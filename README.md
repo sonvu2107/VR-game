@@ -1,124 +1,160 @@
-<div id="top"></div>
+# The Labyrinth
 
-<!-- PROJECT SHIELDS -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links-->
-<div align="center">
+**The Labyrinth** là game hành động khám phá mê cung 2D được phát triển bằng Unity. Bản đồ được sinh tự động bằng thuật toán Random Walk; người chơi phải khám phá dungeon, chiến đấu với Skeleton và tiêu diệt toàn bộ kẻ địch để chiến thắng.
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+> Trạng thái: Đồ án đang được tiếp tục phát triển bởi nhóm 5 thành viên.
 
-</div>
+## Nội dung
 
-<!-- PROJECT LOGO -->
-<br />
-<!-- UPDATE -->
-<div align="center">
+- [Tính năng hiện có](#tính-năng-hiện-có)
+- [Cách chơi](#cách-chơi)
+- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
+- [Cài đặt và chạy project](#cài-đặt-và-chạy-project)
+- [Cấu trúc project](#cấu-trúc-project)
+- [Định hướng phát triển](#định-hướng-phát-triển)
+- [Làm việc nhóm](#làm-việc-nhóm)
+- [Hạn chế hiện tại](#hạn-chế-hiện-tại)
+- [Giấy phép](#giấy-phép)
 
-  <h3 align="center">The Labyrinth</h3>
+## Tính năng hiện có
 
-  <p align="center">
-  <!-- UPDATE -->
-    <i>A procedurally generated 2D Dungeon Crawler game</i>
-    <br />
-    ·
-    <a href="https://github.com/BAGUVIX456/The-Labyrinth/issues">Request Feature / Report Bug</a>
-  </p>
-</div>
+- Sinh phòng và hành lang ngẫu nhiên bằng Procedural Content Generation (PCG).
+- Tự động tạo sàn và tường bằng Tilemap.
+- NavMesh 2D hỗ trợ enemy tìm đường và đuổi theo người chơi.
+- Di chuyển nhân vật bằng bàn phím hoặc gamepad.
+- Đánh thường và kỹ năng tích lực gây sát thương diện rộng.
+- Hệ thống máu hiển thị bằng các biểu tượng trái tim.
+- Enemy Skeleton có hành vi đi lang thang, truy đuổi và tấn công.
+- Hiển thị số lượng enemy còn lại.
+- Các trạng thái Pause, Game Over và Victory.
+- Menu bắt đầu, màn hình tải và âm thanh cơ bản.
 
+## Cách chơi
 
-<!-- TABLE OF CONTENTS -->
-<details>
-<summary>Table of Contents</summary>
+Mục tiêu của người chơi là khám phá mê cung và tiêu diệt toàn bộ Skeleton trong dungeon. Khi số lượng enemy về `0`, màn hình chiến thắng được hiển thị.
 
-- [About The Project](#about-the-project)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-- [Contact](#contact)
-  - [Maintainer(s)](#maintainers)
-- [Additional documentation](#additional-documentation)
+### Bàn phím và chuột
 
-</details>
+| Thao tác | Phím |
+|---|---|
+| Di chuyển | `W`, `A`, `S`, `D` hoặc các phím mũi tên |
+| Đánh thường | Chuột trái hoặc `Left Alt` |
+| Tích lực | Giữ `Space` |
+| Tung đòn tích lực | Thả `Space` |
+| Tạm dừng/tiếp tục | `Esc` |
 
+Đánh thường chỉ được thực hiện một lần cho mỗi lần nhấn. Người chơi cần thả nút rồi nhấn lại để đánh tiếp.
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
-<!-- UPDATE -->
-<div align="center">
-  <a href="https://github.com/BAGUVIX456/The-Labyrinth">
-    <img width="80%" alt="image" src="https://github.com/user-attachments/assets/caa231cb-22bb-4f99-8eda-eaa6dd050b99">
-  </a>
-</div>
+### Gamepad
 
-A 2D game made in Unity. Each room is procedurally generated. Kill all skeletons to win.
- 
-<p align="right">(<a href="#top">back to top</a>)</p>
+| Thao tác | Điều khiển |
+|---|---|
+| Di chuyển | Left Stick |
+| Đánh thường | Right Trigger |
 
-<div id="supports"></div>
+Kỹ năng tích lực và Pause hiện chưa được gán đầy đủ cho gamepad.
 
-## Getting Started
+## Công nghệ sử dụng
 
-To set up the project for development, follow the steps below.
+- Unity `2022.3.10f1` (LTS).
+- C#.
+- Universal Render Pipeline 2D.
+- Unity Input System.
+- Unity Tilemap.
+- Cinemachine.
+- TextMesh Pro.
+- NavMesh Plus/AI Navigation cho môi trường 2D.
 
-### Prerequisites
-1. This game is made in `Unity 2022.3.10f1`. Make sure you have the correct version of the Editor installed before opening the project.
-2. Read the [Contributing Guidelines](/.github/CONTRIBUTING.md)
+Các package và phiên bản chi tiết được khai báo trong `Packages/manifest.json`.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+## Cài đặt và chạy project
 
-### Setup
+### Yêu cầu
 
-_Now that the environment has been set up and configured, the next step is to install the project locally on your system._
-<!-- UPDATE -->
-1. Fork this repository
-2. Clone the fork
-   ```sh
-   git clone https://github.com/<GITHUB-USERNAME>/The-Labyrinth.git
-   ```
-3. Make sure you have configured git for Unity development by following [this tutorial](https://gist.github.com/BAGUVIX456/9a5cfe64cfa6b52ecdbf45f1a31eb852).
+- Unity Hub.
+- Unity Editor `2022.3.10f1`.
+- IDE hỗ trợ C#, ví dụ Visual Studio, Visual Studio Code hoặc JetBrains Rider.
+- Git nếu làm việc theo nhóm.
+
+Nên sử dụng đúng phiên bản Unity của project để hạn chế thay đổi asset, scene và package ngoài ý muốn.
+
+### Các bước chạy
+
+1. Clone hoặc tải project về máy.
+2. Mở Unity Hub và chọn **Add project from disk**.
+3. Chọn thư mục gốc `The-Labyrinth-main`.
+4. Mở project bằng Unity `2022.3.10f1`.
+5. Chờ Unity import toàn bộ asset và package.
+6. Mở scene `Assets/Scenes/StartMenu.unity`.
+7. Nhấn nút **Play** trong Unity Editor.
+
+### Scene trong bản build
+
+Project đang sử dụng hai scene theo thứ tự:
+
+1. `Assets/Scenes/StartMenu.unity`
+2. `Assets/Scenes/Dungeon.unity`
+
+Để build bản Windows, mở **File > Build Settings**, chọn nền tảng Windows và kiểm tra hai scene trên đã được thêm vào danh sách **Scenes In Build**.
+
+## Cấu trúc project
+
+```text
+Assets/
+├── Input/                      # Input Actions của người chơi và UI
+├── NavMeshComponents/          # Thành phần NavMesh dành cho game 2D
+├── Prefabs/                    # Prefab, bao gồm Skeleton
+├── Scenes/                     # StartMenu và Dungeon
+├── Scripts/
+│   ├── Enemy/                  # AI và chiến đấu của enemy
+│   ├── ItemPlacement/          # Bố trí enemy trong phòng
+│   ├── PCG/                    # Sinh phòng và hành lang ngẫu nhiên
+│   ├── Player/                 # Di chuyển, máu và kỹ năng người chơi
+│   ├── ScriptableObjects/      # Dữ liệu cấu hình map và enemy
+│   ├── Tilemap/                # Vẽ sàn, tường và nhận dạng loại tường
+│   ├── UI/                     # Điều khiển giao diện
+│   ├── AudioManager.cs         # Quản lý nhạc và hiệu ứng âm thanh
+│   └── GameManager.cs          # Trạng thái và luồng chơi chính
+└── Tilesets/                   # Tile và palette của dungeon
 ```
-NOTE: Make sure to read the entire tutorial carefully and completely to prevent future headaches
-```
-4. Add the project folder to Unity Hub. This step ensures you have the required editor downloaded before opening the project
-5. Open the project from Unity Hub
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+## Định hướng phát triển
 
-## Contact
+Phiên bản tiếp theo dự kiến bổ sung:
 
-<p>
+- Tiến trình dungeon gồm nhiều tầng.
+- Seed và nhiều loại phòng: bắt đầu, chiến đấu, kho báu, boss và cổng thoát.
+- Kỹ năng Dash và các nâng cấp cho người chơi.
+- Hệ thống vật phẩm.
+- Enemy cận chiến, enemy tầm xa và boss nhiều giai đoạn.
+- Điểm số, high score và lưu cài đặt.
+- HUD, minimap và màn hình kết quả hoàn chỉnh.
+- Kiểm thử Edit Mode và Play Mode.
 
-### Maintainer(s)
+## Làm việc nhóm
 
-The currently active maintainer of this project.
+Tài liệu phân công cho 5 thành viên được lưu tại:
 
+- [Phân công thành viên](Docs/PHAN_CONG_THANH_VIEN.docx)
 
-<!-- UPDATE -->
-- [Dhanvith Nayak](https://github.com/BAGUVIX456)
+Quy ước làm việc:
 
-Join the discord server to connect with other contributors: [Invite Link](https://discord.gg/ynmKETw9sh)
+- Mỗi nhóm chức năng sử dụng một branch riêng.
+- Không commit các thư mục Unity tự sinh như `Library/`, `Temp/`, `Logs/` và `Obj/`.
+- Hạn chế để nhiều thành viên cùng chỉnh sửa một scene trong cùng thời điểm.
+- Không sửa trực tiếp `Assets/Input/PlayerControls.cs` vì đây là file được Unity tự sinh.
+- Khi thay đổi điều khiển, chỉnh `Assets/Input/PlayerControls.inputactions` rồi để Unity sinh lại mã nguồn.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+## Hạn chế hiện tại
 
-## Additional documentation
+- Chỉ có một loại enemy là Skeleton.
+- Điều kiện chiến thắng đang phụ thuộc trực tiếp vào biến đếm enemy.
+- Sinh enemy chưa loại trừ hoàn toàn vị trí trùng nhau.
+- AI đang kết hợp NavMeshAgent với thay đổi `transform` trực tiếp và cần được refactor.
+- Kỹ năng tích lực vẫn sử dụng API input cũ, chưa hỗ trợ rebind hoặc gamepad đầy đủ.
+- Chưa có hệ thống lưu dữ liệu và chưa có test tự động.
 
-  - [License](/LICENSE)
-  - [Contribution Guidelines](/.github/CONTRIBUTING.md)
+## Giấy phép
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+Project sử dụng giấy phép MIT. Xem nội dung chi tiết trong file [LICENSE](LICENSE).
 
-<!-- MARKDOWN LINKS & IMAGES -->
-
-[contributors-shield]: https://img.shields.io/github/contributors/BAGUVIX456/The-Labyrinth.svg?style=for-the-badge
-[contributors-url]: https://github.com/BAGUVIX456/The-Labyrinth/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/BAGUVIX456/The-Labyrinth.svg?style=for-the-badge
-[forks-url]: https://github.com/BAGUVIX456/The-Labyrinth/network/members
-[stars-shield]: https://img.shields.io/github/stars/BAGUVIX456/The-Labyrinth.svg?style=for-the-badge
-[stars-url]: https://github.com/BAGUVIX456/The-Labyrinth/stargazers
-[issues-shield]: https://img.shields.io/github/issues/BAGUVIX456/The-Labyrinth.svg?style=for-the-badge
-[issues-url]: https://github.com/BAGUVIX456/The-Labyrinth/issues
-[license-shield]: https://img.shields.io/github/license/BAGUVIX456/The-Labyrinth.svg?style=for-the-badge
-[license-url]: https://github.com/BAGUVIX456/The-Labyrinth/blob/main/LICENSE
