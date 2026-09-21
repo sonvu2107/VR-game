@@ -3,11 +3,11 @@ using UnityEngine.UI;
 
 public class HealthController : MonoBehaviour
 {
-    private int maxHeartAmount = 10;
+    [SerializeField] private int maxHeartAmount = 10;
     public int startHeart = 3;
     public int currentHealth;
+    [SerializeField] private int healthPerHeart = 2;
     private int maxHealth;
-    private int healthPerHeart = 2;
 
     public GameManager gameManager;
     private Animator animator;
@@ -18,35 +18,36 @@ public class HealthController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        currentHealth = startHeart * healthPerHeart;
+        startHeart = Mathf.Clamp(startHeart, 0, Mathf.Min(maxHeartAmount, heartImages.Length));
         maxHealth = maxHeartAmount * healthPerHeart;
-        checkHealthAmount();
+        currentHealth = startHeart * healthPerHeart;
+        CheckHealthAmount();
     }
     
-    void checkHealthAmount()
+    private void CheckHealthAmount()
     {
-        for (int i=0; i < maxHeartAmount; i++)
+        for (int i = 0; i < heartImages.Length; i++)
         {
-            if (startHeart <= i)
-            {
-                heartImages[i].enabled = false;
-            }
-            else
-            {
-                heartImages[i].enabled = true;
-            }
+            if (heartImages[i] != null)
+                heartImages[i].enabled = i < startHeart;
         }
         
         UpdateHearts();
     }
 
-    void UpdateHearts()
+    private void UpdateHearts()
     {
+        if (heartSprites == null || heartSprites.Length == 0 || healthPerHeart <= 0)
+            return;
+
         bool empty = false;
         int i = 0;
 
         foreach (Image image in heartImages)
         {
+            if (image == null)
+                continue;
+
             if (empty)
             {
                 image.sprite = heartSprites[0];
@@ -60,9 +61,12 @@ public class HealthController : MonoBehaviour
                 }
                 else
                 {
-                    int currentHeartHealth = (int)(healthPerHeart - (healthPerHeart * i - currentHealth));
-                    int healthPerImage = healthPerHeart / (heartSprites.Length - 1);
-                    int imageIndex = currentHeartHealth / healthPerImage;
+                    int currentHeartHealth = Mathf.Max(0, currentHealth - healthPerHeart * (i - 1));
+                    float normalizedHealth = (float)currentHeartHealth / healthPerHeart;
+                    int imageIndex = Mathf.Clamp(
+                        Mathf.CeilToInt(normalizedHealth * (heartSprites.Length - 1)),
+                        0,
+                        heartSprites.Length - 1);
                     image.sprite = heartSprites[imageIndex];
                     empty = true;
                 }
@@ -74,13 +78,18 @@ public class HealthController : MonoBehaviour
     {
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        animator.SetTrigger("Hurt");
+        if (animator != null)
+            animator.SetTrigger("Hurt");
+
         UpdateHearts();
 
         if (currentHealth <= 0)
         {
-            animator.SetBool("isDead", true);
-            gameManager.GameOver();
+            if (animator != null)
+                animator.SetBool("isDead", true);
+
+            if (gameManager != null)
+                gameManager.GameOver();
         }
     }
 
@@ -92,6 +101,6 @@ public class HealthController : MonoBehaviour
         currentHealth = startHeart * healthPerHeart;
         maxHealth = maxHeartAmount * healthPerHeart;
         
-        checkHealthAmount();
+        CheckHealthAmount();
     }
 }

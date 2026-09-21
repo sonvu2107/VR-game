@@ -1,0 +1,35 @@
+fileFormatVersion: 2
+guid: 2c2af9c93026453b82f2d197c48f7182
+TextureImporter:
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  textureType: 8
+  spriteMode: 2
+  spritePixelsToUnits: 512
+  alphaIsTransparency: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - {serializedVersion: 2, name: SlashVfxHit2_6f_0, rect: {serializedVersion: 2, x: 0, y: 0, width: 362, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.5}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 2210a1b2c3d44e55a6b7c8d9e0f20001, internalID: 1022001001}
+    - {serializedVersion: 2, name: SlashVfxHit2_6f_1, rect: {serializedVersion: 2, x: 362, y: 0, width: 362, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.5}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 2210a1b2c3d44e55a6b7c8d9e0f20002, internalID: 1022001002}
+    - {serializedVersion: 2, name: SlashVfxHit2_6f_2, rect: {serializedVersion: 2, x: 724, y: 0, width: 362, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.5}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 2210a1b2c3d44e55a6b7c8d9e0f20003, internalID: 1022001003}
+    - {serializedVersion: 2, name: SlashVfxHit2_6f_3, rect: {serializedVersion: 2, x: 1086, y: 0, width: 362, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.5}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 2210a1b2c3d44e55a6b7c8d9e0f20004, internalID: 1022001004}
+    - {serializedVersion: 2, name: SlashVfxHit2_6f_4, rect: {serializedVersion: 2, x: 1448, y: 0, width: 362, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.5}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 2210a1b2c3d44e55a6b7c8d9e0f20005, internalID: 1022001005}
+    - {serializedVersion: 2, name: SlashVfxHit2_6f_5, rect: {serializedVersion: 2, x: 1810, y: 0, width: 362, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.5}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 2210a1b2c3d44e55a6b7c8d9e0f20006, internalID: 1022001006}
+    nameFileIdTable:
+      SlashVfxHit2_6f_0: 1022001001
+      SlashVfxHit2_6f_1: 1022001002
+      SlashVfxHit2_6f_2: 1022001003
+      SlashVfxHit2_6f_3: 1022001004
+      SlashVfxHit2_6f_4: 1022001005
+      SlashVfxHit2_6f_5: 1022001006

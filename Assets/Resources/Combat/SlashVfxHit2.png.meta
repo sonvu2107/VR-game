@@ -1,0 +1,59 @@
+fileFormatVersion: 2
+guid: 80ff5a21698a4d00ae76b46f5ba5ab90
+TextureImporter:
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  textureType: 8
+  spriteMode: 2
+  spritePixelsToUnits: 512
+  alphaIsTransparency: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SlashVfxHit2_0
+      rect: {serializedVersion: 2, x: 0, y: 0, width: 543, height: 724}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      spriteID: 2020a1b2c3d44e55a6b7c8d9e0f20201
+      internalID: 2020001001
+    - serializedVersion: 2
+      name: SlashVfxHit2_1
+      rect: {serializedVersion: 2, x: 543, y: 0, width: 543, height: 724}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      spriteID: 2020a1b2c3d44e55a6b7c8d9e0f20202
+      internalID: 2020001002
+    - serializedVersion: 2
+      name: SlashVfxHit2_2
+      rect: {serializedVersion: 2, x: 1086, y: 0, width: 543, height: 724}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      spriteID: 2020a1b2c3d44e55a6b7c8d9e0f20203
+      internalID: 2020001003
+    - serializedVersion: 2
+      name: SlashVfxHit2_3
+      rect: {serializedVersion: 2, x: 1629, y: 0, width: 543, height: 724}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      spriteID: 2020a1b2c3d44e55a6b7c8d9e0f20204
+      internalID: 2020001004
+    nameFileIdTable:
+      SlashVfxHit2_0: 2020001001
+      SlashVfxHit2_1: 2020001002
+      SlashVfxHit2_2: 2020001003
+      SlashVfxHit2_3: 2020001004

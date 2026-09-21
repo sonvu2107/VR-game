@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     public int enemyCount;
 
     private InputAction quit;
-    private bool pauseButtonIsPressed = false;
 
     private void Awake()
     {
@@ -33,81 +32,104 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
-        quit.Disable();
+        quit?.Disable();
     }
 
     private void Start()
     {
-        pauseMenuUI.SetActive(false);
-        gameOverUI.SetActive(false);
-
+        Time.timeScale = 1f;
         isGameOver = false;
         isGamePaused = false;
         isWin = false;
-        PlayerMovement.enabled = true;
+
+        SetPanelActive(pauseMenuUI, false);
+        SetPanelActive(gameOverUI, false);
+        SetPanelActive(winUI, false);
+
+        if (PlayerMovement != null)
+            PlayerMovement.enabled = true;
+
+        UpdateCounter();
     }
 
     private void Update()
     {
-        if (isWin)
+        if (isGameOver || isWin)
             return;
-        if (enemyCount <= 0)
-            Win();
-        
-        if (quit.ReadValue<float>() == 1 && !pauseButtonIsPressed && !isGameOver && !isWin)
-        {
-            pauseButtonIsPressed = true;
 
-            if (isGamePaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
-        }
-        else if (quit.ReadValue<float>() == 0)
+        if (enemyCount <= 0)
         {
-            pauseButtonIsPressed = false;
+            Win();
+            return;
+        }
+
+        if (quit != null && quit.WasPressedThisFrame())
+        {
+            if (isGamePaused)
+                Resume();
+            else
+                Pause();
         }
     }
 
     public void Resume()
     {
-        pauseMenuUI.SetActive(false);
-        PlayerMovement.enabled = true;
+        if (isGameOver || isWin)
+            return;
+
+        SetPanelActive(pauseMenuUI, false);
+        if (PlayerMovement != null)
+            PlayerMovement.enabled = true;
+
         Time.timeScale = 1f;
         isGamePaused = false;
     }
 
-    void Pause()
+    public void Pause()
     {
-        pauseMenuUI.SetActive(true);
-        PlayerMovement.enabled = false;
+        if (isGameOver || isWin)
+            return;
+
+        SetPanelActive(pauseMenuUI, true);
+        if (PlayerMovement != null)
+            PlayerMovement.enabled = false;
+
         Time.timeScale = 0f;
         isGamePaused = true;
     }
     
     public void GameOver()
     {
+        if (isGameOver || isWin)
+            return;
+
         isGameOver = true;
-        gameOverUI.SetActive(true);
-        PlayerMovement.enabled = false;
+        isGamePaused = false;
+        SetPanelActive(pauseMenuUI, false);
+        SetPanelActive(gameOverUI, true);
+        if (PlayerMovement != null)
+            PlayerMovement.enabled = false;
+
         Time.timeScale = 0f;
     }
 
     public void Win()
     {
+        if (isGameOver || isWin)
+            return;
+
         isWin = true;
-        winUI.SetActive(true);
-        PlayerMovement.enabled = false;
+        isGamePaused = false;
+        SetPanelActive(pauseMenuUI, false);
+        SetPanelActive(winUI, true);
+        if (PlayerMovement != null)
+            PlayerMovement.enabled = false;
+
         Time.timeScale = 0f;
     }
     
     public void RestartGame()
     {
-        PlayerMovement.enabled = true;
         Time.timeScale = 1f;
         SceneManager.LoadScene("Dungeon");
     }
@@ -119,6 +141,13 @@ public class GameManager : MonoBehaviour
 
     public void UpdateCounter()
     {
-        EnemyCounter.text = "Enemies Remaining: " + enemyCount;
+        if (EnemyCounter != null)
+            EnemyCounter.text = "Enemies Remaining: " + Mathf.Max(0, enemyCount);
+    }
+
+    private static void SetPanelActive(GameObject panel, bool isActive)
+    {
+        if (panel != null)
+            panel.SetActive(isActive);
     }
 }

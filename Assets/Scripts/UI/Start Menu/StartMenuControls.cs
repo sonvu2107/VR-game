@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -11,13 +10,24 @@ public class StartMenuControls : MonoBehaviour
     public Slider slider;
     public TextMeshProUGUI progressText;
 
+    private bool isLoading;
+
     private void Start()
     {
-        loadingScreen.SetActive(false);
+        Time.timeScale = 1f;
+        isLoading = false;
+
+        if (loadingScreen != null)
+            loadingScreen.SetActive(false);
+
+        SetProgress(0f);
     }
 
     public void StartButtonControl()
     {
+        if (isLoading)
+            return;
+
         StartCoroutine(LoadScene("Dungeon"));
     }
     
@@ -28,18 +38,31 @@ public class StartMenuControls : MonoBehaviour
     
     IEnumerator LoadScene(string sceneName)
     {
+        isLoading = true;
+        if (loadingScreen != null)
+            loadingScreen.SetActive(true);
+
+        SetProgress(0f);
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-        
-        loadingScreen.SetActive(true);
         
         while (!operation.isDone)
         {
-            // float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            float progress = operation.progress;
-            slider.value = progress;
-            progressText.text = (int)(progress * 100f) + "%";
-            
+            // Unity reports loading progress from 0 to 0.9 before activation.
+            SetProgress(Mathf.Clamp01(operation.progress / 0.9f));
             yield return null;
         }
+
+        SetProgress(1f);
+    }
+
+    private void SetProgress(float progress)
+    {
+        float clampedProgress = Mathf.Clamp01(progress);
+
+        if (slider != null)
+            slider.value = clampedProgress;
+
+        if (progressText != null)
+            progressText.text = $"{Mathf.RoundToInt(clampedProgress * 100f)}%";
     }
 }

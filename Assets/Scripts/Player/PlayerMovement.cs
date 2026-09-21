@@ -24,6 +24,18 @@ public class PlayerMovement : MonoBehaviour
     [Min(0f)] public float hit1RangeMultiplier = 1f;
     [Min(0f)] public float hit2RangeMultiplier = 1.08f;
     [Min(0f)] public float hit3RangeMultiplier = 1.25f;
+    [Header("Slash VFX")]
+    [Min(0.05f)] public float slashVfxDuration = 0.36f;
+    [Min(0f)] public float hit1VfxScale = 0.8f;
+    [Min(0f)] public float hit2VfxScale = 1f;
+    [Min(0f)] public float hit3VfxScale = 0.85f;
+    [Header("Combo Audio")]
+    [Range(0f, 1f)] public float hit1SwingVolume = 0.75f;
+    [Range(0f, 1f)] public float hit2SwingVolume = 0.9f;
+    [Range(0f, 1f)] public float hit3SwingVolume = 1f;
+    [Range(0.5f, 2f)] public float hit1SwingPitch = 1.05f;
+    [Range(0.5f, 2f)] public float hit2SwingPitch = 1.18f;
+    [Range(0.5f, 2f)] public float hit3SwingPitch = 0.82f;
     public float powerUpAttackCooldown = 15.0f;
     public Transform attackPoint;
     public float attackRange = 0.5f;
@@ -34,6 +46,10 @@ public class PlayerMovement : MonoBehaviour
     public int powerUpDamage;
     private float powerUpAttackCooldownActual;
     public AudioSource audioSource;
+    private AudioSource swingAudioSource;
+    private AudioSource impactAudioSource;
+    private AudioClip[] comboSwingClips;
+    private AudioClip swordImpactClang;
 
     private Vector2 _movement;
     private Vector2 facingLeft;
@@ -48,6 +64,12 @@ public class PlayerMovement : MonoBehaviour
     private int nextComboHit;
     private readonly Collider2D[] enemyHitBuffer = new Collider2D[16];
     private readonly HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
+    private SpriteRenderer slashVfxRenderer;
+    private Sprite[][] slashVfxFrames;
+    private float slashVfxShownAt;
+    private float slashVfxHideAt;
+    private float slashVfxBaseScale;
+    private int activeVfxHit;
     private bool spaceHeld;
     private float spaceHeldTime = 0.0f;
     private float maxPowerupRadius = 35.0f;
@@ -63,6 +85,19 @@ public class PlayerMovement : MonoBehaviour
     {
         playerControl = new PlayerControls();
         audioSource = GetComponent<AudioSource>();
+        swingAudioSource = gameObject.AddComponent<AudioSource>();
+        swingAudioSource.playOnAwake = false;
+        swingAudioSource.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
+        impactAudioSource = gameObject.AddComponent<AudioSource>();
+        impactAudioSource.playOnAwake = false;
+        impactAudioSource.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
+        comboSwingClips = new[]
+        {
+            Resources.Load<AudioClip>("Audio/Combat/SwordSwing1"),
+            Resources.Load<AudioClip>("Audio/Combat/SwordSwing2"),
+            Resources.Load<AudioClip>("Audio/Combat/SwordSwing3")
+        };
+        swordImpactClang = Resources.Load<AudioClip>("Audio/Combat/SwordImpactClang");
         player = GameObject.Find("Player");
         powerupController = player.GetComponent<PowerupController>();
     }
@@ -90,6 +125,7 @@ public class PlayerMovement : MonoBehaviour
         facingLeft = new Vector2(-transform.localScale.x, transform.localScale.y);
         spaceHeld = false;
         isPoweredUp = false;
+        CreateSlashVfx();
     }
 
     private void Flip()
@@ -106,6 +142,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        UpdateSlashVfx();
+
         if(isPoweredUp)
         {
             powerUpAttackCooldownActual -= Time.deltaTime;
@@ -220,6 +258,78 @@ public class PlayerMovement : MonoBehaviour
         // The current controller still uses one clip. ComboIndex is ready for Attack_1/2/3 transitions.
         animator.SetInteger("ComboIndex", activeComboHit + 1);
         animator.SetTrigger("Attack");
+        ShowSlashVfx(activeComboHit);
+    }
+
+    private void CreateSlashVfx()
+    {
+        slashVfxFrames = new Sprite[3][];
+        for (int hit = 0; hit < slashVfxFrames.Length; hit++)
+        {
+            Sprite[] frames = Resources.LoadAll<Sprite>($"Combat/SlashVfxHit{hit + 1}_6f");
+            System.Array.Sort(frames, (first, second) => string.CompareOrdinal(first.name, second.name));
+            if (frames.Length < 6)
+            {
+                slashVfxFrames = null;
+                return;
+            }
+
+            slashVfxFrames[hit] = frames;
+        }
+
+        GameObject slashVfx = new GameObject("Slash VFX");
+        slashVfx.transform.SetParent(transform, false);
+        slashVfxRenderer = slashVfx.AddComponent<SpriteRenderer>();
+
+        SpriteRenderer playerRenderer = GetComponent<SpriteRenderer>();
+        if (playerRenderer != null)
+        {
+            slashVfxRenderer.sortingLayerID = playerRenderer.sortingLayerID;
+            slashVfxRenderer.sortingOrder = playerRenderer.sortingOrder + 1;
+        }
+
+        slashVfxRenderer.enabled = false;
+    }
+
+    private void ShowSlashVfx(int comboHit)
+    {
+        if (slashVfxRenderer == null || slashVfxFrames == null || attackPoint == null)
+            return;
+
+        activeVfxHit = comboHit;
+        slashVfxBaseScale = comboHit == 0 ? hit1VfxScale : comboHit == 1 ? hit2VfxScale : hit3VfxScale;
+        slashVfxRenderer.sprite = slashVfxFrames[comboHit][0];
+        // Every source sheet shares the same right-facing orientation. The parent
+        // mirrors the complete effect together with the Player when facing left.
+        slashVfxRenderer.flipX = false;
+        slashVfxRenderer.flipY = false;
+        slashVfxRenderer.color = Color.white;
+        slashVfxRenderer.transform.localPosition = transform.InverseTransformPoint(attackPoint.position);
+        slashVfxRenderer.transform.localRotation = Quaternion.identity;
+        slashVfxRenderer.transform.localScale = Vector3.one * slashVfxBaseScale;
+        slashVfxRenderer.enabled = true;
+        slashVfxShownAt = Time.time;
+        slashVfxHideAt = Time.time + slashVfxDuration;
+    }
+
+    private void UpdateSlashVfx()
+    {
+        if (slashVfxRenderer == null || !slashVfxRenderer.enabled)
+            return;
+
+        if (Time.time >= slashVfxHideAt)
+        {
+            slashVfxRenderer.enabled = false;
+            return;
+        }
+
+        float progress = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(slashVfxShownAt, slashVfxHideAt, Time.time));
+        int frameIndex = Mathf.Min((int)(progress * slashVfxFrames[activeVfxHit].Length), slashVfxFrames[activeVfxHit].Length - 1);
+        slashVfxRenderer.sprite = slashVfxFrames[activeVfxHit][frameIndex];
+        slashVfxRenderer.transform.localScale = Vector3.one * Mathf.Lerp(slashVfxBaseScale * 0.95f, slashVfxBaseScale, progress);
+        Color color = slashVfxRenderer.color;
+        color.a = 1f - progress * progress;
+        slashVfxRenderer.color = color;
     }
 
     private float GetComboDuration(int comboHit)
@@ -253,20 +363,27 @@ public class PlayerMovement : MonoBehaviour
         }
 
         DamageEnemies(attackPoint.position, attackRange * rangeMultiplier,
-            Mathf.Max(1, Mathf.RoundToInt(attackDamage * damageMultiplier)));
+            Mathf.Max(1, Mathf.RoundToInt(attackDamage * damageMultiplier)), true);
     }
 
-    private void DamageEnemies(Vector2 center, float radius, int damage)
+    private void DamageEnemies(Vector2 center, float radius, int damage, bool playSwordImpact = false)
     {
         int hitCount = Physics2D.OverlapCircleNonAlloc(center, radius, enemyHitBuffer, enemyLayers);
         hitEnemies.Clear();
+        bool damagedEnemy = false;
 
         for (int i = 0; i < hitCount; i++)
         {
             Enemy enemy = enemyHitBuffer[i].GetComponentInParent<Enemy>();
             if (enemy != null && hitEnemies.Add(enemy))
+            {
                 enemy.TakeDamage(damage);
+                damagedEnemy = true;
+            }
         }
+
+        if (playSwordImpact && damagedEnemy)
+            PlaySwordImpact();
     }
 
     void PowerUpAttack()
@@ -312,7 +429,37 @@ public class PlayerMovement : MonoBehaviour
 
     public void PlaySFX(AudioClip clip)
     {
-        audioSource.clip = clip;
-        audioSource.PlayOneShot(clip);
+        if (!isAttacking)
+        {
+            if (clip != null && audioSource != null)
+                audioSource.PlayOneShot(clip);
+            return;
+        }
+
+        AudioClip comboClip = GetComboSwingClip(activeComboHit) ?? clip;
+        if (comboClip == null)
+            return;
+
+        swingAudioSource.pitch = activeComboHit == 0 ? hit1SwingPitch : activeComboHit == 1 ? hit2SwingPitch : hit3SwingPitch;
+        float volume = activeComboHit == 0 ? hit1SwingVolume : activeComboHit == 1 ? hit2SwingVolume : hit3SwingVolume;
+        swingAudioSource.PlayOneShot(comboClip, volume);
+    }
+
+    private AudioClip GetComboSwingClip(int comboHit)
+    {
+        if (comboSwingClips == null || comboHit < 0 || comboHit >= comboSwingClips.Length)
+            return null;
+
+        return comboSwingClips[comboHit];
+    }
+
+    private void PlaySwordImpact()
+    {
+        if (swordImpactClang == null || impactAudioSource == null)
+            return;
+
+        impactAudioSource.pitch = activeComboHit == 2 ? 0.9f : 1.05f;
+        float volume = activeComboHit == 2 ? 1f : 0.75f;
+        impactAudioSource.PlayOneShot(swordImpactClang, volume);
     }
 }
