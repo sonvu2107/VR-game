@@ -19,6 +19,9 @@
 ## Tính năng hiện có
 
 - Sinh phòng và hành lang ngẫu nhiên bằng Procedural Content Generation (PCG).
+- Một lượt chơi gồm ba tầng với seed riêng cho từng tầng.
+- State machine quản lý các trạng thái Generating, Playing, Paused, Game Over và Victory.
+- Cổng chuyển tầng chỉ mở sau khi toàn bộ enemy của tầng đã bị tiêu diệt.
 - Tự động tạo sàn và tường bằng Tilemap.
 - NavMesh 2D hỗ trợ enemy tìm đường và đuổi theo người chơi.
 - Di chuyển nhân vật bằng bàn phím hoặc gamepad.
@@ -31,7 +34,7 @@
 
 ## Cách chơi
 
-Mục tiêu của người chơi là khám phá mê cung và tiêu diệt toàn bộ Skeleton trong dungeon. Khi số lượng enemy về `0`, màn hình chiến thắng được hiển thị.
+Mục tiêu của người chơi là khám phá mê cung và tiêu diệt toàn bộ Skeleton trong từng tầng. Khi số lượng enemy về `0`, cổng thoát được mở. Người chơi cần đi qua cổng của tầng 1 và tầng 2 để tiếp tục, sau đó hoàn thành cổng tầng 3 để chiến thắng.
 
 ### Bàn phím và chuột
 
@@ -106,6 +109,7 @@ Assets/
 ├── Prefabs/                    # Prefab, bao gồm Skeleton
 ├── Scenes/                     # StartMenu và Dungeon
 ├── Scripts/
+│   ├── Core/                   # State machine và cổng chuyển tầng
 │   ├── Enemy/                  # AI và chiến đấu của enemy
 │   ├── ItemPlacement/          # Bố trí enemy trong phòng
 │   ├── PCG/                    # Sinh phòng và hành lang ngẫu nhiên
@@ -122,8 +126,7 @@ Assets/
 
 Phiên bản tiếp theo dự kiến bổ sung:
 
-- Tiến trình dungeon gồm nhiều tầng.
-- Seed và nhiều loại phòng: bắt đầu, chiến đấu, kho báu, boss và cổng thoát.
+- Prefab và nội dung riêng cho phòng kho báu, boss và cổng thoát.
 - Kỹ năng Dash và các nâng cấp cho người chơi.
 - Hệ thống vật phẩm.
 - Enemy cận chiến, enemy tầm xa và boss nhiều giai đoạn.
@@ -148,8 +151,8 @@ Quy ước làm việc:
 ## Hạn chế hiện tại
 
 - Chỉ có một loại enemy là Skeleton.
-- Điều kiện chiến thắng đang phụ thuộc trực tiếp vào biến đếm enemy.
-- Sinh enemy chưa loại trừ hoàn toàn vị trí trùng nhau.
+- Cổng thoát hiện dùng hình đại diện runtime khi chưa cấu hình prefab chính thức.
+- Phòng kho báu và boss chưa có prefab gameplay chính thức.
 - AI đang kết hợp NavMeshAgent với thay đổi `transform` trực tiếp và cần được refactor.
 - Kỹ năng tích lực vẫn sử dụng API input cũ, chưa hỗ trợ rebind hoặc gamepad đầy đủ.
 - Chưa có hệ thống lưu dữ liệu và chưa có test tự động.
@@ -157,4 +160,3 @@ Quy ước làm việc:
 ## Giấy phép
 
 Project sử dụng giấy phép MIT. Xem nội dung chi tiết trong file [LICENSE](LICENSE).
-
