@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -8,11 +9,21 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     
     public float speed = 5f;
-    [Header("Attack Timing")]
-    [Tooltip("Matches the 0.58 second attack animation and prevents the swing from restarting mid-animation.")]
-    [Min(0.05f)] public float attackDuration = 0.60f;
-    [Tooltip("A click made just before the swing ends starts the next swing immediately after it.")]
-    [Min(0f)] public float attackInputBuffer = 0.12f;
+    [Header("Three-Hit Combo")]
+    [Tooltip("Each value should match its own animation clip once the three attack animations are added.")]
+    [Min(0.05f)] public float hit1Duration = 0.60f;
+    [Min(0.05f)] public float hit2Duration = 0.42f;
+    [Min(0.05f)] public float hit3Duration = 0.42f;
+    [Tooltip("How long after a completed swing the next click can continue the combo.")]
+    [Min(0f)] public float comboResetDelay = 0.65f;
+    [Range(0f, 1f)] public float hitImpactNormalizedTime = 0.42f;
+    [Header("Combo Strength")]
+    [Min(0f)] public float hit1DamageMultiplier = 1f;
+    [Min(0f)] public float hit2DamageMultiplier = 1.15f;
+    [Min(0f)] public float hit3DamageMultiplier = 1.6f;
+    [Min(0f)] public float hit1RangeMultiplier = 1f;
+    [Min(0f)] public float hit2RangeMultiplier = 1.08f;
+    [Min(0f)] public float hit3RangeMultiplier = 1.25f;
     public float powerUpAttackCooldown = 15.0f;
     public Transform attackPoint;
     public float attackRange = 0.5f;
@@ -29,7 +40,14 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingLeft;
     private bool isAttacking;
     private float attackEndsAt;
-    private float bufferedAttackExpiresAt = float.NegativeInfinity;
+    private float hitAt;
+    private float comboExpiresAt;
+    private bool attackQueued;
+    private bool hitApplied;
+    private int activeComboHit;
+    private int nextComboHit;
+    private readonly Collider2D[] enemyHitBuffer = new Collider2D[16];
+    private readonly HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
     private bool spaceHeld;
     private float spaceHeldTime = 0.0f;
     private float maxPowerupRadius = 35.0f;
@@ -154,33 +172,100 @@ public class PlayerMovement : MonoBehaviour
         if (attack.WasPressedThisFrame())
         {
             if (isAttacking)
-                bufferedAttackExpiresAt = Time.time + attackInputBuffer;
+            {
+                // One queued input is enough: repeated clicks do not restart the current swing.
+                attackQueued = true;
+            }
             else
-                StartAttack();
+            {
+                if (Time.time > comboExpiresAt)
+                    nextComboHit = 0;
+
+                StartAttack(nextComboHit);
+            }
         }
 
-        if (!isAttacking || Time.time < attackEndsAt)
+        if (!isAttacking)
+            return;
+
+        if (!hitApplied && Time.time >= hitAt)
+        {
+            hitApplied = true;
+            DealComboDamage();
+        }
+
+        if (Time.time < attackEndsAt)
             return;
 
         isAttacking = false;
-        if (Time.time <= bufferedAttackExpiresAt)
+        nextComboHit = activeComboHit == 2 ? 0 : activeComboHit + 1;
+        comboExpiresAt = Time.time + comboResetDelay;
+
+        if (attackQueued)
         {
-            bufferedAttackExpiresAt = float.NegativeInfinity;
-            StartAttack();
+            attackQueued = false;
+            StartAttack(nextComboHit);
         }
     }
 
-    private void StartAttack()
+    private void StartAttack(int comboHit)
     {
+        activeComboHit = Mathf.Clamp(comboHit, 0, 2);
         isAttacking = true;
-        attackEndsAt = Time.time + attackDuration;
+        hitApplied = false;
+        float duration = GetComboDuration(activeComboHit);
+        attackEndsAt = Time.time + duration;
+        hitAt = Time.time + duration * hitImpactNormalizedTime;
+
+        // The current controller still uses one clip. ComboIndex is ready for Attack_1/2/3 transitions.
+        animator.SetInteger("ComboIndex", activeComboHit + 1);
         animator.SetTrigger("Attack");
+    }
 
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-        foreach (Collider2D enemy in hitEnemies)
+    private float GetComboDuration(int comboHit)
+    {
+        switch (comboHit)
         {
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            case 1: return hit2Duration;
+            case 2: return hit3Duration;
+            default: return hit1Duration;
+        }
+    }
+
+    private void DealComboDamage()
+    {
+        float damageMultiplier;
+        float rangeMultiplier;
+        switch (activeComboHit)
+        {
+            case 1:
+                damageMultiplier = hit2DamageMultiplier;
+                rangeMultiplier = hit2RangeMultiplier;
+                break;
+            case 2:
+                damageMultiplier = hit3DamageMultiplier;
+                rangeMultiplier = hit3RangeMultiplier;
+                break;
+            default:
+                damageMultiplier = hit1DamageMultiplier;
+                rangeMultiplier = hit1RangeMultiplier;
+                break;
+        }
+
+        DamageEnemies(attackPoint.position, attackRange * rangeMultiplier,
+            Mathf.Max(1, Mathf.RoundToInt(attackDamage * damageMultiplier)));
+    }
+
+    private void DamageEnemies(Vector2 center, float radius, int damage)
+    {
+        int hitCount = Physics2D.OverlapCircleNonAlloc(center, radius, enemyHitBuffer, enemyLayers);
+        hitEnemies.Clear();
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Enemy enemy = enemyHitBuffer[i].GetComponentInParent<Enemy>();
+            if (enemy != null && hitEnemies.Add(enemy))
+                enemy.TakeDamage(damage);
         }
     }
 
@@ -189,17 +274,13 @@ public class PlayerMovement : MonoBehaviour
         float radius = GetRadius(spaceHeldTime);
         animator.SetTrigger("Powerup Attack");
         
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(powerupCircleController.transform.position, radius*attackRangeScale, enemyLayers);
         powerUpAttackCooldownActual = powerUpAttackCooldown;
         powerupCircleController.setRadius(attackRange);
         spaceHeld = false;
         isPoweredUp = true;
         spaceHeldTime = 0.0f;
  
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            enemy.GetComponent<Enemy>().TakeDamage(powerUpDamage);
-        }
+        DamageEnemies(powerupCircleController.transform.position, radius * attackRangeScale, powerUpDamage);
     }
 
     private void FixedUpdate()
