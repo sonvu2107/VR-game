@@ -1,7 +1,5 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,7 +8,11 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     
     public float speed = 5f;
-    public float attackCooldown = 0.1f;
+    [Header("Attack Timing")]
+    [Tooltip("Matches the 0.58 second attack animation and prevents the swing from restarting mid-animation.")]
+    [Min(0.05f)] public float attackDuration = 0.60f;
+    [Tooltip("A click made just before the swing ends starts the next swing immediately after it.")]
+    [Min(0f)] public float attackInputBuffer = 0.12f;
     public float powerUpAttackCooldown = 15.0f;
     public Transform attackPoint;
     public float attackRange = 0.5f;
@@ -19,7 +21,6 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask enemyLayers;
     public int attackDamage;
     public int powerUpDamage;
-    private float attackCooldownActual;
     private float powerUpAttackCooldownActual;
     public AudioSource audioSource;
 
@@ -27,7 +28,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 facingLeft;
     private bool isFacingLeft;
     private bool isAttacking;
-    private bool attackPressed;
+    private float attackEndsAt;
+    private float bufferedAttackExpiresAt = float.NegativeInfinity;
     private bool spaceHeld;
     private float spaceHeldTime = 0.0f;
     private float maxPowerupRadius = 35.0f;
@@ -58,8 +60,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDisable()
     {
-        move.Disable();
-        attack.Disable();
+        move?.Disable();
+        attack?.Disable();
     }
 
     private void Start()
@@ -68,8 +70,6 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         powerupCircleController = GameObject.FindGameObjectWithTag("Powerup Attack").GetComponent<PowerupCircleController>();
         facingLeft = new Vector2(-transform.localScale.x, transform.localScale.y);
-        attackCooldownActual = attackCooldown;
-        attackPressed = false;
         spaceHeld = false;
         isPoweredUp = false;
     }
@@ -88,8 +88,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (isAttacking)
-            attackCooldownActual -= Time.deltaTime;
         if(isPoweredUp)
         {
             powerUpAttackCooldownActual -= Time.deltaTime;
@@ -130,19 +128,7 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetFloat("Speed", 5);
         }
 
-        if (attack.ReadValue<float>() == 1 && !attackPressed)
-        {
-            Attack();
-            isAttacking = true;
-            attackCooldownActual = attackCooldown;
-            attackPressed = true;
-        }
-        else if (attack.ReadValue<float>() != 1)
-        {
-            if(attackCooldownActual <= 0)
-                isAttacking = false;
-            attackPressed = false;
-        }
+        HandleAttackInput();
 
         if(Input.GetKey(KeyCode.Space))
         {
@@ -163,8 +149,31 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void Attack()
+    private void HandleAttackInput()
     {
+        if (attack.WasPressedThisFrame())
+        {
+            if (isAttacking)
+                bufferedAttackExpiresAt = Time.time + attackInputBuffer;
+            else
+                StartAttack();
+        }
+
+        if (!isAttacking || Time.time < attackEndsAt)
+            return;
+
+        isAttacking = false;
+        if (Time.time <= bufferedAttackExpiresAt)
+        {
+            bufferedAttackExpiresAt = float.NegativeInfinity;
+            StartAttack();
+        }
+    }
+
+    private void StartAttack()
+    {
+        isAttacking = true;
+        attackEndsAt = Time.time + attackDuration;
         animator.SetTrigger("Attack");
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
