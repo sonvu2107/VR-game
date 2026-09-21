@@ -29,6 +29,7 @@ public class Enemy : MonoBehaviour
     private float distance;
     private float wanderSpeedActual;
     private bool attackBlocked;
+    private bool isDead;
     private int currentHealth;
 
     private void Awake()
@@ -55,7 +56,10 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (playerHealthController.currentHealth <= 0)
+        {
             this.enabled = false;
+            return;
+        }
         
         GetRandomDirectionChange();
         distance = Vector2.Distance(transform.position, target.transform.position);
@@ -124,6 +128,9 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isDead)
+            return;
+
         currentHealth -= damage;
         animator.SetTrigger("Hurt");
 
@@ -135,8 +142,11 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
-        manager.enemyCount--;
-        manager.UpdateCounter();
+        if (isDead)
+            return;
+
+        isDead = true;
+        manager?.EnemyDefeated();
         
         animator.SetBool("isDead", true);
         GetComponent<Collider2D>().enabled = false;

@@ -5,7 +5,8 @@ using UnityEngine;
 public class PrefabPlacer : MonoBehaviour
 {
     public static int PlaceMobs(EnemyInfoSO enemyInfo, DungeonRoom room, int numberOfMobs,
-        SeededRandom random, HashSet<Vector2Int> occupiedCells, int spawnClearance)
+        SeededRandom random, HashSet<Vector2Int> occupiedCells, int spawnClearance,
+        ICollection<GameObject> spawnedObjects = null)
     {
         if (enemyInfo == null || enemyInfo.Mob.Count == 0 || enemyInfo.Mob[0].sprite == null)
         {
@@ -23,7 +24,9 @@ public class PrefabPlacer : MonoBehaviour
                 break;
             }
 
-            Instantiate(enemyInfo.Mob[0].sprite, GetWorldPosition(spawnPoint), Quaternion.identity);
+            GameObject spawnedMob = Instantiate(enemyInfo.Mob[0].sprite, GetWorldPosition(spawnPoint),
+                Quaternion.identity);
+            spawnedObjects?.Add(spawnedMob);
             placedMobs++;
         }
 

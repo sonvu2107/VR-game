@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        playerControl = new PlayerControls();
+        EnsurePlayerControls();
         audioSource = GetComponent<AudioSource>();
         player = GameObject.Find("Player");
         powerupController = player.GetComponent<PowerupController>();
@@ -51,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        EnsurePlayerControls();
         move = playerControl.Player.Move;
         attack = playerControl.Player.Fire;
         
@@ -233,5 +234,10 @@ public class PlayerMovement : MonoBehaviour
     {
         audioSource.clip = clip;
         audioSource.PlayOneShot(clip);
+    }
+
+    private void EnsurePlayerControls()
+    {
+        playerControl ??= new PlayerControls();
     }
 }
