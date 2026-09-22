@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerSkillController : MonoBehaviour
 {
-    private enum FrameAnchorMode
+    internal enum FrameAnchorMode
     {
         CellCenter,
         VisualCenter,
@@ -67,16 +67,16 @@ public class PlayerSkillController : MonoBehaviour
     {
         player = GetComponent<PlayerMovement>();
         playerRenderer = GetComponent<SpriteRenderer>();
-        swordWaveCoreFrames = LoadPixelFrames("Combat/Abilities/SwordWavePixel_6f", 6);
-        swordWaveImpactFrames = LoadPixelFrames("Combat/Abilities/SwordWaveImpactPixel_6f", 6);
+        swordWaveCoreFrames = LoadPixelFrames("Combat/Frames/SwordWavePixel_6f", 6);
+        swordWaveImpactFrames = LoadPixelFrames("Combat/Frames/SwordWaveImpactPixel_6f", 6);
         // E is a stationary spin, so every visual frame shares one centre.
-        spinSlashFrames = LoadPixelFrames("Combat/Abilities/SpinSlashPixel_6f", 6, FrameAnchorMode.VisualCenter);
-        runeFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentRunePixel_6f", 6, FrameAnchorMode.VisualCenter);
+        spinSlashFrames = LoadPixelFrames("Combat/Frames/SpinSlashPixel_6f", 6, FrameAnchorMode.VisualCenter);
+        runeFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentRunePixel_6f", 6, FrameAnchorMode.VisualCenter);
         // R descends vertically. Lock its horizontal centre only, preserving
         // the source animation's vertical progression from sky to ground.
-        ultimateSlashFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentBladesPixel_6f", 6, FrameAnchorMode.VisualCenterX);
-        ultimateImpactFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentFinalPixel_6f", 6, FrameAnchorMode.VisualCenterX);
-        casterAuraFrames = LoadPixelFrames("Combat/Abilities/CasterBodyAuraPixel_6f", 6, FrameAnchorMode.VisualCenter);
+        ultimateSlashFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentBladesPixel_6f", 6, FrameAnchorMode.VisualCenterX);
+        ultimateImpactFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentFinalPixel_6f", 6, FrameAnchorMode.VisualCenterX);
+        casterAuraFrames = LoadPixelFrames("Combat/Frames/CasterBodyAuraPixel_6f", 6, FrameAnchorMode.VisualCenter);
         if (GetComponent<SkillHudController>() == null)
             gameObject.AddComponent<SkillHudController>();
     }
@@ -409,55 +409,54 @@ public class PlayerSkillController : MonoBehaviour
     }
 
     /// <summary>
-    /// Builds each VFX frame on a padded canvas. Several generated source sheets
-    /// have glow pixels touching a cell boundary; sampling those cells directly
-    /// produced a hard rectangular crop in-game. The transparent border and a
-    /// small edge feather remove that artificial box while keeping every frame
-    /// anchored at the original cell centre.
+    /// Loads individual frame textures and builds each on a padded canvas.
+    /// The transparent border and edge feather soften source pixels that touch
+    /// an original frame edge while keeping the frame anchored consistently.
     /// </summary>
     internal static Sprite[] LoadPixelFrames(string resourcePath, int frameCount,
         FrameAnchorMode anchorMode = FrameAnchorMode.CellCenter)
     {
-        Texture2D texture = Resources.Load<Texture2D>(resourcePath);
-        if (texture == null || frameCount <= 0)
+        if (frameCount <= 0)
         {
-            Debug.LogWarning($"Could not load ability VFX: {resourcePath}");
+            Debug.LogWarning($"Invalid frame count for ability VFX: {resourcePath}");
             return System.Array.Empty<Sprite>();
         }
-
-        // All skill sheets use a uniform horizontal grid. Point sampling keeps
-        // their white blade edges as sharp as the existing combo slash sprites.
-        texture.filterMode = FilterMode.Point;
-        texture.wrapMode = TextureWrapMode.Clamp;
-
-        Color32[] pixels = texture.GetPixels32();
         Sprite[] frames = new Sprite[frameCount];
         const int transparentPaddingPixels = 24;
         const int sourceEdgeFeatherPixels = 14;
         const byte visibleAlphaThreshold = 8;
         for (int frame = 0; frame < frameCount; frame++)
         {
-            int left = Mathf.RoundToInt(frame * texture.width / (float)frameCount);
-            int right = Mathf.RoundToInt((frame + 1) * texture.width / (float)frameCount);
-            int sourceWidth = right - left;
+            Texture2D source = Resources.Load<Texture2D>($"{resourcePath}/Frame_{frame:00}");
+            if (source == null)
+            {
+                Debug.LogWarning($"Could not load frame {frame:00} for ability VFX: {resourcePath}");
+                return System.Array.Empty<Sprite>();
+            }
+
+            source.filterMode = FilterMode.Point;
+            source.wrapMode = TextureWrapMode.Clamp;
+            int sourceWidth = source.width;
+            int sourceHeight = source.height;
+            Color32[] pixels = source.GetPixels32();
             int paddedWidth = sourceWidth + transparentPaddingPixels * 2;
-            int paddedHeight = texture.height + transparentPaddingPixels * 2;
+            int paddedHeight = sourceHeight + transparentPaddingPixels * 2;
             Color32[] paddedPixels = new Color32[paddedWidth * paddedHeight];
 
             bool hasLeftEdgePixels = false;
             bool hasRightEdgePixels = false;
             int minX = sourceWidth;
             int maxX = -1;
-            int minY = texture.height;
+            int minY = sourceHeight;
             int maxY = -1;
-            for (int y = 0; y < texture.height; y++)
+            for (int y = 0; y < sourceHeight; y++)
             {
-                int sourceRow = y * texture.width;
-                hasLeftEdgePixels |= pixels[sourceRow + left].a >= visibleAlphaThreshold;
-                hasRightEdgePixels |= pixels[sourceRow + right - 1].a >= visibleAlphaThreshold;
+                int sourceRow = y * sourceWidth;
+                hasLeftEdgePixels |= pixels[sourceRow].a >= visibleAlphaThreshold;
+                hasRightEdgePixels |= pixels[sourceRow + sourceWidth - 1].a >= visibleAlphaThreshold;
                 for (int x = 0; x < sourceWidth; x++)
                 {
-                    if (pixels[sourceRow + left + x].a < visibleAlphaThreshold)
+                    if (pixels[sourceRow + x].a < visibleAlphaThreshold)
                         continue;
 
                     minX = Mathf.Min(minX, x);
@@ -467,13 +466,13 @@ public class PlayerSkillController : MonoBehaviour
                 }
             }
 
-            for (int y = 0; y < texture.height; y++)
+            for (int y = 0; y < sourceHeight; y++)
             {
-                int sourceRow = y * texture.width;
+                int sourceRow = y * sourceWidth;
                 int targetRow = (y + transparentPaddingPixels) * paddedWidth + transparentPaddingPixels;
                 for (int x = 0; x < sourceWidth; x++)
                 {
-                    Color32 pixel = pixels[sourceRow + left + x];
+                    Color32 pixel = pixels[sourceRow + x];
                     if (pixel.a > 0)
                     {
                         float alphaMultiplier = 1f;

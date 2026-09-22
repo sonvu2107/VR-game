@@ -433,23 +433,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void LoadHeavyStrikeFrames()
     {
-        Texture2D texture = Resources.Load<Texture2D>("Combat/HeavyStrikeBody_12f");
-        if (texture == null)
-        {
-            Debug.LogWarning("Could not load Heavy Strike body frames: Combat/HeavyStrikeBody_12f");
-            return;
-        }
-
-        texture.filterMode = FilterMode.Point;
-        texture.wrapMode = TextureWrapMode.Clamp;
         heavyStrikeFrames = new Sprite[HeavyStrikeFrameCount];
         for (int frame = 0; frame < heavyStrikeFrames.Length; frame++)
         {
-            int left = Mathf.RoundToInt(frame * texture.width / (float)heavyStrikeFrames.Length);
-            int right = Mathf.RoundToInt((frame + 1) * texture.width / (float)heavyStrikeFrames.Length);
+            Texture2D texture = Resources.Load<Texture2D>($"Combat/Frames/HeavyStrikeBody_12f/Frame_{frame:00}");
+            if (texture == null)
+            {
+                Debug.LogWarning($"Could not load Heavy Strike frame {frame:00} from Combat/Frames/HeavyStrikeBody_12f");
+                heavyStrikeFrames = null;
+                return;
+            }
+
+            texture.filterMode = FilterMode.Point;
+            texture.wrapMode = TextureWrapMode.Clamp;
             heavyStrikeFrames[frame] = frame == 4
-                ? CreateCleanHeavyRaiseFrame(texture, left, right - left)
-                : Sprite.Create(texture, new Rect(left, 0f, right - left, texture.height),
+                ? CreateCleanHeavyRaiseFrame(texture)
+                : Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height),
                     new Vector2(0.5f, 0f), 100f);
             heavyStrikeFrames[frame].name = $"HeavyStrikeBody_{frame:00}";
         }
@@ -459,15 +458,14 @@ public class PlayerMovement : MonoBehaviour
     // on its right side. They are source-art debris, not part of the character.
     // Strip only disconnected components below this size so the sword/body stay
     // untouched while the visible stray pixels disappear.
-    private static Sprite CreateCleanHeavyRaiseFrame(Texture2D source, int left, int width)
+    private static Sprite CreateCleanHeavyRaiseFrame(Texture2D source)
     {
         const byte visibleAlphaThreshold = 8;
         const int detachedFragmentMaxPixels = 96;
+        int width = source.width;
         int height = source.height;
         Color32[] sourcePixels = source.GetPixels32();
-        Color32[] framePixels = new Color32[width * height];
-        for (int y = 0; y < height; y++)
-            System.Array.Copy(sourcePixels, y * source.width + left, framePixels, y * width, width);
+        Color32[] framePixels = sourcePixels;
 
         bool[] visited = new bool[framePixels.Length];
         Queue<int> queue = new Queue<int>();
@@ -648,8 +646,8 @@ public class PlayerMovement : MonoBehaviour
         slashVfxFrames = new Sprite[3][];
         for (int hit = 0; hit < slashVfxFrames.Length; hit++)
         {
-            Sprite[] frames = Resources.LoadAll<Sprite>($"Combat/SlashVfxHit{hit + 1}_6f");
-            System.Array.Sort(frames, (first, second) => string.CompareOrdinal(first.name, second.name));
+            Sprite[] frames = PlayerSkillController.LoadPixelFrames(
+                $"Combat/Frames/SlashVfxHit{hit + 1}_6f", 6);
             if (frames.Length < 6)
             {
                 slashVfxFrames = null;
@@ -715,14 +713,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void CreateDashVfx()
     {
-        Texture2D texture = Resources.Load<Texture2D>("Combat/DashBurstPixel_6f");
-        if (texture == null)
-        {
-            Debug.LogWarning("Could not load dash VFX: Combat/DashBurstPixel_6f");
-            return;
-        }
-
-        dashVfxFrames = PlayerSkillController.LoadPixelFrames("Combat/DashBurstPixel_6f", 6);
+        dashVfxFrames = PlayerSkillController.LoadPixelFrames("Combat/Frames/DashBurstPixel_6f", 6);
 
         GameObject dashVfx = new GameObject("Dash Burst VFX");
         dashVfxRenderer = dashVfx.AddComponent<SpriteRenderer>();
