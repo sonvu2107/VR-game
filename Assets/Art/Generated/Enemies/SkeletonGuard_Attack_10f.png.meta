@@ -1,0 +1,43 @@
+fileFormatVersion: 2
+guid: a196bd260d2c48a88a27a1c6e25f7d11
+TextureImporter:
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  textureType: 8
+  spriteMode: 2
+  spritePixelsToUnits: 512
+  alphaIsTransparency: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_00, rect: {serializedVersion: 2, x: 0, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7001, internalID: 1021001001}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_01, rect: {serializedVersion: 2, x: 217, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7002, internalID: 1021001002}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_02, rect: {serializedVersion: 2, x: 434, y: 0, width: 218, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7003, internalID: 1021001003}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_03, rect: {serializedVersion: 2, x: 652, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7004, internalID: 1021001004}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_04, rect: {serializedVersion: 2, x: 869, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7005, internalID: 1021001005}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_05, rect: {serializedVersion: 2, x: 1086, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7006, internalID: 1021001006}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_06, rect: {serializedVersion: 2, x: 1303, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7007, internalID: 1021001007}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_07, rect: {serializedVersion: 2, x: 1520, y: 0, width: 218, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7008, internalID: 1021001008}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_08, rect: {serializedVersion: 2, x: 1738, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7009, internalID: 1021001009}
+    - {serializedVersion: 2, name: SkeletonGuard_Attack_09, rect: {serializedVersion: 2, x: 1955, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: a196bd260d2c48a88a27a1c6e25f7010, internalID: 1021001010}
+    nameFileIdTable:
+      SkeletonGuard_Attack_00: 1021001001
+      SkeletonGuard_Attack_01: 1021001002
+      SkeletonGuard_Attack_02: 1021001003
+      SkeletonGuard_Attack_03: 1021001004
+      SkeletonGuard_Attack_04: 1021001005
+      SkeletonGuard_Attack_05: 1021001006
+      SkeletonGuard_Attack_06: 1021001007
+      SkeletonGuard_Attack_07: 1021001008
+      SkeletonGuard_Attack_08: 1021001009
+      SkeletonGuard_Attack_09: 1021001010

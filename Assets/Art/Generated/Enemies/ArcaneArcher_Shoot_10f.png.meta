@@ -1,0 +1,43 @@
+fileFormatVersion: 2
+guid: c3bd7f620e5c4ecfa8d4f35a04a05131
+TextureImporter:
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  textureType: 8
+  spriteMode: 2
+  spritePixelsToUnits: 512
+  alphaIsTransparency: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_00, rect: {serializedVersion: 2, x: 0, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05101, internalID: 1023001001}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_01, rect: {serializedVersion: 2, x: 217, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05102, internalID: 1023001002}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_02, rect: {serializedVersion: 2, x: 434, y: 0, width: 218, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05103, internalID: 1023001003}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_03, rect: {serializedVersion: 2, x: 652, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05104, internalID: 1023001004}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_04, rect: {serializedVersion: 2, x: 869, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05105, internalID: 1023001005}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_05, rect: {serializedVersion: 2, x: 1086, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05106, internalID: 1023001006}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_06, rect: {serializedVersion: 2, x: 1303, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05107, internalID: 1023001007}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_07, rect: {serializedVersion: 2, x: 1520, y: 0, width: 218, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05108, internalID: 1023001008}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_08, rect: {serializedVersion: 2, x: 1738, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05109, internalID: 1023001009}
+    - {serializedVersion: 2, name: ArcaneArcher_Shoot_09, rect: {serializedVersion: 2, x: 1955, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: c3bd7f620e5c4ecfa8d4f35a04a05110, internalID: 1023001010}
+    nameFileIdTable:
+      ArcaneArcher_Shoot_00: 1023001001
+      ArcaneArcher_Shoot_01: 1023001002
+      ArcaneArcher_Shoot_02: 1023001003
+      ArcaneArcher_Shoot_03: 1023001004
+      ArcaneArcher_Shoot_04: 1023001005
+      ArcaneArcher_Shoot_05: 1023001006
+      ArcaneArcher_Shoot_06: 1023001007
+      ArcaneArcher_Shoot_07: 1023001008
+      ArcaneArcher_Shoot_08: 1023001009
+      ArcaneArcher_Shoot_09: 1023001010

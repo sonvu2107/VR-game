@@ -1,0 +1,43 @@
+fileFormatVersion: 2
+guid: b2ab6a510f7c40f0b7e5e24f3c940921
+TextureImporter:
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  textureType: 8
+  spriteMode: 2
+  spritePixelsToUnits: 512
+  alphaIsTransparency: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_00, rect: {serializedVersion: 2, x: 0, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940901, internalID: 1022001001}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_01, rect: {serializedVersion: 2, x: 217, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940902, internalID: 1022001002}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_02, rect: {serializedVersion: 2, x: 434, y: 0, width: 218, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940903, internalID: 1022001003}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_03, rect: {serializedVersion: 2, x: 652, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940904, internalID: 1022001004}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_04, rect: {serializedVersion: 2, x: 869, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940905, internalID: 1022001005}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_05, rect: {serializedVersion: 2, x: 1086, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940906, internalID: 1022001006}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_06, rect: {serializedVersion: 2, x: 1303, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940907, internalID: 1022001007}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_07, rect: {serializedVersion: 2, x: 1520, y: 0, width: 218, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940908, internalID: 1022001008}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_08, rect: {serializedVersion: 2, x: 1738, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940909, internalID: 1022001009}
+    - {serializedVersion: 2, name: ToxicSlime_Lunge_09, rect: {serializedVersion: 2, x: 1955, y: 0, width: 217, height: 724}, alignment: 9, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: b2ab6a510f7c40f0b7e5e24f3c940910, internalID: 1022001010}
+    nameFileIdTable:
+      ToxicSlime_Lunge_00: 1022001001
+      ToxicSlime_Lunge_01: 1022001002
+      ToxicSlime_Lunge_02: 1022001003
+      ToxicSlime_Lunge_03: 1022001004
+      ToxicSlime_Lunge_04: 1022001005
+      ToxicSlime_Lunge_05: 1022001006
+      ToxicSlime_Lunge_06: 1022001007
+      ToxicSlime_Lunge_07: 1022001008
+      ToxicSlime_Lunge_08: 1022001009
+      ToxicSlime_Lunge_09: 1022001010
