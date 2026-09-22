@@ -70,7 +70,7 @@ public class PlayerSkillController : MonoBehaviour
         swordWaveCoreFrames = LoadPixelFrames("Combat/Frames/SwordWavePixel_6f", 6);
         swordWaveImpactFrames = LoadPixelFrames("Combat/Frames/SwordWaveImpactPixel_6f", 6);
         // E is a stationary spin, so every visual frame shares one centre.
-        spinSlashFrames = LoadPixelFrames("Combat/Frames/SpinSlashPixel_6f", 6, FrameAnchorMode.VisualCenter);
+        spinSlashFrames = LoadPixelFrames("Combat/Frames/E_SpinSlash_6f", 6, FrameAnchorMode.VisualCenter);
         runeFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentRunePixel_6f", 6, FrameAnchorMode.VisualCenter);
         // R descends vertically. Lock its horizontal centre only, preserving
         // the source animation's vertical progression from sky to ground.
