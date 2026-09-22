@@ -1,14 +1,40 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private const int HeavyStrikeFrameCount = 12;
     private Rigidbody2D rb;
     private PowerupCircleController powerupCircleController;
     private Animator animator;
     
     public float speed = 5f;
+    [Header("Attack Movement")]
+    [Range(0f, 1f)] public float attackMoveSpeedMultiplier = 0.65f;
+    [Header("Dash")]
+    [Tooltip("Press Left Shift or the gamepad right shoulder button to dash.")]
+    [Min(0.05f)] public float dashDuration = 0.16f;
+    [Min(0.1f)] public float dashDistance = 3f;
+    [Min(0f)] public float dashCooldown = 0.7f;
+    [Min(0.05f)] public float dashVfxDuration = 0.22f;
+    [Min(0f)] public float dashVfxScale = 1.7f;
+    [Header("Heavy Strike (Hold Fire)")]
+    [Tooltip("Release before this time for a normal combo hit. Hold longer to charge Heavy Strike.")]
+    [Min(0.05f)] public float heavyChargeThreshold = 0.35f;
+    [Min(0.1f)] public float heavyMaxChargeTime = 1.05f;
+    [Range(0f, 1f)] public float heavyChargeMoveSpeedMultiplier = 0.2f;
+    [Min(0.05f)] public float heavyStrikeWindup = 0.18f;
+    [Min(0.05f)] public float heavyStrikeRecovery = 0.32f;
+    [Min(0.1f)] public float heavyMinRange = 1.35f;
+    [Min(0.1f)] public float heavyMaxRange = 1.75f;
+    [Range(5f, 90f)] public float heavyArcHalfAngle = 50f;
+    [Min(0f)] public float heavyMinDamageMultiplier = 2.4f;
+    [Min(0f)] public float heavyMaxDamageMultiplier = 3.2f;
+    [Header("Player Visual Invariant")]
+    [Tooltip("Writes the Player-instance and authoritative-visual counts at each skill-cast boundary.")]
+    [SerializeField] private bool logPlayerVisualInvariant = true;
     [Header("Three-Hit Combo")]
     [Tooltip("Each value should match its own animation clip once the three attack animations are added.")]
     [Min(0.05f)] public float hit1Duration = 0.60f;
@@ -64,12 +90,33 @@ public class PlayerMovement : MonoBehaviour
     private int nextComboHit;
     private readonly Collider2D[] enemyHitBuffer = new Collider2D[16];
     private readonly HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
+    private readonly HashSet<BossController> hitBosses = new HashSet<BossController>();
     private SpriteRenderer slashVfxRenderer;
     private Sprite[][] slashVfxFrames;
     private float slashVfxShownAt;
     private float slashVfxHideAt;
     private float slashVfxBaseScale;
     private int activeVfxHit;
+    private SpriteRenderer playerSpriteRenderer;
+    private SpriteRenderer dashVfxRenderer;
+    private Sprite[] dashVfxFrames;
+    private Vector2 dashDirection;
+    private bool isDashing;
+    private bool skillPositionLocked;
+    private Vector2 skillLockedPosition;
+    private float dashEndsAt;
+    private float nextDashAt;
+    private float dashVfxShownAt;
+    private float dashVfxHideAt;
+    private Sprite[] heavyStrikeFrames;
+    private bool heavyManualSpriteActive;
+    private bool heavyInputPending;
+    private bool isHeavyCharging;
+    private bool isHeavyAttacking;
+    private bool heavyPositionLocked;
+    private float heavyInputStartedAt;
+    private Vector2 heavyDirection;
+    private Vector2 heavyLockedPosition;
     private bool spaceHeld;
     private float spaceHeldTime = 0.0f;
     private float maxPowerupRadius = 35.0f;
@@ -80,6 +127,22 @@ public class PlayerMovement : MonoBehaviour
 
     private GameObject player;
     private PowerupController powerupController;
+    private PlayerSkillController skillController;
+
+    public bool IsAttacking => isAttacking;
+    public bool IsDashing => isDashing;
+    public bool IsHeavyCharging => isHeavyCharging;
+    public bool IsHeavyAttacking => isHeavyAttacking;
+    public bool IsHeavyLocked => isHeavyCharging || isHeavyAttacking;
+    public bool IsHeavyInputPending => heavyInputPending;
+    public Vector2 FacingDirection => isFacingLeft ? Vector2.left : Vector2.right;
+    // The Player object's transform is the movement/collider anchor, not
+    // necessarily the visual centre of every animation frame.
+    public Vector3 VisualCenter => playerSpriteRenderer != null
+        ? playerSpriteRenderer.bounds.center
+        : transform.position;
+    public float DashCooldownRemaining => Mathf.Max(0f, nextDashAt - Time.time);
+    public float DashCooldownNormalized => dashCooldown <= 0f ? 0f : DashCooldownRemaining / dashCooldown;
 
     private void Awake()
     {
@@ -104,6 +167,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        if (playerControl == null)
+            playerControl = new PlayerControls();
+
         move = playerControl.Player.Move;
         attack = playerControl.Player.Fire;
         
@@ -115,6 +181,12 @@ public class PlayerMovement : MonoBehaviour
     {
         move?.Disable();
         attack?.Disable();
+        heavyInputPending = false;
+        isHeavyCharging = false;
+        isHeavyAttacking = false;
+        RestoreAnimatorAfterHeavyStrike();
+        if (playerSpriteRenderer != null)
+            playerSpriteRenderer.color = Color.white;
     }
 
     private void Start()
@@ -125,7 +197,14 @@ public class PlayerMovement : MonoBehaviour
         facingLeft = new Vector2(-transform.localScale.x, transform.localScale.y);
         spaceHeld = false;
         isPoweredUp = false;
+        playerSpriteRenderer = GetComponent<SpriteRenderer>();
         CreateSlashVfx();
+        CreateDashVfx();
+        LoadHeavyStrikeFrames();
+        skillController = GetComponent<PlayerSkillController>();
+        if (skillController == null)
+            skillController = gameObject.AddComponent<PlayerSkillController>();
+        AssertSingleAuthoritativePlayerVisual("startup");
     }
 
     private void Flip()
@@ -143,6 +222,8 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         UpdateSlashVfx();
+        UpdateDashVfx();
+        UpdateHeavyChargeVisual();
 
         if(isPoweredUp)
         {
@@ -160,33 +241,50 @@ public class PlayerMovement : MonoBehaviour
 
         _movement = move.ReadValue<Vector2>();
 
+        if (isHeavyAttacking)
+        {
+            _movement = Vector2.zero;
+            return;
+        }
+
+        // Skills have a fixed casting position.  Previously only attack/dash
+        // input was blocked; FixedUpdate still applied the held movement axis,
+        // so the player (and E's attached VFX) slid sideways during the cast.
+        if (skillController != null && skillController.IsSkillCasting)
+        {
+            _movement = Vector2.zero;
+            return;
+        }
+
         if (_movement == Vector2.zero)
         {
-            animator.SetFloat("Speed", 0);
+            if (!isAttacking && !isDashing && !IsHeavyLocked && (skillController == null || !skillController.IsSkillCasting))
+                animator.SetFloat("Speed", 0);
         }
         else if (_movement.x > 0 && isFacingLeft)
         {
             isFacingLeft = false;
             Flip();
-            if(!isAttacking)
+            if(!isAttacking && !isDashing && !IsHeavyLocked && (skillController == null || !skillController.IsSkillCasting))
                 animator.SetFloat("Speed", 5);
         }
         else if (_movement.x < 0 && !isFacingLeft)
         {
             isFacingLeft = true;
             Flip();
-            if(!isAttacking)
+            if(!isAttacking && !isDashing && !IsHeavyLocked && (skillController == null || !skillController.IsSkillCasting))
                 animator.SetFloat("Speed", 5);
         }
         else
         {
-            if(!isAttacking)
+            if(!isAttacking && !isDashing && !IsHeavyLocked && (skillController == null || !skillController.IsSkillCasting))
                 animator.SetFloat("Speed", 5);
         }
 
+        HandleDashInput();
         HandleAttackInput();
 
-        if(Input.GetKey(KeyCode.Space))
+        if (!IsHeavyLocked && Input.GetKey(KeyCode.Space))
         {
             if(!isPoweredUp) 
             {
@@ -198,7 +296,7 @@ public class PlayerMovement : MonoBehaviour
                 powerupCircleController.setRadius(GetRadius(spaceHeldTime));
             }
         }
-        else if(spaceHeld)
+        else if(!IsHeavyLocked && spaceHeld)
         {
             PowerUpAttack();
             powerupController.HidePoweredUp();
@@ -207,6 +305,28 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleAttackInput()
     {
+        if (isDashing || isHeavyAttacking || (skillController != null && skillController.IsSkillCasting))
+            return;
+
+        if (heavyInputPending)
+        {
+            if (!attack.IsPressed())
+            {
+                float heldTime = Time.time - heavyInputStartedAt;
+                heavyInputPending = false;
+                if (heldTime >= heavyChargeThreshold)
+                    StartCoroutine(PerformHeavyStrike(HeavyChargeNormalized));
+                else
+                    StartOrQueueComboAttack();
+            }
+            else if (!isHeavyCharging && Time.time - heavyInputStartedAt >= heavyChargeThreshold)
+            {
+                BeginHeavyCharge();
+            }
+
+            return;
+        }
+
         if (attack.WasPressedThisFrame())
         {
             if (isAttacking)
@@ -216,10 +336,10 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                if (Time.time > comboExpiresAt)
-                    nextComboHit = 0;
-
-                StartAttack(nextComboHit);
+                // The basic strike is confirmed on release, letting the same Fire
+                // binding distinguish a quick combo click from a charged heavy hit.
+                heavyInputPending = true;
+                heavyInputStartedAt = Time.time;
             }
         }
 
@@ -244,6 +364,197 @@ public class PlayerMovement : MonoBehaviour
             attackQueued = false;
             StartAttack(nextComboHit);
         }
+    }
+
+    private void StartOrQueueComboAttack()
+    {
+        if (isAttacking)
+        {
+            attackQueued = true;
+            return;
+        }
+
+        if (Time.time > comboExpiresAt)
+            nextComboHit = 0;
+
+        StartAttack(nextComboHit);
+    }
+
+    private void HandleDashInput()
+    {
+        if (isDashing)
+        {
+            if (Time.time >= dashEndsAt)
+            {
+                isDashing = false;
+                animator.SetFloat("Speed", _movement == Vector2.zero ? 0f : 5f);
+            }
+
+            return;
+        }
+
+        if (isAttacking || IsHeavyLocked || heavyInputPending || (skillController != null && skillController.IsSkillCasting) ||
+            Time.time < nextDashAt || !WasDashPressed())
+            return;
+
+        dashDirection = _movement.sqrMagnitude > 0.01f
+            ? _movement.normalized
+            : isFacingLeft ? Vector2.left : Vector2.right;
+        isDashing = true;
+        dashEndsAt = Time.time + dashDuration;
+        nextDashAt = Time.time + dashCooldown;
+        // The run clip is the dash body pose.  Previously this was forced to
+        // zero, leaving the character visibly idle while moving several tiles.
+        animator.SetFloat("Speed", 5f);
+        ShowDashVfx();
+    }
+
+    private static bool WasDashPressed()
+    {
+        return (Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame) ||
+               (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame);
+    }
+
+    private float HeavyChargeNormalized
+    {
+        get
+        {
+            if (heavyMaxChargeTime <= heavyChargeThreshold)
+                return 1f;
+
+            return Mathf.Clamp01((Time.time - heavyInputStartedAt - heavyChargeThreshold) /
+                (heavyMaxChargeTime - heavyChargeThreshold));
+        }
+    }
+
+    private void LoadHeavyStrikeFrames()
+    {
+        Texture2D texture = Resources.Load<Texture2D>("Combat/HeavyStrikeBody_12f");
+        if (texture == null)
+        {
+            Debug.LogWarning("Could not load Heavy Strike body frames: Combat/HeavyStrikeBody_12f");
+            return;
+        }
+
+        texture.filterMode = FilterMode.Point;
+        texture.wrapMode = TextureWrapMode.Clamp;
+        heavyStrikeFrames = new Sprite[HeavyStrikeFrameCount];
+        for (int frame = 0; frame < heavyStrikeFrames.Length; frame++)
+        {
+            int left = Mathf.RoundToInt(frame * texture.width / (float)heavyStrikeFrames.Length);
+            int right = Mathf.RoundToInt((frame + 1) * texture.width / (float)heavyStrikeFrames.Length);
+            heavyStrikeFrames[frame] = Sprite.Create(texture,
+                new Rect(left, 0f, right - left, texture.height), new Vector2(0.5f, 0f), 100f);
+            heavyStrikeFrames[frame].name = $"HeavyStrikeBody_{frame:00}";
+        }
+    }
+
+    private void BeginHeavyCharge()
+    {
+        isHeavyCharging = true;
+        heavyDirection = FacingDirection;
+        animator.SetFloat("Speed", 0f);
+        SetHeavyStrikeFrame(0);
+        AssertSingleAuthoritativePlayerVisual("heavy-charge");
+    }
+
+    private void UpdateHeavyChargeVisual()
+    {
+        if (!isHeavyCharging)
+            return;
+
+        int frame = Mathf.Min(6, Mathf.FloorToInt(HeavyChargeNormalized * 7f));
+        SetHeavyStrikeFrame(frame);
+        float glow = 0.08f + 0.11f * (1f + Mathf.Sin(Time.time * 16f)) * 0.5f;
+        playerSpriteRenderer.color = Color.Lerp(Color.white, new Color(1f, 0.72f, 0.28f), glow);
+    }
+
+    private IEnumerator PerformHeavyStrike(float chargeNormalized)
+    {
+        isHeavyCharging = false;
+        isHeavyAttacking = true;
+        attackQueued = false;
+        nextComboHit = 0;
+        heavyDirection = FacingDirection;
+        if (playerSpriteRenderer != null)
+            playerSpriteRenderer.color = Color.white;
+        // HeavyStrikeBody is sampled onto the existing authoritative Player
+        // renderer. It is animation data, never an instantiated body/VFX.
+        SetHeavyStrikeFrame(7);
+        AssertSingleAuthoritativePlayerVisual("heavy-strike-start");
+
+        yield return new WaitForSeconds(heavyStrikeWindup * 0.34f);
+        SetHeavyStrikeFrame(8);
+        AssertSingleAuthoritativePlayerVisual("heavy-strike-windup-1");
+        yield return new WaitForSeconds(heavyStrikeWindup * 0.33f);
+        SetHeavyStrikeFrame(9);
+        AssertSingleAuthoritativePlayerVisual("heavy-strike-windup-2");
+        yield return new WaitForSeconds(heavyStrikeWindup * 0.33f);
+
+        SetHeavyStrikeFrame(10);
+        AssertSingleAuthoritativePlayerVisual("heavy-strike-impact");
+        float range = Mathf.Lerp(heavyMinRange, heavyMaxRange, chargeNormalized);
+        int damage = Mathf.Max(1, Mathf.RoundToInt(attackDamage *
+            Mathf.Lerp(heavyMinDamageMultiplier, heavyMaxDamageMultiplier, chargeNormalized)));
+        DamageEnemiesInArc(transform.position, heavyDirection, range, heavyArcHalfAngle, damage, true);
+
+        yield return new WaitForSeconds(heavyStrikeRecovery * 0.55f);
+        SetHeavyStrikeFrame(11);
+        yield return new WaitForSeconds(heavyStrikeRecovery * 0.45f);
+
+        isHeavyAttacking = false;
+        heavyPositionLocked = false;
+        RestoreAnimatorAfterHeavyStrike();
+        animator.SetFloat("Speed", _movement == Vector2.zero ? 0f : 5f);
+        AssertSingleAuthoritativePlayerVisual("heavy-strike-complete");
+    }
+
+    private void SetHeavyStrikeFrame(int frame)
+    {
+        if (playerSpriteRenderer == null || heavyStrikeFrames == null ||
+            frame < 0 || frame >= heavyStrikeFrames.Length)
+            return;
+
+        if (!heavyManualSpriteActive)
+        {
+            // Disable the Animator before the first manual frame. This leaves
+            // exactly one renderer writing the body sprite during the strike.
+            animator.enabled = false;
+            heavyManualSpriteActive = true;
+        }
+
+        playerSpriteRenderer.sprite = heavyStrikeFrames[frame];
+    }
+
+    private void RestoreAnimatorAfterHeavyStrike()
+    {
+        if (!heavyManualSpriteActive || animator == null)
+            return;
+
+        heavyManualSpriteActive = false;
+        animator.enabled = true;
+        animator.Play(_movement == Vector2.zero ? "idle" : "run", 0, 0f);
+    }
+
+    /// <summary>
+    /// Makes an ability use the existing player action clips rather than
+    /// casting from idle.  Q uses the first sword pose, E uses the second,
+    /// and R uses the dedicated power-up pose.
+    /// </summary>
+    public void PlaySkillBodyMotion(int comboIndex, bool usePowerupPose = false)
+    {
+        if (animator == null)
+            return;
+
+        animator.SetFloat("Speed", 0f);
+        if (usePowerupPose)
+        {
+            animator.SetTrigger("Powerup Attack");
+            return;
+        }
+
+        animator.SetInteger("ComboIndex", Mathf.Clamp(comboIndex, 1, 3));
+        animator.SetTrigger("Attack");
     }
 
     private void StartAttack(int comboHit)
@@ -281,11 +592,10 @@ public class PlayerMovement : MonoBehaviour
         slashVfx.transform.SetParent(transform, false);
         slashVfxRenderer = slashVfx.AddComponent<SpriteRenderer>();
 
-        SpriteRenderer playerRenderer = GetComponent<SpriteRenderer>();
-        if (playerRenderer != null)
+        if (playerSpriteRenderer != null)
         {
-            slashVfxRenderer.sortingLayerID = playerRenderer.sortingLayerID;
-            slashVfxRenderer.sortingOrder = playerRenderer.sortingOrder + 1;
+            slashVfxRenderer.sortingLayerID = playerSpriteRenderer.sortingLayerID;
+            slashVfxRenderer.sortingOrder = playerSpriteRenderer.sortingOrder + 1;
         }
 
         slashVfxRenderer.enabled = false;
@@ -332,6 +642,103 @@ public class PlayerMovement : MonoBehaviour
         slashVfxRenderer.color = color;
     }
 
+    private void CreateDashVfx()
+    {
+        Texture2D texture = Resources.Load<Texture2D>("Combat/DashBurstPixel_6f");
+        if (texture == null)
+        {
+            Debug.LogWarning("Could not load dash VFX: Combat/DashBurstPixel_6f");
+            return;
+        }
+
+        dashVfxFrames = PlayerSkillController.LoadPixelFrames("Combat/DashBurstPixel_6f", 6);
+
+        GameObject dashVfx = new GameObject("Dash Burst VFX");
+        dashVfxRenderer = dashVfx.AddComponent<SpriteRenderer>();
+        Material vfxMaterial = PlayerSkillController.GetVfxMaterial();
+        if (vfxMaterial != null)
+            dashVfxRenderer.sharedMaterial = vfxMaterial;
+        if (playerSpriteRenderer != null)
+        {
+            dashVfxRenderer.sortingLayerID = playerSpriteRenderer.sortingLayerID;
+            dashVfxRenderer.sortingOrder = playerSpriteRenderer.sortingOrder + 1;
+        }
+
+        dashVfxRenderer.enabled = false;
+    }
+
+    private void ShowDashVfx()
+    {
+        if (dashVfxRenderer == null || dashVfxFrames == null || dashVfxFrames.Length == 0)
+            return;
+
+        dashVfxRenderer.sprite = dashVfxFrames[0];
+        dashVfxRenderer.transform.position = transform.position - (Vector3)dashDirection * 0.2f;
+        dashVfxRenderer.transform.rotation = Quaternion.Euler(0f, 0f,
+            Mathf.Atan2(dashDirection.y, dashDirection.x) * Mathf.Rad2Deg);
+        dashVfxRenderer.transform.localScale = Vector3.one * dashVfxScale;
+        dashVfxRenderer.color = Color.white;
+        dashVfxRenderer.enabled = true;
+        dashVfxShownAt = Time.time;
+        dashVfxHideAt = Time.time + dashVfxDuration;
+    }
+
+    private void UpdateDashVfx()
+    {
+        if (dashVfxRenderer == null || !dashVfxRenderer.enabled)
+            return;
+
+        if (Time.time >= dashVfxHideAt)
+        {
+            dashVfxRenderer.enabled = false;
+            return;
+        }
+
+        float progress = Mathf.InverseLerp(dashVfxShownAt, dashVfxHideAt, Time.time);
+        int frameIndex = Mathf.Min((int)(progress * dashVfxFrames.Length), dashVfxFrames.Length - 1);
+        dashVfxRenderer.sprite = dashVfxFrames[frameIndex];
+        dashVfxRenderer.transform.position = transform.position - (Vector3)dashDirection * 0.2f;
+    }
+
+    /// <summary>
+    /// Runtime proof that gameplay has one Player object and one authoritative
+    /// body renderer. Any renderer copying the current body sprite is treated
+    /// as an illegal player-visual clone (VFX must use its own art instead).
+    /// </summary>
+    public void AssertSingleAuthoritativePlayerVisual(string phase)
+    {
+        PlayerMovement[] players = FindObjectsByType<PlayerMovement>(
+            FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        SpriteRenderer[] renderers = FindObjectsByType<SpriteRenderer>(
+            FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        int authoritativeVisuals = 0;
+        int copiedBodyVisuals = 0;
+
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (renderer.GetComponent<PlayerMovement>() != null)
+                authoritativeVisuals++;
+            else if (playerSpriteRenderer != null && playerSpriteRenderer.sprite != null &&
+                     renderer.sprite == playerSpriteRenderer.sprite)
+                copiedBodyVisuals++;
+        }
+
+        bool valid = players.Length == 1 && authoritativeVisuals == 1 && copiedBodyVisuals == 0;
+        string message = $"[PlayerVisual] {phase}: Player instances={players.Length}, " +
+            $"authoritative visuals={authoritativeVisuals}, copied body visuals={copiedBodyVisuals}.";
+        Debug.Assert(valid, message);
+        if (logPlayerVisualInvariant)
+            Debug.Log(message);
+    }
+
+    private void OnDestroy()
+    {
+        // This is a reusable VFX renderer, not a player visual. It is kept by
+        // reference and explicitly released with its owner.
+        if (dashVfxRenderer != null)
+            Destroy(dashVfxRenderer.gameObject);
+    }
+
     private float GetComboDuration(int comboHit)
     {
         switch (comboHit)
@@ -368,22 +775,111 @@ public class PlayerMovement : MonoBehaviour
 
     private void DamageEnemies(Vector2 center, float radius, int damage, bool playSwordImpact = false)
     {
+        DamageEnemiesInRadius(center, radius, damage, null, null, playSwordImpact);
+    }
+
+    public int DamageEnemiesInRadius(Vector2 center, float radius, int damage,
+        HashSet<Enemy> alreadyHitEnemies = null, HashSet<BossController> alreadyHitBosses = null,
+        bool playSwordImpact = false)
+    {
         int hitCount = Physics2D.OverlapCircleNonAlloc(center, radius, enemyHitBuffer, enemyLayers);
-        hitEnemies.Clear();
+        if (alreadyHitEnemies == null)
+        {
+            hitEnemies.Clear();
+            alreadyHitEnemies = hitEnemies;
+        }
+
+        if (alreadyHitBosses == null)
+        {
+            hitBosses.Clear();
+            alreadyHitBosses = hitBosses;
+        }
+
         bool damagedEnemy = false;
+        int damagedCount = 0;
 
         for (int i = 0; i < hitCount; i++)
         {
             Enemy enemy = enemyHitBuffer[i].GetComponentInParent<Enemy>();
-            if (enemy != null && hitEnemies.Add(enemy))
+            if (enemy != null && alreadyHitEnemies.Add(enemy))
             {
                 enemy.TakeDamage(damage);
                 damagedEnemy = true;
+                damagedCount++;
+            }
+
+            BossController boss = enemyHitBuffer[i].GetComponentInParent<BossController>();
+            if (boss != null && alreadyHitBosses.Add(boss))
+            {
+                boss.TakeDamage(damage);
+                damagedEnemy = true;
+                damagedCount++;
             }
         }
 
         if (playSwordImpact && damagedEnemy)
             PlaySwordImpact();
+
+        if (damagedCount > 0 && skillController != null)
+            skillController.AddUltimateCharge(damagedCount * 8f);
+
+        return damagedCount;
+    }
+
+    /// <summary>
+    /// Applies one hit to each target inside a forward cone.  Radius attacks
+    /// are used by E/R and Power-up; Heavy Strike deliberately uses this arc
+    /// so enemies behind the player are never struck.
+    /// </summary>
+    public int DamageEnemiesInArc(Vector2 origin, Vector2 direction, float range, float halfAngleDegrees,
+        int damage, bool playSwordImpact = false)
+    {
+        if (direction.sqrMagnitude < 0.001f || range <= 0f)
+            return 0;
+
+        direction.Normalize();
+        float minDot = Mathf.Cos(Mathf.Clamp(halfAngleDegrees, 0f, 180f) * Mathf.Deg2Rad);
+        int hitCount = Physics2D.OverlapCircleNonAlloc(origin, range, enemyHitBuffer, enemyLayers);
+        hitEnemies.Clear();
+        hitBosses.Clear();
+        bool damagedEnemy = false;
+        int damagedCount = 0;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D targetCollider = enemyHitBuffer[i];
+            if (targetCollider == null)
+                continue;
+
+            Vector2 targetOffset = (Vector2)targetCollider.bounds.center - origin;
+            if (targetOffset.sqrMagnitude > range * range || targetOffset.sqrMagnitude < 0.0001f ||
+                Vector2.Dot(direction, targetOffset.normalized) < minDot)
+                continue;
+
+            Enemy enemy = targetCollider.GetComponentInParent<Enemy>();
+            if (enemy != null && hitEnemies.Add(enemy))
+            {
+                enemy.TakeDamage(damage);
+                damagedEnemy = true;
+                damagedCount++;
+            }
+
+            BossController boss = targetCollider.GetComponentInParent<BossController>();
+            if (boss != null && hitBosses.Add(boss))
+            {
+                boss.TakeDamage(damage);
+                damagedEnemy = true;
+                damagedCount++;
+            }
+        }
+
+        if (playSwordImpact && damagedEnemy)
+            PlayHeavyImpact();
+
+        if (damagedCount > 0 && skillController != null)
+            skillController.AddUltimateCharge(damagedCount * 8f);
+
+        return damagedCount;
     }
 
     void PowerUpAttack()
@@ -402,10 +898,50 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isAttacking)
+        if (isDashing)
+        {
+            rb.MovePosition(rb.position + dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime);
             return;
-                
-        rb.MovePosition(rb.position + _movement * (speed * Time.fixedDeltaTime));
+        }
+
+        if (isHeavyAttacking)
+        {
+            if (!heavyPositionLocked)
+            {
+                heavyLockedPosition = rb.position;
+                heavyPositionLocked = true;
+            }
+
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.MovePosition(heavyLockedPosition);
+            return;
+        }
+
+        // Stop the physics body as well as the input value.  This covers the
+        // Update/FixedUpdate timing gap on the first physics tick of a cast.
+        if (skillController != null && skillController.IsSkillCasting)
+        {
+            if (!skillPositionLocked)
+            {
+                skillLockedPosition = rb.position;
+                skillPositionLocked = true;
+            }
+
+            // Rigidbody2D is Dynamic and has no linear drag. Clear any velocity
+            // left by the previous MovePosition, then pin it to the cast point
+            // so collisions cannot create a final-frame horizontal slip.
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.MovePosition(skillLockedPosition);
+            return;
+        }
+
+        skillPositionLocked = false;
+
+        float movementMultiplier = isHeavyCharging ? heavyChargeMoveSpeedMultiplier :
+            isAttacking ? attackMoveSpeedMultiplier : 1f;
+        rb.MovePosition(rb.position + _movement * (speed * movementMultiplier * Time.fixedDeltaTime));
     }
 
     private void OnDrawGizmosSelected()
@@ -461,5 +997,14 @@ public class PlayerMovement : MonoBehaviour
         impactAudioSource.pitch = activeComboHit == 2 ? 0.9f : 1.05f;
         float volume = activeComboHit == 2 ? 1f : 0.75f;
         impactAudioSource.PlayOneShot(swordImpactClang, volume);
+    }
+
+    private void PlayHeavyImpact()
+    {
+        if (swordImpactClang == null || impactAudioSource == null)
+            return;
+
+        impactAudioSource.pitch = 0.78f;
+        impactAudioSource.PlayOneShot(swordImpactClang, 1f);
     }
 }

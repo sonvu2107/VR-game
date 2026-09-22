@@ -1,0 +1,39 @@
+fileFormatVersion: 2
+guid: 4a9e6178c1eb4d4d9a6876ef547092a1
+TextureImporter:
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  textureType: 8
+  spriteMode: 2
+  spritePixelsToUnits: 512
+  alphaIsTransparency: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - {serializedVersion: 2, name: AshenWarden_00, rect: {serializedVersion: 2, x: 0, y: 0, width: 272, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709001, internalID: 1069001001}
+    - {serializedVersion: 2, name: AshenWarden_01, rect: {serializedVersion: 2, x: 272, y: 0, width: 271, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709002, internalID: 1069001002}
+    - {serializedVersion: 2, name: AshenWarden_02, rect: {serializedVersion: 2, x: 543, y: 0, width: 272, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709003, internalID: 1069001003}
+    - {serializedVersion: 2, name: AshenWarden_03, rect: {serializedVersion: 2, x: 815, y: 0, width: 271, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709004, internalID: 1069001004}
+    - {serializedVersion: 2, name: AshenWarden_04, rect: {serializedVersion: 2, x: 1086, y: 0, width: 272, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709005, internalID: 1069001005}
+    - {serializedVersion: 2, name: AshenWarden_05, rect: {serializedVersion: 2, x: 1358, y: 0, width: 271, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709006, internalID: 1069001006}
+    - {serializedVersion: 2, name: AshenWarden_06, rect: {serializedVersion: 2, x: 1629, y: 0, width: 272, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709007, internalID: 1069001007}
+    - {serializedVersion: 2, name: AshenWarden_07, rect: {serializedVersion: 2, x: 1901, y: 0, width: 271, height: 724}, alignment: 0, pivot: {x: 0.5, y: 0.08}, border: {x: 0, y: 0, z: 0, w: 0}, spriteID: 4a9e6178c1eb4d4d9a6876ef54709008, internalID: 1069001008}
+    nameFileIdTable:
+      AshenWarden_00: 1069001001
+      AshenWarden_01: 1069001002
+      AshenWarden_02: 1069001003
+      AshenWarden_03: 1069001004
+      AshenWarden_04: 1069001005
+      AshenWarden_05: 1069001006
+      AshenWarden_06: 1069001007
+      AshenWarden_07: 1069001008

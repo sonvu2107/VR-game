@@ -3,16 +3,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RoomGenerator
 {
     private RandomWalkSO randomWalkParameters;
-    private readonly SeededRandom random;
 
-    public RoomGenerator(RandomWalkSO randomWalkParameters, TilemapVisualizer tilemapVisualizer, SeededRandom random)
+    public RoomGenerator(RandomWalkSO randomWalkParameters, TilemapVisualizer tilemapVisualizer)
     {
         this.randomWalkParameters = randomWalkParameters;
-        this.random = random;
     }
 
     // This can be used to generate a single room, not a series of rooms connected by corridors like CorridorFirstGenerator
@@ -34,20 +33,12 @@ public class RoomGenerator
         
         for (int i = 0; i < parameters.iterations; i++)
         {
-            var path = RandomWalk.Walk(currentPosition, parameters.walkLength, random);
+            var path = RandomWalk.Walk(currentPosition, parameters.walkLength);
             floorPositions.UnionWith(path);
-            if (parameters.startRandomlyEachIteration)
-                currentPosition = random.Choose(GetOrderedPositions(floorPositions));
+            if (parameters.startRandomlyEachIteration) 
+                currentPosition = floorPositions.ElementAt(Random.Range(0, floorPositions.Count));
         }
 
         return floorPositions;
-    }
-
-    private static List<Vector2Int> GetOrderedPositions(IEnumerable<Vector2Int> positions)
-    {
-        return positions
-            .OrderBy(position => position.x)
-            .ThenBy(position => position.y)
-            .ToList();
     }
 }

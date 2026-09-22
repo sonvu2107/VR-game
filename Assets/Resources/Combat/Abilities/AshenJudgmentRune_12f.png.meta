@@ -1,0 +1,403 @@
+fileFormatVersion: 2
+guid: 1004d2802dcbd5e468989f57e1ac93b9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7923738442966640680
+    second: AshenJudgmentRune_12f_0
+  - first:
+      213: -7724818072619377172
+    second: AshenJudgmentRune_12f_1
+  - first:
+      213: 1069532448686616038
+    second: AshenJudgmentRune_12f_2
+  - first:
+      213: -8690068853410152060
+    second: AshenJudgmentRune_12f_3
+  - first:
+      213: 8781117280309794195
+    second: AshenJudgmentRune_12f_4
+  - first:
+      213: -104027610537739222
+    second: AshenJudgmentRune_12f_5
+  - first:
+      213: -2583513935958246769
+    second: AshenJudgmentRune_12f_6
+  - first:
+      213: 2874720767741273729
+    second: AshenJudgmentRune_12f_7
+  - first:
+      213: 1580683209235400661
+    second: AshenJudgmentRune_12f_8
+  - first:
+      213: -3080736096250252113
+    second: AshenJudgmentRune_12f_9
+  - first:
+      213: -8746325484971311970
+    second: AshenJudgmentRune_12f_10
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_0
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 41
+        width: 2075
+        height: 637
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8282222d126c6fd60800000000000000
+      internalID: 7923738442966640680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_1
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 640
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ced110b04eeebc490800000000000000
+      internalID: -7724818072619377172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_2
+      rect:
+        serializedVersion: 2
+        x: 1522
+        y: 612
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ed28bf681eb7de00800000000000000
+      internalID: 1069532448686616038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_3
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 302
+        width: 125
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4814dc67b6ca66780800000000000000
+      internalID: -8690068853410152060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_4
+      rect:
+        serializedVersion: 2
+        x: 2023
+        y: 300
+        width: 121
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 395d8ef54abccd970800000000000000
+      internalID: 8781117280309794195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_5
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 198
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2cb01b707b6e8ef0800000000000000
+      internalID: -104027610537739222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_6
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 168
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8affe663c3852cd0800000000000000
+      internalID: -2583513935958246769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_7
+      rect:
+        serializedVersion: 2
+        x: 893
+        y: 144
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18628adae4f05e720800000000000000
+      internalID: 2874720767741273729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_8
+      rect:
+        serializedVersion: 2
+        x: 1609
+        y: 131
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d786e40107bfe510800000000000000
+      internalID: 1580683209235400661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_9
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 129
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa4b748c7d60f35d0800000000000000
+      internalID: -3080736096250252113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AshenJudgmentRune_12f_10
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 128
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9cb65abf4fce9680800000000000000
+      internalID: -8746325484971311970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AshenJudgmentRune_12f_0: 7923738442966640680
+      AshenJudgmentRune_12f_1: -7724818072619377172
+      AshenJudgmentRune_12f_10: -8746325484971311970
+      AshenJudgmentRune_12f_2: 1069532448686616038
+      AshenJudgmentRune_12f_3: -8690068853410152060
+      AshenJudgmentRune_12f_4: 8781117280309794195
+      AshenJudgmentRune_12f_5: -104027610537739222
+      AshenJudgmentRune_12f_6: -2583513935958246769
+      AshenJudgmentRune_12f_7: 2874720767741273729
+      AshenJudgmentRune_12f_8: 1580683209235400661
+      AshenJudgmentRune_12f_9: -3080736096250252113
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

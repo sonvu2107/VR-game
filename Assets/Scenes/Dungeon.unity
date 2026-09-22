@@ -5564,7 +5564,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5c3ab7ecb737a64f959bb67a54c291a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startHeart: 3
+  startHeart: 5
   currentHealth: 0
   gameManager: {fileID: 1546839684}
   heartImages:

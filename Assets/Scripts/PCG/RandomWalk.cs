@@ -7,7 +7,7 @@ public static class RandomWalk
 {
     public static Vector2Int lastCorridorPosition = Vector2Int.zero;
     
-    public static HashSet<Vector2Int> Walk(Vector2Int startPosition, int walkLength, SeededRandom random)
+    public static HashSet<Vector2Int> Walk(Vector2Int startPosition, int walkLength)
     {
         HashSet<Vector2Int> path = new HashSet<Vector2Int>(); 
         path.Add(startPosition);
@@ -16,7 +16,7 @@ public static class RandomWalk
 
         for (int i = 0; i < walkLength; i++)
         {
-            var newPosition = previousPosition + Direction2D.GetRandomDirection(random);
+            var newPosition = previousPosition + Direction2D.GetRandomDirection();
             path.Add(newPosition);
             previousPosition = newPosition;
         }
@@ -24,10 +24,10 @@ public static class RandomWalk
         return path;
     }
 
-    public static List<Vector2Int> CorridorWalk(Vector2Int startPosition, int corridorLength, SeededRandom random)
+    public static List<Vector2Int> CorridorWalk(Vector2Int startPosition, int corridorLength)
     {
         List<Vector2Int> corridor = new List<Vector2Int>();
-        var direction = Direction2D.GetRandomDirection(random);
+        var direction = Direction2D.GetRandomDirection();
         var currentPosition = startPosition;
         corridor.Add(currentPosition);
 
@@ -87,8 +87,8 @@ public static class Direction2D
         new Vector2Int(-1, 1) //LEFT-UP
     };
 
-    public static Vector2Int GetRandomDirection(SeededRandom random)
+    public static Vector2Int GetRandomDirection()
     {
-        return cardinalDirectionsList[random.Range(0, cardinalDirectionsList.Count)];
+        return cardinalDirectionsList[Random.Range(0, cardinalDirectionsList.Count)];
     }
 }
