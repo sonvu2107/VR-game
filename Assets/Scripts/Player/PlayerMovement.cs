@@ -6,6 +6,10 @@ using System.Collections.Generic;
 public class PlayerMovement : MonoBehaviour
 {
     private const int HeavyStrikeFrameCount = 12;
+    // Frames 5 and 6 in the imported HeavyStrikeBody sheet contain detached
+    // sword fragments.  Hold the last clean raised-sword pose while charging
+    // instead of exposing that broken artwork.
+    private static readonly int[] HeavyChargeFrameMap = { 0, 1, 2, 3, 4, 4, 4 };
     private Rigidbody2D rb;
     private PowerupCircleController powerupCircleController;
     private Animator animator;
@@ -443,10 +447,77 @@ public class PlayerMovement : MonoBehaviour
         {
             int left = Mathf.RoundToInt(frame * texture.width / (float)heavyStrikeFrames.Length);
             int right = Mathf.RoundToInt((frame + 1) * texture.width / (float)heavyStrikeFrames.Length);
-            heavyStrikeFrames[frame] = Sprite.Create(texture,
-                new Rect(left, 0f, right - left, texture.height), new Vector2(0.5f, 0f), 100f);
+            heavyStrikeFrames[frame] = frame == 4
+                ? CreateCleanHeavyRaiseFrame(texture, left, right - left)
+                : Sprite.Create(texture, new Rect(left, 0f, right - left, texture.height),
+                    new Vector2(0.5f, 0f), 100f);
             heavyStrikeFrames[frame].name = $"HeavyStrikeBody_{frame:00}";
         }
+    }
+
+    // The otherwise usable raised-sword frame has three small detached islands
+    // on its right side. They are source-art debris, not part of the character.
+    // Strip only disconnected components below this size so the sword/body stay
+    // untouched while the visible stray pixels disappear.
+    private static Sprite CreateCleanHeavyRaiseFrame(Texture2D source, int left, int width)
+    {
+        const byte visibleAlphaThreshold = 8;
+        const int detachedFragmentMaxPixels = 96;
+        int height = source.height;
+        Color32[] sourcePixels = source.GetPixels32();
+        Color32[] framePixels = new Color32[width * height];
+        for (int y = 0; y < height; y++)
+            System.Array.Copy(sourcePixels, y * source.width + left, framePixels, y * width, width);
+
+        bool[] visited = new bool[framePixels.Length];
+        Queue<int> queue = new Queue<int>();
+        List<int> component = new List<int>();
+        for (int pixelIndex = 0; pixelIndex < framePixels.Length; pixelIndex++)
+        {
+            if (visited[pixelIndex] || framePixels[pixelIndex].a < visibleAlphaThreshold)
+                continue;
+
+            component.Clear();
+            queue.Enqueue(pixelIndex);
+            visited[pixelIndex] = true;
+            while (queue.Count > 0)
+            {
+                int current = queue.Dequeue();
+                component.Add(current);
+                int x = current % width;
+                int y = current / width;
+                TryQueueHeavyPixel(current - 1, x > 0, framePixels, visited, queue, visibleAlphaThreshold);
+                TryQueueHeavyPixel(current + 1, x < width - 1, framePixels, visited, queue, visibleAlphaThreshold);
+                TryQueueHeavyPixel(current - width, y > 0, framePixels, visited, queue, visibleAlphaThreshold);
+                TryQueueHeavyPixel(current + width, y < height - 1, framePixels, visited, queue, visibleAlphaThreshold);
+            }
+
+            if (component.Count >= detachedFragmentMaxPixels)
+                continue;
+
+            foreach (int fragmentPixel in component)
+                framePixels[fragmentPixel].a = 0;
+        }
+
+        Texture2D cleanedTexture = new Texture2D(width, height, TextureFormat.RGBA32, false)
+        {
+            name = "HeavyStrikeBody_04_Clean",
+            filterMode = FilterMode.Point,
+            wrapMode = TextureWrapMode.Clamp
+        };
+        cleanedTexture.SetPixels32(framePixels);
+        cleanedTexture.Apply(false, true);
+        return Sprite.Create(cleanedTexture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0f), 100f);
+    }
+
+    private static void TryQueueHeavyPixel(int pixelIndex, bool isInsideFrame, Color32[] pixels, bool[] visited,
+        Queue<int> queue, byte visibleAlphaThreshold)
+    {
+        if (!isInsideFrame || visited[pixelIndex] || pixels[pixelIndex].a < visibleAlphaThreshold)
+            return;
+
+        visited[pixelIndex] = true;
+        queue.Enqueue(pixelIndex);
     }
 
     private void BeginHeavyCharge()
@@ -463,8 +534,8 @@ public class PlayerMovement : MonoBehaviour
         if (!isHeavyCharging)
             return;
 
-        int frame = Mathf.Min(6, Mathf.FloorToInt(HeavyChargeNormalized * 7f));
-        SetHeavyStrikeFrame(frame);
+        int chargeStep = Mathf.Min(6, Mathf.FloorToInt(HeavyChargeNormalized * 7f));
+        SetHeavyStrikeFrame(HeavyChargeFrameMap[chargeStep]);
         float glow = 0.08f + 0.11f * (1f + Mathf.Sin(Time.time * 16f)) * 0.5f;
         playerSpriteRenderer.color = Color.Lerp(Color.white, new Color(1f, 0.72f, 0.28f), glow);
     }

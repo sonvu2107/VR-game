@@ -9,6 +9,13 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerSkillController : MonoBehaviour
 {
+    private enum FrameAnchorMode
+    {
+        CellCenter,
+        VisualCenter,
+        VisualCenterX
+    }
+
     [Header("Sword Wave (Q)")]
     [Min(0f)] public float swordWaveCooldown = 2.2f;
     [Min(0.1f)] public float swordWaveDuration = 0.5f;
@@ -62,11 +69,14 @@ public class PlayerSkillController : MonoBehaviour
         playerRenderer = GetComponent<SpriteRenderer>();
         swordWaveCoreFrames = LoadPixelFrames("Combat/Abilities/SwordWavePixel_6f", 6);
         swordWaveImpactFrames = LoadPixelFrames("Combat/Abilities/SwordWaveImpactPixel_6f", 6);
-        spinSlashFrames = LoadPixelFrames("Combat/Abilities/SpinSlashPixel_6f", 6);
-        runeFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentRunePixel_6f", 6);
-        ultimateSlashFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentBladesPixel_6f", 6);
-        ultimateImpactFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentFinalPixel_6f", 6);
-        casterAuraFrames = LoadPixelFrames("Combat/Abilities/CasterBodyAuraPixel_6f", 6);
+        // E is a stationary spin, so every visual frame shares one centre.
+        spinSlashFrames = LoadPixelFrames("Combat/Abilities/SpinSlashPixel_6f", 6, FrameAnchorMode.VisualCenter);
+        runeFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentRunePixel_6f", 6, FrameAnchorMode.VisualCenter);
+        // R descends vertically. Lock its horizontal centre only, preserving
+        // the source animation's vertical progression from sky to ground.
+        ultimateSlashFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentBladesPixel_6f", 6, FrameAnchorMode.VisualCenterX);
+        ultimateImpactFrames = LoadPixelFrames("Combat/Abilities/AshenJudgmentFinalPixel_6f", 6, FrameAnchorMode.VisualCenterX);
+        casterAuraFrames = LoadPixelFrames("Combat/Abilities/CasterBodyAuraPixel_6f", 6, FrameAnchorMode.VisualCenter);
         if (GetComponent<SkillHudController>() == null)
             gameObject.AddComponent<SkillHudController>();
     }
@@ -372,7 +382,9 @@ public class PlayerSkillController : MonoBehaviour
                 if (frameTrail != null)
                 {
                     float framePhase = framePosition - Mathf.Floor(framePosition);
-                    float trailAlpha = 0.3f * (1f - Mathf.Clamp01(framePhase / 0.72f)) * envelope;
+                    // Keep just a hint of motion. At 30% this read as a
+                    // duplicate body during close-range casts.
+                    float trailAlpha = 0.10f * (1f - Mathf.Clamp01(framePhase / 0.72f)) * envelope;
                     frameTrail.color = new Color(0.72f, 0.93f, 1f, trailAlpha);
                 }
             }
@@ -397,11 +409,14 @@ public class PlayerSkillController : MonoBehaviour
     }
 
     /// <summary>
-    /// Crops each cell to its visible pixels while retaining the original cell
-    /// centre as its pivot. Source frames contain different amounts of empty
-    /// space; using every cell's geometric centre made each VFX jump sideways.
+    /// Builds each VFX frame on a padded canvas. Several generated source sheets
+    /// have glow pixels touching a cell boundary; sampling those cells directly
+    /// produced a hard rectangular crop in-game. The transparent border and a
+    /// small edge feather remove that artificial box while keeping every frame
+    /// anchored at the original cell centre.
     /// </summary>
-    internal static Sprite[] LoadPixelFrames(string resourcePath, int frameCount)
+    internal static Sprite[] LoadPixelFrames(string resourcePath, int frameCount,
+        FrameAnchorMode anchorMode = FrameAnchorMode.CellCenter)
     {
         Texture2D texture = Resources.Load<Texture2D>(resourcePath);
         if (texture == null || frameCount <= 0)
@@ -417,25 +432,32 @@ public class PlayerSkillController : MonoBehaviour
 
         Color32[] pixels = texture.GetPixels32();
         Sprite[] frames = new Sprite[frameCount];
+        const int transparentPaddingPixels = 24;
+        const int sourceEdgeFeatherPixels = 14;
+        const byte visibleAlphaThreshold = 8;
         for (int frame = 0; frame < frameCount; frame++)
         {
             int left = Mathf.RoundToInt(frame * texture.width / (float)frameCount);
             int right = Mathf.RoundToInt((frame + 1) * texture.width / (float)frameCount);
-            int minX = right;
-            int maxX = left;
-            int minY = texture.height;
-            int maxY = 0;
+            int sourceWidth = right - left;
+            int paddedWidth = sourceWidth + transparentPaddingPixels * 2;
+            int paddedHeight = texture.height + transparentPaddingPixels * 2;
+            Color32[] paddedPixels = new Color32[paddedWidth * paddedHeight];
 
-            // Preserve faint glow/smoke in the tail frames. A 50% alpha threshold
-            // made the crop itself chop off those pixels before the shader saw them.
-            const byte visibleAlphaThreshold = 8;
-            const int cropPaddingPixels = 10;
+            bool hasLeftEdgePixels = false;
+            bool hasRightEdgePixels = false;
+            int minX = sourceWidth;
+            int maxX = -1;
+            int minY = texture.height;
+            int maxY = -1;
             for (int y = 0; y < texture.height; y++)
             {
-                int row = y * texture.width;
-                for (int x = left; x < right; x++)
+                int sourceRow = y * texture.width;
+                hasLeftEdgePixels |= pixels[sourceRow + left].a >= visibleAlphaThreshold;
+                hasRightEdgePixels |= pixels[sourceRow + right - 1].a >= visibleAlphaThreshold;
+                for (int x = 0; x < sourceWidth; x++)
                 {
-                    if (pixels[row + x].a < visibleAlphaThreshold)
+                    if (pixels[sourceRow + left + x].a < visibleAlphaThreshold)
                         continue;
 
                     minX = Mathf.Min(minX, x);
@@ -445,28 +467,49 @@ public class PlayerSkillController : MonoBehaviour
                 }
             }
 
-            int centreX = (left + right) / 2;
-            int centreY = texture.height / 2;
-            if (minX > maxX)
+            for (int y = 0; y < texture.height; y++)
             {
-                minX = left;
-                maxX = right - 1;
-                minY = 0;
-                maxY = texture.height - 1;
+                int sourceRow = y * texture.width;
+                int targetRow = (y + transparentPaddingPixels) * paddedWidth + transparentPaddingPixels;
+                for (int x = 0; x < sourceWidth; x++)
+                {
+                    Color32 pixel = pixels[sourceRow + left + x];
+                    if (pixel.a > 0)
+                    {
+                        float alphaMultiplier = 1f;
+                        if (hasLeftEdgePixels && x < sourceEdgeFeatherPixels)
+                            alphaMultiplier = Mathf.Min(alphaMultiplier, x / (float)sourceEdgeFeatherPixels);
+                        if (hasRightEdgePixels && sourceWidth - 1 - x < sourceEdgeFeatherPixels)
+                            alphaMultiplier = Mathf.Min(alphaMultiplier,
+                                (sourceWidth - 1 - x) / (float)sourceEdgeFeatherPixels);
+                        pixel.a = (byte)Mathf.RoundToInt(pixel.a * alphaMultiplier);
+                    }
+                    paddedPixels[targetRow + x] = pixel;
+                }
             }
 
-            // Keep the old cell centre inside the trimmed rectangle. This
-            // anchors all frames to one fixed world position.
-            minX = Mathf.Max(left, Mathf.Min(minX - cropPaddingPixels, centreX));
-            maxX = Mathf.Min(right - 1, Mathf.Max(maxX + cropPaddingPixels, centreX));
-            minY = Mathf.Max(0, Mathf.Min(minY - cropPaddingPixels, centreY));
-            maxY = Mathf.Min(texture.height - 1, Mathf.Max(maxY + cropPaddingPixels, centreY));
+            Texture2D paddedTexture = new Texture2D(paddedWidth, paddedHeight, TextureFormat.RGBA32, false)
+            {
+                name = $"{resourcePath}_{frame:00}_Padded",
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            paddedTexture.SetPixels32(paddedPixels);
+            paddedTexture.Apply(false, true);
+            Vector2 pivot = new Vector2(0.5f, 0.5f);
+            if (maxX >= minX)
+            {
+                float visualCenterX = transparentPaddingPixels + (minX + maxX + 1) * 0.5f;
+                float visualCenterY = transparentPaddingPixels + (minY + maxY + 1) * 0.5f;
+                if (anchorMode == FrameAnchorMode.VisualCenter || anchorMode == FrameAnchorMode.VisualCenterX)
+                    pivot.x = visualCenterX / paddedWidth;
+                if (anchorMode == FrameAnchorMode.VisualCenter)
+                    pivot.y = visualCenterY / paddedHeight;
+            }
 
-            int width = maxX - minX + 1;
-            int height = maxY - minY + 1;
-            Vector2 pivot = new Vector2((centreX - minX) / (float)width, (centreY - minY) / (float)height);
-            frames[frame] = Sprite.Create(texture, new Rect(minX, minY, width, height),
-                pivot, 512f, 0, SpriteMeshType.FullRect);
+            frames[frame] = Sprite.Create(paddedTexture,
+                new Rect(0f, 0f, paddedWidth, paddedHeight), pivot,
+                512f, 0, SpriteMeshType.FullRect);
             frames[frame].name = $"{resourcePath}_{frame:00}";
         }
 
