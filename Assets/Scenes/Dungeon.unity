@@ -3930,9 +3930,61 @@ MonoBehaviour:
   EnemyCounter: {fileID: 1987618085}
   PlayerMovement: {fileID: 7231323267706442779}
   dungeonGenerator: {fileID: 2064515421}
-  totalFloors: 3
+  sessionBridge: {fileID: 0}
+  levels:
+  - levelNumber: 1
+    displayName: "Kh\u1EDFi \u0111\u1EA7u"
+    roomCount: 6
+    enemyCountBonus: 0
+    levelType: 0
+  - levelNumber: 2
+    displayName: "M\u1EDF r\u1ED9ng"
+    roomCount: 7
+    enemyCountBonus: 0
+    levelType: 0
+  - levelNumber: 3
+    displayName: "T\u1EA5n c\xF4ng t\u1EEB xa"
+    roomCount: 7
+    enemyCountBonus: 1
+    levelType: 0
+  - levelNumber: 4
+    displayName: "C\u1EA1m b\u1EABy"
+    roomCount: 8
+    enemyCountBonus: 1
+    levelType: 0
+  - levelNumber: 5
+    displayName: Mini-boss I
+    roomCount: 8
+    enemyCountBonus: 1
+    levelType: 1
+  - levelNumber: 6
+    displayName: "B\xF3ng t\u1ED1i"
+    roomCount: 9
+    enemyCountBonus: 1
+    levelType: 0
+  - levelNumber: 7
+    displayName: Elite
+    roomCount: 9
+    enemyCountBonus: 2
+    levelType: 0
+  - levelNumber: 8
+    displayName: "M\xEA cung kh\xF3a"
+    roomCount: 10
+    enemyCountBonus: 2
+    levelType: 0
+  - levelNumber: 9
+    displayName: "Th\u1EED th\xE1ch cu\u1ED1i"
+    roomCount: 10
+    enemyCountBonus: 2
+    levelType: 1
+  - levelNumber: 10
+    displayName: "Boss cu\u1ED1i"
+    roomCount: 11
+    enemyCountBonus: 3
+    levelType: 2
   baseSeed: 12345
-  floorSeedStep: 1009
+  levelSeedStep: 1009
+  levelTransitionDelay: 0.35
   enemyCount: 0
 --- !u!4 &1546839685
 Transform:
