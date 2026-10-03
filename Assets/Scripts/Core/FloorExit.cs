@@ -44,6 +44,6 @@ public sealed class FloorExit : MonoBehaviour
         if (gameManager == null)
             gameManager = FindObjectOfType<GameManager>();
 
-        gameManager?.TryAdvanceFloor();
+        gameManager?.TryAdvanceLevel();
     }
 }

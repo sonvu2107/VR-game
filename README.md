@@ -1,6 +1,6 @@
 # The Labyrinth
 
-**The Labyrinth** là game hành động khám phá mê cung 2D được phát triển bằng Unity. Bản đồ được sinh tự động bằng thuật toán Random Walk; người chơi phải khám phá dungeon, chiến đấu với Skeleton và tiêu diệt toàn bộ kẻ địch để chiến thắng.
+**The Labyrinth** là game hành động khám phá mê cung 2D được phát triển bằng Unity. Bản đồ được sinh tự động bằng thuật toán Random Walk; người chơi phải vượt qua chiến dịch 10 level trong cùng một hầm ngục, chiến đấu với Skeleton và mở cổng sang level tiếp theo.
 
 > Trạng thái: Đồ án đang được tiếp tục phát triển bởi nhóm 5 thành viên.
 
@@ -19,9 +19,11 @@
 ## Tính năng hiện có
 
 - Sinh phòng và hành lang ngẫu nhiên bằng Procedural Content Generation (PCG).
-- Một lượt chơi gồm ba tầng với seed riêng cho từng tầng.
-- State machine quản lý các trạng thái Generating, Playing, Paused, Game Over và Victory.
-- Cổng chuyển tầng chỉ mở sau khi toàn bộ enemy của tầng đã bị tiêu diệt.
+- Một lượt chơi gồm 10 level với seed, số phòng và độ khó riêng cho từng level.
+- State machine quản lý các trạng thái Generating, Playing, Level Completed, Paused, Game Over và Victory.
+- Cổng chuyển level chỉ mở sau khi toàn bộ enemy của level đã bị tiêu diệt.
+- Cấu hình chiến dịch đánh dấu level thường, mini-boss và boss cuối.
+- Có `GameSessionBridge` làm ranh giới tích hợp quyền Host/Client cho LAN co-op.
 - Tự động tạo sàn và tường bằng Tilemap.
 - NavMesh 2D hỗ trợ enemy tìm đường và đuổi theo người chơi.
 - Di chuyển nhân vật bằng bàn phím hoặc gamepad.
@@ -34,7 +36,7 @@
 
 ## Cách chơi
 
-Mục tiêu của người chơi là khám phá mê cung và tiêu diệt toàn bộ Skeleton trong từng tầng. Khi số lượng enemy về `0`, cổng thoát được mở. Người chơi cần đi qua cổng của tầng 1 và tầng 2 để tiếp tục, sau đó hoàn thành cổng tầng 3 để chiến thắng.
+Mục tiêu hiện tại của người chơi là khám phá mê cung và tiêu diệt toàn bộ Skeleton trong từng level. Khi số lượng enemy về `0`, cổng thoát được mở. Dungeon được sinh lại theo cấu hình level tiếp theo; Victory chỉ xuất hiện sau khi hoàn thành level 10.
 
 ### Bàn phím và chuột
 
@@ -109,7 +111,7 @@ Assets/
 ├── Prefabs/                    # Prefab, bao gồm Skeleton
 ├── Scenes/                     # StartMenu và Dungeon
 ├── Scripts/
-│   ├── Core/                   # State machine và cổng chuyển tầng
+│   ├── Core/                   # State machine, cấu hình level và cầu nối phiên chơi
 │   ├── Enemy/                  # AI và chiến đấu của enemy
 │   ├── ItemPlacement/          # Bố trí enemy trong phòng
 │   ├── PCG/                    # Sinh phòng và hành lang ngẫu nhiên
@@ -119,6 +121,7 @@ Assets/
 │   ├── UI/                     # Điều khiển giao diện
 │   ├── AudioManager.cs         # Quản lý nhạc và hiệu ứng âm thanh
 │   └── GameManager.cs          # Trạng thái và luồng chơi chính
+├── Tests/                      # Edit Mode test cho Core progression
 └── Tilesets/                   # Tile và palette của dungeon
 ```
 
@@ -132,13 +135,15 @@ Phiên bản tiếp theo dự kiến bổ sung:
 - Enemy cận chiến, enemy tầm xa và boss nhiều giai đoạn.
 - Điểm số, high score và lưu cài đặt.
 - HUD, minimap và màn hình kết quả hoàn chỉnh.
-- Kiểm thử Edit Mode và Play Mode.
+- LAN co-op hai người trên hai máy bằng Network Transport.
+- Mở rộng kiểm thử Play Mode và kiểm thử tích hợp mạng.
 
 ## Làm việc nhóm
 
 Tài liệu phân công cho 5 thành viên được lưu tại:
 
 - [Phân công thành viên](Docs/PHAN_CONG_THANH_VIEN.docx)
+- [Kế hoạch nâng cấp 10 level và LAN co-op](Docs/BAO_CAO_KE_HOACH_NANG_CAP_THE_LABYRINTH.docx)
 
 Quy ước làm việc:
 
@@ -153,9 +158,11 @@ Quy ước làm việc:
 - Chỉ có một loại enemy là Skeleton.
 - Cổng thoát hiện dùng hình đại diện runtime khi chưa cấu hình prefab chính thức.
 - Phòng kho báu và boss chưa có prefab gameplay chính thức.
+- Level mini-boss và boss mới có cấu hình Core; gameplay boss phụ thuộc prefab của module Enemy/Boss.
+- `GameSessionBridge` mới là hợp đồng tích hợp; chưa có package mạng, màn hình Host/Join hoặc đồng bộ Player/Enemy qua LAN.
 - AI đang kết hợp NavMeshAgent với thay đổi `transform` trực tiếp và cần được refactor.
 - Kỹ năng tích lực vẫn sử dụng API input cũ, chưa hỗ trợ rebind hoặc gamepad đầy đủ.
-- Chưa có hệ thống lưu dữ liệu và chưa có test tự động.
+- Chưa có hệ thống lưu dữ liệu; test tự động hiện mới bao phủ cấu hình Core và seed level.
 
 ## Giấy phép
 

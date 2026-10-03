@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-/// <summary>Owns the dungeon run state and three-floor progression.</summary>
+/// <summary>Owns the dungeon run state and multi-level campaign progression.</summary>
 public class GameManager : MonoBehaviour
 {
     [Header("Scene References")]
@@ -15,11 +16,13 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI EnemyCounter;
     public PlayerMovement PlayerMovement;
     public InfiniteWorldGenerator dungeonGenerator;
+    [SerializeField] private GameSessionBridge sessionBridge;
 
-    [Header("Run Progression")]
-    [SerializeField, Min(1)] private int totalFloors = 3;
+    [Header("Level Progression")]
+    [SerializeField] private List<LevelDefinition> levels = new();
     [SerializeField] private int baseSeed = 12345;
-    [SerializeField, Min(1)] private int floorSeedStep = 1009;
+    [SerializeField, Min(1)] private int levelSeedStep = 1009;
+    [SerializeField, Min(0f)] private float levelTransitionDelay = 0.35f;
 
     public static bool isGamePaused;
     public static bool isGameOver;
@@ -27,16 +30,28 @@ public class GameManager : MonoBehaviour
 
     public int enemyCount;
     public GameState CurrentState { get; private set; } = GameState.Generating;
-    public int CurrentFloor { get; private set; } = 1;
-    public int TotalFloors => totalFloors;
+    public int CurrentLevel { get; private set; } = 1;
+    public int TotalLevels => levels?.Count ?? 0;
+    public LevelDefinition CurrentLevelDefinition => GetLevelDefinition(CurrentLevel);
+
+    [Obsolete("Use CurrentLevel instead.")]
+    public int CurrentFloor => CurrentLevel;
+
+    [Obsolete("Use TotalLevels instead.")]
+    public int TotalFloors => TotalLevels;
 
     public event Action<GameState> StateChanged;
+    public event Action<int, int> LevelChanged;
+
+    [Obsolete("Use LevelChanged instead.")]
     public event Action<int, int> FloorChanged;
 
     private PlayerControls playerControls;
     private InputAction pauseAction;
     private FloorExit currentExit;
     private Coroutine generationRoutine;
+    private Coroutine transitionRoutine;
+    private bool advanceRequestPending;
 
     private void Awake()
     {
@@ -48,6 +63,11 @@ public class GameManager : MonoBehaviour
 
         if (dungeonGenerator == null)
             dungeonGenerator = FindObjectOfType<InfiniteWorldGenerator>();
+
+        if (sessionBridge == null)
+            sessionBridge = GetComponent<GameSessionBridge>();
+
+        EnsureLevelDefinitions();
     }
 
     private void OnEnable()
@@ -65,9 +85,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 1f;
-        CurrentFloor = 1;
+        CurrentLevel = 1;
         SetState(GameState.Generating);
-        BeginFloorGeneration();
+        BeginLevelGeneration();
     }
 
     private void Update()
@@ -132,36 +152,68 @@ public class GameManager : MonoBehaviour
 
     public void CompleteGeneration(FloorExit floorExit, int spawnedEnemyCount)
     {
+        CompleteLevelGeneration(floorExit, spawnedEnemyCount);
+    }
+
+    public void CompleteLevelGeneration(FloorExit levelExit, int spawnedEnemyCount)
+    {
         if (CurrentState != GameState.Generating)
             return;
 
-        currentExit = floorExit;
+        currentExit = levelExit;
         enemyCount = Mathf.Max(0, spawnedEnemyCount);
+        advanceRequestPending = false;
         SetState(GameState.Playing);
-        FloorChanged?.Invoke(CurrentFloor, totalFloors);
+        LevelChanged?.Invoke(CurrentLevel, TotalLevels);
+        FloorChanged?.Invoke(CurrentLevel, TotalLevels);
         RefreshExitState();
     }
 
     public void GenerationFailed()
     {
-        Debug.LogError($"Floor {CurrentFloor} could not be generated.");
+        Debug.LogError($"Level {CurrentLevel} could not be generated.");
         SetState(GameState.GameOver);
     }
 
-    public void TryAdvanceFloor()
+    public void TryAdvanceLevel()
     {
-        if (CurrentState != GameState.Playing || enemyCount > 0)
+        if (CurrentState != GameState.Playing || enemyCount > 0 || advanceRequestPending)
             return;
 
-        if (CurrentFloor >= totalFloors)
+        advanceRequestPending = true;
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority)
+        {
+            sessionBridge.RequestLevelAdvance(CurrentLevel);
+            return;
+        }
+
+        AuthorizeLevelAdvance(CurrentLevel);
+    }
+
+    public void AuthorizeLevelAdvance(int completedLevel)
+    {
+        if (CurrentState != GameState.Playing || enemyCount > 0 || completedLevel != CurrentLevel)
+        {
+            advanceRequestPending = false;
+            return;
+        }
+
+        if (CurrentLevel >= TotalLevels)
         {
             Win();
             return;
         }
 
-        CurrentFloor++;
-        SetState(GameState.Generating);
-        BeginFloorGeneration();
+        SetState(GameState.LevelCompleted);
+        if (transitionRoutine != null)
+            StopCoroutine(transitionRoutine);
+        transitionRoutine = StartCoroutine(AdvanceLevelRoutine());
+    }
+
+    [Obsolete("Use TryAdvanceLevel instead.")]
+    public void TryAdvanceFloor()
+    {
+        TryAdvanceLevel();
     }
 
     public void RestartGame()
@@ -182,19 +234,19 @@ public class GameManager : MonoBehaviour
             return;
 
         EnemyCounter.text = CurrentState == GameState.Generating
-            ? $"Floor {CurrentFloor}/{totalFloors} - Generating..."
-            : $"Floor {CurrentFloor}/{totalFloors} - Enemies Remaining: {enemyCount}";
+            ? $"Level {CurrentLevel}/{TotalLevels} - Generating..."
+            : $"Level {CurrentLevel}/{TotalLevels} - Enemies Remaining: {enemyCount}";
     }
 
-    private void BeginFloorGeneration()
+    private void BeginLevelGeneration()
     {
         if (generationRoutine != null)
             StopCoroutine(generationRoutine);
 
-        generationRoutine = StartCoroutine(GenerateFloorRoutine());
+        generationRoutine = StartCoroutine(GenerateLevelRoutine());
     }
 
-    private IEnumerator GenerateFloorRoutine()
+    private IEnumerator GenerateLevelRoutine()
     {
         currentExit = null;
         enemyCount = 0;
@@ -210,11 +262,32 @@ public class GameManager : MonoBehaviour
             yield break;
         }
 
-        int floorSeed = baseSeed + (CurrentFloor - 1) * floorSeedStep;
-        if (!dungeonGenerator.GenerateFloor(CurrentFloor, totalFloors, floorSeed))
+        LevelDefinition definition = CurrentLevelDefinition;
+        if (definition == null)
+        {
+            Debug.LogError($"Level {CurrentLevel} has no configuration.");
+            GenerationFailed();
+            yield break;
+        }
+
+        int levelSeed = LevelSeedUtility.Calculate(baseSeed, levelSeedStep, CurrentLevel);
+        sessionBridge?.PublishLevel(CurrentLevel, TotalLevels, levelSeed);
+        if (!dungeonGenerator.GenerateLevel(definition, TotalLevels, levelSeed))
             GenerationFailed();
 
         generationRoutine = null;
+    }
+
+    private IEnumerator AdvanceLevelRoutine()
+    {
+        if (levelTransitionDelay > 0f)
+            yield return new WaitForSecondsRealtime(levelTransitionDelay);
+
+        CurrentLevel++;
+        advanceRequestPending = false;
+        transitionRoutine = null;
+        SetState(GameState.Generating);
+        BeginLevelGeneration();
     }
 
     private void SetState(GameState newState)
@@ -238,6 +311,7 @@ public class GameManager : MonoBehaviour
 
         UpdateCounter();
         StateChanged?.Invoke(newState);
+        sessionBridge?.PublishState(newState);
     }
 
     private void RefreshExitState()
@@ -248,5 +322,18 @@ public class GameManager : MonoBehaviour
     private void EnsurePlayerControls()
     {
         playerControls ??= new PlayerControls();
+    }
+
+    private void EnsureLevelDefinitions()
+    {
+        if (levels == null || levels.Count == 0)
+            levels = LevelDefinition.CreateDefaultCampaign();
+    }
+
+    private LevelDefinition GetLevelDefinition(int levelNumber)
+    {
+        EnsureLevelDefinitions();
+        int index = levelNumber - 1;
+        return index >= 0 && index < levels.Count ? levels[index] : null;
     }
 }

@@ -30,8 +30,9 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private readonly HashSet<Vector2Int> occupiedCells = new();
     private readonly List<GameObject> spawnedObjects = new();
 
-    private int currentFloor;
-    private int totalFloors;
+    private int currentLevel;
+    private int totalLevels;
+    private LevelDefinition currentLevelDefinition;
 
     public IReadOnlyList<DungeonRoom> GeneratedRooms => dungeonLayout?.Rooms;
 
@@ -50,19 +51,31 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
     public bool GenerateFloor(int floorNumber, int runFloorCount, int floorSeed)
     {
-        if (!HasRequiredReferences())
+        LevelDefinition legacyDefinition = new(
+            floorNumber,
+            $"Floor {floorNumber}",
+            numberOfRooms,
+            Mathf.Max(0, floorNumber - 1),
+            floorNumber >= runFloorCount ? LevelType.FinalBoss : LevelType.Standard);
+        return GenerateLevel(legacyDefinition, runFloorCount, floorSeed);
+    }
+
+    public bool GenerateLevel(LevelDefinition levelDefinition, int runLevelCount, int levelSeed)
+    {
+        if (!HasRequiredReferences() || levelDefinition == null)
             return false;
 
         CleanupCurrentFloor();
 
-        currentFloor = floorNumber;
-        totalFloors = Mathf.Max(1, runFloorCount);
-        random = new SeededRandom(floorSeed);
-        Debug.Log($"Generating floor {currentFloor}/{totalFloors} with seed {floorSeed}.");
+        currentLevelDefinition = levelDefinition;
+        currentLevel = levelDefinition.LevelNumber;
+        totalLevels = Mathf.Max(1, runLevelCount);
+        random = new SeededRandom(levelSeed);
+        Debug.Log($"Generating level {currentLevel}/{totalLevels} ({levelDefinition.DisplayName}) with seed {levelSeed}.");
 
         if (!TryGenerateValidDungeon())
         {
-            Debug.LogError($"Unable to generate floor {currentFloor} after {maxGenerationAttempts} attempts.");
+            Debug.LogError($"Unable to generate level {currentLevel} after {maxGenerationAttempts} attempts.");
             return false;
         }
 
@@ -73,11 +86,11 @@ public class InfiniteWorldGenerator : MonoBehaviour
         SpawnRoomObjects(out FloorExit floorExit, out int spawnedEnemyCount);
         if (floorExit == null)
         {
-            Debug.LogError($"Floor {currentFloor} has no usable exit.");
+            Debug.LogError($"Level {currentLevel} has no usable exit.");
             return false;
         }
 
-        manager.CompleteGeneration(floorExit, spawnedEnemyCount);
+        manager.CompleteLevelGeneration(floorExit, spawnedEnemyCount);
         return true;
     }
 
@@ -122,11 +135,11 @@ public class InfiniteWorldGenerator : MonoBehaviour
             GenerateDungeonLayout();
             if (DungeonValidator.IsValid(dungeonLayout, out string failureReason))
             {
-                Debug.Log($"Floor {currentFloor} validation passed on attempt {attempt}.");
+                Debug.Log($"Level {currentLevel} validation passed on attempt {attempt}.");
                 return true;
             }
 
-            Debug.LogWarning($"Floor {currentFloor}, generation attempt {attempt} failed: {failureReason}");
+            Debug.LogWarning($"Level {currentLevel}, generation attempt {attempt} failed: {failureReason}");
         }
 
         return false;
@@ -165,7 +178,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
                     PlaceOptionalRoomPrefab(room, treasurePrefab, "Treasure");
                     break;
                 case RoomType.Boss:
-                    if (currentFloor == totalFloors)
+                    if (currentLevelDefinition.IsFinalBossLevel)
                         spawnedEnemyCount += PlaceFinalBoss(room);
                     break;
                 case RoomType.Exit:
@@ -197,7 +210,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
             return 0;
         }
 
-        int difficultyBonus = Mathf.Max(0, currentFloor - 1);
+        int difficultyBonus = currentLevelDefinition?.EnemyCountBonus ?? 0;
         int numberOfMobs = random.Range(enemyInfo.Mob[0].min, enemyInfo.Mob[0].max) + difficultyBonus;
         return PrefabPlacer.PlaceMobs(enemyInfo, room, numberOfMobs, random, occupiedCells,
             spawnClearance, spawnedObjects);
@@ -301,7 +314,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
     private List<RoomType> BuildRoomSequence()
     {
-        int totalRoomCount = Mathf.Max(numberOfRooms, 5);
+        int totalRoomCount = currentLevelDefinition?.RoomCount ?? Mathf.Max(numberOfRooms, 5);
         int combatRoomCount = totalRoomCount - 4;
         List<RoomType> roomSequence = new() { RoomType.Start };
 
