@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 269229d60e7388e41b2b04c65e9d7147, type: 3}
+  m_Name: Floor_03
+  m_EditorClassIdentifier: Assembly-CSharp::FloorConfigSO
+  floorName: "T\u1EA5n c\xF4ng t\u1EEB xa"
+  description: 
+  numberOfRooms: 6
+  corridorLength: 40
+  enemyInfo: {fileID: 11400000, guid: 9484b65199f0c0148b5715a27247d6ed, type: 2}
+  minEnemiesPerRoom: 5
+  maxEnemiesPerRoom: 12
+  hasBoss: 0
+  bossPrefab: {fileID: 0}
+  hasTraps: 0
+  trapPrefab: {fileID: 0}
+  trapsPerRoom: 0
+  requireKeys: 0
+  keysRequired: 0
+  keyPrefab: {fileID: 0}
+  darkFloor: 0
+  lightRadius: 8
+  waveMode: 0
+  numberOfWaves: 1
+  waveCooldown: 5
+  hasTimeLimit: 0
+  timeLimitSeconds: 120
+  decosPerRoom: 3
+  wallDecoChance: 0.08

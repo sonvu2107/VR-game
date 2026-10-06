@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eae0324744523bb4cba80b22d2f51d26, type: 3}
+  m_Name: DefaultPlayerStats
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  baseSpeed: 5
+  baseAttackDamage: 30
+  basePowerUpDamage: 3
+  baseAttackRange: 1
+  basePowerUpCooldown: 15
+  baseStartHearts: 5
+  baseDashSpeed: 18
+  baseDashDuration: 0.15
+  baseDashCooldown: 1.5
+  baseMaxStamina: 100
+  baseDashStaminaCost: 25
+  baseStaminaRegenRate: 20
+  bonusSpeed: 0
+  bonusDamage: 0
+  bonusPowerUpDamage: 0
+  bonusAttackRange: 0
+  bonusCooldownReduction: 0
+  bonusHearts: 0
+  bonusMaxStamina: 0
+  bonusDashSpeedMult: 0

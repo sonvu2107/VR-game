@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ba5a1c0746593a4c9cabd8dd0fb9dda, type: 3}
+  m_Name: Item_WarHammer
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
+  itemName: War Hammer
+  description: "B\xFAa chi\u1EBFn n\u1EB7ng t\u0103ng s\xE1t th\u01B0\u01A1ng ch\xE9m
+    r\u1EA5t m\u1EA1nh."
+  icon: {fileID: -1409376924971843895, guid: 7ca1ce7d6644f5b4592b162fed836a4a, type: 3}
+  glowColor: {r: 1, g: 0.5, b: 0.3, a: 1}
+  speedBonus: 0
+  damageBonus: 2
+  powerUpDamageBonus: 3
+  attackRangeBonus: 0.15
+  cooldownReduction: 0
+  maxHPBonus: 0
+  staminaBonus: 0
+  dashSpeedMultBonus: 0
+  armorBonus: 0
+  blockChanceBonus: 0
+  instantHeal: 0
+  healPercent: 0
