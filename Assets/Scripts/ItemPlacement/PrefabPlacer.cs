@@ -8,9 +8,23 @@ public class PrefabPlacer : MonoBehaviour
         SeededRandom random, HashSet<Vector2Int> occupiedCells, int spawnClearance,
         ICollection<GameObject> spawnedObjects = null)
     {
-        if (enemyInfo == null || enemyInfo.Mob.Count == 0 || enemyInfo.Mob[0].sprite == null)
+        if (enemyInfo == null || enemyInfo.Mob.Count == 0)
         {
             Debug.LogError("Enemy spawn configuration is missing.");
+            return 0;
+        }
+
+        // Filter to mobs that have a valid prefab
+        List<EnemySO> validMobs = new();
+        foreach (var mob in enemyInfo.Mob)
+        {
+            if (mob != null && mob.sprite != null)
+                validMobs.Add(mob);
+        }
+
+        if (validMobs.Count == 0)
+        {
+            Debug.LogError("No valid mob prefabs found in EnemyInfoSO.");
             return 0;
         }
 
@@ -24,7 +38,10 @@ public class PrefabPlacer : MonoBehaviour
                 break;
             }
 
-            GameObject spawnedMob = Instantiate(enemyInfo.Mob[0].sprite, GetWorldPosition(spawnPoint),
+            // Randomly pick from all valid mob types
+            EnemySO chosenMob = validMobs[random.Range(0, validMobs.Count)];
+
+            GameObject spawnedMob = Instantiate(chosenMob.sprite, GetWorldPosition(spawnPoint),
                 Quaternion.identity);
             spawnedObjects?.Add(spawnedMob);
             placedMobs++;
