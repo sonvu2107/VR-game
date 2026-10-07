@@ -29,11 +29,20 @@ public class GameManager : MonoBehaviour
     {
         quit = playerControl.Player.Pause;
         quit.Enable();
+        EnemySignals.EnemyDied += OnEnemyDied;
     }
 
     private void OnDisable()
     {
         quit.Disable();
+        EnemySignals.EnemyDied -= OnEnemyDied;
+    }
+
+    private void OnEnemyDied(EnemyHealth enemy)
+    {
+        if (enemy == null || !enemy.CountsForLegacyCounter || enemyCount <= 0) return;
+        enemyCount--;
+        UpdateCounter();
     }
 
     private void Start()

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f9cd32dfd3b4dc58cc59ea136796725, type: 3}
+  m_Name: SkeletonKing
+  m_EditorClassIdentifier: 
+  displayName: Skeleton King
+  archetype: 0
+  maxHealth: 1200
+  contactDamage: 3
+  chaseSpeed: 2.4
+  wanderSpeed: 0.8
+  detectionRange: 12
+  attackRange: 1.5
+  preferredRange: 1.5
+  repathInterval: 0.25
+  attackDamage: 3
+  attackCooldown: 1.7
+  attackWindup: 0.55
+  attackRecovery: 0.85
+  projectileSpeed: 7
+  projectileLifetime: 3.5
+  specialCooldown: 4
+  specialRange: 5
+  dashSpeed: 8
+  dashDuration: 0.6
+  poisonDuration: 5
+  poisonTickInterval: 1
+  maxAliveSummons: 4
+  summonPrefab: {fileID: 1872124474934331328, guid: 7da82e4aa535a884f865c56679f8b817, type: 3}
+  projectilePrefab: {fileID: 0}
+  scoreValue: 10

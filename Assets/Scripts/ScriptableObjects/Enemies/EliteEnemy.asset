@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f9cd32dfd3b4dc58cc59ea136796725, type: 3}
+  m_Name: EliteEnemy
+  m_EditorClassIdentifier: 
+  displayName: Elite Enemy
+  archetype: 5
+  maxHealth: 180
+  contactDamage: 2
+  chaseSpeed: 2.7
+  wanderSpeed: 0.9
+  detectionRange: 8
+  attackRange: 1.5
+  preferredRange: 1.5
+  repathInterval: 0.25
+  attackDamage: 2
+  attackCooldown: 1.6
+  attackWindup: 0.45
+  attackRecovery: 0.7
+  projectileSpeed: 7
+  projectileLifetime: 3.5
+  specialCooldown: 4
+  specialRange: 3
+  dashSpeed: 8
+  dashDuration: 0.5
+  poisonDuration: 4
+  poisonTickInterval: 1
+  maxAliveSummons: 8
+  summonPrefab: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  scoreValue: 10

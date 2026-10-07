@@ -171,7 +171,8 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            IDamageable damageable = DamageableLookup.FindInParents(enemy);
+            if (damageable != null) damageable.TakeDamage(attackDamage);
         }
     }
 
@@ -189,7 +190,8 @@ public class PlayerMovement : MonoBehaviour
  
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<Enemy>().TakeDamage(powerUpDamage);
+            IDamageable damageable = DamageableLookup.FindInParents(enemy);
+            if (damageable != null) damageable.TakeDamage(powerUpDamage);
         }
     }
 
