@@ -8,6 +8,7 @@ public sealed class FloorExit : MonoBehaviour
     [SerializeField] private Color unlockedColor = new(0.15f, 0.85f, 0.85f, 0.95f);
 
     private GameManager gameManager;
+    private PortalVisual portalVisual;
 
     public bool IsUnlocked { get; private set; }
 
@@ -18,6 +19,8 @@ public sealed class FloorExit : MonoBehaviour
 
         if (visual == null)
             visual = GetComponent<SpriteRenderer>();
+
+        portalVisual = GetComponent<PortalVisual>();
 
         SetUnlocked(false);
     }
@@ -34,6 +37,8 @@ public sealed class FloorExit : MonoBehaviour
 
         if (visual != null)
             visual.color = unlocked ? unlockedColor : lockedColor;
+
+        portalVisual?.SetUnlocked(unlocked);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -44,6 +49,6 @@ public sealed class FloorExit : MonoBehaviour
         if (gameManager == null)
             gameManager = FindObjectOfType<GameManager>();
 
-        gameManager?.TryAdvanceFloor();
+        gameManager?.TryAdvanceLevel();
     }
 }

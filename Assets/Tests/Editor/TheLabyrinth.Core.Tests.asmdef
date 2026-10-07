@@ -1,0 +1,21 @@
+{
+  "name": "TheLabyrinth.Core.Tests",
+  "rootNamespace": "",
+  "references": [
+    "GUID:491355fa3af145a38f016edfe1c309dc"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}

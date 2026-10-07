@@ -58,3 +58,10 @@ crashlytics-build.properties
 
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Chỉ giữ các bản thử VFX cũ ở local; asset 213 đang dùng được theo dõi cùng
+# repository để các thành viên trong đồ án có đúng tài nguyên runtime.
+/Assets/Resources/VFX/Pipoya/TimeMagic/pipo-btleffect210_192.png
+/Assets/Resources/VFX/Pipoya/TimeMagic/pipo-btleffect210_192.png.meta
+/Assets/Resources/VFX/Pipoya/TimeMagic/pipo-btleffect212_192.png
+/Assets/Resources/VFX/Pipoya/TimeMagic/pipo-btleffect212_192.png.meta
