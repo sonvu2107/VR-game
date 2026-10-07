@@ -21,7 +21,8 @@
 - Sinh phòng và hành lang ngẫu nhiên bằng Procedural Content Generation (PCG).
 - Một lượt chơi gồm 10 level với seed, số phòng và độ khó riêng cho từng level.
 - State machine quản lý các trạng thái Generating, Playing, Level Completed, Paused, Game Over và Victory.
-- Cổng chuyển level chỉ mở sau khi toàn bộ enemy của level đã bị tiêu diệt.
+- Cổng chuyển level chỉ mở sau khi toàn bộ enemy bị tiêu diệt và đủ chìa khóa ở level có khóa.
+- Level 4 có bẫy gai và một chìa khóa; level 6 giới hạn tầm nhìn; level 8 yêu cầu hai chìa khóa; level 9 có giới hạn 4 phút.
 - Cấu hình chiến dịch đánh dấu level thường, mini-boss và boss cuối.
 - Có `GameSessionBridge` làm ranh giới tích hợp quyền Host/Client cho LAN co-op.
 - Tự động tạo sàn và tường bằng Tilemap.
@@ -36,7 +37,7 @@
 
 ## Cách chơi
 
-Mục tiêu hiện tại của người chơi là khám phá mê cung và tiêu diệt toàn bộ Skeleton trong từng level. Khi số lượng enemy về `0`, cổng thoát được mở. Dungeon được sinh lại theo cấu hình level tiếp theo; Victory chỉ xuất hiện sau khi hoàn thành level 10.
+Mục tiêu hiện tại của người chơi là khám phá mê cung và tiêu diệt toàn bộ Skeleton trong từng level. Ở level có khóa, người chơi còn phải thu thập đủ chìa khóa trước khi cổng thoát mở. Dungeon được sinh lại theo cấu hình level tiếp theo; Victory chỉ xuất hiện sau khi hoàn thành level 10.
 
 ### Bàn phím và chuột
 

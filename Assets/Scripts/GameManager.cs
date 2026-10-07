@@ -33,6 +33,10 @@ public class GameManager : MonoBehaviour
     public int CurrentLevel { get; private set; } = 1;
     public int TotalLevels => levels?.Count ?? 0;
     public LevelDefinition CurrentLevelDefinition => GetLevelDefinition(CurrentLevel);
+    public int KeysCollected { get; private set; }
+    public int KeysRequired { get; private set; }
+    public float LevelTimeRemaining { get; private set; }
+    public bool HasLevelTimeLimit => CurrentLevelDefinition?.HasTimeLimit == true;
 
     [Obsolete("Use CurrentLevel instead.")]
     public int CurrentFloor => CurrentLevel;
@@ -52,6 +56,7 @@ public class GameManager : MonoBehaviour
     private Coroutine generationRoutine;
     private Coroutine transitionRoutine;
     private bool advanceRequestPending;
+    private int lastDisplayedSecond = -1;
 
     private void Awake()
     {
@@ -92,13 +97,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (pauseAction == null || !pauseAction.WasPressedThisFrame())
-            return;
+        if (pauseAction != null && pauseAction.WasPressedThisFrame())
+        {
+            if (CurrentState == GameState.Playing)
+                Pause();
+            else if (CurrentState == GameState.Paused)
+                Resume();
+        }
 
-        if (CurrentState == GameState.Playing)
-            Pause();
-        else if (CurrentState == GameState.Paused)
-            Resume();
+        TickLevelTimer();
     }
 
     public void Resume()
@@ -162,6 +169,11 @@ public class GameManager : MonoBehaviour
 
         currentExit = levelExit;
         enemyCount = Mathf.Max(0, spawnedEnemyCount);
+        LevelDefinition definition = CurrentLevelDefinition;
+        KeysCollected = 0;
+        KeysRequired = definition?.RequiredKeys ?? 0;
+        LevelTimeRemaining = definition?.TimeLimitSeconds ?? 0f;
+        lastDisplayedSecond = -1;
         advanceRequestPending = false;
         SetState(GameState.Playing);
         LevelChanged?.Invoke(CurrentLevel, TotalLevels);
@@ -177,7 +189,9 @@ public class GameManager : MonoBehaviour
 
     public void TryAdvanceLevel()
     {
-        if (CurrentState != GameState.Playing || enemyCount > 0 || advanceRequestPending)
+        if (CurrentState != GameState.Playing ||
+            !LevelCompletionRules.AreRequirementsMet(enemyCount, KeysCollected, KeysRequired) ||
+            advanceRequestPending)
             return;
 
         advanceRequestPending = true;
@@ -192,7 +206,9 @@ public class GameManager : MonoBehaviour
 
     public void AuthorizeLevelAdvance(int completedLevel)
     {
-        if (CurrentState != GameState.Playing || enemyCount > 0 || completedLevel != CurrentLevel)
+        if (CurrentState != GameState.Playing ||
+            !LevelCompletionRules.AreRequirementsMet(enemyCount, KeysCollected, KeysRequired) ||
+            completedLevel != CurrentLevel)
         {
             advanceRequestPending = false;
             return;
@@ -233,9 +249,25 @@ public class GameManager : MonoBehaviour
         if (EnemyCounter == null)
             return;
 
-        EnemyCounter.text = CurrentState == GameState.Generating
-            ? $"Level {CurrentLevel}/{TotalLevels} - Generating..."
-            : $"Level {CurrentLevel}/{TotalLevels} - Enemies Remaining: {enemyCount}";
+        if (CurrentState == GameState.Generating)
+        {
+            EnemyCounter.text = $"Level {CurrentLevel}/{TotalLevels} - Generating...";
+            return;
+        }
+
+        string counter = $"Level {CurrentLevel}/{TotalLevels} - Enemies Remaining: {enemyCount}";
+        if (KeysRequired > 0)
+            counter += $" | Keys: {KeysCollected}/{KeysRequired}";
+
+        if (HasLevelTimeLimit)
+        {
+            int secondsRemaining = Mathf.Max(0, Mathf.CeilToInt(LevelTimeRemaining));
+            int minutes = secondsRemaining / 60;
+            int seconds = secondsRemaining % 60;
+            counter += $" | Time: {minutes:00}:{seconds:00}";
+        }
+
+        EnemyCounter.text = counter;
     }
 
     private void BeginLevelGeneration()
@@ -250,6 +282,10 @@ public class GameManager : MonoBehaviour
     {
         currentExit = null;
         enemyCount = 0;
+        KeysCollected = 0;
+        KeysRequired = 0;
+        LevelTimeRemaining = 0f;
+        lastDisplayedSecond = -1;
         UpdateCounter();
 
         // Let the previous physics frame finish before clearing its dungeon.
@@ -316,7 +352,43 @@ public class GameManager : MonoBehaviour
 
     private void RefreshExitState()
     {
-        currentExit?.SetUnlocked(CurrentState == GameState.Playing && enemyCount == 0);
+        currentExit?.SetUnlocked(CurrentState == GameState.Playing &&
+                                 LevelCompletionRules.AreRequirementsMet(
+                                     enemyCount, KeysCollected, KeysRequired));
+    }
+
+    public bool CollectKey()
+    {
+        if (CurrentState != GameState.Playing || KeysRequired <= 0 || KeysCollected >= KeysRequired)
+            return false;
+
+        KeysCollected++;
+        UpdateCounter();
+        RefreshExitState();
+        return true;
+    }
+
+    [Obsolete("Use CollectKey instead.")]
+    public void KeyCollected()
+    {
+        CollectKey();
+    }
+
+    private void TickLevelTimer()
+    {
+        if (CurrentState != GameState.Playing || !HasLevelTimeLimit)
+            return;
+
+        LevelTimeRemaining = Mathf.Max(0f, LevelTimeRemaining - Time.deltaTime);
+        int displayedSecond = Mathf.CeilToInt(LevelTimeRemaining);
+        if (displayedSecond != lastDisplayedSecond)
+        {
+            lastDisplayedSecond = displayedSecond;
+            UpdateCounter();
+        }
+
+        if (LevelTimeRemaining <= 0f)
+            GameOver();
     }
 
     private void EnsurePlayerControls()
@@ -328,6 +400,9 @@ public class GameManager : MonoBehaviour
     {
         if (levels == null || levels.Count == 0)
             levels = LevelDefinition.CreateDefaultCampaign();
+
+        foreach (LevelDefinition definition in levels)
+            definition?.EnsureMechanicsDefaults();
     }
 
     private LevelDefinition GetLevelDefinition(int levelNumber)

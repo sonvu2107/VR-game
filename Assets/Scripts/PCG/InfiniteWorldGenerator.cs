@@ -17,6 +17,12 @@ public class InfiniteWorldGenerator : MonoBehaviour
     public GameObject bossPrefab;
     public GameObject exitPrefab;
 
+    [Header("Optional Level Mechanic Prefabs")]
+    [Tooltip("Uses a generated key visual when unassigned.")]
+    [SerializeField] private GameObject keyPrefab;
+    [Tooltip("Uses a generated spike visual when unassigned.")]
+    [SerializeField] private GameObject spikeTrapPrefab;
+
     [Header("Generation")]
     public int corridorLength = 20;
     public int numberOfRooms = 10;
@@ -29,6 +35,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private DungeonLayout dungeonLayout;
     private readonly HashSet<Vector2Int> occupiedCells = new();
     private readonly List<GameObject> spawnedObjects = new();
+    private DarknessController darknessController;
 
     private int currentLevel;
     private int totalLevels;
@@ -47,6 +54,8 @@ public class InfiniteWorldGenerator : MonoBehaviour
             if (player != null)
                 playerTransform = player.transform;
         }
+
+        darknessController = GetComponent<DarknessController>();
     }
 
     public bool GenerateFloor(int floorNumber, int runFloorCount, int floorSeed)
@@ -90,6 +99,14 @@ public class InfiniteWorldGenerator : MonoBehaviour
             return false;
         }
 
+        if (!PlaceRequiredKeys())
+        {
+            Debug.LogError($"Level {currentLevel} could not place every required key.");
+            return false;
+        }
+
+        ConfigureLevelLighting();
+
         manager.CompleteLevelGeneration(floorExit, spawnedEnemyCount);
         return true;
     }
@@ -105,6 +122,8 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
     private void CleanupCurrentFloor()
     {
+        darknessController?.DisableDarkness();
+
         foreach (GameObject spawnedObject in spawnedObjects)
         {
             if (spawnedObject == null)
@@ -173,6 +192,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
                     break;
                 case RoomType.Combat:
                     spawnedEnemyCount += SpawnCombatMobs(room);
+                    PlaceSpikeTraps(room);
                     break;
                 case RoomType.Treasure:
                     PlaceOptionalRoomPrefab(room, treasurePrefab, "Treasure");
@@ -214,6 +234,104 @@ public class InfiniteWorldGenerator : MonoBehaviour
         int numberOfMobs = random.Range(enemyInfo.Mob[0].min, enemyInfo.Mob[0].max) + difficultyBonus;
         return PrefabPlacer.PlaceMobs(enemyInfo, room, numberOfMobs, random, occupiedCells,
             spawnClearance, spawnedObjects);
+    }
+
+    private void PlaceSpikeTraps(DungeonRoom room)
+    {
+        int trapCount = currentLevelDefinition?.TrapsPerCombatRoom ?? 0;
+        for (int index = 0; index < trapCount; index++)
+        {
+            if (!PrefabPlacer.TryClaimSpawnPoint(room.FloorTiles, random, occupiedCells,
+                    spawnClearance, out Vector2Int spawnPoint))
+            {
+                Debug.LogWarning($"Combat room could only place {index}/{trapCount} spike traps.");
+                return;
+            }
+
+            GameObject trapObject = spikeTrapPrefab != null
+                ? Instantiate(spikeTrapPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity)
+                : CreateRuntimeSpikeTrap(PrefabPlacer.GetWorldPosition(spawnPoint));
+
+            SpikeTrap trap = trapObject.GetComponent<SpikeTrap>();
+            if (trap == null)
+                trap = trapObject.AddComponent<SpikeTrap>();
+            trap.Initialize(currentLevel);
+            spawnedObjects.Add(trapObject);
+        }
+    }
+
+    private bool PlaceRequiredKeys()
+    {
+        int keyCount = currentLevelDefinition?.RequiredKeys ?? 0;
+        if (keyCount <= 0)
+            return true;
+
+        List<DungeonRoom> candidateRooms = dungeonLayout.Rooms
+            .Where(room => room.Type is RoomType.Combat or RoomType.Treasure or RoomType.Boss)
+            .ToList();
+        if (candidateRooms.Count == 0)
+            return false;
+
+        for (int index = 0; index < keyCount; index++)
+        {
+            bool placed = false;
+            for (int roomOffset = 0; roomOffset < candidateRooms.Count; roomOffset++)
+            {
+                DungeonRoom room = candidateRooms[(index + roomOffset) % candidateRooms.Count];
+                if (!PrefabPlacer.TryClaimSpawnPoint(room.FloorTiles, random, occupiedCells,
+                        spawnClearance, out Vector2Int spawnPoint))
+                    continue;
+
+                GameObject keyObject = keyPrefab != null
+                    ? Instantiate(keyPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity)
+                    : CreateRuntimeKey(PrefabPlacer.GetWorldPosition(spawnPoint));
+
+                DungeonKey key = keyObject.GetComponent<DungeonKey>();
+                if (key == null)
+                    key = keyObject.AddComponent<DungeonKey>();
+                key.Initialize(manager);
+                spawnedObjects.Add(keyObject);
+                placed = true;
+                break;
+            }
+
+            if (!placed)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void ConfigureLevelLighting()
+    {
+        float radius = currentLevelDefinition?.DarknessRadius ?? 0f;
+        if (radius <= 0f)
+        {
+            darknessController?.DisableDarkness();
+            return;
+        }
+
+        if (darknessController == null)
+            darknessController = gameObject.AddComponent<DarknessController>();
+        darknessController.EnableDarkness(playerTransform, radius);
+    }
+
+    private static GameObject CreateRuntimeKey(Vector3 worldPosition)
+    {
+        GameObject keyObject = new("Dungeon Key");
+        keyObject.transform.position = worldPosition;
+        keyObject.AddComponent<CircleCollider2D>().isTrigger = true;
+        keyObject.AddComponent<DungeonKey>();
+        return keyObject;
+    }
+
+    private static GameObject CreateRuntimeSpikeTrap(Vector3 worldPosition)
+    {
+        GameObject trapObject = new("Spike Trap");
+        trapObject.transform.position = worldPosition;
+        trapObject.AddComponent<BoxCollider2D>().isTrigger = true;
+        trapObject.AddComponent<SpikeTrap>();
+        return trapObject;
     }
 
     private void PlaceOptionalRoomPrefab(DungeonRoom room, GameObject prefab, string objectName)
