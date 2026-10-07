@@ -286,6 +286,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
         renderer.sprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0f, 0f, 1f, 1f),
             new Vector2(0.5f, 0.5f), 1f);
         renderer.sortingOrder = 2;
+        exitObject.AddComponent<PortalVisual>();
 
         CircleCollider2D exitCollider = exitObject.AddComponent<CircleCollider2D>();
         exitCollider.radius = 0.5f;

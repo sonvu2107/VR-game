@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private static readonly int[] HeavyChargeFrameMap = { 0, 1, 2, 3, 4, 4, 4 };
     private Rigidbody2D rb;
     private PowerupCircleController powerupCircleController;
+    private PowerupChargeVfx powerupChargeVfx;
     private Animator animator;
     
     public float speed = 5f;
@@ -191,6 +192,7 @@ public class PlayerMovement : MonoBehaviour
         heavyInputPending = false;
         isHeavyCharging = false;
         isHeavyAttacking = false;
+        powerupChargeVfx?.Hide();
         RestoreAnimatorAfterHeavyStrike();
         if (playerSpriteRenderer != null)
             playerSpriteRenderer.color = Color.white;
@@ -203,6 +205,10 @@ public class PlayerMovement : MonoBehaviour
         hasComboIndexParameter = animator != null && System.Array.Exists(animator.parameters,
             parameter => parameter.name == "ComboIndex" && parameter.type == AnimatorControllerParameterType.Int);
         powerupCircleController = GameObject.FindGameObjectWithTag("Powerup Attack").GetComponent<PowerupCircleController>();
+        powerupChargeVfx = GetComponent<PowerupChargeVfx>();
+        if (powerupChargeVfx == null)
+            powerupChargeVfx = gameObject.AddComponent<PowerupChargeVfx>();
+        powerupChargeVfx.SetAnchor(powerupCircleController.transform);
         facingLeft = new Vector2(-transform.localScale.x, transform.localScale.y);
         spaceHeld = false;
         isPoweredUp = false;
@@ -237,6 +243,7 @@ public class PlayerMovement : MonoBehaviour
         if (GameManager.isGamePaused || GameManager.isGameOver || GameManager.isWin)
         {
             _movement = Vector2.zero;
+            powerupChargeVfx?.Hide();
             return;
         }
 
@@ -259,6 +266,7 @@ public class PlayerMovement : MonoBehaviour
         if (isHeavyAttacking)
         {
             _movement = Vector2.zero;
+            powerupChargeVfx?.Hide();
             return;
         }
 
@@ -268,6 +276,7 @@ public class PlayerMovement : MonoBehaviour
         if (skillController != null && skillController.IsSkillCasting)
         {
             _movement = Vector2.zero;
+            powerupChargeVfx?.Hide();
             return;
         }
 
@@ -309,12 +318,22 @@ public class PlayerMovement : MonoBehaviour
                 }
                 spaceHeld = true;
                 powerupCircleController.setRadius(GetRadius(spaceHeldTime));
+                powerupChargeVfx?.Show(GetPowerupChargeNormalized());
+            }
+            else
+            {
+                powerupChargeVfx?.Hide();
             }
         }
         else if(!IsHeavyLocked && spaceHeld)
         {
+            powerupChargeVfx?.Hide();
             PowerUpAttack();
             powerupController.HidePoweredUp();
+        }
+        else
+        {
+            powerupChargeVfx?.Hide();
         }
     }
 
@@ -959,6 +978,7 @@ public class PlayerMovement : MonoBehaviour
     void PowerUpAttack()
     {
         float radius = GetRadius(spaceHeldTime);
+        powerupChargeVfx?.Hide();
         animator.SetTrigger("Powerup Attack");
         
         powerUpAttackCooldownActual = powerUpAttackCooldown;
@@ -1035,6 +1055,16 @@ public class PlayerMovement : MonoBehaviour
     private float GetRadius(float timeHeld)
     {
         return attackRange/attackRangeScale + (timeHeld * powerUpAttackRadiusRate);
+    }
+
+    private float GetPowerupChargeNormalized()
+    {
+        float minimumRadius = GetRadius(0f);
+        float chargeRange = maxPowerupRadius - minimumRadius;
+        if (chargeRange <= Mathf.Epsilon)
+            return 1f;
+
+        return Mathf.Clamp01((GetRadius(spaceHeldTime) - minimumRadius) / chargeRange);
     }
 
     public void PlaySFX(AudioClip clip)

@@ -4,30 +4,26 @@ using UnityEngine;
 
 public class PowerupCircleController : MonoBehaviour
 {
-    // Start is called before the first frame update
-
     public LineRenderer lineRenderer;
     public SpriteRenderer circleSpriteRenderer;
     public int numDivisions = 50;
     public float radius = 0.5f;
+    [SerializeField] private bool showLegacyChargeCircle;
+
     void Start()
     {
         lineRenderer.widthMultiplier = 0.1f;
         circleSpriteRenderer.color = new Color(1, 1, 1, 0.1f);
+        UpdateVisibility(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(radius <= 0.5f) {
-            lineRenderer.enabled = false;
-            circleSpriteRenderer.enabled = false;
+        bool shouldShow = showLegacyChargeCircle && radius > 0.5f;
+        UpdateVisibility(shouldShow);
+        if (!shouldShow)
             return;
-        } else {
-            lineRenderer.enabled = true;
-            circleSpriteRenderer.enabled = true;
-        }
-        
+
         lineRenderer.positionCount = numDivisions+1;
         for (int i = 0; i < numDivisions + 1; i++)
         {
@@ -42,5 +38,11 @@ public class PowerupCircleController : MonoBehaviour
     public void setRadius(float radius)
     {
         this.radius = radius;
+    }
+
+    private void UpdateVisibility(bool visible)
+    {
+        lineRenderer.enabled = visible;
+        circleSpriteRenderer.enabled = visible;
     }
 }

@@ -16,6 +16,14 @@ public static class CoreProgressionProbe
     private static bool finishing;
     private static bool restartRequested;
     private static bool restartVerified;
+    private static bool portalVerified;
+    private static string portalMode;
+    private static bool powerupVfxVerified;
+    private static string powerupVfxMode;
+    private static double powerupVfxStartedAt;
+    private static PowerupChargeVfx powerupVfxUnderTest;
+    private static PlayerMovement powerupPlayerUnderTest;
+    private static bool powerupPlayerWasEnabled;
     private static int restartRequestedAtFrame;
 
     static CoreProgressionProbe()
@@ -30,6 +38,14 @@ public static class CoreProgressionProbe
         finishing = false;
         restartRequested = false;
         restartVerified = false;
+        portalVerified = false;
+        portalMode = "unchecked";
+        powerupVfxVerified = false;
+        powerupVfxMode = "unchecked";
+        powerupVfxStartedAt = 0d;
+        powerupVfxUnderTest = null;
+        powerupPlayerUnderTest = null;
+        powerupPlayerWasEnabled = false;
         restartRequestedAtFrame = -1;
         startedAt = 0d;
         SessionState.SetBool(ActiveSessionKey, true);
@@ -71,6 +87,12 @@ public static class CoreProgressionProbe
             Fail($"Expected 10 levels but found {manager.TotalLevels}.");
             return;
         }
+
+        if (!portalVerified && !VerifyPortalVisual())
+            return;
+
+        if (!powerupVfxVerified && !VerifyPowerupChargeVfx())
+            return;
 
         int currentLevel = manager.CurrentLevel;
         if (currentLevel < 1 || currentLevel > manager.TotalLevels || completedLevels.Contains(currentLevel))
@@ -147,8 +169,171 @@ public static class CoreProgressionProbe
         Debug.Log(
             $"CORE_PROGRESS_PLAYMODE_PASS: levels={manager.TotalLevels} " +
             $"completed={completedLevels.Count} pause=ok resume=ok " +
-            $"gameover=ok restart=ok victory=ok");
+            $"gameover=ok restart=ok victory=ok portal={portalMode} " +
+            $"powerupVfx={powerupVfxMode}");
         CleanupAndExit(0);
+    }
+
+    private static bool VerifyPortalVisual()
+    {
+        PortalVisual portalVisual = UnityEngine.Object.FindObjectOfType<PortalVisual>();
+        if (portalVisual == null)
+        {
+            Fail("The generated floor exit has no PortalVisual component.");
+            return false;
+        }
+
+        int installedFrameCount = 0;
+        for (int frameNumber = 1; frameNumber <= 7; frameNumber++)
+        {
+            if (Resources.Load<Texture2D>($"Portal/Frames/portal1_frame_{frameNumber}") != null)
+                installedFrameCount++;
+        }
+
+        if (installedFrameCount != 0 && installedFrameCount != 7)
+        {
+            Fail($"Portal asset installation is incomplete: {installedFrameCount}/7 frames found.");
+            return false;
+        }
+
+        if (installedFrameCount == 7 && !portalVisual.IsUsingPortalFrames)
+        {
+            Fail("Portal frames are installed but the runtime visual did not load them.");
+            return false;
+        }
+
+        portalMode = installedFrameCount == 7 ? "animated" : "fallback";
+        portalVerified = true;
+        return true;
+    }
+
+    private static bool VerifyPowerupChargeVfx()
+    {
+        PlayerMovement player = UnityEngine.Object.FindObjectOfType<PlayerMovement>();
+        if (player == null)
+            return false;
+
+        PowerupChargeVfx chargeVfx = player.GetComponent<PowerupChargeVfx>();
+        if (chargeVfx == null)
+        {
+            Fail("Player has no PowerupChargeVfx component after startup.");
+            return false;
+        }
+
+        Texture2D sheet = Resources.Load<Texture2D>(
+            "VFX/Pipoya/TimeMagic/pipo-btleffect213_192");
+        if (sheet == null)
+        {
+            powerupVfxMode = "fallback";
+            powerupVfxVerified = true;
+            return true;
+        }
+
+        if (sheet.width != 960 || sheet.height != 768)
+        {
+            Fail($"Pipoya Time Magic sheet has unexpected size {sheet.width}x{sheet.height}.");
+            return false;
+        }
+
+        PowerupCircleController legacyCircle =
+            UnityEngine.Object.FindObjectOfType<PowerupCircleController>();
+        if (legacyCircle == null || legacyCircle.lineRenderer.enabled ||
+            legacyCircle.circleSpriteRenderer.enabled)
+        {
+            Fail("The legacy white power-up circle is still visible.");
+            return false;
+        }
+
+        if (powerupVfxUnderTest == null)
+        {
+            powerupVfxUnderTest = chargeVfx;
+            powerupPlayerUnderTest = player;
+            powerupPlayerWasEnabled = player.enabled;
+            player.enabled = false;
+            powerupVfxStartedAt = EditorApplication.timeSinceStartup;
+            powerupVfxUnderTest.Show(0.5f);
+            return false;
+        }
+
+        if (EditorApplication.timeSinceStartup - powerupVfxStartedAt < 1.6d)
+            return false;
+
+        if (!powerupVfxUnderTest.IsUsingTimeMagicFrames || !powerupVfxUnderTest.IsVisible)
+        {
+            Fail("Pipoya Time Magic VFX stopped before the hold state ended.");
+            return false;
+        }
+
+        if (powerupVfxUnderTest.CurrentFrameIndex < 5 ||
+            powerupVfxUnderTest.CurrentFrameIndex > 19)
+        {
+            Fail($"Ground-circle VFX left its full color loop: " +
+                $"{powerupVfxUnderTest.CurrentFrameIndex}.");
+            return false;
+        }
+
+        if (powerupVfxUnderTest.AnimationStepCount <= 10 ||
+            powerupVfxUnderTest.CompletedLoopCount < 1)
+        {
+            Fail("Ground-circle VFX did not complete a continuous loop during hold.");
+            return false;
+        }
+
+        Transform chargeVisual = player.transform.Find("Powerup Charge VFX");
+        Vector2 expectedGroundCenter = new Vector2(
+            legacyCircle.transform.position.x,
+            player.transform.position.y);
+        if (chargeVisual == null ||
+            Vector2.Distance(chargeVisual.position, expectedGroundCenter) > 0.01f)
+        {
+            Fail("Single-circle VFX is not aligned below the player.");
+            return false;
+        }
+
+        SpriteRenderer chargeRenderer = chargeVisual.GetComponent<SpriteRenderer>();
+        SpriteRenderer playerRenderer = player.GetComponent<SpriteRenderer>();
+        if (chargeRenderer == null || playerRenderer == null)
+        {
+            Fail("Ground-circle VFX or player SpriteRenderer is missing.");
+            return false;
+        }
+
+        if (chargeRenderer.sprite == null ||
+            chargeRenderer.sprite.rect.width != 192f ||
+            chargeRenderer.sprite.rect.height != 192f)
+        {
+            Fail("Clock-circle VFX frame was cropped instead of using the full 192x192 frame.");
+            return false;
+        }
+
+        if (chargeRenderer.sortingLayerID != playerRenderer.sortingLayerID ||
+            chargeRenderer.sortingOrder >= playerRenderer.sortingOrder)
+        {
+            Fail("Ground-circle VFX is not rendered below the player.");
+            return false;
+        }
+
+        if (chargeRenderer.bounds.size.y < playerRenderer.bounds.size.y * 1.35f)
+        {
+            Fail("Charge VFX is still too small compared with the player.");
+            return false;
+        }
+
+        powerupVfxUnderTest.Hide();
+        if (powerupVfxUnderTest.IsVisible)
+        {
+            Fail("Charge VFX stayed visible after the hold state ended.");
+            return false;
+        }
+
+        if (powerupPlayerUnderTest != null)
+            powerupPlayerUnderTest.enabled = powerupPlayerWasEnabled;
+
+        powerupVfxMode = "animated";
+        powerupVfxVerified = true;
+        powerupVfxUnderTest = null;
+        powerupPlayerUnderTest = null;
+        return true;
     }
 
     private static void Fail(string message)
