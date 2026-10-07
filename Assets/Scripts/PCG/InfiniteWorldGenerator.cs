@@ -238,13 +238,22 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
         if (bossPrefab == null)
         {
-            Debug.LogWarning("Boss prefab is not assigned. The final floor will use its combat rooms.");
-            return 0;
+            BossController runtimeBoss = BossController.CreateDefaultBoss(
+                PrefabPlacer.GetWorldPosition(spawnPoint), manager);
+            spawnedObjects.Add(runtimeBoss.gameObject);
+            return 1;
         }
 
         GameObject boss = Instantiate(bossPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity);
         spawnedObjects.Add(boss);
-        return boss.GetComponentInChildren<Enemy>() != null ? 1 : 0;
+        BossController bossController = boss.GetComponentInChildren<BossController>();
+        if (bossController != null)
+            bossController.Initialize(manager);
+
+        bool canBeDefeated = bossController != null || boss.GetComponentInChildren<Enemy>() != null;
+        if (!canBeDefeated)
+            Debug.LogWarning("Boss prefab has no Enemy or BossController component and will not block the exit.");
+        return canBeDefeated ? 1 : 0;
     }
 
     private FloorExit PlaceExit(DungeonRoom room)
