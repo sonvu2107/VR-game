@@ -235,7 +235,7 @@ MonoBehaviour:
   chaseSpeed: 2.5
   wanderSpeed: 1
   attackCooldown: 1
-  maxHealth: 100
+  maxHealth: 80
   attackPoint: {fileID: 5798760896849336566}
   attackRange: 1.05
   playerLayer:

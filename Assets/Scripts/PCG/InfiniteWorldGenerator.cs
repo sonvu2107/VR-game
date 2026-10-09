@@ -1,3 +1,5 @@
+// Sinh 6-7 phòng cho mỗi level. Quái được rải theo từng phòng sau khi giữ chỗ
+// cho người chơi, vật phẩm, boss và cổng; số đếm chỉ gồm quái thật đã tạo.
 using System.Collections.Generic;
 using System.Linq;
 using NavMeshPlus.Components;
@@ -16,6 +18,14 @@ public class InfiniteWorldGenerator : MonoBehaviour
     public GameObject treasurePrefab;
     public GameObject bossPrefab;
     public GameObject exitPrefab;
+
+    [Header("Level Enemy Prefabs")]
+    [SerializeField] private GameObject skeletonArcherPrefab;
+    [SerializeField] private GameObject poisonSlimePrefab;
+    [SerializeField] private GameObject batPrefab;
+    [SerializeField] private GameObject darkMagePrefab;
+    [SerializeField] private GameObject eliteEnemyPrefab;
+    [SerializeField] private GameObject miniBossPrefab;
 
     [Header("Optional Level Mechanic Prefabs")]
     [Tooltip("Uses a generated key visual when unassigned.")]
@@ -113,10 +123,13 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
     private bool HasRequiredReferences()
     {
-        if (surface != null && roomParameters != null && tilemapVisualizer != null && manager != null)
+        if (surface != null && roomParameters != null && tilemapVisualizer != null && manager != null &&
+            enemyInfo != null && enemyInfo.Mob.Count > 0 && enemyInfo.Mob[0].sprite != null &&
+            skeletonArcherPrefab != null && poisonSlimePrefab != null && batPrefab != null &&
+            darkMagePrefab != null && eliteEnemyPrefab != null && miniBossPrefab != null && bossPrefab != null)
             return true;
 
-        Debug.LogError("Dungeon generator is missing a required scene reference.");
+        Debug.LogError("Dungeon generator is missing a scene or level enemy prefab reference.");
         return false;
     }
 
@@ -183,29 +196,63 @@ public class InfiniteWorldGenerator : MonoBehaviour
         floorExit = null;
         spawnedEnemyCount = 0;
 
-        foreach (DungeonRoom room in dungeonLayout.Rooms)
+        DungeonRoom widestCombatRoom = dungeonLayout.Rooms
+            .Where(candidate => candidate.Type == RoomType.Combat)
+            .OrderByDescending(candidate => candidate.FloorTiles.Count)
+            .FirstOrDefault();
+        int combatRoomIndex = 0;
+        for (int roomIndex = 0; roomIndex < dungeonLayout.Rooms.Count; roomIndex++)
         {
+            DungeonRoom room = dungeonLayout.Rooms[roomIndex];
+            // Place one potion in generated room 3 and one in generated room 5.
+            if (roomIndex == 2 || roomIndex == 4)
+                PlaceHealingPickup(room);
+
             switch (room.Type)
             {
                 case RoomType.Start:
                     PlacePlayer(room);
+                    spawnedEnemyCount += SpawnRoomMobs(room, -1, false,
+                        GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
                     break;
                 case RoomType.Combat:
-                    spawnedEnemyCount += SpawnCombatMobs(room);
+                    spawnedEnemyCount += SpawnRoomMobs(room, combatRoomIndex, room == widestCombatRoom,
+                        GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
+                    combatRoomIndex++;
                     PlaceSpikeTraps(room);
                     break;
                 case RoomType.Treasure:
                     PlaceOptionalRoomPrefab(room, treasurePrefab, "Treasure");
+                    spawnedEnemyCount += SpawnRoomMobs(room, combatRoomIndex, false,
+                        GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
                     break;
                 case RoomType.Boss:
-                    if (currentLevelDefinition.IsFinalBossLevel)
-                        spawnedEnemyCount += PlaceFinalBoss(room);
+                    if (currentLevelDefinition.Type != LevelType.Standard)
+                        spawnedEnemyCount += PlaceLevelBoss(room);
+                    else
+                        spawnedEnemyCount += SpawnRoomMobs(room, combatRoomIndex, false,
+                            GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
                     break;
                 case RoomType.Exit:
                     floorExit = PlaceExit(room);
+                    spawnedEnemyCount += SpawnRoomMobs(room, combatRoomIndex, false,
+                        GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
                     break;
             }
+            Debug.Log($"Level {currentLevel} room {roomIndex + 1}/{dungeonLayout.Rooms.Count} ({room.Type}): {spawnedEnemyCount} enemies placed so far.");
         }
+    }
+
+    // Phòng đầu/cuối nhẹ hơn; phòng boss thật không có add để người chơi đọc đòn boss.
+    public static int GetRoomEnemyQuota(RoomType roomType, LevelType levelType)
+    {
+        return roomType switch
+        {
+            RoomType.Start or RoomType.Exit => 1,
+            RoomType.Combat or RoomType.Treasure => 2,
+            RoomType.Boss when levelType == LevelType.Standard => 2,
+            _ => 0
+        };
     }
 
     private void PlacePlayer(DungeonRoom room)
@@ -222,7 +269,8 @@ public class InfiniteWorldGenerator : MonoBehaviour
         playerTransform.position = PrefabPlacer.GetWorldPosition(spawnPoint);
     }
 
-    private int SpawnCombatMobs(DungeonRoom room)
+    // Một hoặc hai quái/phòng giữ mật độ đều; phòng boss thật dành riêng cho boss.
+    private int SpawnRoomMobs(DungeonRoom room, int combatRoomIndex, bool isWideRoom, int numberOfMobs)
     {
         if (enemyInfo == null || enemyInfo.Mob.Count == 0)
         {
@@ -230,10 +278,71 @@ public class InfiniteWorldGenerator : MonoBehaviour
             return 0;
         }
 
-        int difficultyBonus = currentLevelDefinition?.EnemyCountBonus ?? 0;
-        int numberOfMobs = random.Range(enemyInfo.Mob[0].min, enemyInfo.Mob[0].max) + difficultyBonus;
-        return PrefabPlacer.PlaceMobs(enemyInfo, room, numberOfMobs, random, occupiedCells,
+        List<GameObject> prefabs = new(numberOfMobs);
+        for (int mobIndex = 0; mobIndex < numberOfMobs; mobIndex++)
+            prefabs.Add(combatRoomIndex < 0 ? enemyInfo.Mob[0].sprite :
+                ChooseEnemyPrefab(combatRoomIndex, mobIndex, isWideRoom));
+
+        return PrefabPlacer.PlaceMobs(prefabs, room, random, occupiedCells,
             spawnClearance, spawnedObjects);
+    }
+
+    private GameObject ChooseEnemyPrefab(int combatRoomIndex, int mobIndex, bool isWideRoom)
+    {
+        GameObject warrior = enemyInfo.Mob[0].sprite;
+        bool firstInFirstCombatRoom = combatRoomIndex == 0 && mobIndex == 0;
+        if (currentLevel <= 2) return warrior;
+        if (currentLevel == 3)
+            return firstInFirstCombatRoom || random.Range(0, 2) == 0 ? skeletonArcherPrefab : warrior;
+        if (currentLevel == 4)
+        {
+            if (firstInFirstCombatRoom) return poisonSlimePrefab;
+            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab);
+        }
+        if (currentLevel == 5)
+            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab);
+        if (currentLevel == 6)
+        {
+            if (firstInFirstCombatRoom) return batPrefab;
+            return ChooseWeighted(warrior, skeletonArcherPrefab, batPrefab);
+        }
+        if (currentLevel == 7)
+        {
+            if (firstInFirstCombatRoom) return eliteEnemyPrefab;
+            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab,
+                batPrefab, eliteEnemyPrefab);
+        }
+        if (currentLevel == 8 && isWideRoom && mobIndex == 0)
+            return darkMagePrefab;
+        if (currentLevel == 8)
+            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab,
+                eliteEnemyPrefab);
+        if (currentLevel == 9)
+        {
+            if (isWideRoom && mobIndex == 0) return darkMagePrefab;
+            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab,
+                batPrefab, eliteEnemyPrefab);
+        }
+        // Level 10 reserves its separate Boss room for Skeleton King.
+        return random.Range(0, 3) == 0 ? eliteEnemyPrefab : warrior;
+    }
+
+    private GameObject ChooseWeighted(params GameObject[] prefabs)
+    {
+        return prefabs[random.Range(0, prefabs.Length)];
+    }
+
+    private void PlaceHealingPickup(DungeonRoom room)
+    {
+        if (!PrefabPlacer.TryClaimSpawnPoint(room.FloorTiles, random, occupiedCells,
+                spawnClearance, out Vector2Int spawnPoint))
+        {
+            Debug.LogWarning($"Level {currentLevel}: no safe tile for a potion in room {room.Type}.");
+            return;
+        }
+
+        HealingPickup pickup = HealingPickup.Create(PrefabPlacer.GetWorldPosition(spawnPoint));
+        spawnedObjects.Add(pickup.gameObject);
     }
 
     private void PlaceSpikeTraps(DungeonRoom room)
@@ -349,29 +458,47 @@ public class InfiniteWorldGenerator : MonoBehaviour
         spawnedObjects.Add(instance);
     }
 
-    private int PlaceFinalBoss(DungeonRoom room)
+    private int PlaceLevelBoss(DungeonRoom room)
     {
         if (!TryClaimRoomSpawn(room, "Boss", out Vector2Int spawnPoint))
             return 0;
 
-        if (bossPrefab == null)
+        GameObject selectedPrefab = currentLevelDefinition.IsFinalBossLevel ? bossPrefab : miniBossPrefab;
+        if (selectedPrefab == null)
         {
-            BossController runtimeBoss = BossController.CreateDefaultBoss(
-                PrefabPlacer.GetWorldPosition(spawnPoint), manager);
-            spawnedObjects.Add(runtimeBoss.gameObject);
-            return 1;
+            Debug.LogError($"Level {currentLevel} boss prefab is missing.");
+            return 0;
         }
 
-        GameObject boss = Instantiate(bossPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity);
+        GameObject boss = Instantiate(selectedPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity);
         spawnedObjects.Add(boss);
-        BossController bossController = boss.GetComponentInChildren<BossController>();
-        if (bossController != null)
-            bossController.Initialize(manager);
+        // Bosses remain inside their own room instead of chasing through a
+        // corridor or walking their large sprite beyond the room walls.
+        EnemyMovement bossMovement = boss.GetComponent<EnemyMovement>();
+        SpriteRenderer bossVisual = boss.GetComponentInChildren<SpriteRenderer>();
+        if (bossMovement != null)
+            bossMovement.ConfigureBossArena(room.FloorTiles,
+                bossVisual != null ? (Vector2)bossVisual.bounds.extents : Vector2.one);
+        EnemyHealth health = boss.GetComponent<EnemyHealth>();
+        if (health == null)
+        {
+            Debug.LogError($"Level {currentLevel} boss prefab has no EnemyHealth component.");
+            return 0;
+        }
 
-        bool canBeDefeated = bossController != null || boss.GetComponentInChildren<Enemy>() != null;
-        if (!canBeDefeated)
-            Debug.LogWarning("Boss prefab has no Enemy or BossController component and will not block the exit.");
-        return canBeDefeated ? 1 : 0;
+        // Level 9 uses a tougher Bone Sentinel without modifying the shared asset from level 5.
+        if (currentLevel == 9 && health.Config != null)
+        {
+            EnemyConfigSO variant = Instantiate(health.Config);
+            variant.maxHealth = 260;
+            variant.attackCooldown = 1.75f;
+            health.Configure(variant);
+            boss.GetComponent<EnemyCombat>()?.Configure(variant);
+            boss.GetComponent<EnemySummoner>()?.Configure(variant);
+            boss.GetComponent<MiniBossController>()?.SetVariantColor(new Color(0.9f, 0.72f, 1f));
+        }
+
+        return 1;
     }
 
     private FloorExit PlaceExit(DungeonRoom room)
@@ -429,6 +556,14 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private DungeonRoom GenerateRoomCorridorPair(Vector2Int startPosition, RoomType roomType, bool createCorridor)
     {
         HashSet<Vector2Int> roomFloor = roomGenerator.GenerateRoom(startPosition);
+        if (roomType == RoomType.Boss && currentLevelDefinition.Type != LevelType.Standard)
+        {
+            // A predictable clear arena gives the large mini/final boss room to
+            // move without its artwork clipping the procedural outer walls.
+            for (int x = -8; x <= 8; x++)
+            for (int y = -8; y <= 8; y++)
+                roomFloor.Add(startPosition + new Vector2Int(x, y));
+        }
         DungeonRoom room = new(roomType, roomFloor, GetRoomSpawnPoint(roomFloor));
         dungeonLayout.AddRoom(room);
 

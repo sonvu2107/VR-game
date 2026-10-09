@@ -1,3 +1,5 @@
+// Chọn ô sàn an toàn và giữ chỗ ô lân cận, tránh quái/vật phẩm/cổng chồng lên
+// nhau. Kết quả trả về là số quái tạo thật, dùng cho bộ đếm hoàn thành level.
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -27,6 +29,36 @@ public class PrefabPlacer : MonoBehaviour
             GameObject spawnedMob = Instantiate(enemyInfo.Mob[0].sprite, GetWorldPosition(spawnPoint),
                 Quaternion.identity);
             spawnedObjects?.Add(spawnedMob);
+            placedMobs++;
+        }
+
+        return placedMobs;
+    }
+
+    public static int PlaceMobs(IReadOnlyList<GameObject> prefabs, DungeonRoom room,
+        SeededRandom random, HashSet<Vector2Int> occupiedCells, int spawnClearance,
+        ICollection<GameObject> spawnedObjects)
+    {
+        int placedMobs = 0;
+        if (prefabs == null) return placedMobs;
+
+        foreach (GameObject prefab in prefabs)
+        {
+            if (prefab == null)
+            {
+                Debug.LogError("A level enemy prefab is missing.");
+                continue;
+            }
+
+            if (!TryClaimSpawnPoint(room.FloorTiles, random, occupiedCells, spawnClearance,
+                    out Vector2Int spawnPoint))
+            {
+                Debug.LogWarning($"Not enough safe tiles for all enemies in the {room.Type} room.");
+                break;
+            }
+
+            GameObject instance = Instantiate(prefab, GetWorldPosition(spawnPoint), Quaternion.identity);
+            spawnedObjects?.Add(instance);
             placedMobs++;
         }
 

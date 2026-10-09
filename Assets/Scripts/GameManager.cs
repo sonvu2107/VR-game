@@ -80,11 +80,23 @@ public class GameManager : MonoBehaviour
         EnsurePlayerControls();
         pauseAction = playerControls.Player.Pause;
         pauseAction.Enable();
+        EnemySignals.EnemyDied += OnConfiguredEnemyDied;
+        EnemySignals.MiniBossDefeated += OnConfiguredEnemyDied;
+        EnemySignals.BossDefeated += OnConfiguredEnemyDied;
     }
 
     private void OnDisable()
     {
         pauseAction?.Disable();
+        EnemySignals.EnemyDied -= OnConfiguredEnemyDied;
+        EnemySignals.MiniBossDefeated -= OnConfiguredEnemyDied;
+        EnemySignals.BossDefeated -= OnConfiguredEnemyDied;
+    }
+
+    private void OnConfiguredEnemyDied(EnemyHealth enemy)
+    {
+        if (enemy != null && enemy.CountsForLegacyCounter && CurrentState == GameState.Playing)
+            EnemyDefeated();
     }
 
     private void Start()
@@ -175,6 +187,8 @@ public class GameManager : MonoBehaviour
         LevelTimeRemaining = definition?.TimeLimitSeconds ?? 0f;
         lastDisplayedSecond = -1;
         advanceRequestPending = false;
+        HealthController health = PlayerMovement != null ? PlayerMovement.GetComponent<HealthController>() : null;
+        health?.RestoreFullHealth();
         SetState(GameState.Playing);
         LevelChanged?.Invoke(CurrentLevel, TotalLevels);
         FloorChanged?.Invoke(CurrentLevel, TotalLevels);

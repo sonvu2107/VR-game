@@ -2,15 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Builds the combat skill HUD at runtime. The illustrated frame is layered over the
-/// skill icon and cooldown fill, keeping a consistent premium look in every scene.
+/// Builds the Shift/Q/E/R HUD at runtime. Each icon stays above the background;
+/// four thin border strips replace the old full-size empty Image that hid icons.
 /// </summary>
 public class SkillHudController : MonoBehaviour
 {
     private const float SlotSize = 132f;
     private const float SlotGap = 14f;
     private const float LabelHeight = 22f;
-    private const string FrameResourcePath = "UI/SkillHud/SkillSlotFrame_ObsidianCyan";
 
     private PlayerMovement movement;
     private PlayerSkillController skills;
@@ -61,14 +60,13 @@ public class SkillHudController : MonoBehaviour
         holderRect.sizeDelta = new Vector2(SlotSize * 4f + SlotGap * 3f, SlotSize + LabelHeight);
         holderRect.anchoredPosition = new Vector2(0f, 28f);
 
-        Sprite frameSprite = LoadSprite(FrameResourcePath);
-        dashSlot = CreateSlot(holder.transform, 0, "SHIFT", "DASH", "UI/Skills/IconDash", frameSprite);
-        swordWaveSlot = CreateSlot(holder.transform, 1, "Q", "SWORD WAVE", "UI/Skills/IconSwordWave", frameSprite);
-        spinSlashSlot = CreateSlot(holder.transform, 2, "E", "SPIN SLASH", "UI/Skills/IconSpinSlash", frameSprite);
-        ultimateSlot = CreateSlot(holder.transform, 3, "R", "ASHEN JUDGMENT", "UI/Skills/IconAshenJudgment", frameSprite);
+        dashSlot = CreateSlot(holder.transform, 0, "SHIFT", "DASH", "UI/Skills/IconDash");
+        swordWaveSlot = CreateSlot(holder.transform, 1, "Q", "SWORD WAVE", "UI/Skills/IconSwordWave");
+        spinSlashSlot = CreateSlot(holder.transform, 2, "E", "SPIN SLASH", "UI/Skills/IconSpinSlash");
+        ultimateSlot = CreateSlot(holder.transform, 3, "R", "ASHEN JUDGMENT", "UI/Skills/IconAshenJudgment");
     }
 
-    private static HudSlot CreateSlot(Transform parent, int index, string key, string label, string iconPath, Sprite frameSprite)
+    private static HudSlot CreateSlot(Transform parent, int index, string key, string label, string iconPath)
     {
         GameObject slot = new GameObject($"Skill Slot {key}");
         slot.transform.SetParent(parent, false);
@@ -82,19 +80,16 @@ public class SkillHudController : MonoBehaviour
         Image baseImage = CreateImage(slot.transform, "Obsidian Backplate", new Color(0.015f, 0.028f, 0.04f, 0.97f));
         SetAnchors(baseImage.rectTransform, new Vector2(0f, LabelHeight / (SlotSize + LabelHeight)), Vector2.one, 7f);
 
-        CreateIcon(slot.transform, iconPath);
-
         Image cooldown = CreateImage(slot.transform, "Cooldown Fill", new Color(0f, 0.01f, 0.02f, 0.72f));
         SetAnchors(cooldown.rectTransform, new Vector2(0.18f, 0.18f + LabelHeight / (SlotSize + LabelHeight)), new Vector2(0.82f, 0.82f), 0f);
         cooldown.type = Image.Type.Filled;
         cooldown.fillMethod = Image.FillMethod.Vertical;
         cooldown.fillOrigin = 1;
 
-        Image frame = CreateImage(slot.transform, "Obsidian Cyan Frame",
-            frameSprite != null ? Color.white : new Color(0.15f, 0.8f, 1f, 0.18f));
-        frame.sprite = frameSprite;
-        frame.preserveAspect = true;
-        SetAnchors(frame.rectTransform, new Vector2(0f, LabelHeight / (SlotSize + LabelHeight)), Vector2.one, 0f);
+        // The previous null-sprite Image covered the entire slot. SetCooldown
+        // then changed its color to opaque white, completely hiding the art.
+        Image[] border = CreateBorder(slot.transform);
+        Image icon = CreateIcon(slot.transform, iconPath);
 
         Image keyBadge = CreateImage(slot.transform, "Key Badge", new Color(0.018f, 0.075f, 0.10f, 0.96f));
         SetAnchors(keyBadge.rectTransform, new Vector2(0.10f, 0.69f), new Vector2(0.40f, 0.89f), 0f);
@@ -106,17 +101,38 @@ public class SkillHudController : MonoBehaviour
         Text labelText = CreateText(labelPlate.transform, label, 11, FontStyle.Bold, new Color(0.63f, 0.88f, 0.96f));
         Stretch(labelText.rectTransform, 1f);
 
-        return new HudSlot(baseImage, cooldown, frame, keyBadge, keyText, labelText);
+        return new HudSlot(baseImage, cooldown, border, icon, keyBadge, keyText, labelText);
     }
 
-    private static void CreateIcon(Transform parent, string resourcePath)
+    private static Image[] CreateBorder(Transform parent)
+    {
+        float bottom = LabelHeight / (SlotSize + LabelHeight);
+        float vertical = 3f / (SlotSize + LabelHeight);
+        float horizontal = 3f / SlotSize;
+        Color borderColor = new Color(0.23f, 0.8f, 0.95f, 0.9f);
+        Image[] parts = new Image[4];
+        parts[0] = CreateImage(parent, "Frame Top", borderColor);
+        SetAnchors(parts[0].rectTransform, new Vector2(0f, 1f - vertical), Vector2.one, 0f);
+        parts[1] = CreateImage(parent, "Frame Bottom", borderColor);
+        SetAnchors(parts[1].rectTransform, new Vector2(0f, bottom), new Vector2(1f, bottom + vertical), 0f);
+        parts[2] = CreateImage(parent, "Frame Left", borderColor);
+        SetAnchors(parts[2].rectTransform, new Vector2(0f, bottom), new Vector2(horizontal, 1f), 0f);
+        parts[3] = CreateImage(parent, "Frame Right", borderColor);
+        SetAnchors(parts[3].rectTransform, new Vector2(1f - horizontal, bottom), Vector2.one, 0f);
+        return parts;
+    }
+
+    private static Image CreateIcon(Transform parent, string resourcePath)
     {
         Sprite sprite = LoadSprite(resourcePath);
-        Image icon = CreateImage(parent, "Skill Icon",
-            sprite != null ? Color.white : new Color(0.18f, 0.72f, 0.9f, 0.72f));
+        Image icon = CreateImage(parent, "Skill Icon", Color.white);
         icon.sprite = sprite;
+        icon.enabled = sprite != null;
         icon.preserveAspect = true;
-        SetAnchors(icon.rectTransform, new Vector2(0.19f, 0.22f + LabelHeight / (SlotSize + LabelHeight)), new Vector2(0.81f, 0.79f), 0f);
+        SetAnchors(icon.rectTransform, new Vector2(0.10f, 0.08f + LabelHeight / (SlotSize + LabelHeight)), new Vector2(0.90f, 0.92f), 0f);
+        if (sprite == null)
+            Debug.LogError($"Missing HUD icon at Resources/{resourcePath}.png");
+        return icon;
     }
 
     private static Sprite LoadSprite(string resourcePath)
@@ -135,6 +151,7 @@ public class SkillHudController : MonoBehaviour
         imageObject.transform.SetParent(parent, false);
         Image image = imageObject.AddComponent<Image>();
         image.color = color;
+        image.raycastTarget = false;
         return image;
     }
 
@@ -149,6 +166,7 @@ public class SkillHudController : MonoBehaviour
         text.fontStyle = style;
         text.alignment = TextAnchor.MiddleCenter;
         text.color = color;
+        text.raycastTarget = false;
         text.horizontalOverflow = HorizontalWrapMode.Overflow;
         text.verticalOverflow = VerticalWrapMode.Overflow;
         return text;
@@ -180,16 +198,18 @@ public class SkillHudController : MonoBehaviour
     {
         private readonly Image background;
         private readonly Image cooldown;
-        private readonly Image frame;
+        private readonly Image[] border;
+        private readonly Image icon;
         private readonly Image keyBadge;
         private readonly Text key;
         private readonly Text label;
 
-        public HudSlot(Image background, Image cooldown, Image frame, Image keyBadge, Text key, Text label)
+        public HudSlot(Image background, Image cooldown, Image[] border, Image icon, Image keyBadge, Text key, Text label)
         {
             this.background = background;
             this.cooldown = cooldown;
-            this.frame = frame;
+            this.border = border;
+            this.icon = icon;
             this.keyBadge = keyBadge;
             this.key = key;
             this.label = label;
@@ -204,7 +224,10 @@ public class SkillHudController : MonoBehaviour
             label.color = contentColor;
             keyBadge.color = ready ? new Color(readyColor.r * 0.12f, readyColor.g * 0.12f, readyColor.b * 0.12f, 0.98f) : new Color(0.025f, 0.03f, 0.035f, 0.96f);
             background.color = ready ? new Color(readyColor.r * 0.035f, readyColor.g * 0.045f, readyColor.b * 0.055f, 0.98f) : new Color(0.012f, 0.016f, 0.02f, 0.98f);
-            frame.color = ready ? Color.white : new Color(0.45f, 0.50f, 0.54f, 0.95f);
+            icon.color = ready ? Color.white : new Color(0.55f, 0.62f, 0.66f, 0.86f);
+            foreach (Image edge in border)
+                edge.color = ready ? new Color(0.23f, 0.8f, 0.95f, 0.9f) :
+                    new Color(0.45f, 0.50f, 0.54f, 0.95f);
         }
 
         public void SetUltimate(float charge)
@@ -217,7 +240,10 @@ public class SkillHudController : MonoBehaviour
             label.color = color;
             keyBadge.color = ready ? new Color(0.22f, 0.07f, 0.015f, 0.98f) : new Color(0.035f, 0.05f, 0.065f, 0.96f);
             background.color = ready ? new Color(0.12f, 0.025f, 0.008f, 0.98f) : new Color(0.025f, 0.02f, 0.035f, 0.98f);
-            frame.color = ready ? new Color(1f, 0.75f, 0.32f, 1f) : new Color(0.77f, 0.84f, 0.90f, 1f);
+            icon.color = ready ? Color.white : new Color(0.70f, 0.73f, 0.78f, 0.90f);
+            foreach (Image edge in border)
+                edge.color = ready ? new Color(1f, 0.75f, 0.32f, 1f) :
+                    new Color(0.55f, 0.62f, 0.70f, 0.95f);
         }
     }
 }

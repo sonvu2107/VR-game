@@ -98,6 +98,7 @@ public class PlayerMovement : MonoBehaviour
     private readonly Collider2D[] enemyHitBuffer = new Collider2D[16];
     private readonly HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
     private readonly HashSet<BossController> hitBosses = new HashSet<BossController>();
+    private readonly HashSet<EnemyHealth> hitConfiguredEnemies = new HashSet<EnemyHealth>();
     private SpriteRenderer slashVfxRenderer;
     private Sprite[][] slashVfxFrames;
     private float slashVfxShownAt;
@@ -120,6 +121,7 @@ public class PlayerMovement : MonoBehaviour
     private bool heavyInputPending;
     private bool isHeavyCharging;
     private bool isHeavyAttacking;
+    private Coroutine heavyStrikeRoutine;
     private bool heavyPositionLocked;
     private float heavyInputStartedAt;
     private Vector2 heavyDirection;
@@ -189,6 +191,11 @@ public class PlayerMovement : MonoBehaviour
     {
         move?.Disable();
         attack?.Disable();
+        if (heavyStrikeRoutine != null)
+        {
+            StopCoroutine(heavyStrikeRoutine);
+            heavyStrikeRoutine = null;
+        }
         heavyInputPending = false;
         isHeavyCharging = false;
         isHeavyAttacking = false;
@@ -219,6 +226,8 @@ public class PlayerMovement : MonoBehaviour
         skillController = GetComponent<PlayerSkillController>();
         if (skillController == null)
             skillController = gameObject.AddComponent<PlayerSkillController>();
+        if (GetComponent<EnemyDirectionIndicator>() == null)
+            gameObject.AddComponent<EnemyDirectionIndicator>();
         AssertSingleAuthoritativePlayerVisual("startup");
     }
 
@@ -265,6 +274,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (isHeavyAttacking)
         {
+            HandleDashInput();
+            if (isDashing) return;
             _movement = Vector2.zero;
             powerupChargeVfx?.Hide();
             return;
@@ -349,7 +360,7 @@ public class PlayerMovement : MonoBehaviour
                 float heldTime = Time.time - heavyInputStartedAt;
                 heavyInputPending = false;
                 if (heldTime >= heavyChargeThreshold)
-                    StartCoroutine(PerformHeavyStrike(HeavyChargeNormalized));
+                    heavyStrikeRoutine = StartCoroutine(PerformHeavyStrike(HeavyChargeNormalized));
                 else
                     StartOrQueueComboAttack();
             }
@@ -427,9 +438,12 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (isAttacking || IsHeavyLocked || heavyInputPending || (skillController != null && skillController.IsSkillCasting) ||
-            Time.time < nextDashAt || !WasDashPressed())
+        if (Time.time < nextDashAt || !WasDashPressed() ||
+            (skillController != null && skillController.IsSkillCasting))
             return;
+
+        // Dash takes priority over a held or repeating left-click attack.
+        InterruptAttackForSkill();
 
         dashDirection = _movement.sqrMagnitude > 0.01f
             ? _movement.normalized
@@ -447,6 +461,33 @@ public class PlayerMovement : MonoBehaviour
     {
         return (Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame) ||
                (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame);
+    }
+
+    /// <summary>Cancel only the current attack so a newly pressed skill can start immediately.</summary>
+    public void InterruptAttackForSkill()
+    {
+        if (heavyStrikeRoutine != null)
+        {
+            StopCoroutine(heavyStrikeRoutine);
+            heavyStrikeRoutine = null;
+        }
+        if (isAttacking && !hitApplied && Time.time >= hitAt)
+            DealComboDamage();
+        isAttacking = false;
+        attackQueued = false;
+        hitApplied = true;
+        nextComboHit = 0;
+        comboExpiresAt = 0f;
+        heavyInputPending = false;
+        isHeavyCharging = false;
+        isHeavyAttacking = false;
+        heavyPositionLocked = false;
+        isDashing = false;
+        if (rb != null) rb.velocity = Vector2.zero;
+        if (slashVfxRenderer != null) slashVfxRenderer.enabled = false;
+        if (dashVfxRenderer != null) dashVfxRenderer.enabled = false;
+        if (playerSpriteRenderer != null) playerSpriteRenderer.color = Color.white;
+        RestoreAnimatorAfterHeavyStrike();
     }
 
     private float HeavyChargeNormalized
@@ -601,6 +642,7 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(heavyStrikeRecovery * 0.45f);
 
         isHeavyAttacking = false;
+        heavyStrikeRoutine = null;
         heavyPositionLocked = false;
         RestoreAnimatorAfterHeavyStrike();
         animator.SetFloat("Speed", _movement == Vector2.zero ? 0f : 5f);
@@ -873,7 +915,8 @@ public class PlayerMovement : MonoBehaviour
 
     public int DamageEnemiesInRadius(Vector2 center, float radius, int damage,
         HashSet<Enemy> alreadyHitEnemies = null, HashSet<BossController> alreadyHitBosses = null,
-        bool playSwordImpact = false)
+        bool playSwordImpact = false, HashSet<EnemyHealth> alreadyHitConfiguredEnemies = null,
+        CombatImpactKind impactKind = CombatImpactKind.Sword)
     {
         int hitCount = Physics2D.OverlapCircleNonAlloc(center, radius, enemyHitBuffer, enemyLayers);
         if (alreadyHitEnemies == null)
@@ -887,16 +930,38 @@ public class PlayerMovement : MonoBehaviour
             hitBosses.Clear();
             alreadyHitBosses = hitBosses;
         }
+        if (alreadyHitConfiguredEnemies == null)
+        {
+            hitConfiguredEnemies.Clear();
+            alreadyHitConfiguredEnemies = hitConfiguredEnemies;
+        }
 
         bool damagedEnemy = false;
         int damagedCount = 0;
 
         for (int i = 0; i < hitCount; i++)
         {
+            if (enemyHitBuffer[i] == null) continue;
+            EnemyHealth configured = enemyHitBuffer[i].GetComponentInParent<EnemyHealth>();
+            if (configured != null)
+            {
+                if (!configured.IsDead && alreadyHitConfiguredEnemies.Add(configured))
+                {
+                    configured.TakeDamage(damage);
+                    CombatHitVfx.Spawn(enemyHitBuffer[i].bounds.center, impactKind,
+                        configured.GetComponent<MiniBossController>() != null ||
+                        configured.GetComponent<SkeletonKingController>() != null ? 1.5f : 0.85f);
+                    damagedEnemy = true;
+                    damagedCount++;
+                }
+                continue;
+            }
+
             Enemy enemy = enemyHitBuffer[i].GetComponentInParent<Enemy>();
             if (enemy != null && alreadyHitEnemies.Add(enemy))
             {
                 enemy.TakeDamage(damage);
+                CombatHitVfx.Spawn(enemyHitBuffer[i].bounds.center, impactKind, 0.85f);
                 damagedEnemy = true;
                 damagedCount++;
             }
@@ -905,6 +970,7 @@ public class PlayerMovement : MonoBehaviour
             if (boss != null && alreadyHitBosses.Add(boss))
             {
                 boss.TakeDamage(damage);
+                CombatHitVfx.Spawn(enemyHitBuffer[i].bounds.center, impactKind, 1.4f);
                 damagedEnemy = true;
                 damagedCount++;
             }
@@ -935,6 +1001,7 @@ public class PlayerMovement : MonoBehaviour
         int hitCount = Physics2D.OverlapCircleNonAlloc(origin, range, enemyHitBuffer, enemyLayers);
         hitEnemies.Clear();
         hitBosses.Clear();
+        hitConfiguredEnemies.Clear();
         bool damagedEnemy = false;
         int damagedCount = 0;
 
@@ -949,10 +1016,24 @@ public class PlayerMovement : MonoBehaviour
                 Vector2.Dot(direction, targetOffset.normalized) < minDot)
                 continue;
 
+            EnemyHealth configured = targetCollider.GetComponentInParent<EnemyHealth>();
+            if (configured != null)
+            {
+                if (!configured.IsDead && hitConfiguredEnemies.Add(configured))
+                {
+                    configured.TakeDamage(damage);
+                    CombatHitVfx.Spawn(targetCollider.bounds.center, CombatImpactKind.Heavy, 1f);
+                    damagedEnemy = true;
+                    damagedCount++;
+                }
+                continue;
+            }
+
             Enemy enemy = targetCollider.GetComponentInParent<Enemy>();
             if (enemy != null && hitEnemies.Add(enemy))
             {
                 enemy.TakeDamage(damage);
+                CombatHitVfx.Spawn(targetCollider.bounds.center, CombatImpactKind.Heavy, 1f);
                 damagedEnemy = true;
                 damagedCount++;
             }
@@ -961,6 +1042,7 @@ public class PlayerMovement : MonoBehaviour
             if (boss != null && hitBosses.Add(boss))
             {
                 boss.TakeDamage(damage);
+                CombatHitVfx.Spawn(targetCollider.bounds.center, CombatImpactKind.Heavy, 1.4f);
                 damagedEnemy = true;
                 damagedCount++;
             }

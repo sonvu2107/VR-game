@@ -3949,37 +3949,37 @@ MonoBehaviour:
     levelType: 0
   - levelNumber: 4
     displayName: "C\u1EA1m b\u1EABy"
-    roomCount: 8
+    roomCount: 7
     enemyCountBonus: 1
     levelType: 0
   - levelNumber: 5
     displayName: Mini-boss I
-    roomCount: 8
+    roomCount: 7
     enemyCountBonus: 1
     levelType: 1
   - levelNumber: 6
     displayName: "B\xF3ng t\u1ED1i"
-    roomCount: 9
+    roomCount: 7
     enemyCountBonus: 1
     levelType: 0
   - levelNumber: 7
     displayName: Elite
-    roomCount: 9
+    roomCount: 7
     enemyCountBonus: 2
     levelType: 0
   - levelNumber: 8
     displayName: "M\xEA cung kh\xF3a"
-    roomCount: 10
+    roomCount: 7
     enemyCountBonus: 2
     levelType: 0
   - levelNumber: 9
     displayName: "Th\u1EED th\xE1ch cu\u1ED1i"
-    roomCount: 10
+    roomCount: 7
     enemyCountBonus: 2
     levelType: 1
   - levelNumber: 10
     displayName: "Boss cu\u1ED1i"
-    roomCount: 11
+    roomCount: 7
     enemyCountBonus: 3
     levelType: 2
   baseSeed: 12345
@@ -5282,8 +5282,14 @@ MonoBehaviour:
   manager: {fileID: 1546839684}
   playerTransform: {fileID: 5021843622550068940}
   treasurePrefab: {fileID: 0}
-  bossPrefab: {fileID: 0}
+  bossPrefab: {fileID: 8721264932229610125, guid: f95f371d78d9bef4e8b3bb5de11a9e27, type: 3}
   exitPrefab: {fileID: 0}
+  skeletonArcherPrefab: {fileID: 3475919434515223811, guid: 100c46ccb1d4e104e9897895b1ccfdfa, type: 3}
+  poisonSlimePrefab: {fileID: 2711008794874440880, guid: eeae670e6cd21fd439c42908131865c0, type: 3}
+  batPrefab: {fileID: 3402305536084570267, guid: b7fc54612733e2442839371220487f99, type: 3}
+  darkMagePrefab: {fileID: 7160897707472040552, guid: b30cf6cd56c111b4ba043c93a97efbd6, type: 3}
+  eliteEnemyPrefab: {fileID: 425042773012497610, guid: 1d0481c6f084990498e55e6466bfcf5f, type: 3}
+  miniBossPrefab: {fileID: 1138175006098687412, guid: efdfe85fed633f4488359e68b17d2c1c, type: 3}
   corridorLength: 40
   numberOfRooms: 10
   maxGenerationAttempts: 20
@@ -5626,7 +5632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5c3ab7ecb737a64f959bb67a54c291a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startHeart: 3
+  startHeart: 5
   currentHealth: 0
   gameManager: {fileID: 1546839684}
   heartImages:

@@ -83,20 +83,30 @@ public class PlayerSkillController : MonoBehaviour
 
     private void Update()
     {
-        if (!CanCast() || Keyboard.current == null)
+        if (Keyboard.current == null || player == null || isSkillCasting ||
+            GameManager.isGamePaused || GameManager.isGameOver || GameManager.isWin)
             return;
 
-        if (Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextSwordWaveAt)
+        bool castQ = Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextSwordWaveAt;
+        bool castE = Keyboard.current.eKey.wasPressedThisFrame && Time.time >= nextSpinSlashAt;
+        bool castR = Keyboard.current.rKey.wasPressedThisFrame && ultimateCharge >= ultimateChargeRequired;
+        if (!castQ && !castE && !castR)
+            return;
+
+        // A skill press interrupts a mouse combo or held heavy charge. Cooldown
+        // is checked first, so an unavailable skill never cancels an attack.
+        player.InterruptAttackForSkill();
+        if (castQ)
         {
             nextSwordWaveAt = Time.time + swordWaveCooldown;
             StartCoroutine(CastSwordWave());
         }
-        else if (Keyboard.current.eKey.wasPressedThisFrame && Time.time >= nextSpinSlashAt)
+        else if (castE)
         {
             nextSpinSlashAt = Time.time + spinSlashCooldown;
             StartCoroutine(CastSpinSlash());
         }
-        else if (Keyboard.current.rKey.wasPressedThisFrame && ultimateCharge >= ultimateChargeRequired)
+        else if (castR)
         {
             ultimateCharge = 0f;
             StartCoroutine(CastAshenJudgment());
@@ -109,13 +119,6 @@ public class PlayerSkillController : MonoBehaviour
             return;
 
         ultimateCharge = Mathf.Clamp(ultimateCharge + amount, 0f, ultimateChargeRequired);
-    }
-
-    private bool CanCast()
-    {
-        return player != null && !GameManager.isGamePaused && !GameManager.isGameOver && !GameManager.isWin &&
-            !player.IsAttacking && !player.IsDashing &&
-            !player.IsHeavyLocked && !player.IsHeavyInputPending && !isSkillCasting;
     }
 
     private IEnumerator CastSwordWave()
@@ -140,6 +143,7 @@ public class PlayerSkillController : MonoBehaviour
 
         HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
         HashSet<BossController> hitBosses = new HashSet<BossController>();
+        HashSet<EnemyHealth> hitConfiguredEnemies = new HashSet<EnemyHealth>();
         float elapsed = 0f;
 
         while (elapsed < swordWaveDuration)
@@ -149,7 +153,9 @@ public class PlayerSkillController : MonoBehaviour
             if (core != null)
                 core.transform.position = position;
 
-            int hitCount = player.DamageEnemiesInRadius(position, swordWaveRadius, swordWaveDamage, hitEnemies, hitBosses);
+            int hitCount = player.DamageEnemiesInRadius(position, swordWaveRadius, swordWaveDamage,
+                hitEnemies, hitBosses, alreadyHitConfiguredEnemies: hitConfiguredEnemies,
+                impactKind: CombatImpactKind.SwordWave);
             if (hitCount > 0)
             {
                 if (core != null)
@@ -228,7 +234,8 @@ public class PlayerSkillController : MonoBehaviour
             elapsed += Time.deltaTime;
             if (nextPulse < pulseTimes.Length && elapsed >= pulseTimes[nextPulse])
             {
-                player.DamageEnemiesInRadius(transform.position, spinSlashRadius, spinSlashDamagePerPulse);
+                player.DamageEnemiesInRadius(transform.position, spinSlashRadius, spinSlashDamagePerPulse,
+                    impactKind: CombatImpactKind.SpinSlash);
                 nextPulse++;
             }
             yield return null;
@@ -263,14 +270,16 @@ public class PlayerSkillController : MonoBehaviour
         for (int pulse = 0; pulse < 3; pulse++)
         {
             yield return new WaitForSeconds(0.16f);
-            player.DamageEnemiesInRadius(strikePosition, ultimateRadius, ultimateSlashDamage);
+            player.DamageEnemiesInRadius(strikePosition, ultimateRadius, ultimateSlashDamage,
+                impactKind: CombatImpactKind.Ashen);
             StartCoroutine(ShakeMainCamera(0.07f, 0.045f));
         }
 
         float finalStartedAt = Time.time;
         CreateEffect("Ashen Judgment Final", ultimateImpactFrames, strikePosition, 4.75f, ultimateFinalVfxDuration,
             Quaternion.identity, null, 3, smoothFrames: true);
-        player.DamageEnemiesInRadius(strikePosition, ultimateRadius * 1.15f, ultimateImpactDamage);
+        player.DamageEnemiesInRadius(strikePosition, ultimateRadius * 1.15f, ultimateImpactDamage,
+            impactKind: CombatImpactKind.Ashen);
         yield return StartCoroutine(PlayImpactFeedback(0.28f, 0.14f, 0.075f));
 
         // Keep the body pose and input lock in sync with the configured cast

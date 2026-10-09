@@ -1,3 +1,5 @@
+// AI Skeleton Warrior cũ. NavMeshAgent chịu trách nhiệm di chuyển; class này
+// vẫn phục vụ prefab Warrior trong các level đầu.
 using System;
 using System.Collections;
 using UnityEngine;
@@ -16,6 +18,7 @@ public class Enemy : MonoBehaviour
     public float attackRange;
     public LayerMask playerLayer;
     public int attackDamage;
+    [SerializeField] private bool countsForLevelClear = true;
     public AudioSource audioSource;
     public GameManager manager;
     
@@ -25,12 +28,13 @@ public class Enemy : MonoBehaviour
     private HealthController playerHealthController;
     
     private float changeDirectionCooldown = 2f;
-    private double angleChange;
+    private float angleChange;
     private float distance;
     private float wanderSpeedActual;
     private bool attackBlocked;
     private bool isDead;
     private int currentHealth;
+    public bool IsDead => isDead;
 
     private void Awake()
     {
@@ -41,7 +45,8 @@ public class Enemy : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        GameObject managerObject = GameObject.FindGameObjectWithTag("GameManager");
+        manager = managerObject != null ? managerObject.GetComponent<GameManager>() : null;
         
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -50,12 +55,13 @@ public class Enemy : MonoBehaviour
         currentHealth = maxHealth;
 
         target = GameObject.Find("Player");
-        playerHealthController = target.GetComponent<HealthController>();
+        playerHealthController = target != null ? target.GetComponent<HealthController>() : null;
     }
 
     void Update()
     {
-        if (playerHealthController.currentHealth <= 0)
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh || target == null ||
+            playerHealthController == null || playerHealthController.currentHealth <= 0)
         {
             this.enabled = false;
             return;
@@ -67,15 +73,20 @@ public class Enemy : MonoBehaviour
         if (distance < maxDistance && distance > minDistance)
         {
             animator.SetFloat("WalkSpeed", 101);
+            agent.speed = chaseSpeed;
             agent.SetDestination(target.transform.position);
         }
         else if (distance > maxDistance)
         {
             animator.SetFloat("WalkSpeed", wanderSpeedActual);
-            Vector3 toMove = new Vector3((float)System.Math.Cos(angleChange), (float)System.Math.Sin(angleChange), 0);
-            
-            transform.position =
-                Vector2.MoveTowards(transform.position, transform.position + toMove * 5, wanderSpeedActual * Time.deltaTime);
+            agent.speed = wanderSpeedActual;
+            Vector3 toMove = new Vector3(Mathf.Cos(angleChange * Mathf.Deg2Rad),
+                Mathf.Sin(angleChange * Mathf.Deg2Rad), 0f);
+            // Agent, khong phai Transform, di chuyen de tranh lech NavMesh/xuyen tuong.
+            if ((!agent.hasPath || agent.remainingDistance <= agent.stoppingDistance) &&
+                NavMesh.SamplePosition(transform.position + toMove * 3f,
+                    out NavMeshHit wanderPoint, 2f, NavMesh.AllAreas))
+                agent.SetDestination(wanderPoint.position);
         }
         else
         {
@@ -120,10 +131,13 @@ public class Enemy : MonoBehaviour
 
     private void HurtPlayer()
     {
-        Collider2D hitPlayer =
-            Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
+        Collider2D hitPlayer = Physics2D.OverlapCircle(
+            attackPoint != null ? attackPoint.position : transform.position, attackRange, playerLayer);
         if (hitPlayer != null)
+        {
             playerHealthController.TakeDamage(attackDamage);
+            CombatHitVfx.Spawn(hitPlayer.bounds.center, CombatImpactKind.EnemyMelee, 0.8f);
+        }
     }
 
     public void TakeDamage(int damage)
@@ -140,16 +154,24 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void SetCountsForLevelClear(bool value)
+    {
+        countsForLevelClear = value;
+    }
+
     private void Die()
     {
         if (isDead)
             return;
 
         isDead = true;
-        manager?.EnemyDefeated();
+        if (countsForLevelClear)
+            manager?.EnemyDefeated();
         
-        animator.SetBool("isDead", true);
-        GetComponent<Collider2D>().enabled = false;
+        if (animator != null) animator.SetBool("isDead", true);
+        Collider2D bodyCollider = GetComponent<Collider2D>();
+        if (bodyCollider != null) bodyCollider.enabled = false;
+        if (agent != null && agent.enabled) agent.enabled = false;
 
         this.enabled = false;
     }

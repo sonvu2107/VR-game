@@ -1,3 +1,5 @@
+// Boss legacy của project; giữ để prefab cũ vẫn chạy, boss mới dùng
+// SkeletonKingController và EnemyHealth để đồng bộ sự kiện chết.
 using UnityEngine;
 
 /// <summary>
@@ -33,6 +35,7 @@ public class BossController : MonoBehaviour
     private int currentHealth;
     private bool isRegistered;
     private bool isDead;
+    public bool IsDead => isDead;
     private bool isWindingUp;
     private bool isDashing;
     private float windupEndsAt;
@@ -242,7 +245,10 @@ public class BossController : MonoBehaviour
     private void TryDamagePlayer(float range)
     {
         if (playerHealth != null && Vector2.Distance(transform.position, player.position) <= range)
+        {
             playerHealth.TakeDamage(attackDamage);
+            CombatHitVfx.Spawn(player.position, CombatImpactKind.Boss, 1.3f);
+        }
     }
 
     private void RegisterWithManager()
