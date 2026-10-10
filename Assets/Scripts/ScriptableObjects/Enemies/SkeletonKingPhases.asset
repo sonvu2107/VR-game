@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9631250f1fcc482bb050becb3ca1856b, type: 3}
+  m_Name: SkeletonKingPhases
+  m_EditorClassIdentifier: 
+  phases:
+  - healthThreshold: 1
+    moveSpeed: 2.4
+    attackCooldown: 1.8
+    summonSkeletons: 0
+    createHazards: 0
+    fireSwordWaves: 0
+    repositionAfterAttack: 0
+  - healthThreshold: 0.65
+    moveSpeed: 2.8
+    attackCooldown: 1.5
+    summonSkeletons: 1
+    createHazards: 1
+    fireSwordWaves: 0
+    repositionAfterAttack: 0
+  - healthThreshold: 0.3
+    moveSpeed: 3.3
+    attackCooldown: 1.15
+    summonSkeletons: 0
+    createHazards: 1
+    fireSwordWaves: 1
+    repositionAfterAttack: 1
+  transitionDuration: 1.25
+  maximumSummons: 4
+  hazardCooldown: 6
+  waveSpeed: 6

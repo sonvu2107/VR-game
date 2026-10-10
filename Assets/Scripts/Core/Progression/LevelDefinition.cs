@@ -92,13 +92,13 @@ public sealed class LevelDefinition
             new(1, "Khởi đầu", 6, 0, LevelType.Standard),
             new(2, "Mở rộng", 7, 0, LevelType.Standard),
             new(3, "Tấn công từ xa", 7, 1, LevelType.Standard),
-            new(4, "Cạm bẫy", 8, 1, LevelType.Standard, keys: 1, traps: 3),
-            new(5, "Mini-boss I", 8, 1, LevelType.MiniBoss),
-            new(6, "Bóng tối", 9, 1, LevelType.Standard, darkRadius: 7f),
-            new(7, "Elite", 9, 2, LevelType.Standard),
-            new(8, "Mê cung khóa", 10, 2, LevelType.Standard, keys: 2),
-            new(9, "Thử thách cuối", 10, 2, LevelType.MiniBoss, timeLimit: 240f),
-            new(10, "Boss cuối", 11, 3, LevelType.FinalBoss)
+            new(4, "Cạm bẫy", 7, 1, LevelType.Standard, keys: 1, traps: 3),
+            new(5, "Mini-boss I", 7, 1, LevelType.MiniBoss),
+            new(6, "Bóng tối", 7, 1, LevelType.Standard, darkRadius: 7f),
+            new(7, "Elite", 7, 2, LevelType.Standard),
+            new(8, "Mê cung khóa", 7, 2, LevelType.Standard, keys: 2),
+            new(9, "Thử thách cuối", 7, 2, LevelType.MiniBoss, timeLimit: 240f),
+            new(10, "Boss cuối", 7, 3, LevelType.FinalBoss)
         };
     }
 }
