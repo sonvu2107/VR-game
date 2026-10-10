@@ -143,6 +143,14 @@ public static class CoreProgressionProbe
 
         completedLevels.Add(currentLevel);
         manager.SetEnemyCount(0);
+        while (manager.KeysCollected < manager.KeysRequired)
+        {
+            if (!manager.CollectKey())
+            {
+                Fail($"Level {currentLevel} could not collect its required keys.");
+                return;
+            }
+        }
         manager.AuthorizeLevelAdvance(currentLevel);
 
         if (currentLevel < manager.TotalLevels && manager.CurrentState != GameState.LevelCompleted)
@@ -255,8 +263,16 @@ public static class CoreProgressionProbe
             return false;
         }
 
-        if (EditorApplication.timeSinceStartup - powerupVfxStartedAt < 1.6d)
+        double vfxElapsed = EditorApplication.timeSinceStartup - powerupVfxStartedAt;
+        if (powerupVfxUnderTest.AnimationStepCount <= 20 ||
+            powerupVfxUnderTest.CompletedLoopCount < 1)
+        {
+            if (vfxElapsed < 5d)
+                return false;
+
+            Fail("Ground-circle VFX did not complete a continuous loop during hold.");
             return false;
+        }
 
         if (!powerupVfxUnderTest.IsUsingTimeMagicFrames || !powerupVfxUnderTest.IsVisible)
         {
@@ -269,13 +285,6 @@ public static class CoreProgressionProbe
         {
             Fail($"Ground-circle VFX left its full color loop: " +
                 $"{powerupVfxUnderTest.CurrentFrameIndex}.");
-            return false;
-        }
-
-        if (powerupVfxUnderTest.AnimationStepCount <= 10 ||
-            powerupVfxUnderTest.CompletedLoopCount < 1)
-        {
-            Fail("Ground-circle VFX did not complete a continuous loop during hold.");
             return false;
         }
 
