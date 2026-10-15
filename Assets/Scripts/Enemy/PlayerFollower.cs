@@ -174,6 +174,25 @@ public class Enemy : MonoBehaviour
         if (agent != null && agent.enabled) agent.enabled = false;
 
         this.enabled = false;
+        StartCoroutine(CleanupCorpseAfterDelay());
+    }
+
+    private IEnumerator CleanupCorpseAfterDelay()
+    {
+        yield return new WaitForSeconds(1.5f);
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            float elapsed = 0f;
+            Color c = sr.color;
+            while (elapsed < 0.8f)
+            {
+                elapsed += Time.deltaTime;
+                sr.color = new Color(c.r, c.g, c.b, Mathf.Lerp(c.a, 0f, elapsed / 0.8f));
+                yield return null;
+            }
+        }
+        Destroy(gameObject);
     }
     
     private IEnumerator DelayAttack()

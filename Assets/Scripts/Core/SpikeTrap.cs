@@ -13,7 +13,7 @@ public sealed class SpikeTrap : MonoBehaviour
 
     [Header("Damage")]
     [SerializeField, Min(1)] private int baseDamage = 1;
-    [SerializeField, Min(0)] private int extraDamagePerLevel = 1;
+    [SerializeField, Min(0)] private int extraDamagePerLevel = 0;
     [SerializeField, Min(0.05f)] private float damageCooldown = 0.75f;
 
     [Header("Cycle")]

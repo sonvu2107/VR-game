@@ -117,10 +117,10 @@ public class EnemyBrain : MonoBehaviour
         }
 
         bool keepsRange = config.archetype == EnemyArchetype.Ranged || config.archetype == EnemyArchetype.Summoner;
-        if (keepsRange && distance < config.preferredRange * 0.65f)
+        if (keepsRange && distance < 1.8f)
         {
             ChangeState(EnemyState.Wander);
-            movement?.TryRetreatFrom(target.transform.position, config.preferredRange, config.chaseSpeed, config.repathInterval);
+            movement?.TryRetreatFrom(target.transform.position, 2.4f, config.wanderSpeed, config.repathInterval);
             SetWalkAnimation(true, false);
             return;
         }
@@ -216,12 +216,30 @@ public class EnemyBrain : MonoBehaviour
         if (visual != null) visual.color = originalColor;
         movement?.SetDestination(target.transform.position, config.dashSpeed, 0.05f, true);
         if (animator != null && HasTrigger(animator, "Special")) animator.SetTrigger("Special");
-        yield return new WaitForSeconds(config.dashDuration);
+
+        float dashTimer = 0f;
+        bool hitDuringDash = false;
+        while (dashTimer < config.dashDuration)
+        {
+            dashTimer += Time.deltaTime;
+            if (!hitDuringDash && target != null && target.currentHealth > 0)
+            {
+                float d = Vector2.Distance(transform.position, target.transform.position);
+                if (d <= 1.2f)
+                {
+                    hitDuringDash = true;
+                    target.TakeDamage(config.attackDamage);
+                    CombatHitVfx.Spawn(target.transform.position, CombatImpactKind.Bat, 1.1f);
+                }
+            }
+            yield return null;
+        }
+
         isDashing = false;
-        if (health != null && !health.IsDead && target != null && target.currentHealth > 0)
+        if (!hitDuringDash && health != null && !health.IsDead && target != null && target.currentHealth > 0)
         {
             float dist = Vector2.Distance(transform.position, target.transform.position);
-            if (dist <= config.attackRange + 0.5f) combat?.TryAttack(target, true);
+            if (dist <= config.attackRange + 0.6f) combat?.TryAttack(target, false);
         }
         yield return new WaitForSeconds(cooldown);
         dashRoutine = null;
@@ -231,7 +249,7 @@ public class EnemyBrain : MonoBehaviour
     {
         if (health == null || health.IsDead) return;
         combat?.CancelAttack();
-        hurtUntil = Time.time + 0.2f;
+        hurtUntil = Time.time + 0.35f;
         ChangeState(EnemyState.Hurt);
         movement?.Stop();
     }

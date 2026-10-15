@@ -33,12 +33,18 @@ public class MiniBossController : MonoBehaviour
         if (config == null) config = GetComponent<EnemyBrain>()?.Config;
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (spriteRenderer != null) normalColor = spriteRenderer.color;
+
+        Boss3DVisual visual3D = GetComponent<Boss3DVisual>();
+        if (visual3D == null)
+            visual3D = gameObject.AddComponent<Boss3DVisual>();
+        visual3D.Setup(Boss3DVisual.BossVisualKind.BoneSentinel, new Color(0.35f, 0.88f, 1f, 0.82f));
     }
 
     public void SetVariantColor(Color color)
     {
         normalColor = color;
         if (spriteRenderer != null) spriteRenderer.color = color;
+        GetComponent<Boss3DVisual>()?.Setup(Boss3DVisual.BossVisualKind.BoneSentinel, color);
     }
 
     private void OnEnable()
