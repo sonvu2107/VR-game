@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     
     public float speed = 5f;
     [Header("Attack Movement")]
-    [Range(0f, 1f)] public float attackMoveSpeedMultiplier = 0.65f;
+    [Range(0f, 1f)] public float attackMoveSpeedMultiplier = 0.85f;
     [Header("Dash")]
     [Tooltip("Press Left Shift or the gamepad right shoulder button to dash.")]
     [Min(0.05f)] public float dashDuration = 0.16f;
@@ -240,6 +240,15 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
+        }
+    }
+
+    public void SetFacing(bool faceLeft)
+    {
+        if (isFacingLeft != faceLeft)
+        {
+            isFacingLeft = faceLeft;
+            Flip();
         }
     }
 

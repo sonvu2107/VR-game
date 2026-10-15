@@ -78,19 +78,80 @@ public class HealthController : MonoBehaviour
         }
     }
 
+    [SerializeField] private float invulnerableDuration = 0.85f;
+    [SerializeField] private int maxDamagePerHit = 1; // 1 máu tương đương nửa trái tim (healthPerHeart = 2)
+    private float invulnerableUntil = -1f;
+    private SpriteRenderer[] renderers;
+    private Coroutine flashRoutine;
+
     public void TakeDamage(int amount)
     {
         if (amount <= 0 || currentHealth <= 0) return;
+        if (Time.time < invulnerableUntil) return;
+
+        if (maxDamagePerHit > 0)
+        {
+            amount = Mathf.Min(amount, maxDamagePerHit);
+        }
+
+        invulnerableUntil = Time.time + invulnerableDuration;
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        animator.SetTrigger("Hurt");
+        if (animator != null) animator.SetTrigger("Hurt");
         UpdateHearts();
 
         if (currentHealth <= 0)
         {
-            animator.SetBool("isDead", true);
-            gameManager.GameOver();
+            if (animator != null) animator.SetBool("isDead", true);
+            if (gameManager != null) gameManager.GameOver();
         }
+        else
+        {
+            StartInvulnerabilityFlash();
+        }
+    }
+
+    private void StartInvulnerabilityFlash()
+    {
+        if (flashRoutine != null) StopCoroutine(flashRoutine);
+        flashRoutine = StartCoroutine(InvulnerabilityFlashRoutine());
+    }
+
+    private System.Collections.IEnumerator InvulnerabilityFlashRoutine()
+    {
+        if (renderers == null || renderers.Length == 0)
+            renderers = GetComponentsInChildren<SpriteRenderer>();
+
+        float elapsed = 0f;
+        bool visible = true;
+        while (elapsed < invulnerableDuration)
+        {
+            visible = !visible;
+            float alpha = visible ? 1f : 0.35f;
+            foreach (var r in renderers)
+            {
+                if (r != null)
+                {
+                    Color c = r.color;
+                    c.a = alpha;
+                    r.color = c;
+                }
+            }
+            yield return new WaitForSeconds(0.08f);
+            elapsed += 0.08f;
+        }
+
+        // Restore full opacity
+        foreach (var r in renderers)
+        {
+            if (r != null)
+            {
+                Color c = r.color;
+                c.a = 1f;
+                r.color = c;
+            }
+        }
+        flashRoutine = null;
     }
 
     public bool TryHeal(int amount)

@@ -117,6 +117,16 @@ public class GameManager : MonoBehaviour
                 Resume();
         }
 
+        if (CurrentState is GameState.GameOver or GameState.Paused)
+        {
+            bool rPressed = (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame);
+            try { if (!rPressed) rPressed = Input.GetKeyDown(KeyCode.R); } catch {}
+            if (rPressed && CurrentState == GameState.GameOver)
+            {
+                RestartGame();
+            }
+        }
+
         TickLevelTimer();
     }
 
