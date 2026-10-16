@@ -2,8 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Boundary between the core game loop and a LAN transport implementation.
-/// A future Netcode bridge should forward client requests to the Host and
-/// publish authoritative state changes to connected clients.
+/// LanSessionBridge forwards inputs to the Host and replicates its world.
 /// </summary>
 public abstract class GameSessionBridge : MonoBehaviour
 {

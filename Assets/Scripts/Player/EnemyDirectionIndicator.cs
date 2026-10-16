@@ -94,7 +94,7 @@ public sealed class EnemyDirectionIndicator : MonoBehaviour
             }
         }
         texture.SetPixels32(pixels);
-        texture.Apply(false, true);
+        texture.Apply(false, LanLaunch.Mode == LanMode.Solo);
         return Sprite.Create(texture, new Rect(0, 0, size, size),
             new Vector2(0.5f, 0.5f), 16f);
     }

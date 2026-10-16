@@ -117,6 +117,14 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
         ConfigureLevelLighting();
 
+        DungeonDecorator.DecorateDungeon(
+            dungeonLayout,
+            random,
+            occupiedCells,
+            spawnedObjects,
+            currentLevel,
+            currentLevelDefinition.Type);
+
         manager.CompleteLevelGeneration(floorExit, spawnedEnemyCount);
         return true;
     }

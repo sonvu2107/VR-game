@@ -24,12 +24,15 @@
 - Cổng chuyển level chỉ mở sau khi toàn bộ enemy bị tiêu diệt và đủ chìa khóa ở level có khóa.
 - Level 4 có bẫy gai và một chìa khóa; level 6 giới hạn tầm nhìn; level 8 yêu cầu hai chìa khóa; level 9 có giới hạn 4 phút.
 - Cấu hình chiến dịch đánh dấu level thường, mini-boss và boss cuối.
-- Có `GameSessionBridge` làm ranh giới tích hợp quyền Host/Client cho LAN co-op.
+- LAN co-op hai người trên hai máy: Host/Join bằng IPv4, Host xử lý gameplay và đồng bộ bản đồ, Player, Enemy, cổng, VFX cùng trạng thái chiến dịch.
 - Tự động tạo sàn và tường bằng Tilemap.
 - NavMesh 2D hỗ trợ enemy tìm đường và đuổi theo người chơi.
 - Di chuyển nhân vật bằng bàn phím hoặc gamepad.
 - Đánh thường và kỹ năng tích lực gây sát thương diện rộng.
 - Hệ thống máu hiển thị bằng các biểu tượng trái tim.
+- HUD gồm minimap, 5 tim và mũi tên chỉ quái gần nhất. Mỗi lần trúng đòn mất tối đa nửa tim, kèm 0,85 giây bất tử.
+- Q tự ngắm mục tiêu gần trong phạm vi 14 đơn vị; E chém xoay; R sẵn sàng khi bắt đầu, tự hồi nộ và nhận nộ khi Q/E trúng quái.
+- Trang trí hầm ngục tự sinh: đuốc và ánh sáng nhấp nháy, cờ, thùng góc phòng, rương phòng kho báu; boss có bóng đổ, vòng ma pháp và chuyển động giả lập chiều sâu.
 - Enemy Skeleton có hành vi đi lang thang, truy đuổi và tấn công.
 - Hiển thị số lượng enemy còn lại.
 - Các trạng thái Pause, Game Over và Victory.
@@ -47,9 +50,12 @@ Mục tiêu hiện tại của người chơi là khám phá mê cung và tiêu 
 | Đánh thường | Chuột trái hoặc `Left Alt` |
 | Tích lực | Giữ `Space` |
 | Tung đòn tích lực | Thả `Space` |
+| Lướt | `Left Shift` |
+| Kiếm khí tự ngắm / chém xoay / tuyệt kỹ | `Q` / `E` / `R` |
 | Tạm dừng/tiếp tục | `Esc` |
+| Chơi lại tại Game Over | `R` (LAN: chỉ Host) |
 
-Đánh thường chỉ được thực hiện một lần cho mỗi lần nhấn. Người chơi cần thả nút rồi nhấn lại để đánh tiếp.
+Giữ nút đánh thường để tiếp tục chuỗi đòn. Kỹ năng và lướt sử dụng cooldown riêng.
 
 ### Gamepad
 
@@ -59,6 +65,21 @@ Mục tiêu hiện tại của người chơi là khám phá mê cung và tiêu 
 | Đánh thường | Right Trigger |
 
 Kỹ năng tích lực và Pause hiện chưa được gán đầy đủ cho gamepad.
+
+## Chơi co-op qua LAN
+
+Hai máy dùng **cùng một bản build Windows**, kết nối cùng mạng LAN/Wi-Fi.
+
+1. Trong menu, chọn **Start**, rồi chọn **Tạo phòng LAN (Host)**. Cổng mặc định là `7777` (TCP).
+2. Host gửi địa chỉ IPv4 hiển thị trên thanh LAN cho người chơi còn lại.
+3. Máy thứ hai chọn **Tham gia phòng (Join)**, nhập IP Host và cùng cổng.
+4. Nếu Windows Firewall hỏi, cho phép game trên mạng **Private**. Nếu không vào được, kiểm tra hai máy có liên lạc được và mạng Wi-Fi không bật cô lập thiết bị.
+
+Mỗi người dùng bàn phím/chuột trên máy của mình, có máu và hồi chiêu riêng. Cả hai có thể đánh thường, giữ chuột để đánh mạnh, Dash, Q/E/R và giữ/thả Space. Quái chọn người còn sống gần nhất. Người hết máu tạm ngừng điều khiển, được hồi sinh khi đồng đội sang level tiếp theo; cả hai hết máu thì Game Over. Esc tạm dừng/tiếp tục **cả phòng**; Restart do Host thực hiện và reset đồng thời chiến dịch, máu, kỹ năng. Chọn **Rời phòng** để về menu. Host chờ khi người thứ hai ngắt kết nối và cho phép Join lại.
+
+Client nhận Tilemap thực tế từ Host, không tự sinh map hoặc tự tính sát thương. Host gửi hình ảnh trạng thái 15 lần/giây; Client gửi input 30 lần/giây và nội suy vị trí hiển thị. Đây là LAN IPv4/TCP, chưa có lobby Internet, tự tìm phòng, host migration hoặc dự đoán di chuyển Client. Cần cùng bản build để ID asset khớp nhau; phiên bản không khớp sẽ báo lỗi.
+
+`LanAssetCatalog` được Unity tự tạo khi import và cập nhật khi build. Khi đổi asset rồi thử hai Editor/build khác nhau, chạy **Tools > The Labyrinth > Refresh LAN Catalog** trước khi build. Không cần gắn thủ công script vào scene. Chi tiết kỹ thuật và kiểm thử: [LAN_COOP.md](Docs/LAN_COOP.md).
 
 ## Công nghệ sử dụng
 
@@ -136,7 +157,7 @@ Phiên bản tiếp theo dự kiến bổ sung:
 - Enemy cận chiến, enemy tầm xa và boss nhiều giai đoạn.
 - Điểm số, high score và lưu cài đặt.
 - HUD, minimap và màn hình kết quả hoàn chỉnh.
-- LAN co-op hai người trên hai máy bằng Network Transport.
+- Cải thiện LAN co-op: tìm phòng tự động, dự đoán di chuyển và tối ưu đồng bộ.
 - Mở rộng kiểm thử Play Mode và kiểm thử tích hợp mạng.
 
 ## Làm việc nhóm
@@ -160,7 +181,7 @@ Quy ước làm việc:
 - Cổng thoát hiện dùng hình đại diện runtime khi chưa cấu hình prefab chính thức.
 - Phòng kho báu và boss chưa có prefab gameplay chính thức.
 - Level mini-boss và boss mới có cấu hình Core; gameplay boss phụ thuộc prefab của module Enemy/Boss.
-- `GameSessionBridge` mới là hợp đồng tích hợp; chưa có package mạng, màn hình Host/Join hoặc đồng bộ Player/Enemy qua LAN.
+- LAN hiện hỗ trợ hai người bằng IP trực tiếp; chưa hỗ trợ lobby Internet, host migration và tự tìm phòng.
 - AI đang kết hợp NavMeshAgent với thay đổi `transform` trực tiếp và cần được refactor.
 - Kỹ năng tích lực vẫn sử dụng API input cũ, chưa hỗ trợ rebind hoặc gamepad đầy đủ.
 - Chưa có hệ thống lưu dữ liệu; test tự động hiện mới bao phủ cấu hình Core và seed level.

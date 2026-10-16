@@ -21,7 +21,7 @@ public class PoisonArea : MonoBehaviour
         tickInterval = Mathf.Max(0.1f, interval);
         playerLayers = targets;
         expiresAt = Time.time + duration;
-        firstDamageAt = Time.time + tickInterval;
+        firstDamageAt = Time.time;
         Collider2D areaCollider = GetComponent<Collider2D>();
         areaCollider.isTrigger = true;
         CircleCollider2D circle = areaCollider as CircleCollider2D;

@@ -130,6 +130,59 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             case DeathKind.MiniBoss: EnemySignals.RaiseMiniBossDefeated(this); break;
             default: EnemySignals.RaiseEnemyDied(this); break;
         }
+
+        StartCoroutine(PlayDeathSequence());
+    }
+
+    private System.Collections.IEnumerator PlayDeathSequence()
+    {
+        // 1. Hiệu ứng nổ/bùng cháy khi chết
+        CombatImpactKind impact = deathKind == DeathKind.Boss ? CombatImpactKind.Boss : CombatImpactKind.EnemyMelee;
+        CombatHitVfx.Spawn(transform.position, impact, deathKind == DeathKind.Boss ? 1.5f : 0.85f);
+
+        // 2. Thu thập toàn bộ SpriteRenderer (bao gồm cả renderer con tạo bởi EnemyLocomotionVisual)
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
+        Color[] initialColors = new Color[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null)
+                initialColors[i] = renderers[i].color;
+        }
+
+        // Chớp đỏ nhẹ báo hiệu chết
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null)
+                renderers[i].color = new Color(1f, 0.25f, 0.25f, initialColors[i].a);
+        }
+        yield return new WaitForSeconds(0.08f);
+
+        // 3. Chìm dần xuống sàn và mờ dần (fade out)
+        float fadeDuration = deathKind == DeathKind.Boss ? 1.1f : 0.55f;
+        float elapsed = 0f;
+        Vector3 initialScale = transform.localScale;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / fadeDuration);
+            float alpha = Mathf.Lerp(1f, 0f, t);
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null)
+                {
+                    Color orig = initialColors[i];
+                    renderers[i].color = new Color(orig.r, orig.g, orig.b, orig.a * alpha);
+                }
+            }
+
+            transform.position += Vector3.down * (Time.deltaTime * 0.35f);
+            transform.localScale = initialScale * Mathf.Lerp(1f, 0.65f, t);
+            yield return null;
+        }
+
+        Destroy(gameObject);
     }
 
     private static bool HasParameter(Animator target, string parameterName, AnimatorControllerParameterType type)

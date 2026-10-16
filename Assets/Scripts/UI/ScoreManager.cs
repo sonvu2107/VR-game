@@ -25,6 +25,7 @@ public class ScoreManager : MonoBehaviour
     private int lastEnemyCount;
     private int lastLevel;
     private bool finished;
+    public int CurrentScore => score;
 
     private void Start()
     {
@@ -52,6 +53,7 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
     {
+        if (LanLaunch.Mode == LanMode.Client) return;
         if (gameManager == null || finished) return;
 
         if (gameManager.CurrentState != GameState.Playing)
@@ -71,7 +73,7 @@ public class ScoreManager : MonoBehaviour
 
     private void HandleLevelChanged(int level, int total)
     {
-        if (lastLevel > 0 && level > lastLevel)
+        if (LanLaunch.Mode != LanMode.Client && lastLevel > 0 && level > lastLevel)
             score += levelClearBonus;
         lastLevel = level;
 
@@ -127,6 +129,21 @@ public class ScoreManager : MonoBehaviour
         SetAll(finalScoreTexts, $"Score : {score}");
         SetAll(finalHighScoreTexts, $"High Score : {best}");
         SetAll(finalHighestLevelTexts, $"Highest Level : {levelLabel}");
+    }
+
+    public void ResetLanRun()
+    {
+        score = 0;
+        lastEnemyCount = 0;
+        lastLevel = 0;
+        finished = false;
+        Refresh();
+    }
+
+    public void ApplyLanScore(int authoritativeScore)
+    {
+        score = Mathf.Max(0, authoritativeScore);
+        Refresh();
     }
 
     private static void SetAll(TMP_Text[] texts, string value)

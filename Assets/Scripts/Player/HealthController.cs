@@ -27,7 +27,8 @@ public class HealthController : MonoBehaviour
     
     void checkHealthAmount()
     {
-        for (int i=0; heartImages != null && i < heartImages.Length; i++)
+        if (GetComponent<LanPlayerInput>() != null || heartImages == null) return;
+        for (int i=0; i < heartImages.Length; i++)
         {
             if (heartImages[i] == null) continue;
             if (startHeart <= i)
@@ -45,11 +46,9 @@ public class HealthController : MonoBehaviour
 
     void UpdateHearts()
     {
+        if (GetComponent<LanPlayerInput>() != null || heartImages == null || heartSprites == null || heartSprites.Length < 2) return;
         bool empty = false;
         int i = 0;
-
-        if (heartImages == null || heartSprites == null || heartSprites.Length < 2)
-            return;
 
         foreach (Image image in heartImages)
         {
@@ -78,24 +77,88 @@ public class HealthController : MonoBehaviour
         }
     }
 
+    [SerializeField] private float invulnerableDuration = 0.85f;
+    [SerializeField] private int maxDamagePerHit = 1; // 1 máu tương đương nửa trái tim (healthPerHeart = 2)
+    private float invulnerableUntil = -1f;
+    private SpriteRenderer[] renderers;
+    private Coroutine flashRoutine;
+
     public void TakeDamage(int amount)
     {
-        if (amount <= 0 || currentHealth <= 0) return;
+        if (LanLaunch.Mode == LanMode.Client || amount <= 0 || currentHealth <= 0) return;
+        if (Time.time < invulnerableUntil) return;
+
+        if (maxDamagePerHit > 0)
+        {
+            amount = Mathf.Min(amount, maxDamagePerHit);
+        }
+
+        invulnerableUntil = Time.time + invulnerableDuration;
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        animator.SetTrigger("Hurt");
+        if (animator != null) animator.SetTrigger("Hurt");
         UpdateHearts();
 
         if (currentHealth <= 0)
         {
-            animator.SetBool("isDead", true);
-            gameManager.GameOver();
+            if (animator != null) animator.SetBool("isDead", true);
+            if (LanSessionBridge.Active != null && LanSessionBridge.Active.HasGuest)
+                LanSessionBridge.Active.PlayerDied(this);
+            else if (gameManager != null)
+                gameManager.GameOver();
         }
+        else
+        {
+            StartInvulnerabilityFlash();
+        }
+    }
+
+    private void StartInvulnerabilityFlash()
+    {
+        if (flashRoutine != null) StopCoroutine(flashRoutine);
+        flashRoutine = StartCoroutine(InvulnerabilityFlashRoutine());
+    }
+
+    private System.Collections.IEnumerator InvulnerabilityFlashRoutine()
+    {
+        if (renderers == null || renderers.Length == 0)
+            renderers = GetComponentsInChildren<SpriteRenderer>();
+
+        float elapsed = 0f;
+        bool visible = true;
+        while (elapsed < invulnerableDuration)
+        {
+            visible = !visible;
+            float alpha = visible ? 1f : 0.35f;
+            foreach (var r in renderers)
+            {
+                if (r != null)
+                {
+                    Color c = r.color;
+                    c.a = alpha;
+                    r.color = c;
+                }
+            }
+            yield return new WaitForSeconds(0.08f);
+            elapsed += 0.08f;
+        }
+
+        // Restore full opacity
+        foreach (var r in renderers)
+        {
+            if (r != null)
+            {
+                Color c = r.color;
+                c.a = 1f;
+                r.color = c;
+            }
+        }
+        flashRoutine = null;
     }
 
     public bool TryHeal(int amount)
     {
-        if (amount <= 0 || currentHealth <= 0 || currentHealth >= MaxHealth)
+        if (LanLaunch.Mode == LanMode.Client || amount <= 0 || currentHealth <= 0 || currentHealth >= MaxHealth)
             return false;
 
         currentHealth = Mathf.Min(MaxHealth, currentHealth + amount);
@@ -105,6 +168,7 @@ public class HealthController : MonoBehaviour
 
     public void RestoreFullHealth()
     {
+        ResetDamageFeedback();
         maxHealth = MaxHealth;
         currentHealth = maxHealth;
         checkHealthAmount();
@@ -119,5 +183,38 @@ public class HealthController : MonoBehaviour
         maxHealth = MaxHealth;
         
         checkHealthAmount();
+    }
+
+    public void ResetForLanRun()
+    {
+        ResetDamageFeedback();
+        currentHealth = startHeart * healthPerHeart;
+        maxHealth = MaxHealth;
+        if (animator == null) animator = GetComponent<Animator>();
+        if (animator != null) animator.SetBool("isDead", false);
+        UpdateHearts();
+    }
+
+    public void ApplyLanHealth(int health, int hearts)
+    {
+        currentHealth = health;
+        startHeart = hearts;
+        maxHealth = MaxHealth;
+        checkHealthAmount();
+    }
+
+    private void ResetDamageFeedback()
+    {
+        invulnerableUntil = -1f;
+        if (flashRoutine != null) StopCoroutine(flashRoutine);
+        flashRoutine = null;
+        if (renderers == null) return;
+        foreach (SpriteRenderer renderer in renderers)
+            if (renderer != null)
+            {
+                Color color = renderer.color;
+                color.a = 1f;
+                renderer.color = color;
+            }
     }
 }

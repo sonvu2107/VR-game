@@ -75,8 +75,21 @@ public class SkeletonKingController : MonoBehaviour
 
         phaseIndex = 0;
         ApplyPhaseSettings();
+        SetupBossVisuals();
         PhaseChanged?.Invoke(CurrentPhase);
         EnemySignals.RaiseBossPhaseChanged(health, CurrentPhase);
+    }
+
+    private void SetupBossVisuals()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.color = Color.white;
+
+        Boss3DVisual visual3D = GetComponent<Boss3DVisual>();
+        if (visual3D == null)
+            visual3D = gameObject.AddComponent<Boss3DVisual>();
+
+        visual3D.Setup(Boss3DVisual.BossVisualKind.SkeletonKing, new Color(0.95f, 0.22f, 0.28f, 0.88f));
     }
 
     private void Update()
@@ -87,13 +100,22 @@ public class SkeletonKingController : MonoBehaviour
             target = EnemyTargeting.FindClosestLivingPlayer(transform.position);
             nextTargetScan = Time.time + 0.3f;
         }
-        if (target == null || target.currentHealth <= 0) return;
+        if (target == null || target.currentHealth <= 0)
+        {
+            if (animator != null && HasParameter(animator, "WalkSpeed", AnimatorControllerParameterType.Float))
+                animator.SetFloat("WalkSpeed", 0f);
+            return;
+        }
 
         BossPhaseDefinition phase = phaseConfig.phases[phaseIndex];
         float distance = Vector2.Distance(transform.position, target.transform.position);
         movement?.FaceTarget(target.transform.position);
 
-        if (distance > 1.35f)
+        bool isMoving = distance > 1.35f;
+        if (animator != null && HasParameter(animator, "WalkSpeed", AnimatorControllerParameterType.Float))
+            animator.SetFloat("WalkSpeed", isMoving ? 101f : 0f);
+
+        if (isMoving)
         {
             movement?.SetDestination(target.transform.position, phase.moveSpeed, 0.15f);
             if (phase.summonSkeletons) summoner?.TrySummon();
@@ -103,6 +125,9 @@ public class SkeletonKingController : MonoBehaviour
         movement?.Stop();
         if (Time.time < nextAttackTime || (combat != null && combat.IsAttacking)) return;
         nextAttackTime = Time.time + phase.attackCooldown;
+
+        if (animator != null && HasParameter(animator, "Attack", AnimatorControllerParameterType.Trigger))
+            animator.SetTrigger("Attack");
 
         // Telegraphs are explicit events so UI/VFX/audio can react without owning boss logic.
         BossAttackTelegraph?.Invoke(this, phaseIndex + 1);
@@ -174,10 +199,11 @@ public class SkeletonKingController : MonoBehaviour
             movement?.SetSpeed(phaseConfig.phases[phaseIndex].moveSpeed);
         if (spriteRenderer != null)
         {
-            // Keep the crown/cape art intact while tinting it as a secondary phase cue.
+            // Giữ nguyên hình ảnh vương giả, tăng sắc độ hào quang theo phase
             spriteRenderer.color = phaseIndex == 0 ? Color.white :
-                (phaseIndex == 1 ? new Color(1f, 0.72f, 0.72f) : new Color(1f, 0.42f, 0.42f));
+                (phaseIndex == 1 ? new Color(1f, 0.78f, 0.78f) : new Color(1f, 0.5f, 0.5f));
         }
+        GetComponent<Boss3DVisual>()?.SetPhaseEnrage(CurrentPhase);
     }
 
     private void OnAttackFinished()
@@ -206,6 +232,13 @@ public class SkeletonKingController : MonoBehaviour
     {
         foreach (AnimatorControllerParameter parameter in targetAnimator.parameters)
             if (parameter.name == name && parameter.type == AnimatorControllerParameterType.Trigger) return true;
+        return false;
+    }
+
+    private static bool HasParameter(Animator target, string parameterName, AnimatorControllerParameterType type)
+    {
+        foreach (AnimatorControllerParameter parameter in target.parameters)
+            if (parameter.name == parameterName && parameter.type == type) return true;
         return false;
     }
 }

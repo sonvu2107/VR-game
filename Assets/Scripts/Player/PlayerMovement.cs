@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     
     public float speed = 5f;
     [Header("Attack Movement")]
-    [Range(0f, 1f)] public float attackMoveSpeedMultiplier = 0.65f;
+    [Range(0f, 1f)] public float attackMoveSpeedMultiplier = 0.85f;
     [Header("Dash")]
     [Tooltip("Press Left Shift or the gamepad right shoulder button to dash.")]
     [Min(0.05f)] public float dashDuration = 0.16f;
@@ -138,6 +138,35 @@ public class PlayerMovement : MonoBehaviour
     private PowerupController powerupController;
     private PlayerSkillController skillController;
     private bool hasComboIndexParameter;
+    private LanPlayerInput lanInput;
+    public bool HasRemoteInput => lanInput != null;
+    public float PowerUpCooldownRemaining => Mathf.Max(0f, powerUpAttackCooldownActual);
+
+    public void CancelLanActions()
+    {
+        StopAllCoroutines();
+        _movement = Vector2.zero;
+        powerupChargeVfx?.Hide();
+        skillController?.ResetForLanRun();
+        if (rb != null) rb.velocity = Vector2.zero;
+    }
+
+    public void ResetForLanRun()
+    {
+        StopAllCoroutines();
+        _movement = Vector2.zero;
+        isAttacking = isDashing = isHeavyCharging = isHeavyAttacking = heavyInputPending = false;
+        attackQueued = spaceHeld = skillPositionLocked = heavyPositionLocked = false;
+        spaceHeldTime = powerUpAttackCooldownActual = nextDashAt = 0f;
+        isPoweredUp = false;
+        activeComboHit = nextComboHit = 0;
+        attackEndsAt = hitAt = comboExpiresAt = dashEndsAt = slashVfxHideAt = dashVfxHideAt = 0f;
+        powerupChargeVfx?.Hide();
+        RestoreAnimatorAfterHeavyStrike();
+        if (rb != null) rb.velocity = Vector2.zero;
+        if (animator != null) { animator.Rebind(); animator.Update(0f); }
+        skillController?.ResetForLanRun();
+    }
 
     public bool IsAttacking => isAttacking;
     public bool IsDashing => isDashing;
@@ -152,7 +181,8 @@ public class PlayerMovement : MonoBehaviour
         ? playerSpriteRenderer.bounds.center
         : transform.position;
     public float DashCooldownRemaining => Mathf.Max(0f, nextDashAt - Time.time);
-    public float DashCooldownNormalized => dashCooldown <= 0f ? 0f : DashCooldownRemaining / dashCooldown;
+    public float DashCooldownNormalized => LanLaunch.Mode == LanMode.Client && LanSessionBridge.Active?.LocalState != null
+        ? LanSessionBridge.Active.LocalState.dash : dashCooldown <= 0f ? 0f : DashCooldownRemaining / dashCooldown;
 
     private void Awake()
     {
@@ -171,7 +201,7 @@ public class PlayerMovement : MonoBehaviour
             Resources.Load<AudioClip>("Audio/Combat/SwordSwing3")
         };
         swordImpactClang = Resources.Load<AudioClip>("Audio/Combat/SwordImpactClang");
-        player = GameObject.Find("Player");
+        player = gameObject;
         powerupController = player.GetComponent<PowerupController>();
     }
 
@@ -211,7 +241,10 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         hasComboIndexParameter = animator != null && System.Array.Exists(animator.parameters,
             parameter => parameter.name == "ComboIndex" && parameter.type == AnimatorControllerParameterType.Int);
-        powerupCircleController = GameObject.FindGameObjectWithTag("Powerup Attack").GetComponent<PowerupCircleController>();
+        lanInput = GetComponent<LanPlayerInput>();
+        powerupCircleController = GetComponentInChildren<PowerupCircleController>();
+        if (powerupCircleController == null)
+            powerupCircleController = GameObject.FindGameObjectWithTag("Powerup Attack").GetComponent<PowerupCircleController>();
         powerupChargeVfx = GetComponent<PowerupChargeVfx>();
         if (powerupChargeVfx == null)
             powerupChargeVfx = gameObject.AddComponent<PowerupChargeVfx>();
@@ -243,6 +276,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void SetFacing(bool faceLeft)
+    {
+        if (isFacingLeft != faceLeft)
+        {
+            isFacingLeft = faceLeft;
+            Flip();
+        }
+    }
+
     private void Update()
     {
         UpdateSlashVfx();
@@ -262,15 +304,15 @@ public class PlayerMovement : MonoBehaviour
             if(powerUpAttackCooldownActual <= 0)
             {
                 isPoweredUp = false;
-                powerupController.ShowPoweredUp();
+                if (!HasRemoteInput) powerupController.ShowPoweredUp();
             } else {
-                powerupController.UpdateCooldown(powerUpAttackCooldownActual);
+                if (!HasRemoteInput) powerupController.UpdateCooldown(powerUpAttackCooldownActual);
             }
             
         }
         
 
-        _movement = move.ReadValue<Vector2>();
+        _movement = HasRemoteInput ? lanInput.Frame.movement : move.ReadValue<Vector2>();
 
         if (isHeavyAttacking)
         {
@@ -319,7 +361,7 @@ public class PlayerMovement : MonoBehaviour
         HandleDashInput();
         HandleAttackInput();
 
-        if (!IsHeavyLocked && Input.GetKey(KeyCode.Space))
+        if (!IsHeavyLocked && (HasRemoteInput ? lanInput.Frame.powerHeld : Input.GetKey(KeyCode.Space)))
         {
             if(!isPoweredUp) 
             {
@@ -340,7 +382,7 @@ public class PlayerMovement : MonoBehaviour
         {
             powerupChargeVfx?.Hide();
             PowerUpAttack();
-            powerupController.HidePoweredUp();
+            if (!HasRemoteInput) powerupController.HidePoweredUp();
         }
         else
         {
@@ -355,7 +397,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (heavyInputPending)
         {
-            if (!attack.IsPressed())
+            if (!(HasRemoteInput ? lanInput.Frame.attackHeld : attack.IsPressed()))
             {
                 float heldTime = Time.time - heavyInputStartedAt;
                 heavyInputPending = false;
@@ -372,7 +414,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (attack.WasPressedThisFrame())
+        if (HasRemoteInput ? lanInput.Frame.attackPressed : attack.WasPressedThisFrame())
         {
             if (isAttacking)
             {
@@ -457,8 +499,9 @@ public class PlayerMovement : MonoBehaviour
         ShowDashVfx();
     }
 
-    private static bool WasDashPressed()
+    private bool WasDashPressed()
     {
+        if (HasRemoteInput) return lanInput.Frame.dash;
         return (Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame) ||
                (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame);
     }
@@ -574,7 +617,7 @@ public class PlayerMovement : MonoBehaviour
             wrapMode = TextureWrapMode.Clamp
         };
         cleanedTexture.SetPixels32(framePixels);
-        cleanedTexture.Apply(false, true);
+        cleanedTexture.Apply(false, LanLaunch.Mode == LanMode.Solo);
         return Sprite.Create(cleanedTexture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0f), 100f);
     }
 
@@ -858,7 +901,9 @@ public class PlayerMovement : MonoBehaviour
                 copiedBodyVisuals++;
         }
 
-        bool valid = players.Length == 1 && authoritativeVisuals == 1 && copiedBodyVisuals == 0;
+        int expectedPlayers = LanLaunch.Mode == LanMode.Host && LanSessionBridge.Active != null &&
+            LanSessionBridge.Active.HasGuest ? 2 : 1;
+        bool valid = players.Length == expectedPlayers && authoritativeVisuals == expectedPlayers && copiedBodyVisuals == 0;
         string message = $"[PlayerVisual] {phase}: Player instances={players.Length}, " +
             $"authoritative visuals={authoritativeVisuals}, copied body visuals={copiedBodyVisuals}.";
         Debug.Assert(valid, message);
@@ -1154,7 +1199,10 @@ public class PlayerMovement : MonoBehaviour
         if (!isAttacking)
         {
             if (clip != null && audioSource != null)
+            {
                 audioSource.PlayOneShot(clip);
+                LanSessionBridge.Active?.PublishSound(clip);
+            }
             return;
         }
 
@@ -1165,6 +1213,7 @@ public class PlayerMovement : MonoBehaviour
         swingAudioSource.pitch = activeComboHit == 0 ? hit1SwingPitch : activeComboHit == 1 ? hit2SwingPitch : hit3SwingPitch;
         float volume = activeComboHit == 0 ? hit1SwingVolume : activeComboHit == 1 ? hit2SwingVolume : hit3SwingVolume;
         swingAudioSource.PlayOneShot(comboClip, volume);
+        LanSessionBridge.Active?.PublishSound(comboClip, volume, swingAudioSource.pitch);
     }
 
     private AudioClip GetComboSwingClip(int comboHit)
@@ -1183,6 +1232,7 @@ public class PlayerMovement : MonoBehaviour
         impactAudioSource.pitch = activeComboHit == 2 ? 0.9f : 1.05f;
         float volume = activeComboHit == 2 ? 1f : 0.75f;
         impactAudioSource.PlayOneShot(swordImpactClang, volume);
+        LanSessionBridge.Active?.PublishSound(swordImpactClang, volume, impactAudioSource.pitch);
     }
 
     private void PlayHeavyImpact()
@@ -1192,5 +1242,6 @@ public class PlayerMovement : MonoBehaviour
 
         impactAudioSource.pitch = 0.78f;
         impactAudioSource.PlayOneShot(swordImpactClang, 1f);
+        LanSessionBridge.Active?.PublishSound(swordImpactClang, 1f, impactAudioSource.pitch);
     }
 }

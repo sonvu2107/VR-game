@@ -16,22 +16,22 @@ MonoBehaviour:
   archetype: 3
   maxHealth: 40
   contactDamage: 1
-  chaseSpeed: 3
-  wanderSpeed: 1.2
+  chaseSpeed: 1.7
+  wanderSpeed: 0.8
   detectionRange: 7
   attackRange: 1.2
   preferredRange: 1.2
   repathInterval: 0.25
   attackDamage: 1
-  attackCooldown: 2
-  attackWindup: 0.35
+  attackCooldown: 3.2
+  attackWindup: 0.55
   attackRecovery: 0.6
-  projectileSpeed: 5
+  projectileSpeed: 3.2
   projectileLifetime: 3
-  specialCooldown: 3
+  specialCooldown: 3.5
   specialRange: 2.2
-  dashSpeed: 9
-  dashDuration: 0.35
+  dashSpeed: 4.8
+  dashDuration: 0.3
   poisonDuration: 3
   poisonTickInterval: 1
   maxAliveSummons: 2

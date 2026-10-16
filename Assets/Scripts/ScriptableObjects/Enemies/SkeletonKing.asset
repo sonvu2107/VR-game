@@ -15,22 +15,22 @@ MonoBehaviour:
   displayName: Skeleton King
   archetype: 0
   maxHealth: 360
-  contactDamage: 2
-  chaseSpeed: 2.4
-  wanderSpeed: 0.8
+  contactDamage: 1
+  chaseSpeed: 1.6
+  wanderSpeed: 0.7
   detectionRange: 12
   attackRange: 1.5
   preferredRange: 1.5
   repathInterval: 0.25
-  attackDamage: 2
-  attackCooldown: 1.7
-  attackWindup: 0.55
+  attackDamage: 1
+  attackCooldown: 2.4
+  attackWindup: 0.75
   attackRecovery: 0.85
-  projectileSpeed: 7
+  projectileSpeed: 3.8
   projectileLifetime: 3.5
-  specialCooldown: 4
+  specialCooldown: 4.5
   specialRange: 5
-  dashSpeed: 8
+  dashSpeed: 5.5
   dashDuration: 0.6
   poisonDuration: 5
   poisonTickInterval: 1

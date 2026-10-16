@@ -85,6 +85,9 @@ public class EnemyCombat : MonoBehaviour
         nextAttackTime = Time.time + Mathf.Max(0.1f, cooldown);
         if (movement != null) movement.Stop();
 
+        Vector2 attackDir = ((Vector2)target.transform.position - (Vector2)transform.position).normalized;
+        GetComponent<EnemyLocomotionVisual>()?.TriggerAttackLunge(attackDir);
+
         if (animator != null)
         {
             string trigger = special && HasTrigger(animator, "Special") ? "Special" : "Attack";
@@ -94,6 +97,76 @@ public class EnemyCombat : MonoBehaviour
         return true;
     }
 
+    private float nextContactDamageTime;
+
+    private void Update()
+    {
+        CheckContactDamage();
+    }
+
+    private void CheckContactDamage()
+    {
+        if (health == null || health.IsDead || config == null || config.contactDamage <= 0)
+            return;
+        if (Time.time < nextContactDamageTime)
+            return;
+
+        EnsurePlayerLayers();
+        float contactRadius = Mathf.Max(0.5f, config.attackRange > 0 ? config.attackRange * 0.5f : 0.5f);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, contactRadius, playerLayers);
+        foreach (Collider2D hit in hits)
+        {
+            if (hit == null) continue;
+            HealthController player = hit.GetComponentInParent<HealthController>();
+            if (player != null && player.currentHealth > 0)
+            {
+                player.TakeDamage(config.contactDamage);
+                CombatHitVfx.Spawn(player.transform.position, GetImpactKind(), 0.75f);
+                nextContactDamageTime = Time.time + 1.5f;
+                break;
+            }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        TryApplyCollisionContact(other);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        TryApplyCollisionContact(collision.collider);
+    }
+
+    private void TryApplyCollisionContact(Collider2D col)
+    {
+        if (health == null || health.IsDead || config == null || config.contactDamage <= 0 || col == null)
+            return;
+        if (Time.time < nextContactDamageTime)
+            return;
+
+        EnsurePlayerLayers();
+        if ((playerLayers.value & (1 << col.gameObject.layer)) == 0)
+            return;
+
+        HealthController player = col.GetComponentInParent<HealthController>();
+        if (player != null && player.currentHealth > 0)
+        {
+            player.TakeDamage(config.contactDamage);
+            CombatHitVfx.Spawn(player.transform.position, GetImpactKind(), 0.75f);
+            nextContactDamageTime = Time.time + 1.5f;
+        }
+    }
+
+    private void EnsurePlayerLayers()
+    {
+        if (playerLayers.value == 0)
+        {
+            int mask = LayerMask.GetMask("Player");
+            playerLayers = mask != 0 ? mask : (1 << 3);
+        }
+    }
+
     private IEnumerator ResolveAttack(bool special)
     {
         yield return new WaitForSeconds(config != null ? config.attackWindup : 0.35f);
@@ -101,10 +174,16 @@ public class EnemyCombat : MonoBehaviour
         {
             if (config != null && (config.archetype == EnemyArchetype.Ranged || config.archetype == EnemyArchetype.Summoner))
                 FireProjectile(currentTarget, config.attackDamage, config.projectileSpeed, config.projectileLifetime);
-            else if (special && config != null && config.archetype == EnemyArchetype.Poison)
-                SpawnPoison(currentTarget != null ? currentTarget.transform.position : transform.position);
-            else
+            else if (config != null && config.archetype == EnemyArchetype.Poison)
+            {
+                // Slime vừa đập/cắn gây sát thương vừa nhả bãi độc
                 ApplyMeleeHit();
+                SpawnPoison(currentTarget != null ? currentTarget.transform.position : transform.position);
+            }
+            else
+            {
+                ApplyMeleeHit();
+            }
         }
 
         yield return new WaitForSeconds(config != null ? config.attackRecovery : 0.5f);
@@ -133,15 +212,22 @@ public class EnemyCombat : MonoBehaviour
             return;
         hitResolved = true;
 
+        EnsurePlayerLayers();
         Vector2 direction = ((Vector2)currentTarget.transform.position - (Vector2)transform.position).normalized;
-        Vector2 center = attackPoint != null
-            ? (Vector2)attackPoint.position
-            : (Vector2)transform.position + direction * (config != null ? config.attackRange * 0.65f : 0.5f);
-        float radius = config != null ? config.attackRange : 0.5f;
-        Collider2D[] hits = Physics2D.OverlapCircleAll(center, radius, playerLayers);
+        if (direction.sqrMagnitude < 0.001f) direction = Vector2.right;
+
+        float attackRadius = config != null ? Mathf.Max(0.75f, config.attackRange) : 0.8f;
+        // Quét cả vùng trước mặt theo hướng người chơi và vùng thân quái
+        Vector2 forwardCenter = (Vector2)transform.position + direction * (attackRadius * 0.55f);
+
+        Collider2D[] forwardHits = Physics2D.OverlapCircleAll(forwardCenter, attackRadius, playerLayers);
+        Collider2D[] centerHits = Physics2D.OverlapCircleAll(transform.position, attackRadius * 0.85f, playerLayers);
+
         HashSet<HealthController> damagedPlayers = new HashSet<HealthController>();
-        foreach (Collider2D hit in hits)
+
+        void ProcessHit(Collider2D hit)
         {
+            if (hit == null) return;
             HealthController player = hit.GetComponentInParent<HealthController>();
             if (player != null && player.currentHealth > 0 && damagedPlayers.Add(player))
             {
@@ -150,6 +236,9 @@ public class EnemyCombat : MonoBehaviour
                     GetImpactKind() == CombatImpactKind.Boss ? 1.3f : 0.8f);
             }
         }
+
+        foreach (Collider2D hit in forwardHits) ProcessHit(hit);
+        foreach (Collider2D hit in centerHits) ProcessHit(hit);
     }
 
     public void FireProjectile(HealthController target, int damage, float speed, float lifetime)
@@ -309,7 +398,8 @@ public static class EnemyEffectSpriteFactory
                 pixels[y * size + x] = new Color32(255, 255, 255, alpha);
             }
             texture.SetPixels32(pixels);
-            texture.Apply(false, true);
+            // Cached across scene/session changes, including Solo -> Host.
+            texture.Apply(false, false);
             disc = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
             disc.name = "EnemyEffectDisc";
             disc.hideFlags = HideFlags.HideAndDontSave;

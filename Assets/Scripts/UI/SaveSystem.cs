@@ -13,8 +13,20 @@ public static class SaveSystem
 {
     private static LabyrinthSaveData data;
 
-    public static string FilePath =>
-        System.IO.Path.Combine(Application.persistentDataPath, "save.json");
+    public static string FilePath
+    {
+        get
+        {
+            string validationDirectory = Application.isBatchMode
+                ? Environment.GetEnvironmentVariable("LABYRINTH_TEST_SAVE_DIR") : null;
+            if (!string.IsNullOrWhiteSpace(validationDirectory))
+            {
+                Directory.CreateDirectory(validationDirectory);
+                return Path.Combine(validationDirectory, "save-" + System.Diagnostics.Process.GetCurrentProcess().Id + ".json");
+            }
+            return Path.Combine(Application.persistentDataPath, "save.json");
+        }
+    }
 
     public static LabyrinthSaveData Data
     {

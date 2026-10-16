@@ -57,8 +57,9 @@ public static class HealthAndLevelValidation
         CheckGuaranteedEnemy(generator, spawner, 8, "darkMagePrefab");
 
         GameObject archer = spawner.FindProperty("skeletonArcherPrefab").objectReferenceValue as GameObject;
-        Require(Mathf.Approximately(archer.transform.localScale.x, 1.5f),
-            "Archer must be half of its former scale 3.");
+        Require(Mathf.Approximately(archer.transform.localScale.x, 0.65f) &&
+                Mathf.Approximately(archer.transform.localScale.y, 0.65f),
+            "Archer must use the compact 0.65 scale from the combat-balance update.");
         for (int i = 1; i <= 4; i++)
         {
             Require(AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Resources/Enemy/Arrows/arrow_{i}.png") != null,
@@ -76,12 +77,15 @@ public static class HealthAndLevelValidation
         }
         ValidateSkillHudLayering();
 
-        foreach (string field in new[] { "batPrefab", "darkMagePrefab", "eliteEnemyPrefab" })
+        string[] resizedFields = { "batPrefab", "darkMagePrefab", "eliteEnemyPrefab" };
+        float[] resizedScales = { 2.4f, 2.8f, 3.2f };
+        for (int i = 0; i < resizedFields.Length; i++)
         {
+            string field = resizedFields[i];
             GameObject special = spawner.FindProperty(field).objectReferenceValue as GameObject;
-            Require(special != null && Mathf.Approximately(special.transform.localScale.x, 4.5f) &&
-                    Mathf.Approximately(special.transform.localScale.y, 4.5f),
-                $"{field} should be 1.5 times its former scale 3.");
+            Require(special != null && Mathf.Approximately(special.transform.localScale.x, resizedScales[i]) &&
+                    Mathf.Approximately(special.transform.localScale.y, resizedScales[i]),
+                $"{field} must use combat-balance scale {resizedScales[i]}.");
         }
         Texture2D impact = Resources.Load<Texture2D>("VFX/Combat/Explosions");
         Texture2D fire = Resources.Load<Texture2D>("VFX/Combat/Fire");

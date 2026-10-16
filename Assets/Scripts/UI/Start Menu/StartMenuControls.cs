@@ -14,12 +14,15 @@ public class StartMenuControls : MonoBehaviour
     private void Start()
     {
         loadingScreen.SetActive(false);
+        if (!string.IsNullOrEmpty(LanLaunch.LastError)) LanMenuUI.Show(this);
     }
 
     public void StartButtonControl()
     {
-        StartCoroutine(LoadScene("Dungeon"));
+        LanMenuUI.Show(this);
     }
+
+    public void LaunchDungeon() => StartCoroutine(LoadScene("Dungeon"));
     
     public void QuitButtonControl()
     {

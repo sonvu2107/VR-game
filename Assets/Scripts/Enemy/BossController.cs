@@ -15,7 +15,7 @@ public class BossController : MonoBehaviour
     [Min(0.1f)] public float attackRange = 2.1f;
     [Min(0.05f)] public float attackWindup = 0.55f;
     [Min(0f)] public float attackCooldown = 1.35f;
-    [Min(0)] public int attackDamage = 2;
+    [Min(0)] public int attackDamage = 1;
     [Header("Enraged Phase")]
     [Min(0.1f)] public float dashRange = 6f;
     [Min(0.1f)] public float dashDuration = 0.24f;
@@ -45,6 +45,10 @@ public class BossController : MonoBehaviour
     private float flashEndsAt;
     private Vector2 dashDirection;
     private Vector3 baseScale;
+    private Transform shadowTransform;
+    private SpriteRenderer shadowRenderer;
+    private Transform runeCircleTransform;
+    private SpriteRenderer runeCircleRenderer;
 
     public static BossController CreateDefaultBoss(Vector3 position, GameManager gameManager)
     {
@@ -85,6 +89,11 @@ public class BossController : MonoBehaviour
 
     private void Update()
     {
+        if (LanSessionBridge.Active != null && LanSessionBridge.Active.HasGuest)
+        {
+            HealthController closest = LanSessionBridge.Active.NearestAlivePlayer(transform.position);
+            if (closest != null) { player = closest.transform; playerHealth = closest; }
+        }
         if (isDead || player == null || playerHealth == null || playerHealth.currentHealth <= 0)
             return;
 
@@ -179,6 +188,28 @@ public class BossController : MonoBehaviour
         collider.radius = 0.42f;
         collider.isTrigger = true;
 
+        // 3D Soft Drop Shadow dưới chân
+        GameObject shadowObj = new GameObject("Ashen Warden 3D Shadow");
+        shadowObj.transform.SetParent(transform, false);
+        shadowTransform = shadowObj.transform;
+        shadowTransform.localPosition = new Vector3(0f, -0.42f, 0f);
+        shadowTransform.localScale = new Vector3(1.7f, 0.68f, 1f);
+        shadowRenderer = shadowObj.AddComponent<SpriteRenderer>();
+        shadowRenderer.sprite = Boss3DVisual.GetSoftShadowSprite();
+        shadowRenderer.color = new Color(0f, 0f, 0f, 0.52f);
+        shadowRenderer.sortingOrder = 0;
+
+        // 3D Magic Rune Circle trên sàn
+        GameObject runeObj = new GameObject("Ashen Warden 3D Rune");
+        runeObj.transform.SetParent(transform, false);
+        runeCircleTransform = runeObj.transform;
+        runeCircleTransform.localPosition = new Vector3(0f, -0.4f, 0f);
+        runeCircleTransform.localScale = new Vector3(2.1f, 0.9f, 1f);
+        runeCircleRenderer = runeObj.AddComponent<SpriteRenderer>();
+        runeCircleRenderer.sprite = Boss3DVisual.GetRuneCircleSprite();
+        runeCircleRenderer.color = new Color(1f, 0.35f, 0.1f, 0.82f);
+        runeCircleRenderer.sortingOrder = 1;
+
         CreateHealthBar();
     }
 
@@ -221,6 +252,16 @@ public class BossController : MonoBehaviour
 
     private void UpdateVisual()
     {
+        if (runeCircleTransform != null)
+        {
+            runeCircleTransform.Rotate(0f, 0f, 24f * Time.deltaTime);
+            if (runeCircleRenderer != null)
+            {
+                float pulse = 0.72f + Mathf.Sin(Time.time * 3.2f) * 0.28f;
+                runeCircleRenderer.color = new Color(1f, 0.35f, 0.1f, 0.85f * pulse);
+            }
+        }
+
         if (spriteRenderer == null || frames == null || frames.Length == 0)
             return;
 
@@ -266,6 +307,10 @@ public class BossController : MonoBehaviour
             Destroy(healthBarBack.gameObject);
         if (healthBarFill != null)
             Destroy(healthBarFill.gameObject);
+        if (shadowTransform != null)
+            Destroy(shadowTransform.gameObject);
+        if (runeCircleTransform != null)
+            Destroy(runeCircleTransform.gameObject);
 
         if (isRegistered && manager != null)
             manager.EnemyDefeated();

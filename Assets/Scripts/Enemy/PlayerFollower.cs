@@ -60,6 +60,13 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        if (LanSessionBridge.Active != null && LanSessionBridge.Active.HasGuest)
+        {
+            HealthController closest = LanSessionBridge.Active.NearestAlivePlayer(transform.position);
+            if (closest == null) return;
+            target = closest.gameObject;
+            playerHealthController = closest;
+        }
         if (agent == null || !agent.enabled || !agent.isOnNavMesh || target == null ||
             playerHealthController == null || playerHealthController.currentHealth <= 0)
         {
@@ -135,7 +142,7 @@ public class Enemy : MonoBehaviour
             attackPoint != null ? attackPoint.position : transform.position, attackRange, playerLayer);
         if (hitPlayer != null)
         {
-            playerHealthController.TakeDamage(attackDamage);
+            hitPlayer.GetComponentInParent<HealthController>()?.TakeDamage(attackDamage);
             CombatHitVfx.Spawn(hitPlayer.bounds.center, CombatImpactKind.EnemyMelee, 0.8f);
         }
     }
@@ -174,6 +181,25 @@ public class Enemy : MonoBehaviour
         if (agent != null && agent.enabled) agent.enabled = false;
 
         this.enabled = false;
+        StartCoroutine(CleanupCorpseAfterDelay());
+    }
+
+    private IEnumerator CleanupCorpseAfterDelay()
+    {
+        yield return new WaitForSeconds(1.5f);
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            float elapsed = 0f;
+            Color c = sr.color;
+            while (elapsed < 0.8f)
+            {
+                elapsed += Time.deltaTime;
+                sr.color = new Color(c.r, c.g, c.b, Mathf.Lerp(c.a, 0f, elapsed / 0.8f));
+                yield return null;
+            }
+        }
+        Destroy(gameObject);
     }
     
     private IEnumerator DelayAttack()
@@ -199,5 +225,6 @@ public class Enemy : MonoBehaviour
     {
         audioSource.clip = clip;
         audioSource.PlayOneShot(clip);
+        LanSessionBridge.Active?.PublishSound(clip);
     }
 }

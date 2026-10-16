@@ -73,6 +73,13 @@ public class GameManager : MonoBehaviour
             sessionBridge = GetComponent<GameSessionBridge>();
 
         EnsureLevelDefinitions();
+        if (LanLaunch.Mode != LanMode.Solo)
+        {
+            LanSessionBridge lan = GetComponent<LanSessionBridge>();
+            if (lan == null) lan = gameObject.AddComponent<LanSessionBridge>();
+            sessionBridge = lan;
+            lan.Initialize(this);
+        }
     }
 
     private void OnEnable()
@@ -104,7 +111,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         CurrentLevel = 1;
         SetState(GameState.Generating);
-        BeginLevelGeneration();
+        if (sessionBridge == null || sessionBridge.HasStateAuthority)
+            BeginLevelGeneration();
     }
 
     private void Update()
@@ -117,11 +125,22 @@ public class GameManager : MonoBehaviour
                 Resume();
         }
 
+        if (CurrentState is GameState.GameOver or GameState.Paused)
+        {
+            bool rPressed = (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame);
+            try { if (!rPressed) rPressed = Input.GetKeyDown(KeyCode.R); } catch {}
+            if (rPressed && CurrentState == GameState.GameOver)
+            {
+                RestartGame();
+            }
+        }
+
         TickLevelTimer();
     }
 
     public void Resume()
     {
+        if (LanSessionBridge.Active != null && LanSessionBridge.Active.SendClientControl("resume")) return;
         if (CurrentState != GameState.Paused)
             return;
 
@@ -130,6 +149,7 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
+        if (LanSessionBridge.Active != null && LanSessionBridge.Active.SendClientControl("pause")) return;
         if (CurrentState != GameState.Playing)
             return;
 
@@ -138,6 +158,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return;
         if (CurrentState is GameState.GameOver or GameState.Victory)
             return;
 
@@ -146,6 +167,7 @@ public class GameManager : MonoBehaviour
 
     public void Win()
     {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return;
         if (CurrentState == GameState.Victory)
             return;
 
@@ -248,6 +270,11 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        if (LanSessionBridge.Active != null)
+        {
+            if (sessionBridge.HasStateAuthority) LanSessionBridge.Active.RestartRun();
+            return;
+        }
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -357,7 +384,10 @@ public class GameManager : MonoBehaviour
         Time.timeScale = newState is GameState.Paused or GameState.GameOver or GameState.Victory ? 0f : 1f;
 
         if (PlayerMovement != null)
-            PlayerMovement.enabled = newState == GameState.Playing;
+            PlayerMovement.enabled = newState == GameState.Playing &&
+                (sessionBridge == null || sessionBridge.HasStateAuthority) &&
+                (PlayerMovement.GetComponent<HealthController>() == null ||
+                 PlayerMovement.GetComponent<HealthController>().currentHealth > 0);
 
         UpdateCounter();
         StateChanged?.Invoke(newState);
@@ -373,6 +403,7 @@ public class GameManager : MonoBehaviour
 
     public bool CollectKey()
     {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return false;
         if (CurrentState != GameState.Playing || KeysRequired <= 0 || KeysCollected >= KeysRequired)
             return false;
 
@@ -390,6 +421,7 @@ public class GameManager : MonoBehaviour
 
     private void TickLevelTimer()
     {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return;
         if (CurrentState != GameState.Playing || !HasLevelTimeLimit)
             return;
 
@@ -403,6 +435,31 @@ public class GameManager : MonoBehaviour
 
         if (LevelTimeRemaining <= 0f)
             GameOver();
+    }
+
+    // Client presentation only: never runs PCG, AI, damage or progression locally.
+    public void ApplyLanState(int level, GameState state, int enemies, int keys, int requiredKeys, float timeRemaining)
+    {
+        bool levelChanged = CurrentLevel != level;
+        CurrentLevel = Mathf.Clamp(level, 1, TotalLevels);
+        enemyCount = Mathf.Max(0, enemies);
+        KeysRequired = Mathf.Max(0, requiredKeys);
+        KeysCollected = Mathf.Clamp(keys, 0, KeysRequired);
+        LevelTimeRemaining = Mathf.Max(0f, timeRemaining);
+        if (CurrentState != state) SetState(state);
+        else UpdateCounter();
+        if (levelChanged) LevelChanged?.Invoke(CurrentLevel, TotalLevels);
+    }
+
+    public void RestartLanCampaign()
+    {
+        if (sessionBridge == null || !sessionBridge.HasStateAuthority) return;
+        if (transitionRoutine != null) StopCoroutine(transitionRoutine);
+        transitionRoutine = null;
+        CurrentLevel = 1;
+        advanceRequestPending = false;
+        SetState(GameState.Generating);
+        BeginLevelGeneration();
     }
 
     private void EnsurePlayerControls()

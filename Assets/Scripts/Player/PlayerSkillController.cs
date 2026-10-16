@@ -18,10 +18,11 @@ public class PlayerSkillController : MonoBehaviour
 
     [Header("Sword Wave (Q)")]
     [Min(0f)] public float swordWaveCooldown = 2.2f;
-    [Min(0.1f)] public float swordWaveDuration = 0.5f;
-    [Min(0f)] public float swordWaveSpeed = 12f;
-    [Min(0.1f)] public float swordWaveRadius = 0.65f;
+    [Min(0.1f)] public float swordWaveDuration = 0.75f;
+    [Min(0f)] public float swordWaveSpeed = 13.5f;
+    [Min(0.1f)] public float swordWaveRadius = 0.75f;
     [Min(1)] public int swordWaveDamage = 55;
+    [Min(1f)] public float swordWaveAutoAimRange = 14f;
     [Header("Spin Slash (E)")]
     [Min(0f)] public float spinSlashCooldown = 4.5f;
     [Min(0.1f)] public float spinSlashDuration = 0.62f;
@@ -53,19 +54,24 @@ public class PlayerSkillController : MonoBehaviour
     private bool isSkillCasting;
     private bool hitStopActive;
     private static Material pixelVfxMaterial;
+    private LanPlayerInput lanInput;
     // Effects are deliberately tracked separately from Player. They are never
     // character clones and are destroyed both at their normal end and when the
     // player/controller is destroyed mid-cast.
     private readonly HashSet<GameObject> activeEffects = new HashSet<GameObject>();
 
     public bool IsSkillCasting => isSkillCasting;
-    public float SwordWaveCooldownNormalized => swordWaveCooldown <= 0f ? 0f : Mathf.Clamp01((nextSwordWaveAt - Time.time) / swordWaveCooldown);
-    public float SpinSlashCooldownNormalized => spinSlashCooldown <= 0f ? 0f : Mathf.Clamp01((nextSpinSlashAt - Time.time) / spinSlashCooldown);
-    public float UltimateNormalized => ultimateChargeRequired <= 0f ? 0f : Mathf.Clamp01(ultimateCharge / ultimateChargeRequired);
+    public float SwordWaveCooldownNormalized => LanLaunch.Mode == LanMode.Client && LanSessionBridge.Active?.LocalState != null
+        ? LanSessionBridge.Active.LocalState.q : swordWaveCooldown <= 0f ? 0f : Mathf.Clamp01((nextSwordWaveAt - Time.time) / swordWaveCooldown);
+    public float SpinSlashCooldownNormalized => LanLaunch.Mode == LanMode.Client && LanSessionBridge.Active?.LocalState != null
+        ? LanSessionBridge.Active.LocalState.e : spinSlashCooldown <= 0f ? 0f : Mathf.Clamp01((nextSpinSlashAt - Time.time) / spinSlashCooldown);
+    public float UltimateNormalized => LanLaunch.Mode == LanMode.Client && LanSessionBridge.Active?.LocalState != null
+        ? LanSessionBridge.Active.LocalState.ultimate : ultimateChargeRequired <= 0f ? 0f : Mathf.Clamp01(ultimateCharge / ultimateChargeRequired);
 
     private void Start()
     {
         player = GetComponent<PlayerMovement>();
+        lanInput = GetComponent<LanPlayerInput>();
         playerRenderer = GetComponent<SpriteRenderer>();
         swordWaveCoreFrames = LoadPixelFrames("Combat/Frames/SwordWavePixel_6f", 6);
         swordWaveImpactFrames = LoadPixelFrames("Combat/Frames/SwordWaveImpactPixel_6f", 6);
@@ -77,19 +83,36 @@ public class PlayerSkillController : MonoBehaviour
         ultimateSlashFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentBladesPixel_6f", 6, FrameAnchorMode.VisualCenterX);
         ultimateImpactFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentFinalPixel_6f", 6, FrameAnchorMode.VisualCenterX);
         casterAuraFrames = LoadPixelFrames("Combat/Frames/CasterBodyAuraPixel_6f", 6, FrameAnchorMode.VisualCenter);
-        if (GetComponent<SkillHudController>() == null)
+        if (lanInput == null && GetComponent<SkillHudController>() == null)
             gameObject.AddComponent<SkillHudController>();
+
+        // Sẵn sàng dùng chiêu R (Ashen Judgment) ngay khi vào màn
+        ultimateCharge = ultimateChargeRequired;
     }
+
+    [Header("Passive Charge")]
+    [Min(0f)] public float ultimatePassiveChargePerSecond = 5f;
 
     private void Update()
     {
-        if (Keyboard.current == null || player == null || isSkillCasting ||
+        if (LanLaunch.Mode == LanMode.Client || player == null || !player.enabled || isSkillCasting ||
             GameManager.isGamePaused || GameManager.isGameOver || GameManager.isWin)
             return;
 
-        bool castQ = Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextSwordWaveAt;
-        bool castE = Keyboard.current.eKey.wasPressedThisFrame && Time.time >= nextSpinSlashAt;
-        bool castR = Keyboard.current.rKey.wasPressedThisFrame && ultimateCharge >= ultimateChargeRequired;
+        // Tự động nạp nộ theo thời gian để chiêu R luôn sẵn sàng
+        if (ultimatePassiveChargePerSecond > 0f && ultimateCharge < ultimateChargeRequired)
+        {
+            AddUltimateCharge(ultimatePassiveChargePerSecond * Time.deltaTime);
+        }
+
+        bool qPressed = lanInput != null ? lanInput.Frame.q : WasKeyPressed(Key.Q, KeyCode.Q);
+        bool ePressed = lanInput != null ? lanInput.Frame.e : WasKeyPressed(Key.E, KeyCode.E);
+        bool rPressed = lanInput != null ? lanInput.Frame.r : WasKeyPressed(Key.R, KeyCode.R);
+
+        bool castQ = qPressed && Time.time >= nextSwordWaveAt;
+        bool castE = ePressed && Time.time >= nextSpinSlashAt;
+        bool castR = rPressed && ultimateCharge >= ultimateChargeRequired;
+
         if (!castQ && !castE && !castR)
             return;
 
@@ -113,6 +136,24 @@ public class PlayerSkillController : MonoBehaviour
         }
     }
 
+    private static bool WasKeyPressed(Key newKey, KeyCode legacyKey)
+    {
+        if (Keyboard.current != null)
+        {
+            try
+            {
+                if (Keyboard.current[newKey].wasPressedThisFrame) return true;
+            }
+            catch {}
+        }
+        try
+        {
+            if (Input.GetKeyDown(legacyKey)) return true;
+        }
+        catch {}
+        return false;
+    }
+
     public void AddUltimateCharge(float amount)
     {
         if (isSkillCasting || amount <= 0f)
@@ -121,15 +162,88 @@ public class PlayerSkillController : MonoBehaviour
         ultimateCharge = Mathf.Clamp(ultimateCharge + amount, 0f, ultimateChargeRequired);
     }
 
+    private Vector2 GetSwordWaveDirection(Vector3 origin)
+    {
+        Vector2 fallback = player != null ? player.FacingDirection : Vector2.right;
+        float bestDistSqr = swordWaveAutoAimRange * swordWaveAutoAimRange;
+        Vector3? targetPos = null;
+
+        // 1. Quét các quái EnemyHealth còn sống
+        EnemyHealth[] enemies = FindObjectsOfType<EnemyHealth>();
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            EnemyHealth e = enemies[i];
+            if (e == null || e.IsDead || !e.gameObject.activeInHierarchy) continue;
+            float d2 = (e.transform.position - origin).sqrMagnitude;
+            if (d2 < bestDistSqr)
+            {
+                bestDistSqr = d2;
+                targetPos = e.transform.position;
+            }
+        }
+
+        // 2. Quét các BossController còn sống
+        BossController[] bosses = FindObjectsOfType<BossController>();
+        for (int i = 0; i < bosses.Length; i++)
+        {
+            BossController b = bosses[i];
+            if (b == null || b.IsDead || !b.gameObject.activeInHierarchy) continue;
+            float d2 = (b.transform.position - origin).sqrMagnitude;
+            if (d2 < bestDistSqr)
+            {
+                bestDistSqr = d2;
+                targetPos = b.transform.position;
+            }
+        }
+
+        // 3. Quét các quái Enemy cũ (nếu có)
+        Enemy[] legacyEnemies = FindObjectsOfType<Enemy>();
+        for (int i = 0; i < legacyEnemies.Length; i++)
+        {
+            Enemy le = legacyEnemies[i];
+            if (le == null || !le.gameObject.activeInHierarchy) continue;
+            float d2 = (le.transform.position - origin).sqrMagnitude;
+            if (d2 < bestDistSqr)
+            {
+                bestDistSqr = d2;
+                targetPos = le.transform.position;
+            }
+        }
+
+        if (targetPos.HasValue)
+        {
+            Vector2 delta = (targetPos.Value - origin);
+            if (delta.sqrMagnitude > 0.001f)
+            {
+                Vector2 targetDir = delta.normalized;
+                if (player != null)
+                {
+                    player.SetFacing(targetDir.x < 0);
+                }
+                return targetDir;
+            }
+        }
+
+        return fallback;
+    }
+
+    public void ResetForLanRun()
+    {
+        StopAllCoroutines();
+        foreach (GameObject effect in activeEffects) if (effect != null) Destroy(effect);
+        activeEffects.Clear();
+        nextSwordWaveAt = nextSpinSlashAt = 0f;
+        ultimateCharge = ultimateChargeRequired;
+        isSkillCasting = hitStopActive = false;
+    }
+
     private IEnumerator CastSwordWave()
     {
         BeginCast("sword-wave");
         player.PlaySkillBodyMotion(1);
-        Vector2 direction = player.FacingDirection;
-        // Effects must use the rendered sprite centre.  The Player transform
-        // is on the movement anchor, which made Q and the caster aura appear
-        // below/away from the animated character.
         Vector3 bodyCenter = player.VisualCenter;
+        Vector2 direction = GetSwordWaveDirection(bodyCenter);
+
         Vector3 bodyOffset = bodyCenter - transform.position;
         Vector3 position = bodyCenter + (Vector3)direction * 0.65f;
         Quaternion rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
@@ -158,6 +272,7 @@ public class PlayerSkillController : MonoBehaviour
                 impactKind: CombatImpactKind.SwordWave);
             if (hitCount > 0)
             {
+                AddSkillHitCharge(15f * hitCount);
                 if (core != null)
                     Destroy(core);
                 CreateEffect("Sword Wave Impact", swordWaveImpactFrames, position, 1.1f, 0.3f, rotation, null);
@@ -174,6 +289,8 @@ public class PlayerSkillController : MonoBehaviour
 
     private IEnumerator PlayImpactFeedback(float shakeDuration, float shakeMagnitude, float hitStopDuration)
     {
+        // A local cosmetic hit-stop must not pause the other LAN player's simulation.
+        if (LanLaunch.Mode != LanMode.Solo) yield break;
         StartCoroutine(ShakeMainCamera(shakeDuration, shakeMagnitude));
         if (hitStopActive)
             yield break;
@@ -189,6 +306,7 @@ public class PlayerSkillController : MonoBehaviour
 
     private static IEnumerator ShakeMainCamera(float duration, float magnitude)
     {
+        if (LanLaunch.Mode != LanMode.Solo) yield break;
         Camera camera = Camera.main;
         if (camera == null)
             yield break;
@@ -234,8 +352,10 @@ public class PlayerSkillController : MonoBehaviour
             elapsed += Time.deltaTime;
             if (nextPulse < pulseTimes.Length && elapsed >= pulseTimes[nextPulse])
             {
-                player.DamageEnemiesInRadius(transform.position, spinSlashRadius, spinSlashDamagePerPulse,
+                int hits = player.DamageEnemiesInRadius(transform.position, spinSlashRadius, spinSlashDamagePerPulse,
                     impactKind: CombatImpactKind.SpinSlash);
+                if (hits > 0)
+                    AddSkillHitCharge(8f * hits);
                 nextPulse++;
             }
             yield return null;
@@ -247,6 +367,13 @@ public class PlayerSkillController : MonoBehaviour
         if (remainingVfxTime > 0f)
             yield return new WaitForSeconds(remainingVfxTime);
         EndCast("spin-slash-complete");
+    }
+
+    // Q/E charge R during their cast lock; R cannot charge itself.
+    private void AddSkillHitCharge(float amount)
+    {
+        if (amount > 0f)
+            ultimateCharge = Mathf.Clamp(ultimateCharge + amount, 0f, ultimateChargeRequired);
     }
 
     private IEnumerator CastAshenJudgment()
@@ -503,7 +630,7 @@ public class PlayerSkillController : MonoBehaviour
                 wrapMode = TextureWrapMode.Clamp
             };
             paddedTexture.SetPixels32(paddedPixels);
-            paddedTexture.Apply(false, true);
+            paddedTexture.Apply(false, LanLaunch.Mode == LanMode.Solo);
             Vector2 pivot = new Vector2(0.5f, 0.5f);
             if (maxX >= minX)
             {
@@ -562,7 +689,7 @@ public class PlayerSkillController : MonoBehaviour
             }
 
             texture.SetPixels(pixels);
-            texture.Apply(false, true);
+            texture.Apply(false, LanLaunch.Mode == LanMode.Solo);
             frames[frame] = Sprite.Create(texture, new Rect(0f, 0f, textureSize, textureSize),
                 new Vector2(0.5f, 0.5f), textureSize);
             frames[frame].name = $"{resourcePath}_{frame:00}_Fallback";
