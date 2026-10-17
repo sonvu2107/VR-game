@@ -32,7 +32,7 @@ public class AnimatedDecor : MonoBehaviour
     [SerializeField] private bool isLightSource;
     [SerializeField] private Light2D lightComponent;
     [SerializeField, Range(0.1f, 3f)] private float baseLightIntensity = 1.15f;
-    [SerializeField, Range(0.5f, 10f)] private float baseLightRadius = 3.4f;
+    [SerializeField, Range(0.5f, 10f)] private float baseLightRadius = 2.2f;
     [SerializeField, Range(0.01f, 0.5f)] private float flickerAmount = 0.22f;
 
     private SpriteRenderer spriteRenderer;
@@ -118,7 +118,7 @@ public class AnimatedDecor : MonoBehaviour
 
     [SerializeField] private SpriteRenderer flameHaloRenderer;
 
-    public void ConfigureTorchLight(Color lightColor, float outerRadius = 3.8f, float innerRadius = 0.5f, float intensity = 1.25f)
+    public void ConfigureTorchLight(Color lightColor, float outerRadius = 2.2f, float innerRadius = 0.3f, float intensity = 1.25f)
     {
         isLightSource = true;
         baseLightIntensity = intensity;
@@ -142,7 +142,7 @@ public class AnimatedDecor : MonoBehaviour
         {
             GameObject haloObj = new("Torch Fire Glow");
             haloObj.transform.SetParent(transform, false);
-            haloObj.transform.localPosition = new Vector3(0f, 0.12f, 0f);
+            haloObj.transform.localPosition = new Vector3(0f, 0.10f, 0f);
             flameHaloRenderer = haloObj.AddComponent<SpriteRenderer>();
             flameHaloRenderer.sprite = EnemyEffectSpriteFactory.Disc;
             flameHaloRenderer.sortingOrder = 2; // Nằm sau thân đuốc và trên nền tường
@@ -151,7 +151,7 @@ public class AnimatedDecor : MonoBehaviour
         }
 
         // Turn on floating flame bobbing automatically for torches
-        EnableFloatingFlame(4.2f, 0.035f);
+        EnableFloatingFlame(4.2f, 0.02f);
     }
 
     public void ConfigureMushroomGlow(Color glowColor, float outerRadius = 1.6f, float innerRadius = 0.2f, float intensity = 0.85f)
@@ -306,8 +306,8 @@ public class AnimatedDecor : MonoBehaviour
             lightComponent.intensity = baseLightIntensity + fastFlicker + slowBreathing;
 
             // Radius breathes slightly so the illuminated halo floats/wavers on surrounding dungeon walls
-            float haloRadiusDrift = (Mathf.PerlinNoise((Time.time * 2.8f) + noiseOffset + 35f, 0f) - 0.5f) * 0.45f;
-            lightComponent.pointLightOuterRadius = Mathf.Max(0.5f, baseLightRadius + haloRadiusDrift);
+            float haloRadiusDrift = (Mathf.PerlinNoise((Time.time * 2.8f) + noiseOffset + 35f, 0f) - 0.5f) * 0.25f;
+            lightComponent.pointLightOuterRadius = Mathf.Max(0.4f, baseLightRadius + haloRadiusDrift);
         }
 
         // Đồng bộ hiệu ứng hào quang lửa ấm áp

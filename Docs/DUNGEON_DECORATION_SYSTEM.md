@@ -8,10 +8,10 @@ Tất cả asset trang trí được tối ưu và đặt tại `Assets/Resource
 
 ### A. Trang trí vách tường & Ngọn đuốc lấp lửng (Floating Fire & Wall Decor)
 * **Đuốc gắn tường (`Decor/Torches/torch_1` đến `torch_4`):**
-  * Trong các vị trí ứng viên được xét, xác suất chọn đuốc là 75% ở tầng thường, 85% ở tầng 6 và boss cuối; không phải tỷ lệ phủ toàn bộ tường.
+  * Trong các vị trí ứng viên được xét, xác suất chọn đuốc là ~65% ở tầng thường, 70% ở tầng 6 và boss cuối; không phải tỷ lệ phủ toàn bộ tường.
   * **Hiệu ứng ngọn lửa lấp lửng (`Floating Flame`):** Sprite ngọn lửa nhấp nhô lơ lửng bồng bềnh trên trục Y (`Mathf.Sin`), tạo cảm giác ngọn lửa thực sự đang bay bổng và cháy cuộn trong không khí.
   * **Nguồn sáng đa tầng (`Breathing Light2D`):** URP Point Light màu cam vàng ấm áp với độ sáng dao động đa tần (Perlin noise + Sine wave) và bán kính vầng sáng co giãn nhẹ nhàng, phản chiếu quầng sáng chao đảo lấp lửng lên các vách đá xung quanh.
-  * Thuật toán duyệt danh sách vị trí tường đã sắp xếp với bước nhảy 3–4 ứng viên; đây không phải cam kết khoảng cách hình học theo ô gạch.
+  * Thuật toán duyệt danh sách vị trí tường với bước nhảy 5–7 ô và khoảng cách tối thiểu giữa 2 đuốc là 4.5 ô (ngăn việc đuốc dồn dày); kích thước đuốc thu gọn tỉ lệ 0.58 vừa vặn với tầm vóc nhân vật.
 * **Biểu ngữ lâu đài (`Decor/Flags/flag_1` đến `flag_4`):**
   * Xác suất 8% ở vị trí được xét, cách nhau tối thiểu 14 chỉ số ứng viên; tầng 6 không đặt cờ.
   * Các vị trí không được chọn giữ nguyên tường gốc.
