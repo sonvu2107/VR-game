@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Attack Movement")]
     [Range(0f, 1f)] public float attackMoveSpeedMultiplier = 0.85f;
     [Header("Dash")]
-    [Tooltip("Press Left Shift or the gamepad right shoulder button to dash.")]
+    [Tooltip("Press Left Shift, right mouse button, or the gamepad right shoulder button to dash.")]
     [Min(0.05f)] public float dashDuration = 0.16f;
     [Min(0.1f)] public float dashDistance = 3f;
     [Min(0f)] public float dashCooldown = 0.7f;
@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     [Min(0f)] public float heavyMaxDamageMultiplier = 3.2f;
     [Header("Player Visual Invariant")]
     [Tooltip("Writes the Player-instance and authoritative-visual counts at each skill-cast boundary.")]
-    [SerializeField] private bool logPlayerVisualInvariant = true;
+    [SerializeField] private bool logPlayerVisualInvariant;
     [Header("Three-Hit Combo")]
     [Tooltip("Each value should match its own animation clip once the three attack animations are added.")]
     [FormerlySerializedAs("attackDuration")]
@@ -312,7 +312,7 @@ public class PlayerMovement : MonoBehaviour
         }
         
 
-        _movement = HasRemoteInput ? lanInput.Frame.movement : move.ReadValue<Vector2>();
+        _movement = HasRemoteInput ? lanInput.Frame.movement : ReadLocalMovement();
 
         if (isHeavyAttacking)
         {
@@ -503,6 +503,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (HasRemoteInput) return lanInput.Frame.dash;
         return (Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame) ||
+               (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame) ||
                (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame);
     }
 
@@ -762,9 +763,12 @@ public class PlayerMovement : MonoBehaviour
         slashVfxFrames = new Sprite[3][];
         for (int hit = 0; hit < slashVfxFrames.Length; hit++)
         {
+            // Hit 2 is the new five-frame sequence. The folder keeps its
+            // legacy name so existing Resources paths remain valid.
+            int frameCount = hit == 1 ? 5 : 6;
             Sprite[] frames = PlayerSkillController.LoadPixelFrames(
-                $"Combat/Frames/SlashVfxHit{hit + 1}_6f", 6);
-            if (frames.Length < 6)
+                $"Combat/Frames/SlashVfxHit{hit + 1}_6f", frameCount);
+            if (frames.Length < frameCount)
             {
                 slashVfxFrames = null;
                 return;
@@ -1160,9 +1164,37 @@ public class PlayerMovement : MonoBehaviour
 
         skillPositionLocked = false;
 
+        // A Dynamic Rigidbody2D can occasionally drop a MovePosition request while
+        // it is resolving the generated wall collider. Drive its velocity instead:
+        // collision remains fully physical, while continuous keyboard movement is
+        // no longer lost between physics ticks.
         float movementMultiplier = isHeavyCharging ? heavyChargeMoveSpeedMultiplier :
             isAttacking ? attackMoveSpeedMultiplier : 1f;
-        rb.MovePosition(rb.position + _movement * (speed * movementMultiplier * Time.fixedDeltaTime));
+        rb.velocity = _movement * (speed * movementMultiplier);
+    }
+
+    /// <summary>
+    /// PlayerInput / UI action-map changes must never leave the offline player
+    /// without movement. The generated Move action remains the primary source
+    /// (so gamepad and remapped controls still work); raw keyboard polling is
+    /// only a fallback for the standard WASD / arrow-key controls.
+    /// </summary>
+    private Vector2 ReadLocalMovement()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null)
+        {
+            float horizontal = (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed ? 1f : 0f) -
+                               (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed ? 1f : 0f);
+            float vertical = (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed ? 1f : 0f) -
+                             (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed ? 1f : 0f);
+            Vector2 keyboardMovement = new Vector2(horizontal, vertical);
+            if (keyboardMovement.sqrMagnitude > 0.0001f)
+                return keyboardMovement.sqrMagnitude > 1f ? keyboardMovement.normalized : keyboardMovement;
+        }
+
+        // Preserve remapped controls and gamepad support when no keyboard key is held.
+        return move != null ? move.ReadValue<Vector2>() : Vector2.zero;
     }
 
     private void OnDrawGizmosSelected()

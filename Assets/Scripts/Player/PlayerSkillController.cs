@@ -333,10 +333,6 @@ public class PlayerSkillController : MonoBehaviour
         float castStartedAt = Time.time;
         player.PlaySkillBodyMotion(2);
         Vector3 bodyCenter = player.VisualCenter;
-        Vector3 bodyOffset = bodyCenter - transform.position;
-        CreateEffect("Spin Slash Caster Aura", casterAuraFrames, bodyCenter, 2.6f, spinSlashDuration,
-            Quaternion.identity, transform, 1, bodyOffset, smoothFrames: true);
-
         // Keep the slash at its cast origin. The visual tail is intentionally
         // longer than the movement lock; following the player made that tail
         // slide sideways as soon as movement became available again.
@@ -382,10 +378,6 @@ public class PlayerSkillController : MonoBehaviour
         float castStartedAt = Time.time;
         player.PlaySkillBodyMotion(3, true);
         Vector3 strikePosition = transform.position;
-        Vector3 bodyCenter = player.VisualCenter;
-        Vector3 bodyOffset = bodyCenter - transform.position;
-        CreateEffect("Ashen Judgment Caster Aura", casterAuraFrames, bodyCenter, 3.35f, 0.88f,
-            Quaternion.identity, transform, 1, bodyOffset, smoothFrames: true);
         CreateEffect("Ashen Judgment Rune", runeFrames, strikePosition, 3.85f, 0.94f,
             Quaternion.identity, null, -1, smoothFrames: true);
         AssertCastVisualInvariant("ashen-judgment-effects-created");

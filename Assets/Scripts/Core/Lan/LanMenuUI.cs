@@ -42,8 +42,11 @@ public sealed class LanMenuUI : MonoBehaviour
         scaler.referenceResolution = new Vector2(1280, 720);
         scaler.matchWidthOrHeight = 0.5f;
         LanMenuUI ui = root.AddComponent<LanMenuUI>();
-        var existing = FindObjectOfType<TextMeshProUGUI>();
-        ui.font = existing != null ? existing.font : TMP_Settings.defaultFontAsset;
+        // Do not inherit a font from an arbitrary scene label here. The
+        // imported FeGPsc2 font can have a missing TMP atlas/material in
+        // Unity 2022, which made the dynamically created LAN menu crash
+        // while opening. TMP's default font is present in this project.
+        ui.font = TMP_Settings.defaultFontAsset;
         if (FindObjectOfType<UnityEngine.EventSystems.EventSystem>() == null)
             new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(InputSystemUIInputModule));
         return ui;

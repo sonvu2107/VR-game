@@ -182,8 +182,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Loading level...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 268f22c0d7a924245a357d745dceed41, type: 2}
-  m_sharedMaterial: {fileID: -6678175218788587944, guid: 268f22c0d7a924245a357d745dceed41, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1006,8 +1006,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 25%
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 268f22c0d7a924245a357d745dceed41, type: 2}
-  m_sharedMaterial: {fileID: -6678175218788587944, guid: 268f22c0d7a924245a357d745dceed41, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1361,8 +1361,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Start Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
-  m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1934,8 +1934,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Quit Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
-  m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2068,8 +2068,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: THE LABYRINTH
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
-  m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
