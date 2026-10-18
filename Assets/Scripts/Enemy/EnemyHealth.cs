@@ -22,6 +22,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public event Action<EnemyHealth> Died;
     public event Action<int> Damaged;
+    public event Action<int> Healed;
     public bool IsDead => isDead;
     public int CurrentHealth => currentHealth;
     public int MaxHealth => config != null ? config.maxHealth : 1;
@@ -32,6 +33,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void SetCountsForLegacyCounter(bool value)
     {
         countsForLegacyCounter = value;
+    }
+
+    public void ConfigureAsFinalBoss(EnemyConfigSO value)
+    {
+        Configure(value);
+        currentHealth = MaxHealth;
+        deathKind = DeathKind.Boss;
+        countsForLegacyCounter = true;
     }
 
     private void Awake()
@@ -74,6 +83,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void SetInvulnerable(bool value)
     {
         isInvulnerable = value;
+    }
+
+    public int Heal(int amount)
+    {
+        if (isDead || amount <= 0 || LanLaunch.Mode == LanMode.Client) return 0;
+        int restored = Mathf.Min(amount, Mathf.Max(0, MaxHealth - currentHealth));
+        if (restored == 0) return 0;
+        currentHealth += restored;
+        Healed?.Invoke(restored);
+        return restored;
     }
 
     public void ApplyReplicatedState(int replicatedHealth, bool replicatedDead)

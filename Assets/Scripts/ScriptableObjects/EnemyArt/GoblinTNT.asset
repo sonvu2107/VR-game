@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2222c9be260c02a488511a60dd6282e0, type: 3}
+  m_Name: GoblinTNT
+  m_EditorClassIdentifier: 
+  variants:
+  - {fileID: 2800000, guid: f0e6a6ba01785984abf0d5cfd915e63e, type: 3}
+  - {fileID: 2800000, guid: f84617a3ecdca17418cddfa1bdcf55bd, type: 3}
+  - {fileID: 2800000, guid: fd7fea39677517146ac9f7e234b1f7e6, type: 3}
+  - {fileID: 2800000, guid: b6f3d7f4f4fb7734292fd024c2d58cdc, type: 3}
+  cellSize: 192
+  pixelsPerUnit: 64
+  framesPerSecond: 10
+  attackImpactFrame: 3
+  idle:
+    row: 0
+    start: 0
+    count: 6
+  move:
+    row: 1
+    start: 0
+    count: 6
+  attack:
+    row: 2
+    start: 0
+    count: 7
+  attackDown:
+    row: 0
+    start: 0
+    count: 0
+  attackUp:
+    row: 0
+    start: 0
+    count: 0
+  reverseIdle:
+    row: 0
+    start: 0
+    count: 0
+  reverseMove:
+    row: 0
+    start: 0
+    count: 0

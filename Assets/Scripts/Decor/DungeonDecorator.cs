@@ -18,13 +18,32 @@ public static class DungeonDecorator
     private static readonly Color TorchWarmColor = new(1f, 0.68f, 0.28f, 1f);
     private static readonly Color DarknessTorchColor = new(1f, 0.60f, 0.20f, 1f);
 
+    // Shared animated torch for the new map; no old crates/banners are spawned.
+    public static GameObject CreateWallTorch(Vector3 position, Transform parent, Material material = null, Color? lightColor = null)
+    {
+        EnsureAssets();
+        if (torchFrames == null || torchFrames.Length == 0) return null;
+        var torch = new GameObject("Wall Torch");
+        torch.transform.SetParent(parent, false);
+        torch.transform.position = position;
+        var renderer = torch.AddComponent<SpriteRenderer>();
+        renderer.sortingOrder = 3;
+        if (material != null) renderer.sharedMaterial = material;
+        var animation = torch.AddComponent<AnimatedDecor>();
+        animation.ConfigureFrames(torchFrames, 5.5f);
+        animation.ConfigureTorchLight(lightColor ?? TorchWarmColor, 2.2f, 0.2f, 0.9f, lightColor.HasValue);
+        animation.SetWallMountedFlame();
+        torch.transform.localScale = Vector3.one * 0.55f;
+        return torch;
+    }
+
     public static void DecorateDungeon(
         DungeonLayout layout,
         SeededRandom random,
         HashSet<Vector2Int> occupiedCells,
         ICollection<GameObject> spawnedObjects,
         int currentLevel,
-        LevelType levelType)
+        LevelType levelType, bool formalLayout = false)
     {
         if (layout == null || layout.FloorTiles == null || layout.FloorTiles.Count == 0)
             return;
@@ -37,7 +56,7 @@ public static class DungeonDecorator
         HashSet<Vector2Int> wallDecorCells = new();
 
         // 1. Decorate Walls (Warm torches ~40%, rare banners, ambient 2D lighting)
-        DecorateWalls(layout, random, spawnedObjects, root.transform, currentLevel, levelType, wallDecorCells);
+        DecorateWalls(layout, random, spawnedObjects, root.transform, currentLevel, levelType, wallDecorCells, formalLayout);
 
         // 2. Decorate Main Rooms (Storage crates in corners and Treasure Chest)
         if (layout.Rooms != null)
@@ -56,7 +75,7 @@ public static class DungeonDecorator
         Transform parent,
         int currentLevel,
         LevelType levelType,
-        HashSet<Vector2Int> wallDecorCells)
+        HashSet<Vector2Int> wallDecorCells, bool formalLayout)
     {
         HashSet<Vector2Int> floorTiles = layout.FloorTiles;
         List<Vector2Int> candidateWalls = new();
@@ -79,7 +98,7 @@ public static class DungeonDecorator
         if (sortedWalls.Count == 0)
             return;
 
-        int step = 3;
+        int step = formalLayout ? 5 : 3;
         int wallIndex = random.Range(0, step);
         int lastFlagWallIndex = -999;
         int torchChance = currentLevel == 6 ? 85 : (levelType == LevelType.FinalBoss ? 85 : 75);
@@ -87,6 +106,13 @@ public static class DungeonDecorator
         while (wallIndex < sortedWalls.Count)
         {
             Vector2Int wallCell = sortedWalls[wallIndex];
+
+            if (formalLayout && (floorTiles.Contains(wallCell + Vector2Int.left) ||
+                floorTiles.Contains(wallCell + Vector2Int.right)))
+            {
+                wallIndex += 1;
+                continue;
+            }
 
             if (floorTiles.Contains(wallCell + Vector2Int.down))
             {

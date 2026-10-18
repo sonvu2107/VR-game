@@ -1,0 +1,40 @@
+ARCANE CITADEL - Bộ asset thử nghiệm v1
+
+Phong cách: pháo đài cổ ma thuật; đá xanh tím, kim loại đồng cũ,
+ánh sáng xanh ngọc, điểm nhấn tinh thể tím. Không thay asset gốc.
+
+ArcaneCitadel_Props_v1.png: PNG 1254 x 1254, nền trong suốt, bố cục 4 x 4.
+Đây là bố cục minh họa gần lưới, không phải atlas đã cắt theo ô nguyên pixel.
+Thứ tự trái sang phải, trên xuống dưới:
+01 Cột rune nguyên vẹn | 02 Cột gãy | 03 Lò lửa xanh | 04 Đuốc tường
+05 Rương đóng | 06 Rương mở | 07 Thùng tiếp tế | 08 Cụm bình gốm
+09 Tinh thể xanh | 10 Tinh thể tím | 11 Tượng hộ vệ | 12 Bục sách
+13 Khung cửa đá | 14 Ấn rune mặt đất | 15 Cờ treo | 16 Đá vụn
+
+Trạng thái: một số mẫu đã dùng làm mesh trang trí trong DungeonArcaneCitadel.
+Cột/rương/tượng đã có collider chân và vùng chặn NavMesh riêng.
+Bục sách không còn đặt trong map thử.
+Chưa có tương tác mở rương. Đuốc tĩnh trong sheet không còn dùng; thay bằng
+đuốc 4 frame có sẵn và shader đổi màu lửa/halo sang xanh ngọc cho theme này.
+Không phải RuleTile tự nối; không tạo Sprite sub-assets hoặc sửa pivot importer.
+Cần kiểm tra vùng cắt từng sprite; không giả định AI vẽ đúng tuyệt đối
+mọi ranh giới ô. Chỉnh PPU/scale và pivot tại chân từng vật thể để hợp
+nhân vật và tile 16 px cũ. Point filtering, không mipmap cho pixel art.
+Không dùng trực tiếp kích thước mặc định của ảnh cho kích thước trong game.
+
+Nguồn tạo: built-in image_gen; prompt đầy đủ nằm trong Docs/ARCANE_CITADEL_ART_PROMPT.txt.
+
+Bổ sung kiến trúc mới, không dùng atlas cũ:
+ArcaneCitadel_Floors_v1.png: 16 mẫu nền đá, nứt/rêu, rune và viền đồng.
+ArcaneCitadel_Walls_v1.png: 16 mẫu tường, đầu tường, góc, cửa và tường vỡ.
+Đã tích hợp nền, tường thẳng và tường cạnh qua mesh UV trong scene thử mới.
+Tường ngang và dọc dùng chung thân gạch, viền ngoài có góc nối liên tục.
+Vài góc tường có phối cảnh nghiêng nên chưa dùng; thay bằng mảnh thẳng.
+Các đường nối nền là bản thử, chưa coi là bộ tile seamless hoàn thiện.
+Không coi là RuleTile hoàn chỉnh. Prompt: Docs/ARCANE_CITADEL_ARCHITECTURE_PROMPTS.txt.
+
+ArcaneCitadel_Spikes_v1.png: atlas bẫy 2x2 mới cùng theme đá xanh tím/đồng.
+Trên trái: thu gai/rune xanh; trên phải: cảnh báo vàng;
+dưới trái: gai nhú/cảnh báo; dưới phải: bật gai/rune đỏ.
+Đã dùng qua mesh UV cho bẫy có sát thương trong map thử; không dùng gai peaks cũ.
+Prompt: Docs/ARCANE_CITADEL_TRAP_PROMPT.txt. Nguồn: built-in image_gen.

@@ -48,6 +48,10 @@ public sealed class LanBuildTools : IPreprocessBuildWithReport
         foreach (string path in paths)
         {
             if (path == CatalogPath || AssetDatabase.IsValidFolder(path)) continue;
+            // Hai bản thử cũ chỉ có ở local và được .gitignore loại ra.
+            // Không để catalog LAN tham chiếu asset mà máy clone mới không có.
+            if (path == "Assets/Resources/VFX/Pipoya/TimeMagic/pipo-btleffect210_192.png" ||
+                path == "Assets/Resources/VFX/Pipoya/TimeMagic/pipo-btleffect212_192.png") continue;
             identity.Append(path).Append(':').Append(AssetDatabase.GetAssetDependencyHash(path)).Append('\n');
             string extension = Path.GetExtension(path).ToLowerInvariant();
             if (extension != ".png" && extension != ".jpg" && extension != ".asset" && extension != ".mat" &&

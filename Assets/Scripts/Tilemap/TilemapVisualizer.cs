@@ -18,6 +18,28 @@ public class TilemapVisualizer : MonoBehaviour
         PaintTiles(floorPositions, floorTilemap, floorTile);
     }
 
+    public void SetMapArtVisible(bool visible)
+    {
+        // Tilemaps can live outside this component's hierarchy in existing scenes.
+        if (floorTilemap != null) floorTilemap.GetComponent<TilemapRenderer>().enabled = visible;
+        if (wallTilemap != null) wallTilemap.GetComponent<TilemapRenderer>().enabled = visible;
+    }
+
+    // TilemapCollider mặc định đợi LateUpdate; phép kiểm tra đường trong lúc sinh map
+    // phải dùng tường của map mới, không phải collider còn giữ từ tầng trước.
+    public void SynchronizeColliders()
+    {
+        foreach (var tilemap in new[] { floorTilemap, wallTilemap })
+        {
+            if (tilemap == null) continue;
+            foreach (var collider in tilemap.GetComponents<TilemapCollider2D>()) collider.ProcessTilemapChanges();
+            var composite = tilemap.GetComponent<CompositeCollider2D>();
+            if (composite != null && composite.generationType == CompositeCollider2D.GenerationType.Manual)
+                composite.GenerateGeometry();
+        }
+        Physics2D.SyncTransforms();
+    }
+
     private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
     {
         foreach (var position in positions)

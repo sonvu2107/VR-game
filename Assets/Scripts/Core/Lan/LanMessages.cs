@@ -5,7 +5,8 @@ using UnityEngine;
 public sealed class LanMessage
 {
     public string type;
-    public int protocol = 1;
+    public const int CurrentProtocol = 2;
+    public int protocol = CurrentProtocol;
     public string catalog;
     public string error;
     public int run;
@@ -24,6 +25,8 @@ public sealed class LanMessage
     public float pitch = 1f;
     public LanInputFrame input;
     public LanTilemap[] maps;
+    public LanMesh[] meshes;
+    public LanMeshFrame[] meshFrames;
     public LanSpriteDefinition[] definitions;
     public LanVisual[] visuals;
     public LanLight[] lights;
@@ -71,8 +74,28 @@ public sealed class LanPlayerState
 public sealed class LanTilemap
 {
     public string name;
+    public bool visible = true;
     public Vector3Int[] cells;
     public int[] tiles;
+}
+
+[Serializable]
+public sealed class LanMesh
+{
+    public int id, material, layer, order;
+    public string name;
+    public Vector3 position, scale;
+    public Quaternion rotation;
+    public Vector3[] vertices;
+    public int[] triangles;
+    public Vector2[] uv;
+}
+
+[Serializable]
+public sealed class LanMeshFrame
+{
+    public int id;
+    public Vector2[] uv;
 }
 
 [Serializable]

@@ -1,6 +1,6 @@
 # The Labyrinth
 
-**The Labyrinth** là game hành động khám phá mê cung 2D được phát triển bằng Unity. Bản đồ được sinh tự động bằng thuật toán Random Walk; người chơi phải vượt qua chiến dịch 10 level trong cùng một hầm ngục, chiến đấu với Skeleton và mở cổng sang level tiếp theo.
+**The Labyrinth** là game hành động khám phá mê cung 2D được phát triển bằng Unity. Chiến dịch gồm 10 level: level 1 dùng dungeon gốc, hoàn thành và qua cổng sẽ sang map Arcane Citadel từ level 2. Các level sau tiếp tục dùng Arcane với cấu hình độ khó riêng cho đến khi có thêm theme khác.
 
 > Trạng thái: Đồ án đang được tiếp tục phát triển bởi nhóm 5 thành viên.
 
@@ -20,10 +20,13 @@
 
 - Sinh phòng và hành lang ngẫu nhiên bằng Procedural Content Generation (PCG).
 - Một lượt chơi gồm 10 level với seed, số phòng và độ khó riêng cho từng level.
+- Đổi từ map gốc ở level 1 sang Arcane ở level 2 trong cùng phiên chơi; không tải lại Player, điểm số hay kết nối LAN. Restart trở lại level 1/map gốc.
 - State machine quản lý các trạng thái Generating, Playing, Level Completed, Paused, Game Over và Victory.
 - Cổng chuyển level chỉ mở sau khi toàn bộ enemy bị tiêu diệt và đủ chìa khóa ở level có khóa.
 - Level 4 có bẫy gai và một chìa khóa; level 6 giới hạn tầm nhìn; level 8 yêu cầu hai chìa khóa; level 9 có giới hạn 4 phút.
 - Cấu hình chiến dịch đánh dấu level thường, mini-boss và boss cuối.
+- Phòng chiến đấu gồm một Goblin Torch, một TNT và một Barrel; boss tầng 10 chọn ngẫu nhiên từ pool quái hiện có và phóng lớn tối đa bốn lần nếu phòng đủ chỗ.
+- Bẫy dùng mẫu chia đường, che tuyến TNT, bảo vệ mục tiêu và hai bên phòng boss; giữ mạng đường né không có bẫy. Phòng không đủ chỗ sẽ giảm/bỏ bẫy; có cảnh báo 0,85 giây trước khi kích hoạt.
 - LAN co-op hai người trên hai máy: Host/Join bằng IPv4, Host xử lý gameplay và đồng bộ bản đồ, Player, Enemy, cổng, VFX cùng trạng thái chiến dịch.
 - Tự động tạo sàn và tường bằng Tilemap.
 - NavMesh 2D hỗ trợ enemy tìm đường và đuổi theo người chơi.
@@ -33,7 +36,7 @@
 - HUD gồm minimap, 5 tim và mũi tên chỉ quái gần nhất. Mỗi lần trúng đòn mất tối đa nửa tim, kèm 0,85 giây bất tử.
 - Q tự ngắm mục tiêu gần trong phạm vi 14 đơn vị; E chém xoay; R sẵn sàng khi bắt đầu, tự hồi nộ và nhận nộ khi Q/E trúng quái.
 - Trang trí hầm ngục tự sinh: đuốc và ánh sáng nhấp nháy, cờ, thùng góc phòng, rương phòng kho báu; boss có bóng đổ, vòng ma pháp và chuyển động giả lập chiều sâu.
-- Enemy Skeleton có hành vi đi lang thang, truy đuổi và tấn công.
+- Enemy gồm Skeleton, Archer, Slime, Bat, Mage, Elite, Skull, Vampire và ba loại bổ sung: Goblin Torch/Barrel/TNT. Mỗi loại được phân bổ theo tiến trình 10 tầng; xem [danh sách quái](Docs/ENEMY_ROSTER.md).
 - Hiển thị số lượng enemy còn lại.
 - Các trạng thái Pause, Game Over và Victory.
 - Menu bắt đầu, màn hình tải và âm thanh cơ bản.
@@ -50,7 +53,7 @@ Mục tiêu hiện tại của người chơi là khám phá mê cung và tiêu 
 | Đánh thường | Chuột trái hoặc `Left Alt` |
 | Tích lực | Giữ `Space` |
 | Tung đòn tích lực | Thả `Space` |
-| Lướt | `Left Shift` |
+| Lướt | `Left Shift` hoặc chuột phải (Solo và LAN) |
 | Kiếm khí tự ngắm / chém xoay / tuyệt kỹ | `Q` / `E` / `R` |
 | Tạm dừng/tiếp tục | `Esc` |
 | Chơi lại tại Game Over | `R` (LAN: chỉ Host) |

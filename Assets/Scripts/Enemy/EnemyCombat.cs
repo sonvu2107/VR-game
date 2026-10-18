@@ -87,6 +87,8 @@ public class EnemyCombat : MonoBehaviour
 
         Vector2 attackDir = ((Vector2)target.transform.position - (Vector2)transform.position).normalized;
         GetComponent<EnemyLocomotionVisual>()?.TriggerAttackLunge(attackDir);
+        GetComponent<EnemySpriteAnimation>()?.TriggerAttackLunge(attackDir);
+        GetComponent<EnemySheetAnimation>()?.TriggerAttack(attackDir, config != null ? config.attackWindup : 0.4f);
 
         if (animator != null)
         {
@@ -120,7 +122,7 @@ public class EnemyCombat : MonoBehaviour
             HealthController player = hit.GetComponentInParent<HealthController>();
             if (player != null && player.currentHealth > 0)
             {
-                player.TakeDamage(config.contactDamage);
+                DealDamageToPlayer(player, config.contactDamage);
                 CombatHitVfx.Spawn(player.transform.position, GetImpactKind(), 0.75f);
                 nextContactDamageTime = Time.time + 1.5f;
                 break;
@@ -152,7 +154,7 @@ public class EnemyCombat : MonoBehaviour
         HealthController player = col.GetComponentInParent<HealthController>();
         if (player != null && player.currentHealth > 0)
         {
-            player.TakeDamage(config.contactDamage);
+            DealDamageToPlayer(player, config.contactDamage);
             CombatHitVfx.Spawn(player.transform.position, GetImpactKind(), 0.75f);
             nextContactDamageTime = Time.time + 1.5f;
         }
@@ -167,12 +169,31 @@ public class EnemyCombat : MonoBehaviour
         }
     }
 
+    // Dùng chung cho cận chiến, chạm và cú lao. Chỉ hút máu theo HP thực sự bị mất.
+    public int DealDamageToPlayer(HealthController target, int amount)
+    {
+        if (LanLaunch.Mode == LanMode.Client || target == null || target.currentHealth <= 0 ||
+            amount <= 0 || health == null || health.IsDead) return 0;
+        int before = target.currentHealth;
+        target.TakeDamage(amount);
+        int dealt = Mathf.Max(0, before - target.currentHealth);
+        if (dealt > 0 && config != null && config.lifeStealHealthPerDamage > 0)
+            health.Heal(dealt * config.lifeStealHealthPerDamage);
+        return dealt;
+    }
+
     private IEnumerator ResolveAttack(bool special)
     {
         yield return new WaitForSeconds(config != null ? config.attackWindup : 0.35f);
         if (!hitResolved && health != null && !health.IsDead)
         {
-            if (config != null && (config.archetype == EnemyArchetype.Ranged || config.archetype == EnemyArchetype.Summoner))
+            if (config != null && config.blastRadius > 0f && config.archetype == EnemyArchetype.Charger)
+            {
+                Explode();
+                if (config.selfDestructOnAttack) health.Die();
+                if (health.IsDead) yield break;
+            }
+            else if (config != null && (config.archetype == EnemyArchetype.Ranged || config.archetype == EnemyArchetype.Summoner))
                 FireProjectile(currentTarget, config.attackDamage, config.projectileSpeed, config.projectileLifetime);
             else if (config != null && config.archetype == EnemyArchetype.Poison)
             {
@@ -231,7 +252,7 @@ public class EnemyCombat : MonoBehaviour
             HealthController player = hit.GetComponentInParent<HealthController>();
             if (player != null && player.currentHealth > 0 && damagedPlayers.Add(player))
             {
-                player.TakeDamage(config != null ? config.attackDamage : 1);
+                DealDamageToPlayer(player, config != null ? config.attackDamage : 1);
                 CombatHitVfx.Spawn(player.transform.position, GetImpactKind(),
                     GetImpactKind() == CombatImpactKind.Boss ? 1.3f : 0.8f);
             }
@@ -294,6 +315,7 @@ public class EnemyCombat : MonoBehaviour
         if (projectile == null) projectile = projectileObject.AddComponent<EnemyProjectile>();
         projectile.Launch(direction, damage, speed, lifetime, playerLayers, wallLayers,
             gameObject, GetImpactKind());
+        if (config != null && config.blastRadius > 0f) projectile.SetBlastRadius(config.blastRadius);
         ownedEffects.RemoveAll(effect => effect == null);
         ownedEffects.Add(projectileObject);
     }
@@ -302,6 +324,13 @@ public class EnemyCombat : MonoBehaviour
     {
         FireProjectileDirection(direction, config != null ? config.attackDamage : 1, speed,
             config != null ? config.projectileLifetime : 4f);
+    }
+
+    public int Explode()
+    {
+        if (health == null || health.IsDead || config == null || LanLaunch.Mode == LanMode.Client) return 0;
+        EnsurePlayerLayers();
+        return EnemyBlast.Apply(transform.position, config.blastRadius, config.attackDamage, playerLayers, wallLayers);
     }
 
     private CombatImpactKind GetImpactKind()

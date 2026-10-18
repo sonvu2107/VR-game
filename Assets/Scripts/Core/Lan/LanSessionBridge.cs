@@ -195,7 +195,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         if (message.type == "hello")
         {
             if (authenticated) return;
-            if (message.protocol != 1 || message.catalog != catalog.fingerprint)
+            if (message.protocol != LanMessage.CurrentProtocol || message.catalog != catalog.fingerprint)
             {
                 Send(new LanMessage { type = "error", error = "Hai máy cần dùng cùng một bản build." });
                 Status = "Bản build của người tham gia không tương thích.";
@@ -235,7 +235,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         if (message.type == "error") { Fail(message.error); return; }
         if (message.type == "welcome")
         {
-            if (message.protocol != 1 || message.catalog != catalog.fingerprint) { Fail("Hai máy cần dùng cùng một bản build."); return; }
+            if (message.protocol != LanMessage.CurrentProtocol || message.catalog != catalog.fingerprint) { Fail("Hai máy cần dùng cùng một bản build."); return; }
             authenticated = true;
             Status = "Đã kết nối. Đang nhận bản đồ từ Host…";
         }
@@ -245,6 +245,7 @@ public sealed class LanSessionBridge : GameSessionBridge
             clientRun = message.run; clientLevel = message.level;
             pendingInput = default; previousAttack = false;
             world.ApplyMap(message.maps);
+            world.ApplyMeshes(message.meshes);
             ApplySnapshot(message);
             ApplyClientLighting();
             peerReady = true;
@@ -316,6 +317,7 @@ public sealed class LanSessionBridge : GameSessionBridge
             frame.dash |= gamepad.rightShoulder.wasPressedThisFrame;
         }
         held |= mouse != null && mouse.leftButton.isPressed;
+        frame.dash |= mouse != null && mouse.rightButton.wasPressedThisFrame;
         frame.movement = Vector2.ClampMagnitude(movement, 1f);
         frame.attackHeld = held; frame.attackPressed = held && !previousAttack;
         previousAttack = held;
@@ -437,6 +439,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         guestInput?.ResetInput();
         LanMessage message = Capture("world");
         message.maps = world.CaptureMap();
+        message.meshes = world.CaptureMeshes();
         Send(message);
     }
     private void SendSnapshot() => Send(Capture("snapshot"));

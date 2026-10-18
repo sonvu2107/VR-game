@@ -117,8 +117,25 @@ public class AnimatedDecor : MonoBehaviour
     }
 
     [SerializeField] private SpriteRenderer flameHaloRenderer;
+    [SerializeField] private float haloSizeMultiplier = 1f;
+    [SerializeField] private float haloOpacityMultiplier = 1f;
 
-    public void ConfigureTorchLight(Color lightColor, float outerRadius = 3.8f, float innerRadius = 0.5f, float intensity = 1.25f)
+    public void SetWallMountedFlame()
+    {
+        enableFlameBobbing = false;
+        // Default foliage breathing restores the Awake scale every Update.
+        // A mounted torch must retain its authored scale and fixed attachment.
+        continuousBreathing = false;
+        haloSizeMultiplier = 0.6f;
+        haloOpacityMultiplier = 0.45f;
+        if (flameHaloRenderer == null) return;
+        flameHaloRenderer.transform.localScale *= haloSizeMultiplier;
+        Color color = flameHaloRenderer.color;
+        color.a *= haloOpacityMultiplier;
+        flameHaloRenderer.color = color;
+    }
+
+    public void ConfigureTorchLight(Color lightColor, float outerRadius = 3.8f, float innerRadius = 0.5f, float intensity = 1.25f, bool preserveHaloColor = false)
     {
         isLightSource = true;
         baseLightIntensity = intensity;
@@ -146,7 +163,9 @@ public class AnimatedDecor : MonoBehaviour
             flameHaloRenderer = haloObj.AddComponent<SpriteRenderer>();
             flameHaloRenderer.sprite = EnemyEffectSpriteFactory.Disc;
             flameHaloRenderer.sortingOrder = 2; // Nằm sau thân đuốc và trên nền tường
-            flameHaloRenderer.color = new Color(lightColor.r, lightColor.g * 0.9f, lightColor.b * 0.4f, 0.28f);
+            flameHaloRenderer.color = preserveHaloColor
+                ? new Color(lightColor.r, lightColor.g, lightColor.b, 0.28f)
+                : new Color(lightColor.r, lightColor.g * 0.9f, lightColor.b * 0.4f, 0.28f);
             haloObj.transform.localScale = Vector3.one * (outerRadius * 0.65f);
         }
 
@@ -315,10 +334,10 @@ public class AnimatedDecor : MonoBehaviour
         {
             float haloAlpha = 0.26f + (fastFlicker + slowBreathing) * 0.15f;
             Color c = flameHaloRenderer.color;
-            c.a = Mathf.Clamp(haloAlpha, 0.12f, 0.42f);
+            c.a = Mathf.Clamp(haloAlpha, 0.12f, 0.42f) * haloOpacityMultiplier;
             flameHaloRenderer.color = c;
             float scaleMul = 1f + (fastFlicker + slowBreathing) * 0.10f;
-            flameHaloRenderer.transform.localScale = Vector3.one * (baseLightRadius * 0.65f * scaleMul);
+            flameHaloRenderer.transform.localScale = Vector3.one * (baseLightRadius * 0.65f * scaleMul * haloSizeMultiplier);
         }
     }
 

@@ -37,7 +37,7 @@ public static class HealthAndLevelValidation
                 InfiniteWorldGenerator.GetRoomEnemyQuota(RoomType.Treasure, levelType) +
                 InfiniteWorldGenerator.GetRoomEnemyQuota(RoomType.Boss, levelType) +
                 InfiniteWorldGenerator.GetRoomEnemyQuota(RoomType.Exit, levelType);
-            Require(normalEnemies is >= 8 and <= 12,
+            Require(normalEnemies is >= 11 and <= 16,
                 $"Level {i + 1} should spread a moderate number of enemies across rooms.");
         }
 
@@ -50,11 +50,7 @@ public static class HealthAndLevelValidation
             RequireEnemyPrefab(spawner, field);
         RequireEnemyPrefab(spawner, "miniBossPrefab");
         RequireEnemyPrefab(spawner, "bossPrefab");
-        CheckGuaranteedEnemy(generator, spawner, 3, "skeletonArcherPrefab");
-        CheckGuaranteedEnemy(generator, spawner, 4, "poisonSlimePrefab");
-        CheckGuaranteedEnemy(generator, spawner, 6, "batPrefab");
-        CheckGuaranteedEnemy(generator, spawner, 7, "eliteEnemyPrefab");
-        CheckGuaranteedEnemy(generator, spawner, 8, "darkMagePrefab");
+        Require(generator.GetCombatSquad().Count == 3, "Combat rooms require the three Goblin roles.");
 
         GameObject archer = spawner.FindProperty("skeletonArcherPrefab").objectReferenceValue as GameObject;
         Require(Mathf.Approximately(archer.transform.localScale.x, 0.65f) &&

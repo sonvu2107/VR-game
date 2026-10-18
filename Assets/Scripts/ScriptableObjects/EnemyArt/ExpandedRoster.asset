@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fc7c2c416257174fb308f2e7a7f16fb, type: 3}
+  m_Name: ExpandedRoster
+  m_EditorClassIdentifier: 
+  entries:
+  - prefab: {fileID: 4801132376388001413, guid: d8496d951788e85468a67326be4c7265, type: 3}
+    firstLevel: 1
+    lastLevel: 10
+    introduceInWideRoom: 0
+  - prefab: {fileID: 3846497946438778754, guid: cd4a35879e3dc644295177b452d248a7, type: 3}
+    firstLevel: 1
+    lastLevel: 10
+    introduceInWideRoom: 0
+  - prefab: {fileID: 4742950798778517208, guid: ea6dbd1e5d3a1674fbb23206ed7531a4, type: 3}
+    firstLevel: 1
+    lastLevel: 10
+    introduceInWideRoom: 1

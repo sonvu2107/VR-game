@@ -34,6 +34,16 @@ public static class CoreProgressionProbe
 
     public static void Run()
     {
+        RunScene(ScenePath);
+    }
+
+    public static void RunCourtyard()
+    {
+        RunScene(CourtyardPrototypeTools.ScenePath);
+    }
+
+    private static void RunScene(string scenePath)
+    {
         completedLevels.Clear();
         finishing = false;
         restartRequested = false;
@@ -50,7 +60,7 @@ public static class CoreProgressionProbe
         startedAt = 0d;
         SessionState.SetBool(ActiveSessionKey, true);
 
-        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
         HookCallbacks();
         EditorApplication.EnterPlaymode();
     }

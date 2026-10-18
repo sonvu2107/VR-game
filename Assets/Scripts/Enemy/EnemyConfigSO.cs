@@ -51,6 +51,11 @@ public class EnemyConfigSO : ScriptableObject
     public GameObject summonPrefab;
     public GameObject projectilePrefab;
 
+    [Header("Life steal (0 = disabled)")]
+    [Min(0)] public int lifeStealHealthPerDamage;
+    [Min(0f)] public float blastRadius;
+    public bool selfDestructOnAttack;
+
     [Header("Reward")]
     [Min(0)] public int scoreValue = 10;
 }

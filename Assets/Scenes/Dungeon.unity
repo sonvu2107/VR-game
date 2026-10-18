@@ -1776,7 +1776,7 @@ Transform:
   m_GameObject: {fileID: 309329686}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0000002682209, y: 0.5, z: -10}
+  m_LocalPosition: {x: 0.00000029802322, y: 0.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2077,14 +2077,14 @@ MonoBehaviour:
 
     Shift  -  Dash
 
-    Q 
-    -  Sword Wave
+    Q - 
+    Sword Wave
 
     E  -  Spin Slash
 
     R  -  Ashen Judgment (when fully charged)
 
-    Esc 
+    Esc
     -  Pause'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2909,7 +2909,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0000002682209, y: 0.5, z: -10}
+  m_LocalPosition: {x: 0.00000029802322, y: 0.5, z: -10}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7289,51 +7289,101 @@ MonoBehaviour:
     roomCount: 6
     enemyCountBonus: 0
     levelType: 0
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 2
     displayName: "M\u1EDF r\u1ED9ng"
     roomCount: 7
     enemyCountBonus: 0
     levelType: 0
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 3
     displayName: "T\u1EA5n c\xF4ng t\u1EEB xa"
     roomCount: 7
     enemyCountBonus: 1
     levelType: 0
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 4
     displayName: "C\u1EA1m b\u1EABy"
     roomCount: 7
     enemyCountBonus: 1
     levelType: 0
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 5
     displayName: Mini-boss I
     roomCount: 7
     enemyCountBonus: 1
     levelType: 1
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 6
     displayName: "B\xF3ng t\u1ED1i"
     roomCount: 7
     enemyCountBonus: 1
     levelType: 0
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 7
     displayName: Elite
     roomCount: 7
     enemyCountBonus: 2
     levelType: 0
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 8
     displayName: "M\xEA cung kh\xF3a"
     roomCount: 7
     enemyCountBonus: 2
     levelType: 0
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 9
     displayName: "Th\u1EED th\xE1ch cu\u1ED1i"
     roomCount: 7
     enemyCountBonus: 2
     levelType: 1
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   - levelNumber: 10
     displayName: "Boss cu\u1ED1i"
     roomCount: 7
     enemyCountBonus: 3
     levelType: 2
+    requiredKeys: 0
+    trapsPerCombatRoom: 0
+    darknessRadius: 0
+    timeLimitSeconds: 0
+    mechanicsSchemaVersion: 0
   baseSeed: 12345
   levelSeedStep: 1009
   levelTransitionDelay: 0.35
@@ -9637,10 +9687,17 @@ MonoBehaviour:
   darkMagePrefab: {fileID: 7160897707472040552, guid: b30cf6cd56c111b4ba043c93a97efbd6, type: 3}
   eliteEnemyPrefab: {fileID: 425042773012497610, guid: 1d0481c6f084990498e55e6466bfcf5f, type: 3}
   miniBossPrefab: {fileID: 1138175006098687412, guid: efdfe85fed633f4488359e68b17d2c1c, type: 3}
+  skullPrefab: {fileID: 1964855678534563105, guid: f82a50b350b3e164084f5b4822b2873a, type: 3}
+  vampirePrefab: {fileID: 1262633000266801370, guid: 60772e60dd20b34469288cb30cb398fc, type: 3}
+  additionalEnemyRoster: {fileID: 11400000, guid: 51095cb4b9172cf43bc1d827c34dde4d, type: 2}
+  keyPrefab: {fileID: 0}
+  spikeTrapPrefab: {fileID: 0}
   corridorLength: 40
   numberOfRooms: 10
   maxGenerationAttempts: 20
   spawnClearance: 1
+  courtyardTheme: {fileID: 0}
+  campaignSecondMap: {fileID: 11400000, guid: e67754f07b92d744488106a41d9ab6df, type: 2}
 --- !u!4 &2064515422
 Transform:
   m_ObjectHideFlags: 0
@@ -10454,6 +10511,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: f1686cd679730bc4699e22b74e26cbf7, type: 3}
   - {fileID: 21300000, guid: e9d845cc0cc40da4cb8ef7b988f57884, type: 3}
   - {fileID: 21300000, guid: da6d874aff119aa47bb55ed41311cfd7, type: 3}
+  invulnerableDuration: 0.85
+  maxDamagePerHit: 1
 --- !u!82 &8254671322557207320
 AudioSource:
   m_ObjectHideFlags: 0

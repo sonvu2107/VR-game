@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2222c9be260c02a488511a60dd6282e0, type: 3}
+  m_Name: GoblinTorch
+  m_EditorClassIdentifier: 
+  variants:
+  - {fileID: 2800000, guid: 3f3a81308ea33b840b7b8ff0a4b04c54, type: 3}
+  - {fileID: 2800000, guid: dae1415b66a03d541a8cf2fbcf928467, type: 3}
+  - {fileID: 2800000, guid: 2e6c7bb290277194d90a04e8809d2b80, type: 3}
+  - {fileID: 2800000, guid: ea69520994c079b45858485849f825ca, type: 3}
+  cellSize: 192
+  pixelsPerUnit: 64
+  framesPerSecond: 10
+  attackImpactFrame: 3
+  idle:
+    row: 0
+    start: 0
+    count: 7
+  move:
+    row: 1
+    start: 0
+    count: 6
+  attack:
+    row: 2
+    start: 0
+    count: 6
+  attackDown:
+    row: 3
+    start: 0
+    count: 6
+  attackUp:
+    row: 4
+    start: 0
+    count: 6
+  reverseIdle:
+    row: 0
+    start: 0
+    count: 0
+  reverseMove:
+    row: 0
+    start: 0
+    count: 0

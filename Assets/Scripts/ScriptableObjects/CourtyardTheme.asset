@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 380ef2651ca683246a6ef3dad7adeecc, type: 3}
+  m_Name: CourtyardTheme
+  m_EditorClassIdentifier: 
+  storageProps:
+  - {fileID: 1502318516, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 1597282227, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 595316122, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 1978442696, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 1140165544, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 334091424, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  potteryProps:
+  - {fileID: -941545825, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 595316122, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 1140165544, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 334091424, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  remainsProps:
+  - {fileID: -832996392, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: -12291965, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 379925753, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: -31888153, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 2057820219, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  entranceSteps: {fileID: -1819646267, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  wallDetails:
+  - {fileID: 1547407745, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: -1733011096, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  wallBanner: {fileID: -702715286, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  pavingSprites:
+  - {fileID: 16622207, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: -248902635, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: -604529946, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  - {fileID: 1602255519, guid: a7523d51016c97c4681193c5da4c5222, type: 3}
+  arcaneFloor: {fileID: 0}
+  arcaneWalls: {fileID: 0}
+  arcaneProps: {fileID: 0}
+  arcaneTorch: {fileID: 0}
+  arcaneTrapsPerCombatRoom: 2
+  arcaneSpike: {fileID: 0}

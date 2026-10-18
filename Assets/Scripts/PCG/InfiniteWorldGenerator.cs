@@ -26,6 +26,9 @@ public class InfiniteWorldGenerator : MonoBehaviour
     [SerializeField] private GameObject darkMagePrefab;
     [SerializeField] private GameObject eliteEnemyPrefab;
     [SerializeField] private GameObject miniBossPrefab;
+    [SerializeField] private GameObject skullPrefab;
+    [SerializeField] private GameObject vampirePrefab;
+    [SerializeField] private EnemyRosterSO additionalEnemyRoster;
 
     [Header("Optional Level Mechanic Prefabs")]
     [Tooltip("Uses a generated key visual when unassigned.")]
@@ -39,6 +42,15 @@ public class InfiniteWorldGenerator : MonoBehaviour
     [Min(1)] public int maxGenerationAttempts = 20;
     [Min(0)] public int spawnClearance = 1;
 
+    [Header("Optional Courtyard Prototype")]
+    [Tooltip("Opt-in only. Existing scenes keep the Random Walk layout.")]
+    public CourtyardTheme courtyardTheme;
+    [Header("Campaign Map Progression")]
+    [Tooltip("Optional: switch to this map from level 2 without resetting the session.")]
+    [SerializeField] private CourtyardTheme campaignSecondMap;
+    // Không thay serialized theme gốc khi đổi level, tránh ghi nhầm Arcane lên map đầu.
+    public CourtyardTheme ActiveTheme => campaignSecondMap != null && currentLevel >= 2 ? campaignSecondMap : courtyardTheme;
+
     private RoomGenerator roomGenerator;
     private CorridorGenerator corridorGenerator;
     private SeededRandom random;
@@ -46,6 +58,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private readonly HashSet<Vector2Int> occupiedCells = new();
     private readonly List<GameObject> spawnedObjects = new();
     private DarknessController darknessController;
+    public TacticalTrapPlanner LastTrapPlan { get; private set; }
 
     private int currentLevel;
     private int totalLevels;
@@ -86,6 +99,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
         CleanupCurrentFloor();
 
+
         currentLevelDefinition = levelDefinition;
         currentLevel = levelDefinition.LevelNumber;
         totalLevels = Mathf.Max(1, runLevelCount);
@@ -100,6 +114,15 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
         tilemapVisualizer.PaintFloorTiles(dungeonLayout.FloorTiles);
         WallGenerator.CreateWalls(dungeonLayout.FloorTiles, tilemapVisualizer);
+        if (ActiveTheme != null && ActiveTheme.UsesArcaneArt)
+        {
+            // Static props and non-walkable volumes must exist BEFORE the bake.
+            // Their footprint cells also keep player/items/enemies from spawning inside them.
+            tilemapVisualizer.SetMapArtVisible(false);
+            spawnedObjects.Add(ArcaneCitadelGeometry.Build(dungeonLayout, ActiveTheme, occupiedCells));
+            Physics2D.SyncTransforms();
+        }
+        tilemapVisualizer.SynchronizeColliders();
         surface.BuildNavMesh();
 
         SpawnRoomObjects(out FloorExit floorExit, out int spawnedEnemyCount);
@@ -115,15 +138,23 @@ public class InfiniteWorldGenerator : MonoBehaviour
             return false;
         }
 
+        PlaceTacticalTraps();
         ConfigureLevelLighting();
 
-        DungeonDecorator.DecorateDungeon(
-            dungeonLayout,
-            random,
-            occupiedCells,
-            spawnedObjects,
-            currentLevel,
-            currentLevelDefinition.Type);
+        if (ActiveTheme == null || !ActiveTheme.UsesArcaneArt)
+        {
+            tilemapVisualizer.SetMapArtVisible(true);
+            DungeonDecorator.DecorateDungeon(
+                dungeonLayout,
+                random,
+                occupiedCells,
+                spawnedObjects,
+                currentLevel,
+                currentLevelDefinition.Type, ActiveTheme != null);
+
+            if (ActiveTheme != null)
+                CourtyardDecorator.Decorate(dungeonLayout, ActiveTheme, random, occupiedCells, spawnedObjects);
+        }
 
         manager.CompleteLevelGeneration(floorExit, spawnedEnemyCount);
         return true;
@@ -188,6 +219,11 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private void GenerateDungeonLayout()
     {
         List<RoomType> roomSequence = BuildRoomSequence();
+        if (ActiveTheme != null)
+        {
+            dungeonLayout = CourtyardLayout.Generate(roomSequence, random);
+            return;
+        }
         Vector2Int nextRoomStart = Vector2Int.zero;
 
         for (int i = 0; i < roomSequence.Count; i++)
@@ -200,7 +236,6 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
     private void SpawnRoomObjects(out FloorExit floorExit, out int spawnedEnemyCount)
     {
-        occupiedCells.Clear();
         floorExit = null;
         spawnedEnemyCount = 0;
 
@@ -227,7 +262,6 @@ public class InfiniteWorldGenerator : MonoBehaviour
                     spawnedEnemyCount += SpawnRoomMobs(room, combatRoomIndex, room == widestCombatRoom,
                         GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
                     combatRoomIndex++;
-                    PlaceSpikeTraps(room);
                     break;
                 case RoomType.Treasure:
                     PlaceOptionalRoomPrefab(room, treasurePrefab, "Treasure");
@@ -257,8 +291,9 @@ public class InfiniteWorldGenerator : MonoBehaviour
         return roomType switch
         {
             RoomType.Start or RoomType.Exit => 1,
-            RoomType.Combat or RoomType.Treasure => 2,
-            RoomType.Boss when levelType == LevelType.Standard => 2,
+            RoomType.Combat => 3,
+            RoomType.Treasure => 2,
+            RoomType.Boss when levelType == LevelType.Standard => 3,
             _ => 0
         };
     }
@@ -277,7 +312,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
         playerTransform.position = PrefabPlacer.GetWorldPosition(spawnPoint);
     }
 
-    // Một hoặc hai quái/phòng giữ mật độ đều; phòng boss thật dành riêng cho boss.
+    // Phòng chiến đấu dùng bộ ba vai trò; phòng boss thật dành riêng cho boss.
     private int SpawnRoomMobs(DungeonRoom room, int combatRoomIndex, bool isWideRoom, int numberOfMobs)
     {
         if (enemyInfo == null || enemyInfo.Mob.Count == 0)
@@ -287,6 +322,12 @@ public class InfiniteWorldGenerator : MonoBehaviour
         }
 
         List<GameObject> prefabs = new(numberOfMobs);
+        if (room.Type == RoomType.Combat || room.Type == RoomType.Boss)
+        {
+            var squad = GetCombatSquad();
+            if (squad.Count == 3)
+                return PrefabPlacer.PlaceMobs(squad, room, random, occupiedCells, spawnClearance, spawnedObjects);
+        }
         for (int mobIndex = 0; mobIndex < numberOfMobs; mobIndex++)
             prefabs.Add(combatRoomIndex < 0 ? enemyInfo.Mob[0].sprite :
                 ChooseEnemyPrefab(combatRoomIndex, mobIndex, isWideRoom));
@@ -295,44 +336,85 @@ public class InfiniteWorldGenerator : MonoBehaviour
             spawnClearance, spawnedObjects);
     }
 
+    public List<GameObject> GetCombatSquad()
+    {
+        var squad = new List<GameObject>();
+        foreach (string name in new[] { "GoblinTorch", "GoblinTNT", "GoblinBarrel" })
+        {
+            var entry = additionalEnemyRoster?.entries?.FirstOrDefault(item => item?.prefab != null && item.prefab.name == name);
+            if (entry == null) return new List<GameObject>();
+            squad.Add(entry.prefab);
+        }
+        return squad;
+    }
+
+    public List<GameObject> GetFinalBossCandidates()
+    {
+        var pool = new List<GameObject>();
+        if (enemyInfo != null) foreach (var mob in enemyInfo.Mob)
+            if (mob.sprite != null && mob.sprite.name != "SkeletonScout" && mob.sprite.name != "SkeletonGuard" &&
+                !pool.Contains(mob.sprite)) pool.Add(mob.sprite);
+        foreach (var prefab in new[] { skeletonArcherPrefab, poisonSlimePrefab, batPrefab, darkMagePrefab,
+            eliteEnemyPrefab, skullPrefab, vampirePrefab, miniBossPrefab, bossPrefab })
+            if (prefab != null && !pool.Contains(prefab)) pool.Add(prefab);
+        foreach (var prefab in GetCombatSquad()) if (!pool.Contains(prefab)) pool.Add(prefab);
+        return pool;
+    }
+
     private GameObject ChooseEnemyPrefab(int combatRoomIndex, int mobIndex, bool isWideRoom)
+    {
+        GameObject original = ChooseOriginalEnemyPrefab(combatRoomIndex, mobIndex, isWideRoom);
+        bool protectedSlot = mobIndex == 0 && (combatRoomIndex == 0 && currentLevel is 2 or 3 or 4 or 6 or 7 ||
+            isWideRoom && currentLevel is 8 or 9 || currentLevel == 7 && combatRoomIndex == 1);
+        return protectedSlot || additionalEnemyRoster == null ? original :
+            additionalEnemyRoster.Choose(original, currentLevel, combatRoomIndex, mobIndex, isWideRoom, random);
+    }
+
+    private GameObject ChooseOriginalEnemyPrefab(int combatRoomIndex, int mobIndex, bool isWideRoom)
     {
         GameObject warrior = enemyInfo.Mob[0].sprite;
         bool firstInFirstCombatRoom = combatRoomIndex == 0 && mobIndex == 0;
-        if (currentLevel <= 2) return warrior;
+        // Optional references preserve older scenes until their content is upgraded.
+        GameObject skull = skullPrefab != null ? skullPrefab : warrior;
+        GameObject vampire = vampirePrefab != null ? vampirePrefab : eliteEnemyPrefab;
+        if (currentLevel <= 1) return warrior;
+        if (currentLevel == 2)
+            return firstInFirstCombatRoom ? skull : ChooseWeighted(warrior, skull);
         if (currentLevel == 3)
-            return firstInFirstCombatRoom || random.Range(0, 2) == 0 ? skeletonArcherPrefab : warrior;
+            return firstInFirstCombatRoom ? skeletonArcherPrefab :
+                ChooseWeighted(warrior, skeletonArcherPrefab, skull);
         if (currentLevel == 4)
         {
             if (firstInFirstCombatRoom) return poisonSlimePrefab;
-            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab);
+            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab, skull);
         }
         if (currentLevel == 5)
-            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab);
+            return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab, skull);
         if (currentLevel == 6)
         {
             if (firstInFirstCombatRoom) return batPrefab;
-            return ChooseWeighted(warrior, skeletonArcherPrefab, batPrefab);
+            return ChooseWeighted(warrior, skeletonArcherPrefab, batPrefab, skull);
         }
         if (currentLevel == 7)
         {
             if (firstInFirstCombatRoom) return eliteEnemyPrefab;
+            if (combatRoomIndex == 1 && mobIndex == 0) return vampire;
             return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab,
-                batPrefab, eliteEnemyPrefab);
+                batPrefab, eliteEnemyPrefab, skull, vampire);
         }
         if (currentLevel == 8 && isWideRoom && mobIndex == 0)
             return darkMagePrefab;
         if (currentLevel == 8)
             return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab,
-                eliteEnemyPrefab);
+                eliteEnemyPrefab, skull, vampire);
         if (currentLevel == 9)
         {
             if (isWideRoom && mobIndex == 0) return darkMagePrefab;
             return ChooseWeighted(warrior, skeletonArcherPrefab, poisonSlimePrefab,
-                batPrefab, eliteEnemyPrefab);
+                batPrefab, eliteEnemyPrefab, skull, vampire);
         }
         // Level 10 reserves its separate Boss room for Skeleton King.
-        return random.Range(0, 3) == 0 ? eliteEnemyPrefab : warrior;
+        return ChooseWeighted(warrior, warrior, eliteEnemyPrefab, vampire);
     }
 
     private GameObject ChooseWeighted(params GameObject[] prefabs)
@@ -353,27 +435,68 @@ public class InfiniteWorldGenerator : MonoBehaviour
         spawnedObjects.Add(pickup.gameObject);
     }
 
-    private void PlaceSpikeTraps(DungeonRoom room)
+    private void PlaceTacticalTraps()
     {
-        int trapCount = currentLevelDefinition?.TrapsPerCombatRoom ?? 0;
-        for (int index = 0; index < trapCount; index++)
+        bool arcane = ActiveTheme != null && ActiveTheme.UsesArcaneArt;
+        Physics2D.SyncTransforms();
+        LastTrapPlan = new TacticalTrapPlanner(dungeonLayout, spawnedObjects, playerTransform, arcane);
+        // Decor được sinh sau bước này phải nhường cả lối đi và tầm nhìn của bẫy.
+        occupiedCells.UnionWith(LastTrapPlan.Reserved);
+        if (!LastTrapPlan.RoutesVerified)
         {
-            if (!PrefabPlacer.TryClaimSpawnPoint(room.FloorTiles, random, occupiedCells,
-                    spawnClearance, out Vector2Int spawnPoint))
+            Debug.LogWarning("TACTICAL_TRAPS_SKIPPED: " + LastTrapPlan.FailureReason + "; no hazards added.");
+            return;
+        }
+        int budget = Mathf.Max(currentLevelDefinition.TrapsPerCombatRoom,
+            arcane ? ActiveTheme.arcaneTrapsPerCombatRoom : currentLevel >= 3 ? 2 : 0);
+        budget = Mathf.Min(budget, currentLevel == 1 ? 1 : currentLevel < 4 ? 2 : currentLevel < 7 ? 3 : 4);
+        foreach (DungeonRoom room in dungeonLayout.Rooms)
+        {
+            if (room.Type == RoomType.Start || room.Type == RoomType.Exit || budget == 0) continue;
+            var pattern = room.Type == RoomType.Boss ? TacticalTrapPattern.BossFlanks :
+                room.Type == RoomType.Treasure ? TacticalTrapPattern.TreasureGuard :
+                random.Range(0, 2) == 0 ? TacticalTrapPattern.Chicane : TacticalTrapPattern.RangedScreen;
+            Vector2Int focus = room.SpawnPoint;
+            foreach (var obj in spawnedObjects)
             {
-                Debug.LogWarning($"Combat room could only place {index}/{trapCount} spike traps.");
-                return;
+                if (obj == null) continue;
+                var position = obj.transform.position;
+                var cell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y - 1f));
+                if (!room.FloorTiles.Contains(cell)) continue;
+                if (pattern == TacticalTrapPattern.RangedScreen && obj.GetComponent<EnemyHealth>()?.Config?.displayName == "GoblinTNT" ||
+                    pattern == TacticalTrapPattern.TreasureGuard && obj.GetComponent<DungeonKey>() != null) focus = cell;
+                if (room.Type == RoomType.Boss && (obj.GetComponent<CampaignFinalBoss>() != null || obj.GetComponent<MiniBossController>() != null))
+                {
+                    var visual = obj.GetComponent<EnemySheetAnimation>()?.Renderer ?? obj.GetComponent<EnemySpriteAnimation>()?.Renderer ?? obj.GetComponentInChildren<SpriteRenderer>();
+                    if (visual == null) continue;
+                    Bounds safe = visual.bounds; safe.Expand(3f);
+                    foreach (var tile in room.FloorTiles)
+                    {
+                        Vector3 p = LastTrapPlan.Position(tile); p.z = safe.center.z;
+                        if (safe.Contains(p)) occupiedCells.Add(tile);
+                    }
+                }
             }
-
-            GameObject trapObject = spikeTrapPrefab != null
-                ? Instantiate(spikeTrapPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity)
-                : CreateRuntimeSpikeTrap(PrefabPlacer.GetWorldPosition(spawnPoint));
-
-            SpikeTrap trap = trapObject.GetComponent<SpikeTrap>();
-            if (trap == null)
-                trap = trapObject.AddComponent<SpikeTrap>();
-            trap.Initialize(currentLevel);
-            spawnedObjects.Add(trapObject);
+            var cells = LastTrapPlan.Plan(room, pattern, room.Type == RoomType.Treasure ? Mathf.Max(1, budget / 2) : budget,
+                focus, random.Range(0, 4), occupiedCells);
+            if (cells.Count == 0) continue;
+            var root = new GameObject("Tactical Traps - " + pattern);
+            var group = root.AddComponent<TacticalTrapGroup>();
+            group.Initialize(pattern, cells.ToArray(), cells.Min(cell => LastTrapPlan.DistanceToSafeRoute(LastTrapPlan.Position(cell))));
+            spawnedObjects.Add(root);
+            float rest = currentLevel < 4 ? 3.2f : 2.7f;
+            foreach (var cell in cells)
+            {
+                Vector3 position = LastTrapPlan.Position(cell);
+                var obj = spikeTrapPrefab != null ? Instantiate(spikeTrapPrefab, position, Quaternion.identity) : CreateRuntimeSpikeTrap(position);
+                obj.transform.SetParent(root.transform, true);
+                var trap = obj.GetComponent<SpikeTrap>() ?? obj.AddComponent<SpikeTrap>();
+                trap.Initialize(currentLevel);
+                trap.ConfigureTacticalCycle(rest, 0.85f, 0.9f);
+                if (arcane) trap.ConfigureAtlasVisual(ActiveTheme.arcaneSpike);
+                for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) occupiedCells.Add(cell + new Vector2Int(x, y));
+            }
+            Debug.Log($"TACTICAL_TRAP_GROUP level={currentLevel} pattern={pattern} count={cells.Count} clearance={group.MinimumClearance:F2}");
         }
     }
 
@@ -472,6 +595,14 @@ public class InfiniteWorldGenerator : MonoBehaviour
             return 0;
 
         GameObject selectedPrefab = currentLevelDefinition.IsFinalBossLevel ? bossPrefab : miniBossPrefab;
+        if (currentLevelDefinition.IsFinalBossLevel)
+        {
+            var candidates = GetFinalBossCandidates();
+            selectedPrefab = candidates[random.Range(0, candidates.Count)];
+            var finalBoss = CampaignFinalBoss.Create(selectedPrefab, room, PrefabPlacer.GetWorldPosition(spawnPoint));
+            spawnedObjects.Add(finalBoss.gameObject);
+            return 1;
+        }
         if (selectedPrefab == null)
         {
             Debug.LogError($"Level {currentLevel} boss prefab is missing.");

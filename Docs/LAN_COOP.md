@@ -1,5 +1,11 @@
 # LAN co-op hai người
 
+## Map theo level và giao thức hiện tại
+
+Level 1 dùng Dungeon gốc; Host sinh Arcane từ level 2 trong cùng phiên, không đổi scene hay ngắt socket. World packet gửi thêm mesh nền/tường/props và trạng thái ẩn/hiện Tilemap một lần mỗi tầng. Snapshot chỉ gửi UV của bẫy chuyển động (bốn đỉnh), không gửi lại toàn bộ mesh map mỗi frame. Client dựng hình từ dữ liệu Host, không chạy PCG hay collider/AI của Arcane. Mesh cũ được dọn khi đổi tầng hoặc rời phiên.
+
+Giao thức đã nâng lên phiên bản 2; hai máy phải dùng cùng bản build mới. Bản LAN cũ bị từ chối khi bắt tay để tránh Client chỉ thấy nền dungeon cũ. Round-trip JSON trong Editor không thay thế kiểm thử hai máy Wi-Fi thực tế.
+
 ## Cách chạy
 
 Mở StartMenu, bấm Start và chọn Chơi một mình / Tạo phòng LAN / Tham gia phòng.
@@ -10,7 +16,7 @@ Không cần package mạng hoặc dịch vụ cloud. `GameManager.Awake` tự g
 ## Quyền điều khiển và luật chơi
 
 - Host chạy hai actor Player thật, Physics2D, AI, sát thương, PCG, portal và tiến trình 10 level.
-- Client chỉ gửi input (di chuyển, Fire, Shift, Space, Q/E/R) và yêu cầu Pause/Resume. Không nhận vị trí, máu, sát thương hoặc điều kiện thắng từ Client.
+- Client chỉ gửi input (di chuyển, Fire, Shift/chuột phải để Dash, Space, Q/E/R) và yêu cầu Pause/Resume. Không nhận vị trí, máu, sát thương hoặc điều kiện thắng từ Client.
 - Đánh thường/giữ chuột và Space được xử lý qua controller hiện có trên Host. Mỗi actor có cooldown, HP, attack point và hiệu ứng riêng.
 - Quái và boss chọn người còn sống gần nhất. Không có friendly fire; va chạm Player/Player bị bỏ qua.
 - Hết máu: ngừng điều khiển; đồng đội vẫn chơi. Sang level mới hồi sinh người đã gục. Hai người cùng gục: Game Over.

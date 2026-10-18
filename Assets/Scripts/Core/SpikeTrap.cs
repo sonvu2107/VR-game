@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>Cycles between safe, warning and damaging states.</summary>
 [RequireComponent(typeof(BoxCollider2D))]
@@ -27,12 +28,39 @@ public sealed class SpikeTrap : MonoBehaviour
     [SerializeField] private Color activeColor = new(0.9f, 0.12f, 0.16f, 1f);
 
     private static Sprite runtimeSprite;
+    private ArcaneSpikeTrapVisual atlasVisual;
     private SpriteRenderer spriteRenderer;
     private TrapState state;
     private float stateTimeRemaining;
     private float nextDamageAt;
     private int damage;
     private Vector3 baseScale;
+    private readonly HashSet<HealthController> damagedThisActivation = new();
+
+    public bool IsDangerous => state == TrapState.Active;
+    public bool IsWarning => state == TrapState.Warning;
+    public float WarningSeconds => warningDuration;
+
+    public void ConfigureTacticalCycle(float rest, float warning, float active)
+    {
+        EnsureComponents();
+        safeDuration = Mathf.Max(2f, rest);
+        warningDuration = Mathf.Max(0.8f, warning);
+        activeDuration = Mathf.Clamp(active, 0.5f, 1f);
+        SetState(TrapState.Safe);
+    }
+
+    // Optional art only: legacy levels keep the existing generated visual.
+    public void ConfigureAtlasVisual(Material material)
+    {
+        EnsureComponents();
+        if (material == null || atlasVisual != null) return;
+        var child = new GameObject("Arcane Spike Plate Visual");
+        child.transform.SetParent(transform, false);
+        atlasVisual = child.AddComponent<ArcaneSpikeTrapVisual>();
+        atlasVisual.Initialize(material);
+        spriteRenderer.enabled = false;
+    }
 
     public void Initialize(int levelNumber)
     {
@@ -41,6 +69,13 @@ public sealed class SpikeTrap : MonoBehaviour
 
     private void Awake()
     {
+        EnsureComponents();
+        damage = baseDamage;
+    }
+
+    private void EnsureComponents()
+    {
+        if (spriteRenderer != null) return;
         BoxCollider2D trigger = GetComponent<BoxCollider2D>();
         trigger.isTrigger = true;
         trigger.size = new Vector2(0.85f, 0.85f);
@@ -53,7 +88,6 @@ public sealed class SpikeTrap : MonoBehaviour
 
         spriteRenderer.sortingOrder = Mathf.Max(spriteRenderer.sortingOrder, 3);
         baseScale = transform.localScale;
-        damage = baseDamage;
     }
 
     private void Start()
@@ -63,11 +97,16 @@ public sealed class SpikeTrap : MonoBehaviour
 
     private void Update()
     {
+        if (LanLaunch.Mode == LanMode.Client || Time.deltaTime <= 0f) return;
         stateTimeRemaining -= Time.deltaTime;
         if (stateTimeRemaining > 0f)
         {
             if (state == TrapState.Warning)
-                transform.localScale = baseScale * (1f + Mathf.Sin(Time.time * 35f) * 0.06f);
+            {
+                if (atlasVisual == null)
+                    transform.localScale = baseScale * (1f + Mathf.Sin(Time.time * 35f) * 0.06f);
+                atlasVisual?.SetFrame(stateTimeRemaining > warningDuration * 0.5f ? 1 : 2);
+            }
             return;
         }
 
@@ -87,13 +126,14 @@ public sealed class SpikeTrap : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (state != TrapState.Active || Time.time < nextDamageAt)
+        if (LanLaunch.Mode == LanMode.Client || Time.timeScale <= 0f || state != TrapState.Active || Time.time < nextDamageAt)
             return;
 
         HealthController health = other.GetComponentInParent<HealthController>();
-        if (health == null)
+        if (health == null || damagedThisActivation.Contains(health))
             return;
 
+        damagedThisActivation.Add(health);
         health.TakeDamage(damage);
         nextDamageAt = Time.time + damageCooldown;
     }
@@ -108,15 +148,19 @@ public sealed class SpikeTrap : MonoBehaviour
             case TrapState.Safe:
                 stateTimeRemaining = safeDuration;
                 spriteRenderer.color = safeColor;
+                atlasVisual?.SetFrame(0);
                 break;
             case TrapState.Warning:
                 stateTimeRemaining = warningDuration;
                 spriteRenderer.color = warningColor;
+                atlasVisual?.SetFrame(1);
                 break;
             default:
+                damagedThisActivation.Clear();
                 stateTimeRemaining = activeDuration;
                 spriteRenderer.color = activeColor;
-                transform.localScale = baseScale * 1.15f;
+                atlasVisual?.SetFrame(3);
+                if (atlasVisual == null) transform.localScale = baseScale * 1.15f;
                 break;
         }
     }

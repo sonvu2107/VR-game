@@ -14,6 +14,21 @@ public class EnemyProjectile : MonoBehaviour
     private GameObject owner;
     private bool hit;
     private CombatImpactKind impactKind;
+    private float blastRadius;
+    public void SetBlastRadius(float radius) => blastRadius = Mathf.Max(0f, radius);
+
+    private void ResolveImpact(Vector3 position, HealthController target = null)
+    {
+        if (hit) return;
+        hit = true;
+        if (blastRadius > 0f) EnemyBlast.Apply(position, blastRadius, damage, playerLayers, wallLayers);
+        else if (target != null)
+        {
+            target.TakeDamage(damage);
+            CombatHitVfx.Spawn(position, impactKind, impactKind == CombatImpactKind.Boss ? 1.3f : 0.8f);
+        }
+        Destroy(gameObject);
+    }
 
     public void Launch(Vector2 travelDirection, int damageAmount, float travelSpeed, float lifetime,
         LayerMask targetLayers, LayerMask obstacleLayers, GameObject source,
@@ -39,7 +54,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (hit || Time.time >= expiresAt)
         {
-            Destroy(gameObject);
+            if (!hit && blastRadius > 0f) ResolveImpact(transform.position); else Destroy(gameObject);
             return;
         }
 
@@ -53,11 +68,7 @@ public class EnemyProjectile : MonoBehaviour
                 HealthController target = playerHit.collider.GetComponentInParent<HealthController>();
                 if (target != null && target.currentHealth > 0)
                 {
-                    hit = true;
-                    target.TakeDamage(damage);
-                    CombatHitVfx.Spawn(playerHit.point, impactKind,
-                        impactKind == CombatImpactKind.Boss ? 1.3f : 0.8f);
-                    Destroy(gameObject);
+                    ResolveImpact(playerHit.point, target);
                     return;
                 }
             }
@@ -66,7 +77,7 @@ public class EnemyProjectile : MonoBehaviour
         RaycastHit2D wall = Physics2D.Raycast(transform.position, direction, step, wallLayers);
         if (wall.collider != null && !wall.collider.isTrigger)
         {
-            Destroy(gameObject);
+            ResolveImpact(wall.point);
             return;
         }
 
@@ -94,17 +105,12 @@ public class EnemyProjectile : MonoBehaviour
             HealthController target = other.GetComponentInParent<HealthController>();
             if (target != null && target.currentHealth > 0)
             {
-                hit = true;
-                target.TakeDamage(damage);
-                CombatHitVfx.Spawn(other.bounds.center, impactKind,
-                    impactKind == CombatImpactKind.Boss ? 1.3f : 0.8f);
-                Destroy(gameObject);
+                ResolveImpact(other.bounds.center, target);
             }
         }
         else if (wallLayers.value != 0 && (wallLayers.value & bit) != 0 && !other.isTrigger)
         {
-            hit = true;
-            Destroy(gameObject);
+            ResolveImpact(transform.position);
         }
     }
 }

@@ -28,7 +28,8 @@ public class EnemyMovement : MonoBehaviour
 
     private void Start()
     {
-        if (GetComponent<EnemyHealth>() != null && GetComponent<EnemyLocomotionVisual>() == null)
+        if (GetComponent<EnemyHealth>() != null && GetComponent<EnemyLocomotionVisual>() == null &&
+            GetComponent<EnemySpriteAnimation>() == null && GetComponent<EnemySheetAnimation>() == null)
             gameObject.AddComponent<EnemyLocomotionVisual>().Initialize(this);
     }
 

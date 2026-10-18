@@ -30,23 +30,55 @@ public static class EnemyDistributionValidation
             var spawned = spawnedField?.GetValue(generator) as List<GameObject>;
             if (spawned == null) throw new InvalidOperationException("Cannot inspect spawned objects.");
 
+            int skullCount = 0;
+            int vampireCount = 0;
+            int[] addedCounts = new int[ExpandedEnemyIntegration.Names.Length];
+            foreach (GameObject obj in spawned)
+            {
+                string kind = obj != null ? obj.GetComponent<EnemyBrain>()?.Config?.displayName : null;
+                if (kind == "Skull") skullCount++;
+                if (kind == "Vampire") vampireCount++;
+                if (kind == "SkeletonScout" || kind == "SkeletonGuard")
+                    throw new InvalidOperationException("Removed Skeleton variant spawned at level " + levelNumber);
+                int addedIndex = Array.IndexOf(ExpandedEnemyIntegration.Names, kind);
+                if (addedIndex >= 0) addedCounts[addedIndex]++;
+            }
+            for (int i = 0; i < addedCounts.Length; i++)
+            {
+                int first = ExpandedEnemyIntegration.FirstLevels[i], last = ExpandedEnemyIntegration.LastLevels[i];
+                if ((levelNumber < first || levelNumber > last) && addedCounts[i] > 0 ||
+                    levelNumber == first && addedCounts[i] == 0)
+                    throw new InvalidOperationException($"{ExpandedEnemyIntegration.Names[i]} violates level {levelNumber} distribution.");
+            }
+            Debug.Log($"EXPANDED_DISTRIBUTION level={levelNumber} counts={string.Join(",", addedCounts)}");
+            Debug.Log($"SKULL_VAMPIRE_DISTRIBUTION level={levelNumber} skull={skullCount} vampire={vampireCount}");
+
             int total = 0;
             for (int roomIndex = 0; roomIndex < generator.GeneratedRooms.Count; roomIndex++)
             {
                 DungeonRoom room = generator.GeneratedRooms[roomIndex];
                 int count = 0;
+                var roomKinds = new List<string>();
                 foreach (GameObject obj in spawned)
                 {
                     if (obj == null || (obj.GetComponent<EnemyHealth>() == null && obj.GetComponent<Enemy>() == null))
                         continue;
                     Vector2Int cell = new(Mathf.RoundToInt(obj.transform.position.x),
                         Mathf.RoundToInt(obj.transform.position.y - 1f));
-                    if (room.FloorTiles.Contains(cell)) count++;
+                    if (room.FloorTiles.Contains(cell))
+                    {
+                        count++;
+                        roomKinds.Add(obj.GetComponent<EnemyHealth>()?.Config?.displayName ?? "Skeleton");
+                    }
                 }
                 int expected = room.Type == RoomType.Boss && definition.Type != LevelType.Standard
                     ? 1 : InfiniteWorldGenerator.GetRoomEnemyQuota(room.Type, definition.Type);
                 if (count != expected)
                     throw new InvalidOperationException($"Level {levelNumber} room {roomIndex + 1} ({room.Type}): expected {expected}, got {count}.");
+                if (room.Type == RoomType.Combat || room.Type == RoomType.Boss && definition.Type == LevelType.Standard)
+                    foreach (string role in ExpandedEnemyIntegration.Names)
+                        if (roomKinds.FindAll(kind => kind == role).Count != 1)
+                            throw new InvalidOperationException($"Level {levelNumber} room {roomIndex} must contain exactly one {role}.");
                 if (room.Type == RoomType.Boss && definition.Type != LevelType.Standard)
                     CheckBossArtworkInsideRoom(spawned, room, levelNumber);
                 total += count;
@@ -61,9 +93,10 @@ public static class EnemyDistributionValidation
     {
         foreach (GameObject obj in spawned)
         {
-            if (obj == null || (obj.GetComponent<MiniBossController>() == null &&
+            if (obj == null || (obj.GetComponent<CampaignFinalBoss>() == null && obj.GetComponent<MiniBossController>() == null &&
                                 obj.GetComponent<SkeletonKingController>() == null)) continue;
-            SpriteRenderer art = obj.GetComponentInChildren<SpriteRenderer>();
+            SpriteRenderer art = obj.GetComponent<EnemySheetAnimation>()?.Renderer ??
+                obj.GetComponent<EnemySpriteAnimation>()?.Renderer ?? obj.GetComponentInChildren<SpriteRenderer>();
             if (art == null) throw new InvalidOperationException($"Level {level} boss has no art.");
             Bounds bounds = art.bounds;
             foreach (int xSign in new[] { -1, 1 })

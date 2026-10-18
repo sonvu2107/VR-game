@@ -20,6 +20,8 @@ public sealed class LanWorldReplication
     private readonly Transform root;
     private Sprite whiteSprite;
     public int RuntimeTextureCount => clientTextures.Count;
+    private readonly Dictionary<int, MeshFilter> clientMeshes = new Dictionary<int, MeshFilter>();
+    public int ReplicatedMeshCount => clientMeshes.Count;
 
     public LanWorldReplication(LanAssetCatalog catalog, Transform root)
     { this.catalog = catalog; this.root = root; }
@@ -42,7 +44,8 @@ public sealed class LanWorldReplication
                 if (id < 0) throw new System.InvalidOperationException("Tile chưa có trong LAN catalog: " + tile.name);
                 cells.Add(cell); tiles.Add(id);
             }
-            result.Add(new LanTilemap { name = map.name, cells = cells.ToArray(), tiles = tiles.ToArray() });
+            result.Add(new LanTilemap { name = map.name, visible = map.GetComponent<TilemapRenderer>().enabled,
+                cells = cells.ToArray(), tiles = tiles.ToArray() });
         }
         return result.ToArray();
     }
@@ -64,6 +67,7 @@ public sealed class LanWorldReplication
                 tiles[i] = catalog.tiles[data.tiles[i]];
             }
             map.SetTiles(data.cells, tiles);
+            map.GetComponent<TilemapRenderer>().enabled = data.visible;
         }
         foreach (var view in clientViews.Values) if (view != null) Object.Destroy(view.gameObject);
         clientViews.Clear(); targets.Clear();
@@ -72,6 +76,14 @@ public sealed class LanWorldReplication
 
     public void CaptureVisuals(LanMessage message)
     {
+        var frames = new List<LanMeshFrame>();
+        foreach (var plate in Object.FindObjectsByType<ArcaneSpikeTrapVisual>(FindObjectsSortMode.None))
+        {
+            var filter = plate.GetComponent<MeshFilter>();
+            if (filter != null && filter.sharedMesh != null)
+                frames.Add(new LanMeshFrame { id = filter.GetInstanceID(), uv = filter.sharedMesh.uv });
+        }
+        message.meshFrames = frames.ToArray();
         var definitions = new List<LanSpriteDefinition>();
         var visuals = new List<LanVisual>();
         foreach (SpriteRenderer renderer in Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
@@ -138,6 +150,13 @@ public sealed class LanWorldReplication
 
     public void ApplyVisuals(LanMessage message)
     {
+        if (message.meshFrames != null)
+        {
+            if (message.meshFrames.Length > 256) throw new System.IO.InvalidDataException("Too many trap mesh frames.");
+            foreach (var frame in message.meshFrames)
+                if (frame.uv != null && frame.uv.Length == 4 && clientMeshes.TryGetValue(frame.id, out MeshFilter filter))
+                    filter.sharedMesh.uv = frame.uv;
+        }
         ApplyLights(message.lights);
         if (message.definitions != null)
             foreach (LanSpriteDefinition data in message.definitions)
@@ -217,8 +236,78 @@ public sealed class LanWorldReplication
         }
     }
 
+    // Map meshes are sent once per level; only four UVs per moving trap are in snapshots.
+    public LanMesh[] CaptureMeshes()
+    {
+        var result = new List<LanMesh>();
+        foreach (var filter in Object.FindObjectsByType<MeshFilter>(FindObjectsSortMode.None))
+        {
+            if (filter.GetComponentInParent<ArcaneCitadelGeometry>() == null && filter.GetComponent<ArcaneSpikeTrapVisual>() == null) continue;
+            var renderer = filter.GetComponent<MeshRenderer>();
+            var mesh = filter.sharedMesh;
+            if (renderer == null || !renderer.enabled || mesh == null) continue;
+            int material = catalog.Id(renderer.sharedMaterial);
+            if (material < 0) throw new System.InvalidOperationException("Missing LAN map material: " + renderer.sharedMaterial.name);
+            result.Add(new LanMesh { id = filter.GetInstanceID(), name = filter.name, material = material,
+                layer = renderer.sortingLayerID, order = renderer.sortingOrder,
+                position = filter.transform.position, scale = filter.transform.lossyScale, rotation = filter.transform.rotation,
+                vertices = mesh.vertices, triangles = mesh.triangles, uv = mesh.uv });
+        }
+        return result.ToArray();
+    }
+
+    public void ApplyMeshes(LanMesh[] meshes)
+    {
+        ClearMeshes();
+        if (meshes == null) return;
+        if (meshes.Length > 256) throw new System.IO.InvalidDataException("Too many LAN map meshes.");
+        int totalVertices = 0;
+        foreach (var data in meshes)
+        {
+            if (data == null || data.vertices == null || data.uv == null || data.triangles == null ||
+                data.vertices.Length != data.uv.Length || data.triangles.Length % 3 != 0 ||
+                data.vertices.Length > 100000 || data.triangles.Length > 150000 ||
+                data.material < 0 || data.material >= catalog.materials.Length || clientMeshes.ContainsKey(data.id))
+                throw new System.IO.InvalidDataException("Invalid LAN map mesh.");
+            totalVertices += data.vertices.Length;
+            if (totalVertices > 200000) throw new System.IO.InvalidDataException("LAN mesh budget exceeded.");
+            foreach (int index in data.triangles) if (index < 0 || index >= data.vertices.Length)
+                throw new System.IO.InvalidDataException("Invalid LAN mesh index.");
+            foreach (Vector3 vertex in data.vertices)
+                if (float.IsNaN(vertex.x) || float.IsNaN(vertex.y) || float.IsNaN(vertex.z) ||
+                    float.IsInfinity(vertex.x) || float.IsInfinity(vertex.y) || float.IsInfinity(vertex.z))
+                    throw new System.IO.InvalidDataException("Invalid LAN vertex.");
+            var view = new GameObject("LAN Map/" + data.name);
+            view.transform.SetParent(root, false);
+            view.transform.SetPositionAndRotation(data.position, data.rotation);
+            view.transform.localScale = data.scale;
+            var mesh = new Mesh { name = data.name, indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+            mesh.vertices = data.vertices; mesh.triangles = data.triangles; mesh.uv = data.uv;
+            var colors = new Color[data.vertices.Length]; for (int i = 0; i < colors.Length; i++) colors[i] = Color.white;
+            mesh.colors = colors; mesh.RecalculateBounds();
+            var filter = view.AddComponent<MeshFilter>(); filter.sharedMesh = mesh;
+            var renderer = view.AddComponent<MeshRenderer>(); renderer.sharedMaterial = catalog.materials[data.material];
+            renderer.sortingLayerID = data.layer; renderer.sortingOrder = data.order;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; renderer.receiveShadows = false;
+            clientMeshes.Add(data.id, filter);
+        }
+    }
+
+    private void ClearMeshes()
+    {
+        foreach (var filter in clientMeshes.Values)
+        {
+            if (filter == null) continue;
+            if (filter.sharedMesh != null) Object.Destroy(filter.sharedMesh);
+            filter.gameObject.SetActive(false);
+            Object.Destroy(filter.gameObject);
+        }
+        clientMeshes.Clear();
+    }
+
     public void Dispose()
     {
+        ClearMeshes();
         ClearLights();
         foreach (Sprite sprite in createdSprites) if (sprite != null) Object.Destroy(sprite);
         foreach (Texture2D texture in clientTextures.Values) if (texture != null) Object.Destroy(texture);

@@ -35,6 +35,7 @@ public class EnemyBrain : MonoBehaviour
 
     public EnemyState CurrentState => currentState;
     public EnemyConfigSO Config => config;
+    public void Configure(EnemyConfigSO value) { config = value; ApplyConfiguration(); }
     public event System.Action<EnemyState> StateChanged;
     public static event System.Action<EnemyBrain, HealthController> ChargeTelegraph;
 
@@ -200,10 +201,16 @@ public class EnemyBrain : MonoBehaviour
         if (target == null) { isDashing = false; dashRoutine = null; yield break; }
 
         movement?.Stop();
-        SpriteRenderer visual = GetComponent<EnemyLocomotionVisual>()?.Renderer;
+        SpriteRenderer visual = GetComponent<EnemySpriteAnimation>()?.Renderer;
+        if (visual == null) visual = GetComponent<EnemySheetAnimation>()?.Renderer;
+        if (visual == null) visual = GetComponent<EnemyLocomotionVisual>()?.Renderer;
         if (visual == null) visual = GetComponentInChildren<SpriteRenderer>();
         Color originalColor = visual != null ? visual.color : Color.white;
         if (visual != null) visual.color = new Color(1f, 0.35f, 0.22f);
+        GetComponent<EnemySpriteAnimation>()?.TriggerAttackLunge(target.transform.position - transform.position,
+            Mathf.Min(config.attackWindup, 0.45f));
+        GetComponent<EnemySheetAnimation>()?.TriggerAttack(target.transform.position - transform.position,
+            Mathf.Min(config.attackWindup, 0.45f));
         ChargeTelegraph?.Invoke(this, target);
         yield return new WaitForSeconds(Mathf.Min(config.attackWindup, 0.45f));
         if (health == null || health.IsDead || target == null || target.currentHealth <= 0)
@@ -228,7 +235,14 @@ public class EnemyBrain : MonoBehaviour
                 if (d <= 1.2f)
                 {
                     hitDuringDash = true;
-                    target.TakeDamage(config.attackDamage);
+                    if (config.selfDestructOnAttack)
+                    {
+                        combat?.Explode();
+                        health.Die();
+                        yield break;
+                    }
+                    if (config.blastRadius > 0f) combat?.Explode();
+                    else combat?.DealDamageToPlayer(target, config.attackDamage);
                     CombatHitVfx.Spawn(target.transform.position, CombatImpactKind.Bat, 1.1f);
                 }
             }
