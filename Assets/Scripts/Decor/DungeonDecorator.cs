@@ -98,10 +98,12 @@ public static class DungeonDecorator
         if (sortedWalls.Count == 0)
             return;
 
-        int step = formalLayout ? 5 : 3;
+        int step = 5;
         int wallIndex = random.Range(0, step);
         int lastFlagWallIndex = -999;
-        int torchChance = currentLevel == 6 ? 85 : (levelType == LevelType.FinalBoss ? 85 : 75);
+        int torchChance = currentLevel == 6 ? 70 : (levelType == LevelType.FinalBoss ? 70 : 65);
+        List<Vector2Int> placedTorchCells = new();
+        const float minTorchSpacing = 4.5f;
 
         while (wallIndex < sortedWalls.Count)
         {
@@ -116,16 +118,18 @@ public static class DungeonDecorator
 
             if (floorTiles.Contains(wallCell + Vector2Int.down))
             {
+                bool isTooCloseToOtherTorch = placedTorchCells.Any(p => Vector2Int.Distance(p, wallCell) < minTorchSpacing);
                 int roll = random.Range(0, 100);
-                bool placeTorch = roll < torchChance;
-                bool placeFlag = !placeTorch && (roll >= 92) && (wallIndex - lastFlagWallIndex >= 14) && currentLevel != 6;
+                bool placeTorch = !isTooCloseToOtherTorch && (roll < torchChance);
+                bool placeFlag = !placeTorch && (roll >= 90) && (wallIndex - lastFlagWallIndex >= 14) && currentLevel != 6;
 
-                Vector3 worldPos = new(wallCell.x + 0.5f, wallCell.y + 0.35f, 0f);
+                Vector3 worldPos = new(wallCell.x + 0.5f, wallCell.y + 0.38f, 0f);
 
                 if (placeTorch && torchFrames != null && torchFrames.Length > 0)
                 {
                     GameObject torchObj = new("Wall Torch");
                     torchObj.transform.position = worldPos;
+                    torchObj.transform.localScale = new Vector3(0.58f, 0.58f, 1f);
                     torchObj.transform.SetParent(parent, true);
 
                     SpriteRenderer sr = torchObj.AddComponent<SpriteRenderer>();
@@ -134,13 +138,14 @@ public static class DungeonDecorator
                     AnimatedDecor decor = torchObj.AddComponent<AnimatedDecor>();
                     decor.ConfigureFrames(torchFrames, 5.5f);
 
-                    float lightRadius = currentLevel == 6 ? 4.2f : 3.8f;
-                    float lightIntensity = currentLevel == 6 ? 1.45f : 1.25f;
+                    float lightRadius = currentLevel == 6 ? 2.3f : 1.9f;
+                    float lightIntensity = currentLevel == 6 ? 1.4f : 1.2f;
                     Color lightCol = currentLevel == 6 ? DarknessTorchColor : TorchWarmColor;
-                    decor.ConfigureTorchLight(lightCol, lightRadius, 0.5f, lightIntensity);
+                    decor.ConfigureTorchLight(lightCol, lightRadius, 0.25f, lightIntensity);
 
                     spawnedObjects?.Add(torchObj);
                     wallDecorCells.Add(wallCell);
+                    placedTorchCells.Add(wallCell);
                 }
                 else if (placeFlag && flagFrames != null && flagFrames.Length > 0)
                 {
@@ -160,7 +165,7 @@ public static class DungeonDecorator
                 }
             }
 
-            wallIndex += random.Range(step, step + 2);
+            wallIndex += random.Range(step, step + 3);
         }
     }
 

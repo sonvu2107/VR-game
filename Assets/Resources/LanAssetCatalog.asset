@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e5dc757eb9574948bdd78b235042369, type: 3}
   m_Name: LanAssetCatalog
   m_EditorClassIdentifier: 
-  fingerprint: 9850C40FB371699FFA1E1432C92848A30ACB5D8C5AA61C9FB48E76F2BDB140DB
+  fingerprint: 38DCE47C8C6AD95CFF45868CB8996353D0791227C61DD1B11C56410C83835393
   sprites:
   - {fileID: 21300000, guid: 8fec46d3fd98f7b4998f8563a2beffc5, type: 3}
   - {fileID: 21300000, guid: 3b60e5039dba4d64d9a26c796fe29847, type: 3}
