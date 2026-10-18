@@ -1,0 +1,12 @@
+{
+  "generator": "built-in image_gen",
+  "asset": "Assets/Art/MapThemes/Ambience/DungeonAmbience_Atlas_v1.png",
+  "prompt": "Use case: stylized-concept. Asset type: production 2D pixel-art dungeon decoration SPRITE SHEET, genuine transparent alpha background. Create exactly a square 4 columns x 4 rows uniform grid, no visible grid lines. Each sprite strictly contained in its equal square cell with generous 15 percent transparent padding. Crisp chunky hand-pixelled 32-bit dark fantasy dungeon style, limited palette, visible square pixels, no smooth airbrush, no blur, no text. Row 1: four sequential seamless looping animation frames of a small standing iron brazier with flickering pale ivory fire; identical stationary bowl base, identical scale and center, only flame tips vary gently. Row 2: four sequential seamless looping frames of the SAME small floating ghost soul, pale blue-white wispy hood silhouette, two tiny dark eyes, narrow trailing spectral tail; same center, same size; tiny wispy motion, frame4 transitions gently to frame1, never disappear. Row3: four static different corner cobwebs, grey ivory fine chunky pixel threads, triangular web that attaches to upper left wall corner; first thin delicate, second denser, third slightly torn, fourth small cobweb cluster. Row4 static thematic accent sprites: a cluster of three glowing mushrooms with dark stems, a cluster of thin icy blue crystals, a cluster of candle stubs with small ivory flames, a pile of dark bones with small skull. All assets top-down three-quarter dungeon perspective matching pixel stone rooms. No floor, no backdrop, no cast ground shadow, no chest, no labels, no border. The sprites should be mostly pale neutral ivory so Unity tint can color flames and ghosts to cyan, violet, green or red. Canvas square, exact evenly spaced 4x4 atlas, each row centered at consistent cell centers. Deliver sprites only on true transparency.",
+  "layout": {
+    "row1": "Brazier fire: 4 looping frames",
+    "row2": "Floating soul: 4 looping frames",
+    "row3": "Cobweb variants",
+    "row4": "Mushrooms, crystals, candles, bones"
+  },
+  "integration": "Texture-only atlas; fixed mesh quad sizes; shader frame loop and floating; materials per campaign theme. No sprite metadata edits."
+}

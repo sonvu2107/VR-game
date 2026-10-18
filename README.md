@@ -1,6 +1,6 @@
 # The Labyrinth
 
-**The Labyrinth** là game hành động khám phá mê cung 2D được phát triển bằng Unity. Chiến dịch gồm 10 level: level 1 dùng dungeon gốc, hoàn thành và qua cổng sẽ sang map Arcane Citadel từ level 2. Các level sau tiếp tục dùng Arcane với cấu hình độ khó riêng cho đến khi có thêm theme khác.
+**The Labyrinth** là game hành động khám phá mê cung 2D được phát triển bằng Unity. Chiến dịch gồm 10 level, mỗi level có bộ map riêng. Level 1 giữ dungeon gốc, level 2 giữ Arcane Citadel; level 3–10 dùng tám atlas và bố cục mới.
 
 > Trạng thái: Đồ án đang được tiếp tục phát triển bởi nhóm 5 thành viên.
 
@@ -16,11 +16,46 @@
 - [Hạn chế hiện tại](#hạn-chế-hiện-tại)
 - [Giấy phép](#giấy-phép)
 
+## Bản đồ theo level
+
+Trong menu chính, bấm **Start/Play** để mở màn hình **CHỌN MÀN**. Có thể chọn trực tiếp **LV 1–10**, xem tên map rồi bấm **Chơi một mình** hoặc **Tạo phòng LAN (Host)**. Không khóa level theo save. Người Join nhận màn của Host, không tự quyết định level. Game luôn tải scene `Dungeon` và chọn theme đúng level, không dùng các scene preview để chơi chiến dịch. Qua cổng tiếp tục level kế; Restart quay về level đã chọn lúc bắt đầu lượt chơi. Chọn LV 1 để chơi toàn bộ chiến dịch từ đầu; mặc định vẫn là LV 1.
+
+| Level | Map | Bố cục chính |
+|---|---|---|
+| 1 | Dungeon gốc | PCG Random Walk cũ |
+| 2 | Arcane Citadel | Pháo đài rune xanh ngọc cũ |
+| 3 | Hầm Rêu Cổ | Phòng oval, trục rẽ nhánh và đường vòng qua phòng kho báu |
+| 4 | Ngục Ngập Nước | Phòng góc vát, hai tuyến cầu rộng qua khoảng trống |
+| 5 | Lò Rèn Tro Tàn | Hai cánh xưởng có hốc tường, hội tụ trước boss |
+| 6 | Kho Băng Cổ | Phòng kim cương nối bằng hành lang gấp khúc |
+| 7 | Hầm Mộ Xương | Phòng chữ thập, trục chính và nhánh hầm mộ cụt |
+| 8 | Thư Viện Cấm | Đại sảnh rộng ở giữa, phòng đọc hai cánh và nhánh lưu trữ |
+| 9 | Thánh Điện Vực Sâu | Phòng bát giác tạo vòng bao quanh khoảng trống |
+| 10 | Điện Huyết Vương | Trục đại điện rộng bảy ô, hai cánh phụ và phòng boss lớn |
+
+Mỗi map mới có atlas riêng gồm nền, tường, viền, cột, rương, vật trang trí và bốn trạng thái bẫy. Đuốc dùng animation cũ với màu lửa theo theme. Nước/băng/lava trong art hiện chỉ là bối cảnh; chưa thêm cơ chế bơi, trượt hay sát thương môi trường.
+
+Chiến dịch chạy qua `StartMenu` → `Dungeon`, chọn map từ `CampaignMapSet`, không load scene mới giữa tầng để giữ phiên LAN. Các scene `Assets/Scenes/Level03_MossCrypt.unity` đến `Level10_CrimsonThrone.unity` dùng xem trước bố cục trong Editor; mở riêng một scene xem thử không tương đương bắt đầu chiến dịch ở đúng số level đó.
+
+Editor menu: **Tools → The Labyrinth → Campaign Maps** có lệnh dựng asset/preview, kiểm tra layout, sinh thử chiến dịch và chạy Play qua mười map. Lệnh dựng không ghi đè preview scene đã tồn tại và yêu cầu lưu scene/dừng Play trước. Atlas được tạo bằng built-in `image_gen`; prompt ở [CAMPAIGN_MAP_ART_PROMPTS.json](Docs/CAMPAIGN_MAP_ART_PROMPTS.json). Đây là asset bản thử, chưa coi các mép nền là bộ tile seamless hoàn thiện.
+
+Lệnh **Refresh Owned Preview Geometry** chỉ dựng lại root preview do công cụ tạo, sao lưu scene và mesh trước khi ghi; không thay map gốc hoặc Arcane. **Export Actual Floor Plans** xuất `Captures/CampaignMapStructures.png` từ ô sàn thật (seed 12345): xanh lá = Start, vàng = Treasure, đỏ = Boss, xanh ngọc = Exit, hành lang màu xanh xám. Sơ đồ này không phải ảnh gameplay hoặc concept vẽ tay.
+
+### Trang trí pixel art và hiệu ứng môi trường
+
+Không còn sinh rương trang trí hoặc footprint của rương; vẫn giữ phòng Treasure, chìa khóa và logic phần thưởng. Atlas nguồn có hình rương được giữ lại, không xóa dữ liệu ảnh.
+
+`DungeonAmbienceSet` cấu hình 10 phối màu: lửa cháy lặp 4 frame, linh hồn lơ lửng, mạng nhện bám mép tường, nấm ở hầm rêu, tinh thể ở kho băng/vực sâu, nến trong thư viện/điện vua và xương trong hầm mộ. Map gốc (level 1 chiến dịch) giữ đuốc tường cũ, không thêm chậu lửa; chỉ bổ sung mạng nhện, xương và linh hồn thưa. Lò rèn ưu tiên lửa, không rải linh hồn. Tất cả là trang trí thuần hình ảnh, không gây sát thương và không thêm collider.
+
+Texture dùng Point, không mipmap/compression; mesh giữ nguyên kích thước, shader đổi UV liên tục qua 4 frame không có frame trống và dùng thời gian scaled để dừng khi Pause. Trang trí gắn theo mép phòng thật, không rải vào tâm phòng hoặc hành lang. LAN dùng cùng mesh/material trong catalog; pha hoạt ảnh mang tính thẩm mỹ trên từng máy, không phải trạng thái gameplay đồng bộ chính xác từng frame.
+
+**Tools → The Labyrinth → Campaign Maps → Install Ambience and Refresh Chest-Free Previews** cài bộ material và cập nhật preview Arcane cùng level 3–10, sao lưu scene/mesh trước khi ghi và yêu cầu Edit Mode với mọi scene đã lưu. Công cụ không chạy Play hoặc sửa save. Ảnh chụp góc phòng xuất vào `Captures/Ambience/`; báo cáo kiểm tra tại `Temp/DungeonAmbience.result.txt`. Atlas được tạo bằng built-in `image_gen`, prompt lưu ở [DUNGEON_AMBIENCE_ART_PROMPT.json](Docs/DUNGEON_AMBIENCE_ART_PROMPT.json).
+
 ## Tính năng hiện có
 
 - Sinh phòng và hành lang ngẫu nhiên bằng Procedural Content Generation (PCG).
 - Một lượt chơi gồm 10 level với seed, số phòng và độ khó riêng cho từng level.
-- Đổi từ map gốc ở level 1 sang Arcane ở level 2 trong cùng phiên chơi; không tải lại Player, điểm số hay kết nối LAN. Restart trở lại level 1/map gốc.
+- Qua cổng sẽ đổi map theo từng level trong cùng phiên chơi; không tải lại Player, điểm số hay kết nối LAN. Restart trở lại level 1/map gốc.
 - State machine quản lý các trạng thái Generating, Playing, Level Completed, Paused, Game Over và Victory.
 - Cổng chuyển level chỉ mở sau khi toàn bộ enemy bị tiêu diệt và đủ chìa khóa ở level có khóa.
 - Level 4 có bẫy gai và một chìa khóa; level 6 giới hạn tầm nhìn; level 8 yêu cầu hai chìa khóa; level 9 có giới hạn 4 phút.

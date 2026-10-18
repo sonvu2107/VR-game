@@ -51,14 +51,14 @@ public sealed class SpikeTrap : MonoBehaviour
     }
 
     // Optional art only: legacy levels keep the existing generated visual.
-    public void ConfigureAtlasVisual(Material material)
+    public void ConfigureAtlasVisual(Material material, Rect[] frameRects = null)
     {
         EnsureComponents();
         if (material == null || atlasVisual != null) return;
         var child = new GameObject("Arcane Spike Plate Visual");
         child.transform.SetParent(transform, false);
         atlasVisual = child.AddComponent<ArcaneSpikeTrapVisual>();
-        atlasVisual.Initialize(material);
+        atlasVisual.Initialize(material, frameRects);
         spriteRenderer.enabled = false;
     }
 

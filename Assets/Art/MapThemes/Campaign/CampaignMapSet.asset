@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26777c2eba343d84cab9a2c2c638ea2b, type: 3}
+  m_Name: CampaignMapSet
+  m_EditorClassIdentifier: 
+  maps:
+  - {fileID: 0}
+  - {fileID: 11400000, guid: e67754f07b92d744488106a41d9ab6df, type: 2}
+  - {fileID: 11400000, guid: a151230ce9cc4024ea5b6a3baa0e2f8a, type: 2}
+  - {fileID: 11400000, guid: 53b733ce71537d7458977cc6d0241751, type: 2}
+  - {fileID: 11400000, guid: a8a7aa8d7adb21a4ba6fa6253b6eefe4, type: 2}
+  - {fileID: 11400000, guid: bde0d475830fc484f8edcc4c9db56a45, type: 2}
+  - {fileID: 11400000, guid: a47929290fbfecf449b4ddee35313257, type: 2}
+  - {fileID: 11400000, guid: 11065d79051f9704ca855d81ff54a0a0, type: 2}
+  - {fileID: 11400000, guid: faaac542ce1e3794e864cadfd9f6a3c2, type: 2}
+  - {fileID: 11400000, guid: 745f230072a8b8742906e62056bef04f, type: 2}

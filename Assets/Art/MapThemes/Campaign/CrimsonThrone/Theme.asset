@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 380ef2651ca683246a6ef3dad7adeecc, type: 3}
+  m_Name: Theme
+  m_EditorClassIdentifier: 
+  storageProps: []
+  potteryProps: []
+  remainsProps: []
+  entranceSteps: {fileID: 0}
+  wallDetails: []
+  wallBanner: {fileID: 0}
+  pavingSprites: []
+  arcaneFloor: {fileID: 2100000, guid: b886ffda5b44b754e88b77ce5f19b25b, type: 2}
+  arcaneWalls: {fileID: 2100000, guid: b886ffda5b44b754e88b77ce5f19b25b, type: 2}
+  arcaneProps: {fileID: 2100000, guid: b886ffda5b44b754e88b77ce5f19b25b, type: 2}
+  arcaneTorch: {fileID: 2100000, guid: 57919f0c85d6e58409fcf524665c8f69, type: 2}
+  arcaneTrapsPerCombatRoom: 4
+  arcaneSpike: {fileID: 2100000, guid: b886ffda5b44b754e88b77ce5f19b25b, type: 2}
+  usesCampaignAtlas: 1
+  layoutStyle: 7
+  mapDisplayName: "\u0110i\u1EC7n Huy\u1EBFt V\u01B0\u01A1ng"
+  torchLightColor: {r: 1, g: 0.15, b: 0.15, a: 1}
+  atlasUvs:
+  - serializedVersion: 2
+    x: 0.0023923444
+    y: 0.7519936
+    width: 0.24561404
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.25279108
+    y: 0.7519936
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.50239235
+    y: 0.7519936
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.7519936
+    y: 0.7519936
+    width: 0.24561404
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.0023923444
+    y: 0.50239235
+    width: 0.24561404
+    height: 0.24481659
+  - serializedVersion: 2
+    x: 0.25279108
+    y: 0.6036683
+    width: 0.24481659
+    height: 0.05661882
+  - serializedVersion: 2
+    x: 0.57416266
+    y: 0.5430622
+    width: 0.10047847
+    height: 0.14673047
+  - serializedVersion: 2
+    x: 0.8492823
+    y: 0.53110045
+    width: 0.086124405
+    height: 0.20255183
+  - serializedVersion: 2
+    x: 0.07256778
+    y: 0.25279108
+    width: 0.102870815
+    height: 0.24481659
+  - serializedVersion: 2
+    x: 0.27352473
+    y: 0.25279108
+    width: 0.20255183
+    height: 0.1291866
+  - serializedVersion: 2
+    x: 0.5063796
+    y: 0.25279108
+    width: 0.23684211
+    height: 0.24481659
+  - serializedVersion: 2
+    x: 0.7998405
+    y: 0.25279108
+    width: 0.14832535
+    height: 0.24481659
+  - serializedVersion: 2
+    x: 0.0023923444
+    y: 0.0023923444
+    width: 0.24561404
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.25279108
+    y: 0.0023923444
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.50239235
+    y: 0.0023923444
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.7519936
+    y: 0.0023923444
+    width: 0.24561404
+    height: 0.24561404

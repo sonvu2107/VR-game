@@ -25,3 +25,8 @@ MonoBehaviour:
   arcaneTorch: {fileID: 2100000, guid: 99d49b63d8eea93429d78b7fbef60b83, type: 2}
   arcaneTrapsPerCombatRoom: 2
   arcaneSpike: {fileID: 2100000, guid: 0d23b692ea528a54a9e1b9fe317749d0, type: 2}
+  usesCampaignAtlas: 0
+  layoutStyle: 0
+  mapDisplayName: 
+  torchLightColor: {r: 0.12, g: 0.9, b: 1, a: 1}
+  atlasUvs: []

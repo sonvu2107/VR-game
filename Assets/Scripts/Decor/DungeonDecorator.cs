@@ -13,7 +13,6 @@ public static class DungeonDecorator
     private static Sprite[] torchFrames;
     private static Sprite[] flagFrames;
     private static Sprite[] boxSprites;
-    private static Sprite chestSprite;
 
     private static readonly Color TorchWarmColor = new(1f, 0.68f, 0.28f, 1f);
     private static readonly Color DarknessTorchColor = new(1f, 0.60f, 0.20f, 1f);
@@ -58,7 +57,7 @@ public static class DungeonDecorator
         // 1. Decorate Walls (Warm torches ~40%, rare banners, ambient 2D lighting)
         DecorateWalls(layout, random, spawnedObjects, root.transform, currentLevel, levelType, wallDecorCells, formalLayout);
 
-        // 2. Decorate Main Rooms (Storage crates in corners and Treasure Chest)
+        // 2. Decorate Main Rooms (storage crates in corners, no decorative chests)
         if (layout.Rooms != null)
         {
             foreach (DungeonRoom room in layout.Rooms)
@@ -238,17 +237,6 @@ public static class DungeonDecorator
             }
         }
 
-        // B. Special Room Centerpieces (Treasure Chest in Treasure Room)
-        if (room.Type == RoomType.Treasure && chestSprite != null)
-        {
-            Vector2Int centerCell = room.SpawnPoint;
-            if (!occupiedCells.Contains(centerCell))
-            {
-                Vector3 chestPos = PrefabPlacer.GetWorldPosition(centerCell) + new Vector3(0.5f, -0.4f, 0f);
-                SpawnStaticProp("Treasure Chest Prop", chestSprite, chestPos, 3, parent, spawnedObjects);
-                occupiedCells.Add(centerCell);
-            }
-        }
     }
 
     private static GameObject SpawnStaticProp(string name, Sprite sprite, Vector3 position, int sortingOrder, Transform parent, ICollection<GameObject> spawnedObjects)
@@ -287,7 +275,6 @@ public static class DungeonDecorator
             LoadSprite("Decor/Props/box_4", 16f, new Vector2(0.5f, 0.3f))
         }.Where(s => s != null).ToArray();
 
-        chestSprite = LoadSprite("Decor/Props/chest_1", 16f, new Vector2(0.5f, 0.3f));
     }
 
     private static Sprite LoadSprite(string resourcePath, float pixelsPerUnit, Vector2 pivot)

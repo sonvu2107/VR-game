@@ -17,4 +17,28 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DungeonArcaneCitadel.unity
     guid: 74e9e6e5a01e27a48aff7415aa9c1877
+  - enabled: 1
+    path: Assets/Scenes/Level03_MossCrypt.unity
+    guid: 0477446c91c37764f813dd3efef0b35f
+  - enabled: 1
+    path: Assets/Scenes/Level04_SunkenPrison.unity
+    guid: 1c11f73e2f0e3da4d80e4b09870a3cda
+  - enabled: 1
+    path: Assets/Scenes/Level05_EmberForge.unity
+    guid: 3046b771ec69f0b428c9de507acaabd6
+  - enabled: 1
+    path: Assets/Scenes/Level06_FrozenVault.unity
+    guid: c3ef742d4b95cb644adacd898e3c9215
+  - enabled: 1
+    path: Assets/Scenes/Level07_BoneCatacombs.unity
+    guid: 448f1d54017391b4184bd7aec2061e14
+  - enabled: 1
+    path: Assets/Scenes/Level08_ForbiddenLibrary.unity
+    guid: f825798924a29fa49bf95228f7f22e3d
+  - enabled: 1
+    path: Assets/Scenes/Level09_AbyssSanctum.unity
+    guid: b982218a0dbba5543b7d40f61dab0164
+  - enabled: 1
+    path: Assets/Scenes/Level10_CrimsonThrone.unity
+    guid: 09450fa7e87afe44aab8963f37221334
   m_configObjects: {}

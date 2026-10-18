@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 380ef2651ca683246a6ef3dad7adeecc, type: 3}
+  m_Name: Theme
+  m_EditorClassIdentifier: 
+  storageProps: []
+  potteryProps: []
+  remainsProps: []
+  entranceSteps: {fileID: 0}
+  wallDetails: []
+  wallBanner: {fileID: 0}
+  pavingSprites: []
+  arcaneFloor: {fileID: 2100000, guid: 79a02e33720d3ff4183cfe26093353c5, type: 2}
+  arcaneWalls: {fileID: 2100000, guid: 79a02e33720d3ff4183cfe26093353c5, type: 2}
+  arcaneProps: {fileID: 2100000, guid: 79a02e33720d3ff4183cfe26093353c5, type: 2}
+  arcaneTorch: {fileID: 2100000, guid: 8d50089dec58d2149a0ed7928a98e969, type: 2}
+  arcaneTrapsPerCombatRoom: 3
+  arcaneSpike: {fileID: 2100000, guid: 79a02e33720d3ff4183cfe26093353c5, type: 2}
+  usesCampaignAtlas: 1
+  layoutStyle: 3
+  mapDisplayName: "Kho B\u0103ng C\u1ED5"
+  torchLightColor: {r: 0.45, g: 0.8, b: 1, a: 1}
+  atlasUvs:
+  - serializedVersion: 2
+    x: 0.0023923444
+    y: 0.7519936
+    width: 0.24561404
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.25279108
+    y: 0.7519936
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.50239235
+    y: 0.7519936
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.7519936
+    y: 0.7519936
+    width: 0.24561404
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.0023923444
+    y: 0.50239235
+    width: 0.24561404
+    height: 0.24481659
+  - serializedVersion: 2
+    x: 0.25279108
+    y: 0.59090906
+    width: 0.24481659
+    height: 0.0645933
+  - serializedVersion: 2
+    x: 0.57416266
+    y: 0.53907496
+    width: 0.103668265
+    height: 0.14114833
+  - serializedVersion: 2
+    x: 0.84210527
+    y: 0.53269535
+    width: 0.067783095
+    height: 0.1937799
+  - serializedVersion: 2
+    x: 0.060606062
+    y: 0.25279108
+    width: 0.12838915
+    height: 0.2416268
+  - serializedVersion: 2
+    x: 0.27910686
+    y: 0.25598085
+    width: 0.19059011
+    height: 0.13476874
+  - serializedVersion: 2
+    x: 0.56060606
+    y: 0.25279108
+    width: 0.12200957
+    height: 0.20733653
+  - serializedVersion: 2
+    x: 0.7982456
+    y: 0.25279108
+    width: 0.16666667
+    height: 0.24481659
+  - serializedVersion: 2
+    x: 0.0023923444
+    y: 0.0023923444
+    width: 0.24561404
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.25279108
+    y: 0.0023923444
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.50239235
+    y: 0.0023923444
+    width: 0.24481659
+    height: 0.24561404
+  - serializedVersion: 2
+    x: 0.7519936
+    y: 0.0023923444
+    width: 0.24561404
+    height: 0.24561404

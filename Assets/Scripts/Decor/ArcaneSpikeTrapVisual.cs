@@ -13,9 +13,15 @@ public sealed class ArcaneSpikeTrapVisual : MonoBehaviour
         new(54, 668, 531, 520), new(669, 668, 533, 520)
     };
     private static readonly Vector2[][] Frames = CreateUvs();
+    // Unity không serialize jagged array khi reload script. Giữ nguồn Rect[] và dựng lại cache.
+    [SerializeField, HideInInspector] private Rect[] customFrameRects;
+    private Vector2[][] frameUvs;
 
-    public void Initialize(Material material)
+    public void Initialize(Material material, Rect[] frameRects = null)
     {
+        customFrameRects = frameRects != null && frameRects.Length == 4 ? (Rect[])frameRects.Clone() : null;
+        frameUvs = null;
+        CurrentFrame = -1;
         mesh = new Mesh { name = "Arcane Spike Atlas Quad" };
         const float halfWidth = 0.85f * 0.5f;
         const float halfHeight = 0.85f * (520f / 531f) * 0.5f;
@@ -35,9 +41,40 @@ public sealed class ArcaneSpikeTrapVisual : MonoBehaviour
 
     public void SetFrame(int index)
     {
-        if (mesh == null || CurrentFrame == index) return;
+        if (mesh == null) return;
+        bool rebuild = frameUvs == null;
+        if (rebuild) RebuildFrameUvs();
+        index = Mathf.Clamp(index, 0, 3);
+        if (!rebuild && CurrentFrame == index) return;
         CurrentFrame = Mathf.Clamp(index, 0, 3);
-        mesh.uv = Frames[CurrentFrame];
+        mesh.uv = frameUvs[CurrentFrame];
+    }
+
+    private void OnEnable()
+    {
+        frameUvs = null;
+        if (mesh == null)
+        {
+            var filter = GetComponent<MeshFilter>();
+            if (filter != null) mesh = filter.sharedMesh;
+        }
+        SetFrame(Mathf.Max(0, CurrentFrame));
+    }
+
+    private void RebuildFrameUvs()
+    {
+        if (customFrameRects == null || customFrameRects.Length != 4)
+        {
+            frameUvs = Frames; // Chỉ atlas Arcane cũ mới không truyền Rect[].
+            return;
+        }
+        frameUvs = new Vector2[4][];
+        for (int i = 0; i < 4; i++)
+        {
+            Rect uv = customFrameRects[i];
+            frameUvs[i] = new[] { new Vector2(uv.xMin, uv.yMin), new Vector2(uv.xMin, uv.yMax),
+                new Vector2(uv.xMax, uv.yMax), new Vector2(uv.xMax, uv.yMin) };
+        }
     }
 
     private static Vector2[][] CreateUvs()

@@ -16,6 +16,9 @@ public sealed class LanMenuUI : MonoBehaviour
     private float nextRefresh;
     private string hostAddresses;
     private float nextAddressRefresh;
+    private static readonly string[] MapNames = {
+        "Hầm ngục gốc", "Thành cổ Arcane", "Hầm Rêu Cổ", "Ngục Ngập Nước", "Lò Rèn Tro Tàn",
+        "Kho Băng Cổ", "Hầm Mộ Xương", "Thư Viện Cấm", "Thánh Điện Vực Sâu", "Điện Huyết Vương" };
 
     public static void Show(StartMenuControls menu)
     {
@@ -57,28 +60,50 @@ public sealed class LanMenuUI : MonoBehaviour
         RectTransform backdrop = Panel("Backdrop", transform, new Color(0.025f, 0.025f, 0.06f, 0.96f));
         Stretch(backdrop);
         RectTransform panel = Panel("LAN Lobby", backdrop, new Color(0.10f, 0.08f, 0.16f));
-        Center(panel, new Vector2(580, 530), Vector2.zero);
-        Label(panel, "THE LABYRINTH · CO-OP LAN", 29, new Vector2(0, 214), new Vector2(540, 48));
-        Label(panel, "Hai người · hai máy · cùng mạng Wi-Fi/LAN", 20, new Vector2(0, 165), new Vector2(540, 42));
-        TMP_InputField address = Field(panel, "IP máy Host", "192.168.1.10", new Vector2(-80, 102), new Vector2(310, 44));
-        TMP_InputField port = Field(panel, "Cổng", "7777", new Vector2(180, 102), new Vector2(140, 44));
+        Center(panel, new Vector2(760, 660), Vector2.zero);
+        Label(panel, "THE LABYRINTH · CHỌN MÀN", 29, new Vector2(0, 282), new Vector2(700, 48));
+        Label(panel, "Chọn level bắt đầu · chơi Solo hoặc làm Host LAN", 20, new Vector2(0, 237), new Vector2(700, 36));
+        int selectedLevel = Mathf.Clamp(LanLaunch.StartingLevel, 1, LanLaunch.CampaignLevelCount);
+        var levelButtons = new RectTransform[LanLaunch.CampaignLevelCount];
+        var selectedLabel = Label(panel, "", 23, new Vector2(0, 37), new Vector2(700, 40));
+        selectedLabel.gameObject.name = "Selected Level";
+        for (int i = 0; i < levelButtons.Length; i++)
+        {
+            int level = i + 1;
+            levelButtons[i] = Button(panel, "LV " + level, new Vector2((i % 5 - 2) * 132, 165 - (i / 5) * 60),
+                new Vector2(116, 48), () => SelectLevel(level));
+        }
+        SelectLevel(selectedLevel);
+        Label(panel, "Tất cả level đã mở · Người Join sẽ theo màn của Host", 17, new Vector2(0, -2), new Vector2(700, 30));
+        TMP_InputField address = Field(panel, "IP máy Host", "192.168.1.10", new Vector2(-90, -55), new Vector2(390, 44));
+        TMP_InputField port = Field(panel, "Cổng", "7777", new Vector2(230, -55), new Vector2(180, 44));
         port.contentType = TMP_InputField.ContentType.IntegerNumber;
         port.characterLimit = 5;
         address.characterLimit = 15;
         status = Label(panel, LanLaunch.LastError ?? "Host gửi IP của mình cho người tham gia.", 18,
-            new Vector2(0, 34), new Vector2(530, 70));
+            new Vector2(0, -109), new Vector2(700, 54));
         status.color = new Color(1f, 0.85f, 0.55f);
-        Button(panel, "Tạo phòng LAN (Host)", new Vector2(0, -39), new Vector2(500, 48), () => Launch(LanMode.Host));
-        Button(panel, "Tham gia phòng (Join)", new Vector2(0, -100), new Vector2(500, 48), () => Launch(LanMode.Client));
-        Button(panel, "Chơi một mình", new Vector2(-130, -176), new Vector2(240, 48), () => Launch(LanMode.Solo));
-        Button(panel, "Quay lại", new Vector2(130, -176), new Vector2(240, 48), () => Destroy(gameObject));
+        Button(panel, "Tạo phòng LAN (Host)", new Vector2(-170, -170), new Vector2(320, 48), () => Launch(LanMode.Host));
+        Button(panel, "Tham gia phòng (Join)", new Vector2(170, -170), new Vector2(320, 48), () => Launch(LanMode.Client));
+        Button(panel, "Chơi một mình", new Vector2(0, -232), new Vector2(660, 48), () => Launch(LanMode.Solo));
+        Button(panel, "Quay lại", new Vector2(0, -290), new Vector2(220, 42), () => Destroy(gameObject));
+
+        void SelectLevel(int level)
+        {
+            selectedLevel = level;
+            selectedLabel.text = $"LV {level:00} · {MapNames[level - 1]}";
+            for (int i = 0; i < levelButtons.Length; i++)
+                if (levelButtons[i] != null) levelButtons[i].GetComponent<UnityEngine.UI.Image>().color = i == level - 1
+                    ? new Color(.18f, .48f, .38f) : new Color(.23f, .16f, .34f);
+        }
 
         void Launch(LanMode mode)
         {
             try
             {
-                if (!int.TryParse(port.text, out int number)) throw new ArgumentException("Cổng không hợp lệ.");
-                LanLaunch.Configure(mode, address.text.Trim(), number);
+                int number = 7777;
+                if (mode != LanMode.Solo && !int.TryParse(port.text, out number)) throw new ArgumentException("Cổng không hợp lệ.");
+                LanLaunch.Configure(mode, address.text.Trim(), number, selectedLevel);
                 gameObject.SetActive(false);
                 menu.LaunchDungeon();
             }

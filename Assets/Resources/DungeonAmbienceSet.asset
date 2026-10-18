@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41098baa35212264f9dd80648c094595, type: 3}
+  m_Name: DungeonAmbienceSet
+  m_EditorClassIdentifier: 
+  palettes:
+  - fire: {fileID: 2100000, guid: 38fac02c9facde046b6b2662565d9b71, type: 2}
+    souls: {fileID: 2100000, guid: 45c42edf588633e4f9f316187de0fd88, type: 2}
+    details: {fileID: 2100000, guid: fa361fdd4a6f1084b8f8938e6aae9c7a, type: 2}
+    accentCell: 15
+    soulsPerRoom: 1
+    websPerRoom: 2
+  - fire: {fileID: 2100000, guid: 543129b8dd46a5c4aae9bbafb8d65330, type: 2}
+    souls: {fileID: 2100000, guid: 1352d8e59178bac4292ef6c54b87a3f9, type: 2}
+    details: {fileID: 2100000, guid: 41f9c063cc3168b4c86fc5536baec5b4, type: 2}
+    accentCell: 13
+    soulsPerRoom: 1
+    websPerRoom: 2
+  - fire: {fileID: 2100000, guid: d709f167f3152b644b854c74183ddef6, type: 2}
+    souls: {fileID: 2100000, guid: 38c95aa9e98f8f142a1badfffd70b70c, type: 2}
+    details: {fileID: 2100000, guid: 36527039b0b789d43bedb1c2dde1e1f8, type: 2}
+    accentCell: 12
+    soulsPerRoom: 2
+    websPerRoom: 2
+  - fire: {fileID: 2100000, guid: cc006b138cb7b8243909f39f5d9d898a, type: 2}
+    souls: {fileID: 2100000, guid: 46a8580e6aeeeae45bf71783f814c735, type: 2}
+    details: {fileID: 2100000, guid: c6832fe28a5a7ad408a0320370c58228, type: 2}
+    accentCell: 15
+    soulsPerRoom: 2
+    websPerRoom: 2
+  - fire: {fileID: 2100000, guid: a4f1e3a3787130a4db1591354ffd613d, type: 2}
+    souls: {fileID: 2100000, guid: 5da556fcc101c954f9408f0c73a0bfa1, type: 2}
+    details: {fileID: 2100000, guid: 972b5da904fd8524db49003384bb2ea2, type: 2}
+    accentCell: 14
+    soulsPerRoom: 0
+    websPerRoom: 1
+  - fire: {fileID: 2100000, guid: 75d4c810571e16240877582438e1e4b3, type: 2}
+    souls: {fileID: 2100000, guid: 8dd83be20882b77429220cb4fb913573, type: 2}
+    details: {fileID: 2100000, guid: 3b3c485bf26c21d4fab820a406b23fb5, type: 2}
+    accentCell: 13
+    soulsPerRoom: 2
+    websPerRoom: 1
+  - fire: {fileID: 2100000, guid: 95175cb814ee5344ab5872f7b911df12, type: 2}
+    souls: {fileID: 2100000, guid: 27950bcb69aff7f44ac70e659e12f93f, type: 2}
+    details: {fileID: 2100000, guid: 79b53f556fd22be4ab432115fc07ae84, type: 2}
+    accentCell: 15
+    soulsPerRoom: 3
+    websPerRoom: 3
+  - fire: {fileID: 2100000, guid: 873e400da11c32449948b3e0e8fd3fb7, type: 2}
+    souls: {fileID: 2100000, guid: 70d0d3d17451847429c9d2defc764981, type: 2}
+    details: {fileID: 2100000, guid: 3674d9dfe0f476e499bbf3be6c8f22d9, type: 2}
+    accentCell: 14
+    soulsPerRoom: 1
+    websPerRoom: 3
+  - fire: {fileID: 2100000, guid: 22957e924da959d4e9c872c123ce83d2, type: 2}
+    souls: {fileID: 2100000, guid: daa9115ac845fcb45a9af413fc10ccea, type: 2}
+    details: {fileID: 2100000, guid: a2e6bb90cd6f0fc46b66c1e491eda6df, type: 2}
+    accentCell: 13
+    soulsPerRoom: 3
+    websPerRoom: 2
+  - fire: {fileID: 2100000, guid: 2f498936a0d2c044f8d3531e46527c5f, type: 2}
+    souls: {fileID: 2100000, guid: 3ceb64b302fc34e439ce48bb40861ad2, type: 2}
+    details: {fileID: 2100000, guid: 0e021334480f4c943b975fd74b8889e3, type: 2}
+    accentCell: 14
+    soulsPerRoom: 2
+    websPerRoom: 2

@@ -9,21 +9,27 @@ public static class LanLaunch
     public static LanMode Mode { get; private set; }
     public static string Address { get; private set; } = "127.0.0.1";
     public static int Port { get; private set; } = 7777;
+    public const int CampaignLevelCount = 10;
+    public static int StartingLevel { get; private set; } = 1;
     public static string LastError { get; set; }
 
-    public static void Configure(LanMode mode, string address = "127.0.0.1", int port = 7777)
+    public static void Configure(LanMode mode, string address = "127.0.0.1", int port = 7777, int startingLevel = 1)
     {
         LanTransport.ValidatePort(port);
+        if (startingLevel < 1 || startingLevel > CampaignLevelCount)
+            throw new ArgumentOutOfRangeException(nameof(startingLevel), "Chọn level từ 1 đến 10.");
         if (mode == LanMode.Client && (!System.Net.IPAddress.TryParse(address, out var ip) ||
             ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork))
             throw new ArgumentException("Nhập địa chỉ IPv4 của máy Host.");
         Mode = mode; Address = address; Port = port; LastError = null;
+        StartingLevel = mode == LanMode.Client ? 1 : startingLevel; // Client nhận level có thẩm quyền từ Host.
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Reset()
     {
         Mode = LanMode.Solo; Address = "127.0.0.1"; Port = 7777; LastError = null;
+        StartingLevel = 1;
         LanSessionBridge.Active = null;
         string[] args = Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)

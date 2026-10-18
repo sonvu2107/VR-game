@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 1f;
-        CurrentLevel = 1;
+        CurrentLevel = Mathf.Clamp(LanLaunch.StartingLevel, 1, TotalLevels);
         SetState(GameState.Generating);
         if (sessionBridge == null || sessionBridge.HasStateAuthority)
             BeginLevelGeneration();
@@ -456,7 +456,7 @@ public class GameManager : MonoBehaviour
         if (sessionBridge == null || !sessionBridge.HasStateAuthority) return;
         if (transitionRoutine != null) StopCoroutine(transitionRoutine);
         transitionRoutine = null;
-        CurrentLevel = 1;
+        CurrentLevel = Mathf.Clamp(LanLaunch.StartingLevel, 1, TotalLevels);
         advanceRequestPending = false;
         SetState(GameState.Generating);
         BeginLevelGeneration();

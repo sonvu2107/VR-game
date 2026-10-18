@@ -285,6 +285,7 @@ public sealed class LanWorldReplication
             mesh.vertices = data.vertices; mesh.triangles = data.triangles; mesh.uv = data.uv;
             var colors = new Color[data.vertices.Length]; for (int i = 0; i < colors.Length; i++) colors[i] = Color.white;
             mesh.colors = colors; mesh.RecalculateBounds();
+            var bounds = mesh.bounds; bounds.Expand(0.3f); mesh.bounds = bounds;
             var filter = view.AddComponent<MeshFilter>(); filter.sharedMesh = mesh;
             var renderer = view.AddComponent<MeshRenderer>(); renderer.sharedMaterial = catalog.materials[data.material];
             renderer.sortingLayerID = data.layer; renderer.sortingOrder = data.order;

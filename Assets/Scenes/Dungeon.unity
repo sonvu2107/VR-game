@@ -9698,6 +9698,7 @@ MonoBehaviour:
   spawnClearance: 1
   courtyardTheme: {fileID: 0}
   campaignSecondMap: {fileID: 11400000, guid: e67754f07b92d744488106a41d9ab6df, type: 2}
+  campaignMaps: {fileID: 11400000, guid: c7efb08beb4497f4a96b97e017409c14, type: 2}
 --- !u!4 &2064515422
 Transform:
   m_ObjectHideFlags: 0

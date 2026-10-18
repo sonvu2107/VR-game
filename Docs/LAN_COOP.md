@@ -2,7 +2,7 @@
 
 ## Map theo level và giao thức hiện tại
 
-Level 1 dùng Dungeon gốc; Host sinh Arcane từ level 2 trong cùng phiên, không đổi scene hay ngắt socket. World packet gửi thêm mesh nền/tường/props và trạng thái ẩn/hiện Tilemap một lần mỗi tầng. Snapshot chỉ gửi UV của bẫy chuyển động (bốn đỉnh), không gửi lại toàn bộ mesh map mỗi frame. Client dựng hình từ dữ liệu Host, không chạy PCG hay collider/AI của Arcane. Mesh cũ được dọn khi đổi tầng hoặc rời phiên.
+Level 1 dùng Dungeon gốc, level 2 dùng Arcane; level 3–10 có tám theme/layout riêng trong `CampaignMapSet`. Host đổi map trong cùng phiên, không đổi scene hay ngắt socket. World packet gửi mesh nền/tường/props và trạng thái ẩn/hiện Tilemap một lần mỗi tầng. Snapshot chỉ gửi UV của bẫy chuyển động (bốn đỉnh), không gửi lại toàn bộ mesh map mỗi frame. Client dựng hình từ dữ liệu Host, không chạy PCG hay collider/AI. Mesh cũ được dọn khi đổi tầng hoặc rời phiên. Hai máy cần dùng cùng bản build và catalog được tạo lại sau khi thêm các map.
 
 Giao thức đã nâng lên phiên bản 2; hai máy phải dùng cùng bản build mới. Bản LAN cũ bị từ chối khi bắt tay để tránh Client chỉ thấy nền dungeon cũ. Round-trip JSON trong Editor không thay thế kiểm thử hai máy Wi-Fi thực tế.
 

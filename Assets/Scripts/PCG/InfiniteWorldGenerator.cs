@@ -48,8 +48,16 @@ public class InfiniteWorldGenerator : MonoBehaviour
     [Header("Campaign Map Progression")]
     [Tooltip("Optional: switch to this map from level 2 without resetting the session.")]
     [SerializeField] private CourtyardTheme campaignSecondMap;
+    [SerializeField] private CampaignMapSet campaignMaps;
     // Không thay serialized theme gốc khi đổi level, tránh ghi nhầm Arcane lên map đầu.
-    public CourtyardTheme ActiveTheme => campaignSecondMap != null && currentLevel >= 2 ? campaignSecondMap : courtyardTheme;
+    public CourtyardTheme ActiveTheme
+    {
+        get
+        {
+            if (campaignMaps != null && campaignMaps.TryGetTheme(currentLevel, out var theme)) return theme;
+            return campaignSecondMap != null && currentLevel >= 2 ? campaignSecondMap : courtyardTheme;
+        }
+    }
 
     private RoomGenerator roomGenerator;
     private CorridorGenerator corridorGenerator;
@@ -154,6 +162,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
             if (ActiveTheme != null)
                 CourtyardDecorator.Decorate(dungeonLayout, ActiveTheme, random, occupiedCells, spawnedObjects);
+            spawnedObjects.Add(ArcaneCitadelGeometry.BuildAmbienceOnly(dungeonLayout, ActiveTheme));
         }
 
         manager.CompleteLevelGeneration(floorExit, spawnedEnemyCount);
@@ -221,7 +230,9 @@ public class InfiniteWorldGenerator : MonoBehaviour
         List<RoomType> roomSequence = BuildRoomSequence();
         if (ActiveTheme != null)
         {
-            dungeonLayout = CourtyardLayout.Generate(roomSequence, random);
+            dungeonLayout = ActiveTheme.usesCampaignAtlas
+                ? CampaignDungeonLayout.Generate(roomSequence, random, ActiveTheme.layoutStyle)
+                : CourtyardLayout.Generate(roomSequence, random);
             return;
         }
         Vector2Int nextRoomStart = Vector2Int.zero;
@@ -493,7 +504,8 @@ public class InfiniteWorldGenerator : MonoBehaviour
                 var trap = obj.GetComponent<SpikeTrap>() ?? obj.AddComponent<SpikeTrap>();
                 trap.Initialize(currentLevel);
                 trap.ConfigureTacticalCycle(rest, 0.85f, 0.9f);
-                if (arcane) trap.ConfigureAtlasVisual(ActiveTheme.arcaneSpike);
+                if (arcane) trap.ConfigureAtlasVisual(ActiveTheme.arcaneSpike, ActiveTheme.usesCampaignAtlas
+                    ? Enumerable.Range(12, 4).Select(ActiveTheme.AtlasUv).ToArray() : null);
                 for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) occupiedCells.Add(cell + new Vector2Int(x, y));
             }
             Debug.Log($"TACTICAL_TRAP_GROUP level={currentLevel} pattern={pattern} count={cells.Count} clearance={group.MinimumClearance:F2}");
