@@ -23,6 +23,9 @@ public sealed class LanSmokeProbe : MonoBehaviour
     private void Start() => StartCoroutine(Run());
     public LanInputFrame ClientInput()
     {
+        if (LanSessionBridge.Active == null ||
+            LanSessionBridge.Active.GetComponent<GameManager>().CurrentState != GameState.Playing)
+            return default;
         if (clientStart == 0f) clientStart = Time.realtimeSinceStartup;
         float elapsed = Time.realtimeSinceStartup - clientStart;
         var frame = new LanInputFrame();
@@ -87,6 +90,18 @@ public sealed class LanSmokeProbe : MonoBehaviour
         // world acknowledgement reaches the Host, before shader warm-up ends.
         Vector3 initial = guest.transform.position;
         yield return new WaitForSecondsRealtime(0.2f);
+        bool companionVisible = false;
+        float portraitDeadline = Time.realtimeSinceStartup + 1f;
+        while (!companionVisible && Time.realtimeSinceStartup < portraitDeadline)
+        {
+            Sprite guestSprite = guest.GetComponent<SpriteRenderer>()?.sprite;
+            companionVisible = guestSprite != null && guestSprite.name.StartsWith("Companion ");
+            yield return null;
+        }
+        if (guest.GetComponent<CompanionVisual>() == null || !companionVisible ||
+            manager.GetComponent<CampaignStory>() == null ||
+            manager.transform.Find("Campaign Story Canvas") == null)
+        { Fail("companion artwork or campaign story presentation missing"); yield break; }
         if (!HasRestoredHud(manager, false)) { Fail("Host missing minimap, five hearts or direction indicator"); yield break; }
         // Stabilize fixture while exercising real input, colliders and ability controllers.
         FreezeEnemies();
@@ -113,6 +128,7 @@ public sealed class LanSmokeProbe : MonoBehaviour
         manager.Resume();
         KillEnemies();
         manager.SetEnemyCount(0);
+        yield return WaitUntilPlaying(manager);
         yield return CollectKeysWithGuest(manager, guest);
         EnterPortal(guest);
         yield return new WaitForSecondsRealtime(0.8f);
@@ -121,6 +137,7 @@ public sealed class LanSmokeProbe : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
         session.RestartRun();
         yield return new WaitForSecondsRealtime(0.9f);
+        yield return WaitUntilPlaying(manager);
         FreezeEnemies();
         if (manager.CurrentLevel != 1 || !session.HasGuest || !session.IsReady) { Fail("shared restart"); yield break; }
         // Verify one knockout is survivable, both knockouts cause shared GameOver.
@@ -132,23 +149,26 @@ public sealed class LanSmokeProbe : MonoBehaviour
         manager.PlayerMovement.GetComponent<HealthController>().currentHealth = 1;
         manager.PlayerMovement.GetComponent<HealthController>().TakeDamage(1);
         if (manager.CurrentState != GameState.GameOver) { Fail("two knockouts did not end team run"); yield break; }
-        yield return new WaitForSecondsRealtime(0.3f);
+        // Leave the terminal state visible long enough for a snapshot on a busy machine.
+        yield return new WaitForSecondsRealtime(1f);
         session.RestartRun();
         yield return new WaitForSecondsRealtime(0.8f);
         for (int level = 1; level <= 10; level++)
         {
+            yield return WaitUntilPlaying(manager);
             FreezeEnemies();
             // Let a snapshot include the living boss rig before the fixture kills it.
             if (FindObjectOfType<Boss3DVisual>() != null) yield return new WaitForSecondsRealtime(0.25f);
             KillEnemies();
             manager.SetEnemyCount(0);
+            yield return WaitUntilPlaying(manager);
             yield return CollectKeysWithGuest(manager, guest);
             EnterPortal(guest);
             yield return new WaitForSecondsRealtime(0.65f);
         }
         if (manager.CurrentState != GameState.Victory) { Fail("10-level Victory"); yield break; }
         yield return new WaitForSecondsRealtime(1f);
-        Debug.Log("LAN_HOST_SMOKE_PASS actors=2 minimap=ok hearts=5 indicator=ok movement=ok pause=ok level2=ok restart=ok knockout=ok gameover=ok keys=ok levels=10 victory=ok");
+        Debug.Log("LAN_HOST_SMOKE_PASS actors=2 companion=Colour2 story=ok minimap=ok hearts=5 indicator=ok movement=ok pause=ok level2=ok restart=ok knockout=ok gameover=ok keys=ok levels=10 victory=ok");
         Application.Quit(0);
     }
     private static void FreezeEnemies()
@@ -176,8 +196,17 @@ public sealed class LanSmokeProbe : MonoBehaviour
             guest.GetComponent<Rigidbody2D>().position = key.transform.position;
             Physics2D.SyncTransforms();
             yield return new WaitForSecondsRealtime(0.15f);
+            yield return WaitUntilPlaying(manager);
         }
         if (manager.KeysCollected < manager.KeysRequired) throw new InvalidOperationException("Guest failed to collect required keys.");
+    }
+    private static IEnumerator WaitUntilPlaying(GameManager manager)
+    {
+        float deadline = Time.realtimeSinceStartup + 20f;
+        while (manager.CurrentState != GameState.Playing && Time.realtimeSinceStartup < deadline)
+            yield return null;
+        if (manager.CurrentState != GameState.Playing)
+            throw new InvalidOperationException($"Story did not release gameplay: level={manager.CurrentLevel} state={manager.CurrentState} sequence={manager.StorySequence} peer={LanSessionBridge.Active?.Status}.");
     }
     private static bool HasRestoredHud(GameManager manager, bool client)
     {

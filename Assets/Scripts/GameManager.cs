@@ -46,6 +46,13 @@ public class GameManager : MonoBehaviour
 
     public event Action<GameState> StateChanged;
     public event Action<int, int> LevelChanged;
+    public event Action<int, PlayerMovement> KeyPickedUp;
+    public int StoryCueSerial { get; private set; }
+    public int StoryCueKind { get; private set; }
+    public int StoryCueCollector { get; private set; }
+    public int StorySequence { get; private set; }
+    private bool storyLocalFinished;
+    private bool storyGuestFinished;
 
     [Obsolete("Use LevelChanged instead.")]
     public event Action<int, int> FloorChanged;
@@ -80,6 +87,8 @@ public class GameManager : MonoBehaviour
             sessionBridge = lan;
             lan.Initialize(this);
         }
+        if (GetComponent<CampaignStory>() == null)
+            gameObject.AddComponent<CampaignStory>();
     }
 
     private void OnEnable()
@@ -381,7 +390,7 @@ public class GameManager : MonoBehaviour
         if (winUI != null)
             winUI.SetActive(newState == GameState.Victory);
 
-        Time.timeScale = newState is GameState.Paused or GameState.GameOver or GameState.Victory ? 0f : 1f;
+        Time.timeScale = newState is GameState.Paused or GameState.GameOver or GameState.Victory or GameState.Story ? 0f : 1f;
 
         if (PlayerMovement != null)
             PlayerMovement.enabled = newState == GameState.Playing &&
@@ -401,16 +410,76 @@ public class GameManager : MonoBehaviour
                                      enemyCount, KeysCollected, KeysRequired));
     }
 
-    public bool CollectKey()
+    public bool CollectKey(PlayerMovement collector = null)
     {
         if (sessionBridge != null && !sessionBridge.HasStateAuthority) return false;
         if (CurrentState != GameState.Playing || KeysRequired <= 0 || KeysCollected >= KeysRequired)
             return false;
 
         KeysCollected++;
+        StoryCueCollector = collector != null && collector != PlayerMovement ? 2 : 1;
+        KeyPickedUp?.Invoke(KeysCollected, collector);
         UpdateCounter();
         RefreshExitState();
         return true;
+    }
+
+    public void PublishStoryCue(int kind)
+    {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return;
+        StoryCueKind = kind;
+        StoryCueSerial++;
+    }
+
+    public void ApplyStoryCue(int serial, int kind, int collector)
+    {
+        if (serial < StoryCueSerial) return;
+        StoryCueSerial = serial;
+        StoryCueKind = kind;
+        StoryCueCollector = collector;
+    }
+
+    public void BeginStory()
+    {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return;
+        if (CurrentState != GameState.Playing) return;
+        StorySequence++;
+        storyLocalFinished = false;
+        storyGuestFinished = LanSessionBridge.Active == null || !LanSessionBridge.Active.HasGuest;
+        SetState(GameState.Story);
+    }
+
+    public void FinishLocalStory()
+    {
+        if (CurrentState != GameState.Story) return;
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority)
+        {
+            (sessionBridge as LanSessionBridge)?.SendStoryFinished(StorySequence);
+            return;
+        }
+        storyLocalFinished = true;
+        ResumeStoryIfReady();
+    }
+
+    public void FinishGuestStory(int sequence)
+    {
+        if (CurrentState != GameState.Story || sequence != StorySequence) return;
+        storyGuestFinished = true;
+        ResumeStoryIfReady();
+    }
+
+    public void ApplyStorySequence(int sequence)
+    {
+        StorySequence = Mathf.Max(StorySequence, sequence);
+    }
+
+    private void ResumeStoryIfReady()
+    {
+        if (storyLocalFinished && storyGuestFinished && CurrentState == GameState.Story)
+        {
+            SetState(GameState.Playing);
+            RefreshExitState();
+        }
     }
 
     [Obsolete("Use CollectKey instead.")]
@@ -446,7 +515,9 @@ public class GameManager : MonoBehaviour
         KeysRequired = Mathf.Max(0, requiredKeys);
         KeysCollected = Mathf.Clamp(keys, 0, KeysRequired);
         LevelTimeRemaining = Mathf.Max(0f, timeRemaining);
-        if (CurrentState != state) SetState(state);
+        // A fast LAN level change can skip the Generating snapshot. Re-fire
+        // Story for the new level even when both snapshots have that state.
+        if (CurrentState != state || levelChanged) SetState(state);
         else UpdateCounter();
         if (levelChanged) LevelChanged?.Invoke(CurrentLevel, TotalLevels);
     }

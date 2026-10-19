@@ -49,7 +49,7 @@ public sealed class LanMenuUI : MonoBehaviour
         // imported FeGPsc2 font can have a missing TMP atlas/material in
         // Unity 2022, which made the dynamically created LAN menu crash
         // while opening. TMP's default font is present in this project.
-        ui.font = TMP_Settings.defaultFontAsset;
+        ui.font = Resources.Load<TMP_FontAsset>("Story/StoryFont") ?? TMP_Settings.defaultFontAsset;
         if (FindObjectOfType<UnityEngine.EventSystems.EventSystem>() == null)
             new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(InputSystemUIInputModule));
         return ui;
@@ -86,7 +86,8 @@ public sealed class LanMenuUI : MonoBehaviour
         Button(panel, "Tạo phòng LAN (Host)", new Vector2(-170, -170), new Vector2(320, 48), () => Launch(LanMode.Host));
         Button(panel, "Tham gia phòng (Join)", new Vector2(170, -170), new Vector2(320, 48), () => Launch(LanMode.Client));
         Button(panel, "Chơi một mình", new Vector2(0, -232), new Vector2(660, 48), () => Launch(LanMode.Solo));
-        Button(panel, "Quay lại", new Vector2(0, -290), new Vector2(220, 42), () => Destroy(gameObject));
+        Button(panel, "Quay lại", new Vector2(-126, -290), new Vector2(220, 42), () => Destroy(gameObject));
+        Button(panel, "Dừng chơi", new Vector2(126, -290), new Vector2(220, 42), menu.QuitButtonControl);
 
         void SelectLevel(int level)
         {

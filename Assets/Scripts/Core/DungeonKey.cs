@@ -62,7 +62,7 @@ public sealed class DungeonKey : MonoBehaviour
         if (collected || other.GetComponentInParent<PlayerMovement>() == null)
             return;
 
-        if (gameManager == null || !gameManager.CollectKey())
+        if (gameManager == null || !gameManager.CollectKey(other.GetComponentInParent<PlayerMovement>()))
             return;
 
         collected = true;

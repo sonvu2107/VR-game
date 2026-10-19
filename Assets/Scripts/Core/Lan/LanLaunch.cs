@@ -12,6 +12,7 @@ public static class LanLaunch
     public const int CampaignLevelCount = 10;
     public static int StartingLevel { get; private set; } = 1;
     public static string LastError { get; set; }
+    public static bool MenuSelectionMade { get; private set; }
 
     public static void Configure(LanMode mode, string address = "127.0.0.1", int port = 7777, int startingLevel = 1)
     {
@@ -22,6 +23,7 @@ public static class LanLaunch
             ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork))
             throw new ArgumentException("Nhập địa chỉ IPv4 của máy Host.");
         Mode = mode; Address = address; Port = port; LastError = null;
+        MenuSelectionMade = true;
         StartingLevel = mode == LanMode.Client ? 1 : startingLevel; // Client nhận level có thẩm quyền từ Host.
     }
 
@@ -30,6 +32,7 @@ public static class LanLaunch
     {
         Mode = LanMode.Solo; Address = "127.0.0.1"; Port = 7777; LastError = null;
         StartingLevel = 1;
+        MenuSelectionMade = false;
         LanSessionBridge.Active = null;
         string[] args = Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)
@@ -43,6 +46,14 @@ public static class LanLaunch
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoLaunch()
     {
+        // Editor Play uses whichever scene is open. Enter the lobby for every
+        // interactive run until a menu choice has been made.
+        if (Application.isEditor && !Application.isBatchMode && !MenuSelectionMade &&
+            Mode == LanMode.Solo && SceneManager.GetActiveScene().name != "StartMenu")
+        {
+            SceneManager.LoadScene("StartMenu");
+            return;
+        }
         if (Mode != LanMode.Solo && SceneManager.GetActiveScene().name == "StartMenu")
             SceneManager.LoadScene("Dungeon");
     }

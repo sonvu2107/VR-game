@@ -32,10 +32,14 @@ public sealed class LanBuildTools : IPreprocessBuildWithReport
     {
         string[] scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray();
         var paths = new SortedSet<string>(AssetDatabase.GetDependencies(scenes, true), StringComparer.Ordinal);
-        foreach (string path in AssetDatabase.GetAllAssetPaths())
-            if (path != CatalogPath && (path.StartsWith("Assets/", StringComparison.Ordinal) && path.Contains("/Resources/") ||
-                path.StartsWith("Assets/Scripts/", StringComparison.Ordinal) && path.EndsWith(".cs", StringComparison.Ordinal) ||
-                path.StartsWith("Assets/Input/", StringComparison.Ordinal)))
+        string[] assetPaths = AssetDatabase.GetAllAssetPaths();
+        string[] resources = assetPaths.Where(path => path.StartsWith("Assets/", StringComparison.Ordinal) &&
+            path.Contains("/Resources/") && path != CatalogPath).ToArray();
+        foreach (string path in AssetDatabase.GetDependencies(resources, true)) paths.Add(path);
+        foreach (string path in resources) paths.Add(path);
+        foreach (string path in assetPaths)
+            if (path.StartsWith("Assets/Scripts/", StringComparison.Ordinal) && path.EndsWith(".cs", StringComparison.Ordinal) ||
+                path.StartsWith("Assets/Input/", StringComparison.Ordinal))
                 paths.Add(path);
         var sprites = new List<Sprite>();
         var textures = new List<Texture2D>();

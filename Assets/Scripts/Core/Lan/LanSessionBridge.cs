@@ -227,6 +227,8 @@ public sealed class LanSessionBridge : GameSessionBridge
         }
         else if (message.type == "pause" && peerReady) manager.Pause();
         else if (message.type == "resume" && peerReady) manager.Resume();
+        else if (message.type == "storyDone" && peerReady && message.run == run &&
+                 message.level == manager.CurrentLevel) manager.FinishGuestStory(message.storySequence);
         // Client outcomes (damage, health, position, victory, restart, advance) are never accepted.
     }
 
@@ -241,7 +243,11 @@ public sealed class LanSessionBridge : GameSessionBridge
         }
         else if (authenticated && message.type == "world")
         {
-            if (clientRun != message.run) scoreManager?.ResetLanRun();
+            if (clientRun != message.run)
+            {
+                scoreManager?.ResetLanRun();
+                manager.GetComponent<CampaignStory>()?.ResetForNewRun();
+            }
             clientRun = message.run; clientLevel = message.level;
             pendingInput = default; previousAttack = false;
             world.ApplyMap(message.maps);
@@ -277,6 +283,8 @@ public sealed class LanSessionBridge : GameSessionBridge
         scoreManager?.ApplyLanScore(message.score);
         manager.ApplyLanState(message.level, (GameState)message.state, message.enemies,
             message.keys, message.requiredKeys, message.timeRemaining);
+        manager.ApplyStoryCue(message.storyCueSerial, message.storyCueKind, message.storyCueCollector);
+        manager.ApplyStorySequence(message.storySequence);
         if (teammateDungeonLight != null) teammateDungeonLight.transform.position = message.players[0].position;
         PowerupController power = manager.PlayerMovement.GetComponent<PowerupController>();
         if (LocalState.power > 0f) power.UpdateCooldown(LocalState.power); else power.ShowPoweredUp();
@@ -335,6 +343,8 @@ public sealed class LanSessionBridge : GameSessionBridge
         scale.x = Mathf.Abs(scale.x);
         copy.transform.localScale = scale;
         guest = copy.GetComponent<PlayerMovement>();
+        if (copy.GetComponent<CompanionVisual>() == null)
+            copy.AddComponent<CompanionVisual>();
         guest.enabled = false;
         guestInput = copy.AddComponent<LanPlayerInput>();
         guestHealth = copy.GetComponent<HealthController>();
@@ -377,6 +387,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         authenticated = peerReady = false;
         if (guest != null) Destroy(guest.gameObject);
         guest = null; guestHealth = null; guestInput = null;
+        manager.FinishGuestStory(manager.StorySequence);
         if (hostHealth.currentHealth <= 0 && manager.CurrentState != GameState.Victory) manager.GameOver();
     }
 
@@ -391,8 +402,8 @@ public sealed class LanSessionBridge : GameSessionBridge
             guestHealth.ResetForLanRun();
             float radius = manager.CurrentLevelDefinition.DarknessRadius;
             ConfigurePointLight(ref guestDungeonLight, guest.transform, radius);
-            manager.PlayerMovement.enabled = true;
-            guest.enabled = true;
+            manager.PlayerMovement.enabled = manager.CurrentState == GameState.Playing;
+            guest.enabled = manager.CurrentState == GameState.Playing;
         }
         if (authenticated) SendWorld();
     }
@@ -426,6 +437,8 @@ public sealed class LanSessionBridge : GameSessionBridge
             type = type, run = run, level = manager.CurrentLevel, total = manager.TotalLevels, seed = levelSeed,
             state = (int)manager.CurrentState, enemies = manager.enemyCount,
             keys = manager.KeysCollected, requiredKeys = manager.KeysRequired, timeRemaining = manager.LevelTimeRemaining,
+            storyCueSerial = manager.StoryCueSerial, storyCueKind = manager.StoryCueKind,
+            storyCueCollector = manager.StoryCueCollector, storySequence = manager.StorySequence,
             score = scoreManager != null ? scoreManager.CurrentScore : 0,
             players = new[] { CapturePlayer(manager.PlayerMovement), CapturePlayer(guest) }
         };
@@ -452,6 +465,12 @@ public sealed class LanSessionBridge : GameSessionBridge
         if (HasStateAuthority) return false;
         if (peerReady) Send(new LanMessage { type = command });
         return true;
+    }
+
+    public void SendStoryFinished(int sequence)
+    {
+        if (!HasStateAuthority && peerReady)
+            Send(new LanMessage { type = "storyDone", run = clientRun, level = clientLevel, storySequence = sequence });
     }
 
     public HealthController NearestAlivePlayer(Vector3 position)
