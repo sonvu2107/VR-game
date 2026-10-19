@@ -19,6 +19,7 @@ public class SkeletonKingController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private int phaseIndex;
+    private BossPhaseConfigSO runtimePhaseConfig;
 
     private HealthController target;
     private float nextTargetScan;
@@ -41,6 +42,15 @@ public class SkeletonKingController : MonoBehaviour
         if (summoner == null) summoner = GetComponent<EnemySummoner>();
         if (animator == null) animator = GetComponent<Animator>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (phaseConfig != null)
+        {
+            runtimePhaseConfig = Instantiate(phaseConfig);
+            runtimePhaseConfig.name = "Runtime_" + phaseConfig.name;
+            if (runtimePhaseConfig.phases != null)
+                foreach (BossPhaseDefinition phase in runtimePhaseConfig.phases)
+                    if (phase != null) phase.attackCooldown = Mathf.Clamp(phase.attackCooldown * 0.72f, 1.1f, 1.8f);
+            phaseConfig = runtimePhaseConfig;
+        }
     }
 
     private void OnEnable()
@@ -62,6 +72,13 @@ public class SkeletonKingController : MonoBehaviour
         }
         if (combat != null) combat.AttackFinished -= OnAttackFinished;
         if (phaseRoutine != null) StopCoroutine(phaseRoutine);
+    }
+
+    private void OnDestroy()
+    {
+        if (runtimePhaseConfig == null) return;
+        if (Application.isPlaying) Destroy(runtimePhaseConfig);
+        else DestroyImmediate(runtimePhaseConfig);
     }
 
     private void Start()

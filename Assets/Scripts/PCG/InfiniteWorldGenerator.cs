@@ -609,9 +609,13 @@ public class InfiniteWorldGenerator : MonoBehaviour
         GameObject selectedPrefab = currentLevelDefinition.IsFinalBossLevel ? bossPrefab : miniBossPrefab;
         if (currentLevelDefinition.IsFinalBossLevel)
         {
-            var candidates = GetFinalBossCandidates();
-            selectedPrefab = candidates[random.Range(0, candidates.Count)];
+            if (selectedPrefab == null)
+            {
+                Debug.LogError($"Level {currentLevel} final boss prefab is missing.");
+                return 0;
+            }
             var finalBoss = CampaignFinalBoss.Create(selectedPrefab, room, PrefabPlacer.GetWorldPosition(spawnPoint));
+            BossWaveAttackController.Attach(finalBoss.gameObject);
             spawnedObjects.Add(finalBoss.gameObject);
             return 1;
         }
@@ -622,6 +626,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
         }
 
         GameObject boss = Instantiate(selectedPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity);
+        BossWaveAttackController.Attach(boss);
         spawnedObjects.Add(boss);
         // Bosses remain inside their own room instead of chasing through a
         // corridor or walking their large sprite beyond the room walls.
@@ -637,16 +642,19 @@ public class InfiniteWorldGenerator : MonoBehaviour
             return 0;
         }
 
-        // Level 9 uses a tougher Bone Sentinel without modifying the shared asset from level 5.
-        if (currentLevel == 9 && health.Config != null)
+        // Tune a per-run mini-boss config so levels 5 and 9 do not mutate shared assets.
+        if (health.Config != null && boss.GetComponent<MiniBossController>() != null)
         {
             EnemyConfigSO variant = Instantiate(health.Config);
-            variant.maxHealth = 260;
-            variant.attackCooldown = 1.75f;
-            health.Configure(variant);
-            boss.GetComponent<EnemyCombat>()?.Configure(variant);
-            boss.GetComponent<EnemySummoner>()?.Configure(variant);
-            boss.GetComponent<MiniBossController>()?.SetVariantColor(new Color(0.9f, 0.72f, 1f));
+            if (currentLevel == 9)
+            {
+                variant.maxHealth = 260;
+                variant.attackCooldown = 1.75f;
+                boss.GetComponent<MiniBossController>()?.SetVariantColor(new Color(0.9f, 0.72f, 1f));
+            }
+            variant.attackCooldown = Mathf.Clamp(variant.attackCooldown * 0.72f, 1.15f, 2.4f);
+            variant.attackWindup = Mathf.Clamp(variant.attackWindup * 0.75f, 0.35f, 0.58f);
+            boss.GetComponent<MiniBossController>()?.ConfigureRuntimeVariant(variant);
         }
 
         return 1;

@@ -89,6 +89,9 @@ public class EnemyCombat : MonoBehaviour
         GetComponent<EnemyLocomotionVisual>()?.TriggerAttackLunge(attackDir);
         GetComponent<EnemySpriteAnimation>()?.TriggerAttackLunge(attackDir);
         GetComponent<EnemySheetAnimation>()?.TriggerAttack(attackDir, config != null ? config.attackWindup : 0.4f);
+        GetComponent<EnemyRuntimeSpriteAnimation>()?.TriggerAttack(
+            (config != null ? config.attackWindup : 0.4f) + (config != null ? config.attackRecovery : 0.45f));
+        EnemyAttackCueVisual.Show(this, target, config != null ? config.attackWindup : 0.4f, special);
 
         if (animator != null)
         {
@@ -270,6 +273,16 @@ public class EnemyCombat : MonoBehaviour
 
     public void FireProjectileDirection(Vector2 direction, int damage, float speed, float lifetime)
     {
+        FireProjectileDirection(direction, damage, speed, lifetime, (Color?)null);
+    }
+
+    public void FireProjectileDirection(Vector2 direction, int damage, float speed, float lifetime, Color color)
+    {
+        FireProjectileDirection(direction, damage, speed, lifetime, (Color?)color);
+    }
+
+    private void FireProjectileDirection(Vector2 direction, int damage, float speed, float lifetime, Color? visualColor)
+    {
         if (health == null || health.IsDead) return;
         direction = direction.sqrMagnitude > 0.001f ? direction.normalized : Vector2.right;
         // Projectile tự xử lý va chạm tường khi bay. Quét trước cả detectionRange
@@ -298,11 +311,11 @@ public class EnemyCombat : MonoBehaviour
             Sprite[] arrowFrames = isArrow ? EnemyArrowAnimation.LoadFrames() : null;
             visual.sprite = arrowFrames != null ? arrowFrames[0] : EnemyEffectSpriteFactory.Disc;
             visual.sortingOrder = 2;
-            visual.color = isArrow ? Color.white : config != null && config.archetype == EnemyArchetype.Summoner
+            visual.color = visualColor ?? (isArrow ? Color.white : config != null && config.archetype == EnemyArchetype.Summoner
                 ? new Color(0.78f, 0.36f, 1f)
                 : config != null && config.archetype == EnemyArchetype.MiniBoss
                     ? new Color(0.35f, 1f, 0.72f)
-                    : new Color(1f, 0.78f, 0.22f);
+                    : new Color(1f, 0.78f, 0.22f));
             projectileObject.transform.rotation = Quaternion.FromToRotation(
                 isArrow && arrowFrames != null ? Vector3.up : Vector3.right, direction);
             projectileObject.transform.localScale = isArrow && arrowFrames != null
@@ -312,6 +325,11 @@ public class EnemyCombat : MonoBehaviour
         }
 
         EnemyProjectile projectile = projectileObject.GetComponent<EnemyProjectile>();
+        if (visualColor.HasValue)
+        {
+            SpriteRenderer projectileVisual = projectileObject.GetComponentInChildren<SpriteRenderer>();
+            if (projectileVisual != null) projectileVisual.color = visualColor.Value;
+        }
         if (projectile == null) projectile = projectileObject.AddComponent<EnemyProjectile>();
         projectile.Launch(direction, damage, speed, lifetime, playerLayers, wallLayers,
             gameObject, GetImpactKind());
@@ -403,6 +421,7 @@ public class EnemyCombat : MonoBehaviour
 public static class EnemyEffectSpriteFactory
 {
     private static Sprite disc;
+    private static Sprite ring;
 
     public static Sprite Disc
     {
@@ -433,6 +452,36 @@ public static class EnemyEffectSpriteFactory
             disc.name = "EnemyEffectDisc";
             disc.hideFlags = HideFlags.HideAndDontSave;
             return disc;
+        }
+    }
+
+    public static Sprite Ring
+    {
+        get
+        {
+            if (ring != null) return ring;
+            const int size = 32;
+            Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            texture.name = "EnemyAttackTelegraphRing";
+            texture.filterMode = FilterMode.Point;
+            texture.wrapMode = TextureWrapMode.Clamp;
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            Color32[] pixels = new Color32[size * size];
+            Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+            float radius = size * 0.43f;
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), center);
+                byte alpha = distance >= radius - 1.8f && distance <= radius + 1.2f ? (byte)255 : (byte)0;
+                pixels[y * size + x] = new Color32(255, 255, 255, alpha);
+            }
+            texture.SetPixels32(pixels);
+            texture.Apply(false, false);
+            ring = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
+            ring.name = "EnemyAttackTelegraphRing";
+            ring.hideFlags = HideFlags.HideAndDontSave;
+            return ring;
         }
     }
 }

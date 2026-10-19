@@ -20,6 +20,7 @@ public class MiniBossController : MonoBehaviour
     private float nextSpecialTime;
     private Coroutine specialRoutine;
     private Color normalColor = Color.white;
+    private EnemyConfigSO runtimeConfig;
 
     public event Action MiniBossDefeated;
     public static event Action<MiniBossController, HealthController> SpecialTelegraph;
@@ -47,6 +48,16 @@ public class MiniBossController : MonoBehaviour
         GetComponent<Boss3DVisual>()?.Setup(Boss3DVisual.BossVisualKind.BoneSentinel, color);
     }
 
+    public void ConfigureRuntimeVariant(EnemyConfigSO variant)
+    {
+        if (variant == null) return;
+        runtimeConfig = variant;
+        config = variant;
+        health?.Configure(variant);
+        combat?.Configure(variant);
+        summoner?.Configure(variant);
+    }
+
     private void OnEnable()
     {
         if (health == null) return;
@@ -71,7 +82,7 @@ public class MiniBossController : MonoBehaviour
             combat == null || IsUsingSpecial || Time.time < nextSpecialTime)
             return false;
 
-        nextSpecialTime = Time.time + (config != null ? config.specialCooldown : 5f);
+        nextSpecialTime = Time.time + Mathf.Clamp((config != null ? config.specialCooldown : 5f) * 0.72f, 2.8f, 4.5f);
         specialRoutine = StartCoroutine(FireShardFan(target));
         return true;
     }
@@ -80,6 +91,9 @@ public class MiniBossController : MonoBehaviour
     {
         IsUsingSpecial = true;
         Vector2 aim = ((Vector2)target.transform.position - (Vector2)transform.position).normalized;
+        EnemyAttackCueVisual.Show(combat, target, config != null ? config.attackWindup : 0.55f, true);
+        GetComponent<EnemyRuntimeSpriteAnimation>()?.TriggerAttack((config != null ? config.attackWindup : 0.55f) + 0.25f);
+        CombatHitVfx.Spawn(transform.position, CombatImpactKind.Boss, 0.85f);
         if (spriteRenderer != null) spriteRenderer.color = new Color(0.4f, 1f, 0.55f);
         SpecialTelegraph?.Invoke(this, target);
         yield return new WaitForSeconds(config != null ? config.attackWindup : 0.55f);
@@ -114,5 +128,12 @@ public class MiniBossController : MonoBehaviour
     private void OnDied(EnemyHealth dead)
     {
         MiniBossDefeated?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        if (runtimeConfig == null) return;
+        if (Application.isPlaying) Destroy(runtimeConfig);
+        else DestroyImmediate(runtimeConfig);
     }
 }

@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dash")]
     [Tooltip("Press Left Shift, right mouse button, or the gamepad right shoulder button to dash.")]
     [Min(0.05f)] public float dashDuration = 0.16f;
-    [Min(0.1f)] public float dashDistance = 3f;
+    [Min(0.1f)] public float dashDistance = 4.5f;
     [Min(0f)] public float dashCooldown = 0.7f;
     [Min(0.05f)] public float dashVfxDuration = 0.22f;
     [Min(0f)] public float dashVfxScale = 1.7f;

@@ -34621,7 +34621,7 @@ MonoBehaviour:
   speed: 5
   attackMoveSpeedMultiplier: 0.65
   dashDuration: 0.16
-  dashDistance: 3
+  dashDistance: 4.5
   dashCooldown: 0.7
   dashVfxDuration: 0.22
   dashVfxScale: 1.7

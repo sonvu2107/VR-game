@@ -36,7 +36,7 @@ public class Boss3DVisual : MonoBehaviour
     [SerializeField, Range(2f, 15f)] private float maxTiltAngle = 6.5f;
     [SerializeField, Range(0.02f, 0.3f)] private float hoverBobHeight = 0.09f;
     [SerializeField, Range(0.5f, 5f)] private float hoverFrequency = 1.8f;
-    [SerializeField] private bool isHovering = true;
+    [SerializeField] private bool isHovering;
 
     [Header("Shadow & Ground Dais")]
     [SerializeField] private float shadowScaleX = 1.4f;
@@ -115,7 +115,7 @@ public class Boss3DVisual : MonoBehaviour
             shadowScaleX = 2.2f;
             shadowScaleY = 0.85f;
             runeCircleRadius = 2.6f;
-            isHovering = true;
+            isHovering = false;
             shadowGroundOffsetY = -0.75f;
         }
         else if (GetComponent<MiniBossController>() != null || gameObject.name.Contains("BoneSentinel"))
@@ -303,6 +303,13 @@ public class Boss3DVisual : MonoBehaviour
 
     private void Update()
     {
+        // The procedural display renderer is separate from the prefab renderer. Keep
+        // it in sync so runtime sprite-sheet animations remain visible on bosses.
+        if (sourceRenderer != null && displayRenderer != null)
+        {
+            displayRenderer.sprite = sourceRenderer.sprite;
+            displayRenderer.flipX = sourceRenderer.flipX;
+        }
         if (visualPivot == null || (health != null && health.IsDead)) return;
 
         Vector2 velocity = movement != null ? movement.Velocity : Vector2.zero;

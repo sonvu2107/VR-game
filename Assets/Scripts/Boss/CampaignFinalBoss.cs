@@ -38,8 +38,8 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         stats.maxHealth = Mathf.Max(600, stats.maxHealth * 5);
         stats.scoreValue = Mathf.Max(300, stats.scoreValue * 10);
         stats.detectionRange = 30f;
-        stats.attackCooldown = Mathf.Max(1.5f, stats.attackCooldown);
-        stats.attackWindup = Mathf.Max(0.65f, stats.attackWindup);
+        stats.attackCooldown = Mathf.Clamp(stats.attackCooldown * 0.72f, 1.15f, 2.4f);
+        stats.attackWindup = Mathf.Clamp(stats.attackWindup * 0.75f, 0.35f, 0.58f);
         // Barrel boss nổ theo hồi chiêu, không tự sát như Barrel thường.
         stats.selfDestructOnAttack = false;
         marker.runtimeConfig = stats;
@@ -56,6 +56,8 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         root.GetComponent<EnemySummoner>()?.Configure(stats);
         var sheet = root.GetComponent<EnemySheetAnimation>();
         if (sheet != null) sheet.Renderer.sprite = sheet.Art.Frame(0, sheet.Art.idle, 0);
+        if (root.GetComponent<SkeletonKingController>() != null)
+            EnemyRuntimeSpriteAnimation.TryAttach(movement, root.GetComponent<SpriteRenderer>());
 
         // Full sprite rectangle gồm cả khoảng cho animation đánh; chừa thêm một ô né đòn.
         bool found = false;
@@ -70,7 +72,9 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         Vector3 location = spawn;
         float factor = 1f;
         bool fits = false;
-        for (float test = 4f; test >= 1f && !fits; test -= 0.25f)
+        float maxDimension = Mathf.Max(relative.extents.x, relative.extents.y) * 2f;
+        float preferredScale = Mathf.Clamp(maxDimension > 0.01f ? 4.2f / maxDimension : 1f, 0.5f, 2f);
+        for (float test = preferredScale; test >= 0.5f && !fits; test -= 0.1f)
         foreach (var tile in room.FloorTiles)
         {
             Vector3 point = new Vector3(tile.x, tile.y + 1f, spawn.z);
