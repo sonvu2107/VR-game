@@ -13,8 +13,8 @@ public class StartMenuControls : MonoBehaviour
 
     private void Start()
     {
-        loadingScreen.SetActive(false);
-        if (!string.IsNullOrEmpty(LanLaunch.LastError)) LanMenuUI.Show(this);
+        if (loadingScreen != null) loadingScreen.SetActive(false);
+        LanMenuUI.Show(this);
     }
 
     public void StartButtonControl()
@@ -26,7 +26,11 @@ public class StartMenuControls : MonoBehaviour
     
     public void QuitButtonControl()
     {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
         Application.Quit();
+#endif
     }
     
     IEnumerator LoadScene(string sceneName)

@@ -73,6 +73,7 @@ public class EnemyCombat : MonoBehaviour
 
     public bool TryAttack(HealthController target, bool special = false)
     {
+        if (Time.timeScale == 0f) return false;
         if (target == null || target.currentHealth <= 0 || health == null || health.IsDead || isAttacking)
             return false;
         if (Time.time < nextAttackTime) return false;
@@ -111,6 +112,7 @@ public class EnemyCombat : MonoBehaviour
 
     private void CheckContactDamage()
     {
+        if (Time.timeScale == 0f) return;
         if (health == null || health.IsDead || config == null || config.contactDamage <= 0)
             return;
         if (Time.time < nextContactDamageTime)

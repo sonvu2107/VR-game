@@ -86,6 +86,7 @@ public class HealthController : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (LanLaunch.Mode == LanMode.Client || amount <= 0 || currentHealth <= 0) return;
+        if (gameManager != null && gameManager.CurrentState == GameState.Story) return;
         if (Time.time < invulnerableUntil) return;
 
         if (maxDamagePerHit > 0)

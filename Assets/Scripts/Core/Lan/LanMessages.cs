@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class LanMessage
 {
     public string type;
-    public const int CurrentProtocol = 2;
+    public const int CurrentProtocol = 3;
     public int protocol = CurrentProtocol;
     public string catalog;
     public string error;
@@ -16,6 +16,10 @@ public sealed class LanMessage
     public int state;
     public int enemies;
     public int keys;
+    public int storyCueSerial;
+    public int storyCueKind;
+    public int storyCueCollector;
+    public int storySequence;
     public int requiredKeys;
     public float timeRemaining;
     public int score;

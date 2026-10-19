@@ -89,6 +89,7 @@ public class BossController : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0f) return;
         if (LanSessionBridge.Active != null && LanSessionBridge.Active.HasGuest)
         {
             HealthController closest = LanSessionBridge.Active.NearestAlivePlayer(transform.position);
