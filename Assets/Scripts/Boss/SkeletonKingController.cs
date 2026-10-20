@@ -94,6 +94,7 @@ public class SkeletonKingController : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.isStoryPlaying) return;
         if (health == null || health.IsDead || isTransitioning) return;
         if (Time.time >= nextTargetScan)
         {
@@ -111,7 +112,9 @@ public class SkeletonKingController : MonoBehaviour
         float distance = Vector2.Distance(transform.position, target.transform.position);
         movement?.FaceTarget(target.transform.position);
 
-        bool isMoving = distance > 1.35f;
+        // Boss lớn phải có thể đánh người chơi đang đứng ngoài collider của nó.
+        float attackDistance = health.Config != null ? Mathf.Max(1.35f, health.Config.attackRange - .15f) : 1.35f;
+        bool isMoving = distance > attackDistance;
         if (animator != null && HasParameter(animator, "WalkSpeed", AnimatorControllerParameterType.Float))
             animator.SetFloat("WalkSpeed", isMoving ? 101f : 0f);
 

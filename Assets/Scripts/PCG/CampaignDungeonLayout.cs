@@ -16,7 +16,7 @@ public static class CampaignDungeonLayout
         new[] { P(0,0), P(0,28), P(-28,28), P(28,28), P(-28,58), P(0,58), P(0,88) },
         new[] { P(0,-2), P(0,30), P(-36,30), P(36,30), P(-36,64), P(0,64), P(0,96) },
         new[] { P(-34,-34), P(-34,0), P(-34,34), P(0,34), P(34,34), P(34,0), P(34,-34) },
-        new[] { P(0,0), P(0,32), P(-34,64), P(34,64), P(-34,100), P(0,100), P(0,136) }
+        new[] { P(0,0), P(0,32), P(-34,64), P(34,64), P(-34,100), P(0,136), P(34,112) }
     };
     private static Vector2Int P(int x, int y) => new Vector2Int(x,y);
 
@@ -98,7 +98,7 @@ public static class CampaignDungeonLayout
             case CampaignLayoutStyle.CrimsonThrone:
                 Link(0,1); Link(1,bossRoom); Link(1,2,true); Link(2,treasure);
                 if(combatCount==3) { Link(1,3,true); Link(3,bossRoom,true); }
-                Link(treasure,bossRoom); Link(bossRoom,exit); break;
+                Link(treasure,bossRoom,true); Link(bossRoom,exit); break;
             default:
                 for(int i=1;i<sequence.Count;i++)
                 {

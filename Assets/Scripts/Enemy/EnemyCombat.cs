@@ -73,6 +73,7 @@ public class EnemyCombat : MonoBehaviour
 
     public bool TryAttack(HealthController target, bool special = false)
     {
+        if (GameManager.isStoryPlaying) return false;
         if (target == null || target.currentHealth <= 0 || health == null || health.IsDead || isAttacking)
             return false;
         if (Time.time < nextAttackTime) return false;
@@ -103,6 +104,7 @@ public class EnemyCombat : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.isStoryPlaying) return;
         CheckContactDamage();
     }
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 
 /// <summary>Biến một prefab có sẵn thành boss, chỉ sửa config bản sao của lượt chơi.</summary>
 public sealed class CampaignFinalBoss : MonoBehaviour
@@ -35,7 +36,9 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         var health = root.GetComponent<EnemyHealth>() ?? root.AddComponent<EnemyHealth>();
         var stats = health.Config != null ? Instantiate(health.Config) : ScriptableObject.CreateInstance<EnemyConfigSO>();
         stats.name = "RunBoss_" + prefab.name;
-        stats.maxHealth = Mathf.Max(600, stats.maxHealth * 5);
+        bool isSkeletonKing = root.GetComponent<SkeletonKingController>() != null;
+        stats.maxHealth = isSkeletonKing ? 600 : Mathf.Max(600, stats.maxHealth * 5);
+        if (isSkeletonKing) stats.displayName = "Vua Xương";
         stats.scoreValue = Mathf.Max(300, stats.scoreValue * 10);
         stats.detectionRange = 30f;
         stats.attackCooldown = Mathf.Max(1.5f, stats.attackCooldown);
@@ -70,8 +73,10 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         Vector3 location = spawn;
         float factor = 1f;
         bool fits = false;
-        for (float test = 4f; test >= 1f && !fits; test -= 0.25f)
-        foreach (var tile in room.FloorTiles)
+        // Tối đa 1.75 lần, đồng thời giới hạn khung sprite vào khoảng 3.5 ô map.
+        float maxFactor = Mathf.Clamp(3.5f / Mathf.Max(.01f, Mathf.Max(relative.size.x, relative.size.y)), 1f, 1.75f);
+        for (float test = maxFactor; test >= .99f && !fits; test = test > 1f ? Mathf.Max(1f, test - .25f) : 0f)
+        foreach (var tile in room.FloorTiles.OrderBy(p => ((Vector2)p - (Vector2)spawn).sqrMagnitude).ThenBy(p => p.y).ThenBy(p => p.x))
         {
             Vector3 point = new Vector3(tile.x, tile.y + 1f, spawn.z);
             Vector3 center = point + offset * test;

@@ -1,0 +1,65 @@
+CỐT TRUYỆN GẮN VỚI HÀNH ĐỘNG — 19/10/2026
+
+Phạm vi
+- Tầng 1–10 vào chơi ngay. Bia tầng 1 giữ nguyên hình ảnh và va chạm chân bia.
+- Tầng 2–10 có dấu khế ước trên nền phòng khám phá; đây là ký hiệu trên nền,
+  không phải vật thể đứng nên không thêm vật cản. Đến trong bán kính 1,8 m,
+  nhấn F để đọc. Không đọc vẫn được qua tầng nếu đủ điều kiện cũ.
+- Hội thoại F tạm dừng trận đấu như bản trước. Cả hai người có thể tiếp tục
+  hoặc bỏ qua; Esc bỏ qua. Thoại không tự mở khi vừa sang tầng.
+- Lời dẫn sự kiện không khóa điều khiển. Backspace bỏ qua lời đang hiện.
+  Mốc quan trọng như độc, chìa khóa, hộ vệ và thời gian được ưu tiên hiện ngay.
+- J mở/đóng nhật ký của lượt chơi; mũi tên trái/phải đổi trang theo tầng.
+  Nhật ký không dừng trận đấu. Chỉ chứa những mốc đã thực sự xảy ra.
+
+Liên kết từng tầng
+1. Đọc bia, hạ địch và mở cổng: giải thích đội quân giữ vòng khóa lối xuống.
+2. Dấu khắc ở phòng khám phá kể về những người đi trước và nguồn nuôi lời nguyền.
+3. Khi một người chơi sống tiến gần địch tầm xa, nhắc tránh tên/kiếm khí Q.
+   Đây là gợi ý tùy chọn, không bắt dùng Q hay thêm điều kiện chiến đấu.
+4. Nhặt chìa thật ghi mốc truyện và đổi màu ấn trên cổng. Địch còn thì cổng
+   vẫn khóa theo LevelCompletionRules hiện có.
+5. Đến gần hộ vệ phát lời cảnh báo; sự kiện EnemyHealth chết phát lời thú nhận.
+6. Tìm dấu khắc khế ước trong kho băng tối; giữ nguyên hệ thống ánh sáng.
+7. Chỉ khi PoisonArea thực sự làm giảm máu mới ghi mốc trúng độc. Chỉ khi
+   HealingPickup gọi TryHeal thành công mới ghi mốc hồi phục. Mỗi mốc một lần.
+8. Mỗi chìa hé lộ một nửa sự thật; hai dấu ấn trên cổng lần lượt đổi trạng thái.
+9. Giải thích nguồn lực phong ấn cạn dần, liên hệ bí mật tầng 8. Nhắc ở ngưỡng
+   120 và 60 giây. Giữ nguyên thời hạn 240 giây; tính trong lúc chơi, dừng
+   theo trạng thái pause/đọc hội thoại/chờ bạn như hệ thống hiện có.
+10. Boss hiện tại là hiện thân của lời nguyền, không giả định prefab luôn là
+    Vua Xương. Khi boss chết, ấn đổi màu; đủ điều kiện cũ và qua cổng cuối
+    mới mở đoạn kết. Đọc xong hoặc bỏ qua đoạn kết đều chuyển Victory.
+
+Solo/LAN
+- Host xác nhận mốc, hàng đợi lời dẫn, tiến trình đọc và đoạn kết.
+- Snapshot chứa 10 bitmask nhật ký, lời đang hiện, số phiên lời nhắc,
+  thời gian còn lại, vị trí dấu khắc/cổng và pha đoạn kết.
+- Client kết nối lại nhận toàn bộ nhật ký lượt chơi; không tự suy diễn mốc
+  từ bộ đếm của snapshot đầu tiên và không phát lại hàng loạt thoại đã cũ.
+- Yêu cầu đọc/bỏ qua được chặn bằng run, level, vị trí, trạng thái sống,
+  phiên lời nhắc hoặc dòng hội thoại. Pha đoạn kết được kiểm tra riêng để
+  gói bỏ qua hội thoại thường không bỏ qua nhầm đoạn kết cùng tầng 10.
+- Bỏ qua chỉ tác động trình bày, không xóa nhật ký hoặc cộng chìa/chiến công.
+- Nhật ký giữ xuyên tầng trong lượt hiện tại, không ghi vào save lâu dài.
+- Giao thức LAN tăng từ 5 lên 6; hai máy cần dùng chung toàn bộ thư mục Build.
+
+Giữ nguyên
+- Điều kiện qua tầng: hết địch và đủ chìa, rồi tới cổng.
+- Roster/ngẫu nhiên boss, HP, sát thương, kỹ năng, bẫy, vật phẩm, seed,
+  va chạm trang trí, NavMesh và hình học bản đồ.
+- Không cần đọc đủ nhật ký hoặc bấm một kỹ năng cụ thể mới được thắng.
+
+Kiểm thử
+- -narrativeSmoke: chạy 10 tầng trong Development Player; F thật qua Input
+  System, bỏ qua, journal UI/chữ Việt, nhặt chìa qua trigger, sát thương
+  độc và hồi phục qua pickup, giết hộ vệ qua EnemyHealth, timer, đoạn kết.
+- -narrativeSmoke -narrativeDisconnect: Host/Client ngắt ở tầng 8 sau chìa
+  đầu; Client mới chạy thêm -storyReconnect để kiểm tra khôi phục tiến trình.
+- Fixture tự di chuyển người chơi, vô hiệu AI chiến đấu, gây sát thương và
+  chỉnh timer để kiểm tra nhanh nhánh sự kiện; không thay thế chơi tay.
+- -stoneCollisionSmoke và -decorCollisionSmoke kiểm tra hồi quy va chạm.
+- Ảnh batchmode dùng camera render riêng và tạm tắt Light2D khi chụp:
+  dùng kiểm tra chữ/bố cục, không phải bằng chứng chất lượng ánh sáng map.
+
+Tài liệu này thay mô tả “tự mở thoại tầng 2–10” ở STORY_CAMPAIGN.txt.

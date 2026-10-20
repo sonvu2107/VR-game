@@ -1,0 +1,71 @@
+CẬP NHẬT: Tầng 1 đã chuyển sang bia đá tùy chọn, nhấn F để đọc; xem STORY_STONE_LEVEL1.txt. Protocol hiện tại: 5. Phần mô tả thoại mở màn tầng 1 bên dưới là bản trước.
+
+MỞ ĐẦU TẦNG 1 — NGƯỠNG CỬA THỨC TỈNH
+
+GHI CHÚ: Tài liệu này ghi lại bản thử tầng 1. Bản mở rộng hiện tại đã có hội thoại
+đầu cả 10 tầng và protocol LAN 4; xem Docs/STORY_CAMPAIGN.txt để dùng bản mới.
+
+Cách chơi thử
+- Vào menu, chọn tầng 1, chơi Solo hoặc tạo/tham gia phòng LAN.
+- Sáu đoạn thoại xuất hiện sau khi bản đồ tạo xong. Không tự chuyển câu.
+- Click Tiếp tục/Bắt đầu hành trình hoặc chọn nút bằng Tab rồi nhấn Enter.
+- Click Bỏ qua hoặc nhấn Esc để bỏ toàn bộ đoạn mở đầu.
+- LAN: cả hai người đều có thể tiếp tục/bỏ qua; Host xác nhận tiến trình chung.
+- Khi chờ người thứ hai hoặc mất kết nối, thoại giữ nguyên và nút tiến tiếp bị khóa.
+  Nút Rời phòng vẫn dùng được. Người vào lại nhận đúng câu đang đọc.
+- Restart tầng 1 phát lại đoạn mở đầu. Bắt đầu từ tầng 2 trở lên không phát truyện.
+
+Nội dung
+- Solo: Tiếng vọng Khế Ước trò chuyện với Kỵ Sĩ Tro Tàn.
+- LAN: Người Đồng Hành có lời thoại riêng; không nhắc đến mã nguồn/giao thức mạng.
+- Đây là bản hội thoại 2D, chưa có lồng tiếng, chân dung hoặc hoạt cảnh nhân vật.
+
+Ranh giới gameplay
+- Không đổi chỉ số, sát thương, cooldown, quái, bản đồ, phần thưởng hoặc điều kiện qua tầng.
+- Trạng thái Story dừng thời gian, điều khiển, AI thường và sát thương lên người chơi.
+  Thoát thoại trở về Playing; pause menu thông thường không bị dùng làm hộp thoại.
+- Chờ nhả nút chiến đấu khi đóng thoại để click bỏ qua không biến thành đòn đánh.
+- GameState.Story được thêm cuối enum, giữ nguyên giá trị các trạng thái cũ.
+- LAN protocol tăng từ 2 lên 3. Hai máy phải dùng cùng bản build mới.
+- Font thoại tạo atlas riêng lúc chạy; không ghi đè font asset của project.
+- Font nguồn nằm tại Assets/Resources/Story/StoryVietnamese.ttf, là bản sao nguyên
+  vẹn Liberation Sans có sẵn trong project; đi kèm giấy phép OFL.
+- LanBuildTools.RefreshCatalog nay gom cả dependency gián tiếp của Resources.
+  Điều này sửa lỗi thiếu vật liệu Level01_Details khi gửi bản đồ tầng 1 qua LAN.
+
+Mã chính
+- Assets/Scripts/UI/LevelOneStory.cs: lời thoại, UI, tiến trình và ý định người chơi.
+- Assets/Scripts/GameManager.cs: bắt đầu/kết thúc trạng thái Story.
+- Assets/Scripts/Core/Lan/LanMessages.cs và LanSessionBridge.cs: đồng bộ câu thoại
+  trong world/snapshot; kiểm tra lượt chơi, tầng và câu hiện tại trước khi tiến tiếp.
+- Assets/Scripts/Core/Lan/StorySmokeProbe.cs: kiểm thử opt-in Editor/Development,
+  chỉ hoạt động khi truyền -storySmoke; không biên dịch vào Release.
+
+Kiểm thử tái lập
+- Build Development bằng LanBuildTools.BuildWindows.
+- Solo: TheLabyrinth.exe -storySmoke
+- Host: TheLabyrinth.exe -lanHost -lanPort 28779 -storySmoke
+- Client: TheLabyrinth.exe -lanJoin 127.0.0.1 -lanPort 28779 -storySmoke
+- Sau STORY_HOST_RECONNECT_READY, chạy Client với các tham số trên và thêm
+  -storyReconnect để kiểm tra nhận lại câu đang đọc sau khi Client cũ tự thoát.
+- LABYRINTH_STORY_ARTIFACTS chỉ định thư mục ảnh của probe.
+- Kiểm thử hai tiến trình loopback không thay thế nghiệm thu hai máy LAN vật lý.
+
+Kết quả kiểm tra ngày 19/10/2026
+- Windows x64 Development build thành công: build-ready.log.
+- SOLO PASS: đọc đủ câu, bỏ qua, Restart, tầng 2 không hiện truyện, khóa sát thương
+  khi đọc và khôi phục sát thương/Pause sau thoại; đủ glyph tiếng Việt, chữ không tràn.
+- LAN PASS: Client tiến câu, Host tiến câu, từ chối lệnh của câu cũ, Client bỏ qua,
+  Restart, Client rời giữa câu, Host giữ trạng thái dừng, Client mới vào đúng câu
+  đang đọc rồi bỏ qua; cả hai trở lại Playing.
+- Các log kết quả cuối: solo-ready.log, host-ready.log, client-ready.log,
+  rejoin-ready.log trong D:/tl-story-validation-20261019/.
+- Ảnh UI tại Evidence/story-Solo.png và Evidence/story-Client.png cùng thư mục.
+  Ảnh render kiểm tra bố cục với Light2D tạm tắt trong probe; không phải kiểm thử
+  ánh sáng toàn cảnh. Đã xem ảnh và kiểm tra chữ/nút không bị cắt ở 1280x720.
+- Các lượt kiểm tra cuối không có C# exception hoặc STORY_SMOKE_FAIL.
+- Bản chạy: D:/tl-story-validation-20261019/Build/TheLabyrinth.exe.
+  Muốn đưa sang máy khác phải sao chép toàn bộ thư mục Build.
+- Catalog trong project đã được cập nhật theo bản build. Bản trước cập nhật được
+  giữ tại D:/tl-story-validation-20261019/Evidence/LanAssetCatalog.before-story.asset.
+- Không chạy kiểm thử trên scene đang mở của người dùng; không thay file save thật.

@@ -847,6 +847,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         dashVfxRenderer.enabled = false;
+        WorldDepthSort.Attach(dashVfx, dashVfx.transform.position.y);
     }
 
     private void ShowDashVfx()

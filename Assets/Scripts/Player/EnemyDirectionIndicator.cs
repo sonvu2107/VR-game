@@ -18,6 +18,7 @@ public sealed class EnemyDirectionIndicator : MonoBehaviour
         GameObject marker = new GameObject("Nearest Enemy Direction");
         arrow = marker.AddComponent<SpriteRenderer>();
         arrow.sprite = CreateTriangle();
+        WorldDepthSort.Attach(marker, marker.transform.position.y);
         arrow.sortingLayerID = playerVisual != null ? playerVisual.sortingLayerID : 0;
         arrow.sortingOrder = playerVisual != null ? playerVisual.sortingOrder + 4 : 20;
         marker.transform.localScale = Vector3.one * 0.38f;

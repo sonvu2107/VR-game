@@ -467,6 +467,7 @@ public class PlayerSkillController : MonoBehaviour
             frameTrail.sortingOrder = renderer.sortingOrder - 1;
         }
 
+        WorldDepthSort.Attach(effect, effect.transform.position.y);
         StartCoroutine(AnimateEffect(effect, renderer, frameTrail, frames, duration,
             followTarget, followOffset, smoothFrames));
         return effect;

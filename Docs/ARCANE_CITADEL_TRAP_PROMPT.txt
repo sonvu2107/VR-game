@@ -1,0 +1,11 @@
+Phương pháp: built-in image_gen
+Asset: Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Spikes_v1.png
+Bốn pha trong atlas 2x2: an toàn, cảnh báo sớm, cảnh báo muộn, bật gai.
+Không dùng hình gai peaks từ map cũ.
+
+Use case: stylized-concept. Create NEW game source art: a 2 by 2 animation atlas of ONE matching arcane floor spike trap in four states for a top-down orthogonal dungeon crawler. Style: crisp detailed pixel-art clusters, matching an ancient citadel of dark blue-violet carved stone, weathered bronze frames and turquoise runic inlays. Not tiny simplistic 16px retro art; detailed environment prop art readable when shrunk to one floor tile. Straight overhead / very shallow front-visible view, square floor footprint, NOT isometric diamonds, NOT floating cubes.
+Canvas: square, exact two equal columns and two equal rows. Each cell has the SAME centered square pressure plate, same physical footprint, scale, silhouette, aligned base corners and margins. Object fills 80 percent of its cell; generous fully transparent gutters. Transparent outside the plates, no floor scene or opaque background, no text, no labels, no grid lines. Consistency between frames is critical: only spike height and rune glow change.
+Top left: SAFE, spikes fully retracted into nine dark round slots in a 3x3 array, faint turquoise corner runes, aged bronze border.
+Top right: EARLY WARNING, same plate and slots, amber runes and a very thin amber outline lighting up, spikes still retracted.
+Bottom left: LATE WARNING, same plate, nine short sharp steel spike tips starting to emerge, amber runes slightly brighter.
+Bottom right: DANGEROUS ACTIVE, same plate with nine fully extended sharp triangular steel spikes, subtly red-lit tips and red-orange warning runes. Spikes visibly sharp and metallic, not crystals or blunt pillars. All spikes and glows fit inside their cell; no smoke, no bloom crossing gutters. Keep base stone blue-purple and bronze frame unchanged in all four states. Actual reusable source atlas, no presentation board, no watermark.

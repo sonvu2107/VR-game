@@ -37,6 +37,9 @@ public sealed class LanBuildTools : IPreprocessBuildWithReport
                 path.StartsWith("Assets/Scripts/", StringComparison.Ordinal) && path.EndsWith(".cs", StringComparison.Ordinal) ||
                 path.StartsWith("Assets/Input/", StringComparison.Ordinal)))
                 paths.Add(path);
+        // Resources.Load cũng kéo theo material/texture ngoài thư mục Resources.
+        // Ví dụ DungeonAmbienceSet -> Level01_Details: scene không tham chiếu trực tiếp.
+        paths.UnionWith(AssetDatabase.GetDependencies(paths.ToArray(), true));
         var sprites = new List<Sprite>();
         var textures = new List<Texture2D>();
         var tiles = new List<TileBase>();

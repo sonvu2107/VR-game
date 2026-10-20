@@ -80,6 +80,7 @@ public class EnemyBrain : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.isStoryPlaying) return;
         if (health == null || health.IsDead || currentState == EnemyState.Dead || !initialized) return;
 
         if (currentState == EnemyState.Hurt)

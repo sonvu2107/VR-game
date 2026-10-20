@@ -1,0 +1,35 @@
+Probe hồi quy: chạy bằng execute_code trong Unity Play Mode khi mở DungeonArcaneCitadel.
+Mô phỏng collider Player với MovePosition trong PhysicsScene2D riêng, không sửa Player thật.
+Kết quả mong đợi hiện tại: physicsCases=128, failures=[] (16 vật cản);
+scene probe tự unload trong finally.
+
+var geo=UnityEngine.Object.FindObjectOfType<ArcaneCitadelGeometry>();
+var blockers=geo.GetComponentsInChildren<UnityEngine.BoxCollider2D>();
+var player=UnityEngine.GameObject.Find("Player");
+var scene=UnityEngine.SceneManagement.SceneManager.CreateScene("Arcane Collision Probe",new UnityEngine.SceneManagement.CreateSceneParameters(UnityEngine.SceneManagement.LocalPhysicsMode.Physics2D));
+var physics=scene.GetPhysicsScene2D();
+var wallObject=new UnityEngine.GameObject("Probe Obstacle");
+UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(wallObject,scene);
+var wall=wallObject.AddComponent<UnityEngine.BoxCollider2D>();
+var bodyObject=new UnityEngine.GameObject("Probe Player");
+bodyObject.layer=player.layer;
+UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(bodyObject,scene);
+var body=bodyObject.AddComponent<UnityEngine.Rigidbody2D>();
+body.gravityScale=0; body.constraints=UnityEngine.RigidbodyConstraints2D.FreezeRotation;
+body.collisionDetectionMode=player.GetComponent<UnityEngine.Rigidbody2D>().collisionDetectionMode;
+var box=bodyObject.AddComponent<UnityEngine.BoxCollider2D>();
+box.size=player.GetComponent<UnityEngine.BoxCollider2D>().bounds.size;
+string playerSize=box.size.ToString();
+int cases=0; var failures=new System.Collections.Generic.List<string>();
+try {
+ foreach(var obstacle in blockers)
+ foreach(var direction in new[]{UnityEngine.Vector2.right,UnityEngine.Vector2.left,UnityEngine.Vector2.up,UnityEngine.Vector2.down})
+ foreach(float speed in new[]{5f,18.75f}) {
+ wall.size=obstacle.bounds.size; body.position=-direction*2; body.velocity=UnityEngine.Vector2.zero;
+ for(int step=0;step<60;step++) {body.MovePosition(body.position+direction*(speed*0.02f));physics.Simulate(0.02f);}
+ if(UnityEngine.Vector2.Dot(body.position,direction)>0) failures.Add(obstacle.name+":"+direction+":"+speed);
+ cases++;
+ }
+} finally {UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene);}
+var torch=geo.GetComponentsInChildren<AnimatedDecor>()[0];
+return Newtonsoft.Json.JsonConvert.SerializeObject(new {physicsCases=cases, failures=failures, playerColliderSize=playerSize, torchSprite=torch.GetComponent<UnityEngine.SpriteRenderer>().sprite.name, light=torch.GetComponent<UnityEngine.Rendering.Universal.Light2D>().intensity, time=UnityEngine.Time.time});

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-/// <summary>Curated clusters from the original atlas; no collision or rewards.</summary>
+/// <summary>Curated clusters from the original atlas; solid props have ground collision; no rewards.</summary>
 public static class CourtyardDecorator
 {
     public static void Decorate(DungeonLayout layout, CourtyardTheme theme, SeededRandom random,
@@ -26,15 +26,13 @@ public static class CourtyardDecorator
                     room.Type == RoomType.Treasure ? theme.storageProps :
                     placements % 2 == 0 ? theme.potteryProps : theme.storageProps;
                 if (pool == null || pool.Length == 0) continue;
-                Spawn(root.transform, random.Choose(pool), cell, "Atlas Border Prop", 2);
-                occupied.Add(cell);
+                if (!SpawnSolid(layout, root.transform, random.Choose(pool), cell, "Atlas Border Prop", occupied)) continue;
                 // A second piece makes a composed supply cluster, not scattered noise.
                 Vector2Int side = cell + Vector2Int.right;
                 if (room.FloorTiles.Contains(side) && !occupied.Contains(side) &&
                     !layout.FloorTiles.Contains(side + Vector2Int.up))
                 {
-                    Spawn(root.transform, random.Choose(pool), side, "Atlas Supply Cluster", 2);
-                    occupied.Add(side);
+                    SpawnSolid(layout, root.transform, random.Choose(pool), side, "Atlas Supply Cluster", occupied);
                 }
                 placements++;
             }
@@ -81,6 +79,17 @@ public static class CourtyardDecorator
     {
         return new Vector2Int((room.FloorTiles.Min(cell => cell.x) + room.FloorTiles.Max(cell => cell.x)) / 2,
             (room.FloorTiles.Min(cell => cell.y) + room.FloorTiles.Max(cell => cell.y)) / 2);
+    }
+
+    private static bool SpawnSolid(DungeonLayout layout, Transform parent, Sprite sprite, Vector2Int cell,
+        string label, HashSet<Vector2Int> reserved)
+    {
+        var renderer = Spawn(parent, sprite, cell, label, 2);
+        if (renderer == null) return false;
+        if (DecorationCollision.TrySprite(layout, renderer, reserved)) return true;
+        renderer.gameObject.SetActive(false);
+        if (Application.isPlaying) Object.Destroy(renderer.gameObject); else Object.DestroyImmediate(renderer.gameObject);
+        return false;
     }
 
     private static SpriteRenderer Spawn(Transform parent, Sprite sprite, Vector2Int cell, string name, int order)

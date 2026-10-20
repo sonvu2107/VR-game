@@ -62,6 +62,8 @@ public sealed class HealingPickup : MonoBehaviour
         if (health == null || !health.TryHeal(healAmount))
             return;
 
+        var story = FindObjectOfType<GameManager>()?.Story;
+        if (story != null && story.StoryLevel == 7) story.Record(LevelOneStory.Beat.Heal);
         collected = true;
         Destroy(gameObject);
     }

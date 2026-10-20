@@ -162,9 +162,12 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
             if (ActiveTheme != null)
                 CourtyardDecorator.Decorate(dungeonLayout, ActiveTheme, random, occupiedCells, spawnedObjects);
-            spawnedObjects.Add(ArcaneCitadelGeometry.BuildAmbienceOnly(dungeonLayout, ActiveTheme));
+            spawnedObjects.Add(ArcaneCitadelGeometry.BuildAmbienceOnly(dungeonLayout, ActiveTheme, occupiedCells));
         }
 
+        // Đồ trang trí sinh sau item/bẫy vẫn phải được tính vào đường đi của quái.
+        Physics2D.SyncTransforms();
+        if (ActiveTheme == null || !ActiveTheme.UsesArcaneArt) surface.BuildNavMesh();
         manager.CompleteLevelGeneration(floorExit, spawnedEnemyCount);
         return true;
     }
@@ -266,12 +269,13 @@ public class InfiniteWorldGenerator : MonoBehaviour
             {
                 case RoomType.Start:
                     PlacePlayer(room);
-                    spawnedEnemyCount += SpawnRoomMobs(room, -1, false,
-                        GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
+                    // Mỗi tầng có một phòng yên tĩnh trước nhịp khám phá.
+                    // Suất lính canh được chuyển sang phòng chiến đấu đầu tiên.
                     break;
                 case RoomType.Combat:
                     spawnedEnemyCount += SpawnRoomMobs(room, combatRoomIndex, room == widestCombatRoom,
-                        GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type));
+                        GetRoomEnemyQuota(room.Type, currentLevelDefinition.Type) +
+                        (combatRoomIndex == 0 ? GetRoomEnemyQuota(RoomType.Start, currentLevelDefinition.Type) : 0));
                     combatRoomIndex++;
                     break;
                 case RoomType.Treasure:
@@ -337,7 +341,11 @@ public class InfiniteWorldGenerator : MonoBehaviour
         {
             var squad = GetCombatSquad();
             if (squad.Count == 3)
+            {
+                // Giữ bộ ba vai trò và nhận thêm lính được chuyển khỏi phòng đầu.
+                while (squad.Count < numberOfMobs) squad.Add(enemyInfo.Mob[0].sprite);
                 return PrefabPlacer.PlaceMobs(squad, room, random, occupiedCells, spawnClearance, spawnedObjects);
+            }
         }
         for (int mobIndex = 0; mobIndex < numberOfMobs; mobIndex++)
             prefabs.Add(combatRoomIndex < 0 ? enemyInfo.Mob[0].sprite :
@@ -361,15 +369,9 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
     public List<GameObject> GetFinalBossCandidates()
     {
-        var pool = new List<GameObject>();
-        if (enemyInfo != null) foreach (var mob in enemyInfo.Mob)
-            if (mob.sprite != null && mob.sprite.name != "SkeletonScout" && mob.sprite.name != "SkeletonGuard" &&
-                !pool.Contains(mob.sprite)) pool.Add(mob.sprite);
-        foreach (var prefab in new[] { skeletonArcherPrefab, poisonSlimePrefab, batPrefab, darkMagePrefab,
-            eliteEnemyPrefab, skullPrefab, vampirePrefab, miniBossPrefab, bossPrefab })
-            if (prefab != null && !pool.Contains(prefab)) pool.Add(prefab);
-        foreach (var prefab in GetCombatSquad()) if (!pool.Contains(prefab)) pool.Add(prefab);
-        return pool;
+        // Cốt truyện cố định: Vua Xương giữ đường trở về, không chọn quái thường làm boss.
+        return bossPrefab != null && bossPrefab.GetComponent<SkeletonKingController>() != null
+            ? new List<GameObject> { bossPrefab } : new List<GameObject>();
     }
 
     private GameObject ChooseEnemyPrefab(int combatRoomIndex, int mobIndex, bool isWideRoom)
@@ -466,16 +468,20 @@ public class InfiniteWorldGenerator : MonoBehaviour
             if (room.Type == RoomType.Start || room.Type == RoomType.Exit || budget == 0) continue;
             var pattern = room.Type == RoomType.Boss ? TacticalTrapPattern.BossFlanks :
                 room.Type == RoomType.Treasure ? TacticalTrapPattern.TreasureGuard :
-                random.Range(0, 2) == 0 ? TacticalTrapPattern.Chicane : TacticalTrapPattern.RangedScreen;
+                TacticalTrapPattern.DoorwayChoke;
             Vector2Int focus = room.SpawnPoint;
+            Vector2Int? rangedFocus = null;
             foreach (var obj in spawnedObjects)
             {
                 if (obj == null) continue;
                 var position = obj.transform.position;
-                var cell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y - 1f));
+                // Cả map gốc và atlas dùng cùng phép đo vị trí của planner, tránh lệch một ô.
+                var cell = LastTrapPlan.Cell(position);
                 if (!room.FloorTiles.Contains(cell)) continue;
-                if (pattern == TacticalTrapPattern.RangedScreen && obj.GetComponent<EnemyHealth>()?.Config?.displayName == "GoblinTNT" ||
-                    pattern == TacticalTrapPattern.TreasureGuard && obj.GetComponent<DungeonKey>() != null) focus = cell;
+                var config = obj.GetComponent<EnemyHealth>()?.Config;
+                if (config != null && (config.archetype == EnemyArchetype.Ranged || config.archetype == EnemyArchetype.Summoner))
+                    rangedFocus ??= cell;
+                if (pattern == TacticalTrapPattern.TreasureGuard && obj.GetComponent<DungeonKey>() != null) focus = cell;
                 if (room.Type == RoomType.Boss && (obj.GetComponent<CampaignFinalBoss>() != null || obj.GetComponent<MiniBossController>() != null))
                 {
                     var visual = obj.GetComponent<EnemySheetAnimation>()?.Renderer ?? obj.GetComponent<EnemySpriteAnimation>()?.Renderer ?? obj.GetComponentInChildren<SpriteRenderer>();
@@ -489,7 +495,13 @@ public class InfiniteWorldGenerator : MonoBehaviour
                 }
             }
             var cells = LastTrapPlan.Plan(room, pattern, room.Type == RoomType.Treasure ? Mathf.Max(1, budget / 2) : budget,
-                focus, random.Range(0, 4), occupiedCells);
+                focus, 0, occupiedCells);
+            // Chỉ dùng lá chắn quái đánh xa khi cửa không đủ chỗ cho một cụm an toàn.
+            if (cells.Count == 0 && pattern == TacticalTrapPattern.DoorwayChoke && rangedFocus.HasValue)
+            {
+                pattern = TacticalTrapPattern.RangedScreen;
+                cells = LastTrapPlan.Plan(room, pattern, budget, rangedFocus.Value, 0, occupiedCells);
+            }
             if (cells.Count == 0) continue;
             var root = new GameObject("Tactical Traps - " + pattern);
             var group = root.AddComponent<TacticalTrapGroup>();
@@ -603,17 +615,30 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
     private int PlaceLevelBoss(DungeonRoom room)
     {
+        int formationCount = currentLevelDefinition.IsFinalBossLevel ? SpawnThroneFormation(room) : 0;
         if (!TryClaimRoomSpawn(room, "Boss", out Vector2Int spawnPoint))
-            return 0;
+            return formationCount;
 
         GameObject selectedPrefab = currentLevelDefinition.IsFinalBossLevel ? bossPrefab : miniBossPrefab;
         if (currentLevelDefinition.IsFinalBossLevel)
         {
             var candidates = GetFinalBossCandidates();
-            selectedPrefab = candidates[random.Range(0, candidates.Count)];
-            var finalBoss = CampaignFinalBoss.Create(selectedPrefab, room, PrefabPlacer.GetWorldPosition(spawnPoint));
+            if (candidates.Count == 0)
+            {
+                Debug.LogError("Thiếu prefab Vua Xương có SkeletonKingController.");
+                return 0;
+            }
+            selectedPrefab = candidates[0];
+            // Boss ở gần giữa chính điện, không chọn sát ngai hoặc chồng vào đội hình hộ vệ.
+            var bossTiles = new HashSet<Vector2Int>(room.FloorTiles.Where(cell => !occupiedCells.Contains(cell)));
+            bossTiles.Add(spawnPoint);
+            var arena = new DungeonRoom(room.Type, bossTiles, spawnPoint);
+            Vector3 preferred = ActiveTheme != null && ActiveTheme.usesCampaignAtlas && ActiveTheme.layoutStyle == CampaignLayoutStyle.CrimsonThrone
+                ? PrefabPlacer.GetWorldPosition(new Vector2Int(0, room.FloorTiles.Max(p => p.y) - 9))
+                : PrefabPlacer.GetWorldPosition(spawnPoint);
+            var finalBoss = CampaignFinalBoss.Create(selectedPrefab, arena, preferred);
             spawnedObjects.Add(finalBoss.gameObject);
-            return 1;
+            return 1 + formationCount;
         }
         if (selectedPrefab == null)
         {
@@ -650,6 +675,32 @@ public class InfiniteWorldGenerator : MonoBehaviour
         }
 
         return 1;
+    }
+
+    private int SpawnThroneFormation(DungeonRoom room)
+    {
+        if (ActiveTheme == null || !ActiveTheme.usesCampaignAtlas || ActiveTheme.layoutStyle != CampaignLayoutStyle.CrimsonThrone)
+            return 0;
+        var squad = GetCombatSquad();
+        if (squad.Count != 3) return 0;
+        int cx = (room.FloorTiles.Min(p => p.x) + room.FloorTiles.Max(p => p.x)) / 2;
+        int top = room.FloorTiles.Max(p => p.y);
+        int count = 0;
+        // Hai tướng đứng dưới hai tượng hộ vệ, bốn lính canh dọc lối lên ngai.
+        for (int rank = 0; rank < 3; rank++)
+        foreach (int side in new[] { -1, 1 })
+        {
+            var cell = new Vector2Int(cx + side * (rank == 0 ? 6 : 5), top - 6 - rank * 4);
+            if (!room.FloorTiles.Contains(cell) || occupiedCells.Contains(cell)) continue;
+            var guard = Instantiate(squad[0], PrefabPlacer.GetWorldPosition(cell), Quaternion.identity);
+            guard.name = rank == 0 ? "Throne General" : "Throne Guard";
+            if (rank == 0) guard.transform.localScale *= 1.25f;
+            guard.GetComponent<EnemyMovement>()?.ConfigureBossArena(room.FloorTiles, Vector2.one);
+            spawnedObjects.Add(guard);
+            for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) occupiedCells.Add(cell + new Vector2Int(x,y));
+            count++;
+        }
+        return count;
     }
 
     private FloorExit PlaceExit(DungeonRoom room)

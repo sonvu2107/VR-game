@@ -1,0 +1,62 @@
+BIA ĐÁ KHẾ ƯỚC — BẢN THỬ TẦNG 1
+
+Cách chơi
+- Vào tầng 1 là có thể di chuyển ngay, không còn hội thoại mở màn tự bật.
+- Bia đá nằm cạnh điểm xuất phát. Đến trong phạm vi 1,8 đơn vị sẽ thấy lời nhắc F.
+- Nhấn F để đọc ba đoạn ngắn. Tiếp tục bằng nút/Enter; bỏ qua bằng nút hoặc Esc.
+- Đọc xong hoặc bỏ qua, bia được ghi nhận đã đọc cho lượt hiện tại; không bật lại.
+- Hạ kẻ địch đầu tiên và đủ điều kiện mở cửa sẽ có lời dẫn ngắn, không khóa điều khiển.
+- Không đọc bia vẫn qua tầng được. Không thêm chìa, nhiệm vụ, vật phẩm hoặc điều kiện chiến thắng.
+- Tầng 2–10 giữ hội thoại hiện có.
+
+Solo/LAN
+- Host kiểm tra tầng, trạng thái, sinh lực và khoảng cách thật của người kích hoạt.
+- Một người đọc, cả hai xem cùng tiến trình; một trong hai có thể tiếp tục/bỏ qua.
+- Trong lúc đọc, dùng trạng thái Story hiện có để tạm dừng chiến đấu.
+- Snapshot mang vị trí và trạng thái đã đọc; Client nhận lại khi kết nối lại.
+- Protocol 5: cả hai máy phải dùng cùng toàn bộ thư mục Build mới.
+
+Kiểm thử
+- Probe Development opt-in: -stoneSmoke (hoặc -storySmoke).
+- Kiểm tra phím F qua Input System, từ chối ngoài phạm vi, không tự bật mở màn,
+  chặn yêu cầu trùng/cũ, font tiếng Việt, bỏ qua, đồng bộ Host/Client,
+  điều kiện cửa cũ, tầng 2, reset và qua tầng không đọc trong Solo.
+- Fixture đặt số địch về 0 chỉ trong kiểm thử luồng qua tầng, không thay gameplay thực.
+
+Asset
+- Assets/Resources/Story/OathStone.png: PNG RGBA được tạo riêng cho bia đá tầng 1.
+- Giữ nguyên ảnh nguồn; Unity nhập Sprite, Point, không mipmap, tối đa 256 px.
+- Bia đặt lệch cạnh điểm xuất phát để không che nhân vật; có BoxCollider2D đặc tại chân bia trên Solo/Host.
+- Màu sáng khi chưa đọc, dịu sau khi đọc, vàng khi cửa đủ điều kiện mở.
+- Font hội thoại nạp trước dấu tiếng Việt để không đổi atlas lúc dựng giao diện.
+- LAN có trạng thái chờ người đồng hành riêng, không tự bật menu tạm dừng.
+
+Bản chạy thử
+D:/tl-stone-collision-20261019/Build/TheLabyrinth.exe
+Cần chép cả thư mục Build sang máy LAN thứ hai (protocol 5).
+
+
+Kết quả đã chạy (bản có asset bia đá)
+- build-stone-asset.log: Build Successful.
+- asset-solo.log: PASS F, phạm vi, bỏ qua, restart, qua tầng khi không đọc.
+- asset-campaign.log: PASS luồng Solo tầng 1–10, thời gian tầng 9, khóa và kết thúc.
+- asset-client.log: Client nhấn F, đọc chung; chủ động rời ở câu 2.
+- asset-host.log: PASS giữ câu khi mất kết nối, tiếp tục sau kết nối lại, sang tầng 2.
+- asset-rejoined.log: PASS khôi phục bia đã đọc và đúng câu, Client bỏ qua đồng bộ.
+- Ảnh giao diện: Evidence/stone-explore-Solo.png và Evidence/stone-Host.png.
+- Thư mục log/ảnh: D:/tl-stone-story-20261019.
+- LAN kiểm tra bằng hai tiến trình trên cùng máy (loopback), chưa thử hai máy vật lý.
+- Ảnh batchmode tạm tắt Light2D trong lúc chụp để kiểm tra bố cục; không đánh giá ánh sáng map.
+- Catalog cũ được giữ tại Evidence/LanAssetCatalog.before-stone.asset.
+
+Sửa va chạm bia đá
+- Chân bia: BoxCollider2D không trigger, kích thước thế giới 1 x 0,38; tâm lệch xuống 0,5.
+- Collider theo vòng đời bia: vẫn chặn sau khi đọc/bỏ qua, tắt khi tạo tầng mới hoặc sang tầng 2.
+- Solo/Host mô phỏng vật lý; trong LAN Host chặn cả hai Rigidbody2D, Client nhận vị trí chuẩn.
+- Probe -stoneCollisionSmoke: đưa Rigidbody2D thật của từng nhân vật vào bia từ 4 hướng,
+  bằng velocity (đi bộ) và MovePosition (lướt), dùng tốc độ từ PlayerMovement hiện tại.
+- Kiểm tra tiếp xúc đúng bia, không nhầm tường; đọc ngoài chân bia, bỏ qua và chuyển tầng.
+- Bản build và log sửa va chạm: D:/tl-stone-collision-20261019.
+- Kết quả cuối: solo-final.log, host-final.log, client-final.log đều STONE_COLLISION PASS.
+- story-regression.log: PASS phím F, bỏ qua, restart và qua tầng không cần đọc.
+- Kiểm tra LAN bằng hai tiến trình loopback, chưa xác nhận trên hai máy vật lý.

@@ -1,0 +1,77 @@
+CỐT TRUYỆN HIỆN HÀNH — NGƯỜI ĐI LẠC — 20/10/2026
+
+Kỵ sĩ bước vào một phế tích để trú mưa. Khi quay lại, lối vào đã biến mất.
+Không có lời tiên tri hay sứ mệnh từ trước: mục tiêu là tìm đường trở về.
+Solo đọc ghi chép của người đi trước; LAN có thêm đối thoại với người đồng hành.
+
+1. Bia đá cũ: biết có người cũng từng mắc kẹt; phải tìm kẻ giữ lối ra.
+2. Thành cổ: hiểu quy luật hạ lính canh để mở cổng, nhưng cổng vẫn dẫn xuống.
+3. Hầm rêu: lời cảnh báo về cung thủ gắn với kiếm khí và giữ đường né.
+4. Ngục ngập nước: tìm chìa và đánh thức dấu dò đường, tránh chông.
+5. Lò rèn: vượt kẻ giữ cửa; biết thư viện bên dưới có thể chứa lời giải.
+6. Kho băng: thắp nguồn sáng cố định để nhận ra đường trong bóng tối.
+7. Hầm mộ: lời nhắn dở dang của người chết vì độc; tránh độc, nhặt thuốc.
+8. Thư viện: hai chìa ghép thông điệp cho biết Vua Xương giữ mê cung bằng
+   mạng sống của hắn. Hạ hắn và lính canh cuối cùng thì cổng sẽ dẫn ra ngoài.
+9. Thánh điện: đường đi mất ổn định; có bốn phút để vượt qua.
+10. Điện Vua Xương: hạ chính nhà vua và lính canh, bước qua cổng trở về.
+Đoạn kết: bên ngoài là bầu trời sau cơn mưa; lối vào khép lại phía sau.
+
+TƯƠNG TÁC
+F đọc / đọc lại. Esc hoặc nút Bỏ qua đóng thoại, vẫn lưu nội dung vào nhật ký.
+G tầng 4: chỉ hướng chìa, sau khi đủ chìa thì chỉ hướng cổng.
+G tầng 6: thắp nguồn sáng cố định bán kính 4 đơn vị.
+G tầng 8: áp chìa để ghép thông điệp, không tiêu hao chìa.
+  Một chìa: sáng nửa dấu ấn, dò chìa còn lại.
+  Hai chìa: sáng cả dấu ấn, chỉ hướng cổng.
+J mở nhật ký; trái/phải đổi tầng; Tab đổi diễn biến/hội thoại;
+PageUp/PageDown đổi trang. Nhật ký không dừng trận chiến.
+Tương tác cần còn sống, đứng gần, không bị vật cản rắn che chắn.
+Bia tầng 1 có collider chân; các dấu khắc khác nằm trên nền.
+
+SOLO/LAN VÀ ĐIỀU KIỆN THẮNG
+Host xác nhận thao tác và tiến trình; Client gửi yêu cầu.
+Đọc, bỏ qua, dấu ấn, ánh sáng, chỉ hướng và nhật ký được đồng bộ khi vào lại.
+Hai máy cần cùng bản build, giao thức LAN 12 (nhật ký lịch sử và dấu F từ Host).
+Tương tác truyện vẫn tùy chọn; cổng vẫn cần đủ chìa và hết kẻ địch.
+Không tăng điều kiện bắt buộc phải đọc hay ghép đủ thông điệp.
+Boss cuối luôn là prefab SkeletonKing với ba giai đoạn hiện có, 600 HP.
+Không còn chọn quái thường ngẫu nhiên làm boss cuối. Cấu hình prefab gốc
+không bị ghi đè; chỉ cấu hình bản sao runtime có tên hiển thị Vua Xương.
+Nhật ký thuộc lượt chơi; chưa lưu qua lần đóng game.
+
+Tài liệu này thay thế phần cốt truyện khế ước/phong ấn trong các ghi chép cũ.
+
+GÓI TRÌNH BÀY TỐI THIỂU — CẬP NHẬT 20/10/2026
+- Mở lượt chơi tầng 1 bằng cảnh phế tích giữa mưa, cửa đá khép rồi chuyển vào
+  mê cung. Có ba nhịp lời kể; Tiếp tục / Bỏ qua / Esc như hội thoại thường.
+- Kết thúc tại phế tích lúc bình minh, nhân vật xuất hiện bên ngoài và cửa
+  khép lại. Sau khi đọc xong hoặc bỏ qua mới chuyển Victory.
+- Cảnh được dựng trực tiếp bằng UI Unity; dùng lại sprite nhân vật và bia đá.
+  Solo có một kỵ sĩ, LAN có hai hình nhân vật. Không thêm bản đồ chiến đấu.
+- Hốc lửa tầng 6 có animation từ sprite sheet VFX/Combat/Fire hiện có.
+- Bệ đá âm sàn tầng 8 có hai rãnh chìa, hiện chìa và từng nửa thông điệp
+  theo tiến trình ghép. Không tiêu hao chìa; không thêm vật cản nổi.
+- Cổng cuối có viền ánh sáng và nhãn riêng; đổi sang ánh vàng khi đủ điều
+  kiện. Tận dụng 7 frame cổng hiện có, không thay collider kích hoạt cổng.
+- Trạng thái cảnh và nhịp thoại được Host gửi cùng snapshot; hiệu ứng mưa,
+  lửa nhấp nháy chạy cục bộ. Hai máy cần cùng bản mới, giao thức LAN 12.
+- Chưa thêm lồng tiếng hoặc bản nhạc riêng cho cảnh mở đầu/kết thúc.
+
+
+THAY THẾ HÌNH CẢNH BẰNG PIXEL ART
+RuinsRain.png: phế tích giữa mưa. RuinsDawn.png: cùng phế tích lúc sáng,
+cửa đã bị bịt kín; được nhuộm tối trong nhịp phát hiện cửa biến mất.
+KeyDais.png: bệ đá trong suốt, hai chìa dùng đúng sprite của chìa gameplay.
+Khi chạy cảnh: ẩn renderer của map bằng forceRenderingOff và ẩn các canvas
+ngoài hội thoại. Không tắt actor/collider, không làm mất mesh/sprite trong
+snapshot LAN. Khôi phục trạng thái hiển thị sau khi đọc xong hoặc bỏ qua.
+Chi tiết nguồn/prompt: STORY_PIXEL_ART_PROMPTS.txt.
+ĐIỀU CHỈNH HIỂN THỊ CẢNH TRUYỆN
+- Kỵ sĩ dùng sprite gameplay, khung vẽ 540x360 thay cho 340x280;
+  tăng khoảng 59% kích thước thực, không đổi scale/collider nhân vật khi chơi.
+- Sắc xanh xám dưới mưa, sắc vàng nhạt lúc bình minh; đồng hành LAN
+  cùng bảng màu và đứng cách 110 đơn vị UI.
+- Khung thoại tối alpha 0.82, viền mảnh alpha 0.48; không dùng blur hậu kỳ.
+- Cảnh phim dùng khung 1080x286 ở cạnh dưới; đọc bia dùng 1080x376.
+  Canvas tham chiếu 1280x720, tự co giãn theo màn hình.

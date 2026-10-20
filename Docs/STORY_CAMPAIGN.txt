@@ -1,0 +1,84 @@
+CẬP NHẬT: Tầng 1 đã chuyển sang bia đá tùy chọn, nhấn F để đọc; xem STORY_STONE_LEVEL1.txt. Protocol hiện tại: 5. Phần mô tả thoại mở màn tầng 1 bên dưới là bản trước.
+
+CỐT TRUYỆN CHIẾN DỊCH — TẦNG 1 ĐẾN 10
+
+Cách thử
+- Vào menu và chọn bất kỳ tầng nào: hộp thoại mở đầu của đúng tầng đó sẽ xuất hiện.
+- Tầng 1 giữ sáu đoạn thoại của bản thử trước; tầng 2–10 có năm đoạn mỗi tầng.
+- Click Tiếp tục/Tiến bước hoặc Tab chọn nút rồi Enter xác nhận. Esc/Bỏ qua đóng
+  toàn bộ đoạn thoại của tầng hiện tại, không bỏ các tầng tiếp theo.
+- Solo dùng Tiếng vọng Khế Ước; LAN dùng Người Đồng Hành với lời thoại riêng.
+- Hai người đều có thể tiếp tục/bỏ qua. Host quyết định câu hiện tại; lệnh mạng
+  của câu, tầng hoặc lượt chơi cũ không được dùng để chuyển câu mới.
+- Khi Client rời phòng giữa thoại, Host giữ đúng câu đang đọc. Người kết nối lại
+  nhận lại cả tầng và câu hiện tại. Nút Rời phòng vẫn hoạt động lúc chờ.
+- Restart phát lại truyện tại tầng được chọn lúc bắt đầu phiên.
+- LAN dùng protocol 4; cả hai máy phải dùng cùng bản build mới.
+
+Các chương
+1. Ngưỡng cửa thức tỉnh.
+2. Thành cổ — Lối đi lạc dấu.
+3. Hầm rêu — Mưa xương và tro.
+4. Ngục ngập nước — Phong ấn đỏ.
+5. Lò rèn tro tàn — Kẻ giữ cửa.
+6. Kho băng — Ngọn lửa giữa đêm.
+7. Hầm mộ xương — Hơi thở của độc.
+8. Thư viện cấm — Hai chìa phong ấn.
+9. Thánh điện vực sâu — Bốn phút.
+10. Điện huyết vương — Lời thề cuối.
+
+Phạm vi
+- Thêm hội thoại đầu tầng, chưa thêm hoạt cảnh giữa trận hoặc đoạn kết mới.
+- Không thay chỉ số, sát thương, kỹ năng, bản đồ, quái, boss, phần thưởng hay
+  điều kiện qua cổng. Lời thoại được viết theo cơ chế và chủ đề map hiện tại.
+- Khi đọc thoại, thời gian và điều khiển dừng; AI không khởi động đòn đánh hay
+  triệu hồi. Đóng thoại khôi phục Playing và hành vi chiến đấu như trước.
+- Tầng 9 giữ đủ 240 giây trong lúc đọc/chờ kết nối. Đồng hồ chỉ chạy khi Playing.
+- Tầng 8 không bắt hai người tách nhánh; tầng 10 không đổi lựa chọn boss hiện có.
+- Victory vẫn đi qua điều kiện hoàn tất tầng/cổng hiện tại, không do lời thoại cấp.
+
+Mã nguồn
+- Assets/Scripts/UI/CampaignStoryChapter.cs: toàn bộ lời thoại tầng 2–10.
+- Assets/Scripts/UI/LevelOneStory.cs: bộ phát dùng chung; giữ tên lớp cũ để tránh
+  đổi định danh không cần thiết. StoryLevel xác định chương, LineIndex xác định câu.
+- GameManager mở Story sau khi tạo xong từng tầng. LanSessionBridge áp dụng tầng
+  truyện từ snapshot trước khi cập nhật UI/trạng thái Client.
+- Các guard AI chỉ áp dụng trong Story, không thay logic chiến đấu khi Playing.
+
+Kiểm thử tự động
+- Development build: -campaignStorySmoke kiểm tra cả chiến dịch.
+- Solo: thêm -storyStart 9 để kiểm tra mở trực tiếp tầng 9 từ menu.
+- Host: -campaignStorySmoke -lanHost -lanPort 28780.
+- Client: -campaignStorySmoke -lanJoin 127.0.0.1 -lanPort 28780.
+- Client đầu tự thoát ở câu 2 tầng 9. Sau CAMPAIGN_HOST_REJOIN_READY, chạy Client
+  mới với cùng tham số và thêm -storyReconnect để kiểm tra nối lại tại tầng 9.
+- Probe dùng điều kiện qua tầng giả lập (xóa bộ đếm quái, thu đủ chìa) chỉ để kiểm
+  tra luồng truyện và tiến trình, không phải kiểm thử đánh thắng/cân bằng combat.
+- Probe chỉ tồn tại trong Editor/Development, chỉ chạy khi có tham số kiểm thử.
+- LABYRINTH_TEST_SAVE_DIR tách save khi chạy batchmode; không dùng save thật.
+- Ảnh UI render kiểm tra bố cục tạm tắt Light2D; không dùng để nghiệm thu ánh sáng.
+
+Kết quả kiểm tra ngày 19/10/2026
+- Build Windows x64 Development thành công, không lỗi biên dịch C# hoặc shader.
+- Solo: PASS 10/10 tầng, đọc đủ lời thoại, giữ HP/số quái/đồng hồ khi đọc; các điều
+  kiện chìa khóa, chuyển tầng và Victory vẫn dùng luồng hiện có.
+- Host/Client loopback: PASS 10/10 tầng. Client bấm tiếp câu, Host đọc các câu tiếp
+  theo hoặc Client bỏ qua; lệnh câu cũ bị từ chối. Client đầu đi qua tầng 1–8 rồi
+  thoát ở câu thứ hai tầng 9; Client mới nhận đúng tầng 9/câu thứ hai và hoàn tất
+  tầng 9–10 với Host. Đây không phải kiểm thử trên hai máy LAN vật lý.
+- Tầng 9 giữ đúng 240 giây trong Story, kể cả lúc chờ kết nối lại; đồng hồ giảm
+  sau khi chuyển Playing. PASS mở trực tiếp tầng 9 từ lựa chọn màn Solo.
+- Regression tầng 1: PASS đọc hết/bỏ qua, Restart, sát thương và Pause sau thoại;
+  tầng 2 giờ mở đúng chương mới. Không sửa file save thật.
+- Toàn bộ ký tự Solo/LAN có trong font. Không phát hiện tràn chữ trong các kiểm
+  tra UI đã chạy; đã xem ảnh hộp thoại Solo tầng 9 và Client tầng 6 ở 1280x720.
+- Các log kiểm tra cuối không có C# exception hoặc STORY_SMOKE_FAIL.
+- Thư mục bằng chứng: D:/tl-campaign-story-20261019/.
+  build.log, solo.log, host.log, client.log, rejoin.log, direct-level9.log,
+  regression.log. Ảnh nằm trong Evidence/campaign-<Solo|Host|Client>-<tầng>.png.
+- Bản chạy: D:/tl-campaign-story-20261019/Build/TheLabyrinth.exe.
+  Sao chép TOÀN BỘ thư mục Build khi chuyển sang máy khác; hai bên dùng bản này.
+- Mã nguồn các file thay đổi đã đối chiếu hash với nguồn build kiểm thử.
+  Catalog project được cập nhật; bản trước cập nhật giữ tại
+  D:/tl-campaign-story-20261019/Evidence/LanAssetCatalog.before-campaign.asset.
+- Bản build tầng 1 trước đó vẫn nằm trong D:/tl-story-validation-20261019/Build/.

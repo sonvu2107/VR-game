@@ -1,0 +1,47 @@
+NHỊP TRUYỆN THEO HÀNH ĐỘNG — 20/10/2026
+
+Tầng 1: tỉnh lại sau cảnh mở đầu → bước đi tìm người → phát hiện bia →
+đọc bia (tùy chọn) → rời bia mới suy nghĩ về đường xuống → gặp quái đầu
+→ phản ứng sau khi hạ quái, chờ lúc không còn địch gần → cổng mở → đi tiếp.
+Nếu không đọc bia, câu cổng mở không viện dẫn lời trên bia.
+
+Tầng 2–10: lời vào tầng nối với hành trình trước, không kể trước vật thể
+chưa khám phá. Tầng 6/9/10 có câu thay thế nếu chưa biết manh mối trước đó.
+Tầng 8 chỉ ghép đủ hai chìa mới giải thích mạng sống Vua Xương là khóa.
+Đọc bia/nhặt chìa không tiết lộ trước toàn bộ đáp án.
+
+Phản ứng sau bia chỉ kích hoạt khi người vừa đọc đi xa hơn 2 đơn vị.
+Các câu dài chờ lúc không có địch sống trong bán kính 6 đơn vị quanh người
+chơi còn sống. Có khoảng nghỉ 1,2 giây giữa các câu; lời nguy hiểm có thể
+chen vào. Bỏ lời lỗi thời khi đã đọc bia, hạ quái, kích hoạt hoặc mở cổng.
+Mỗi mốc chỉ ghi một lần/tầng. Đọc lại không tạo độc thoại lặp.
+Backspace bỏ câu, J xem nhật ký; không dừng gameplay.
+
+Host sở hữu hàng đợi/mốc/câu và gửi cue/version/thời gian/mask cho Client.
+Không thêm điều kiện qua tầng, không đổi chiến đấu, chìa hay bộ đếm giờ.
+Giao thức LAN 12 (lịch sử truyện và quyền hiển thị F do Host gửi); hai bên phải dùng cùng bản.
+
+KIỂM TRA
+Unity 2022.3.10f1, bản Development, build-final.log: LAN_BUILD_SUCCESS.
+Nguồn sáu script thay đổi đã khớp SHA-256 với bản build riêng.
+Solo đủ 10 tầng: STORY_SMOKE_PASS; kiểm tra thêm nhánh không đọc bia,
+đứng yên sau đọc chưa phát mốc, rời bia mới phát, gặp quái trước khi hạ,
+và lời giải tầng 8 không bị tiết lộ trong bản đọc bia chưa ghép đủ chìa.
+F đọc/đọc lại/bỏ qua, nhật ký, lửa, chìa, boss và kết thúc tiếp tục đạt.
+Probe tự động dùng fixture vị trí/thời gian/sát thương, không thay thế
+đánh giá nhịp truyện bằng một lượt chơi tay hoàn chỉnh.
+Bản chạy thử: D:/tl-story-flow-20261020/FinalBuild/TheLabyrinth.exe
+Log: D:/tl-story-flow-20261020/.
+LAN Host đủ 10 tầng PASS; Client ngắt/vào lại giữa mở đầu và ở tầng 8, hoàn tất tầng 10 PASS. Chạy nhiều tiến trình trên cùng máy; chưa thử hai máy vật lý.
+HUD tự co theo nội dung: dùng TMP.GetPreferredValues đo chiều rộng/cao,
+giới hạn chiều rộng theo Canvas rồi xuống dòng. Độc thoại đệm 16 px hai
+bên/10 px trên dưới; mục tiêu đệm 16/8 px. Neo độc thoại cách đáy 150,
+mục tiêu cách đỉnh 78 để chừa thanh kỹ năng và bộ đếm địch.
+Kiểm tra ảnh: D:/tl-story-hud-20261020/RoomEvidence/room-entry-Solo.png.
+
+MỞ RỘNG HOÀN THIỆN 20/10/2026
+Phòng đầu yên tĩnh và mốc bước khám phá/gặp địch nay áp dụng cả 10 tầng.
+Mỗi tầng có lời riêng; không sao chép độc thoại tầng 1. Hàng đợi ưu tiên
+sự kiện quan trọng, giữ lời giải bệ sau khi cổng mở và giữ câu còn hợp lệ
+khi đọc bia. Xem STORY_CAMPAIGN_COMPLETION.txt để đối chiếu phạm vi,
+bằng chứng kiểm thử cuối Solo/LAN/ngắt và vào lại cùng các giới hạn.

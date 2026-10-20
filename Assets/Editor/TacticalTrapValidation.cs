@@ -56,6 +56,18 @@ public static class TacticalTrapValidation
         }
         foreach (var group in UnityEngine.Object.FindObjectsOfType<TacticalTrapGroup>())
         {
+            if (group.Pattern != TacticalTrapPattern.BossFlanks && group.Cells.Length > 1)
+            {
+                var remaining = new HashSet<Vector2Int>(group.Cells);
+                var pending = new Queue<Vector2Int>(); pending.Enqueue(remaining.First()); remaining.Remove(pending.Peek());
+                while (pending.Count > 0)
+                {
+                    var at = pending.Dequeue();
+                    foreach (var direction in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+                        if (remaining.Remove(at + direction)) pending.Enqueue(at + direction);
+                }
+                if (remaining.Count > 0) throw new InvalidOperationException("Trap cluster is scattered: " + group.Pattern);
+            }
             if (group.MinimumClearance < TacticalTrapPlanner.SafeClearance)
                 throw new InvalidOperationException("Trap route clearance too small.");
             if (group.GetComponentsInChildren<SpikeTrap>().Length != group.Cells.Length)

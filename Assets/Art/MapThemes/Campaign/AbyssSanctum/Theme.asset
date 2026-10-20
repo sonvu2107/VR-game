@@ -19,8 +19,8 @@ MonoBehaviour:
   wallDetails: []
   wallBanner: {fileID: 0}
   pavingSprites: []
-  arcaneFloor: {fileID: 2100000, guid: b3e908ffea91e884d806a87a64950bfc, type: 2}
-  arcaneWalls: {fileID: 2100000, guid: b3e908ffea91e884d806a87a64950bfc, type: 2}
+  arcaneFloor: {fileID: 2100000, guid: a50363e4a22caac4a92f763cd117ba0b, type: 2}
+  arcaneWalls: {fileID: 2100000, guid: a50363e4a22caac4a92f763cd117ba0b, type: 2}
   arcaneProps: {fileID: 2100000, guid: b3e908ffea91e884d806a87a64950bfc, type: 2}
   arcaneTorch: {fileID: 2100000, guid: 1635640876ca8624ebeb20069db0aeeb, type: 2}
   arcaneTrapsPerCombatRoom: 4

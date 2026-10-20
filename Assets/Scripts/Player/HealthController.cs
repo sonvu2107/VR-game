@@ -18,6 +18,7 @@ public class HealthController : MonoBehaviour
     
     void Start()
     {
+        WorldDepthSort.AttachActor(gameObject);
         animator = GetComponent<Animator>();
         startHeart = Mathf.Clamp(startHeart, 1, maxHeartAmount);
         maxHealth = MaxHealth;
@@ -85,6 +86,7 @@ public class HealthController : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+        if (GameManager.isStoryPlaying) return;
         if (LanLaunch.Mode == LanMode.Client || amount <= 0 || currentHealth <= 0) return;
         if (Time.time < invulnerableUntil) return;
 

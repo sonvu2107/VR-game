@@ -14,6 +14,7 @@ public class EnemySummoner : MonoBehaviour
 
     public bool TrySummon()
     {
+        if (GameManager.isStoryPlaying) return false;
         if (config == null || config.summonPrefab == null || Time.time < nextSummonTime) return false;
         activeSummons.RemoveAll(item => item == null);
         if (activeSummons.Count >= config.maxAliveSummons) return false;

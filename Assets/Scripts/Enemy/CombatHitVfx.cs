@@ -38,6 +38,7 @@ public sealed class CombatHitVfx : MonoBehaviour
         renderer.sprite = frames[0];
         renderer.color = Tint(kind);
         renderer.sortingOrder = 40;
+        WorldDepthSort.Attach(effect, position.y);
         effect.AddComponent<CombatHitVfx>().StartCoroutine(Play(renderer, frames));
     }
 

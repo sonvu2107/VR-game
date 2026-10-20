@@ -1,0 +1,29 @@
+Chạy bằng execute_code trong Play Mode của DungeonArcaneCitadel.
+Tạo camera/mesh probe tạm, không đổi frame bẫy thật hoặc ảnh gốc.
+Kết quả đo: bốn frame đều 334x328 px, tâm (255.5,255.5), alpha>=128.
+
+var source=UnityEngine.Object.FindObjectOfType<ArcaneSpikeTrapVisual>();
+var obj=new UnityEngine.GameObject("Trap Alignment Render Probe"); obj.layer=31;
+var visual=obj.AddComponent<ArcaneSpikeTrapVisual>(); visual.Initialize(source.GetComponent<UnityEngine.MeshRenderer>().sharedMaterial);
+var camObj=new UnityEngine.GameObject("Trap Alignment Camera"); var camera=camObj.AddComponent<UnityEngine.Camera>();
+camera.orthographic=true; camera.orthographicSize=0.65f; camera.transform.position=new UnityEngine.Vector3(0,0,-10);
+camera.clearFlags=UnityEngine.CameraClearFlags.SolidColor; camera.backgroundColor=UnityEngine.Color.clear;
+camera.cullingMask=1<<31; camera.allowHDR=false; camera.allowMSAA=false;
+camObj.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>().renderPostProcessing=false;
+var rt=new UnityEngine.RenderTexture(512,512,24,UnityEngine.RenderTextureFormat.ARGB32); camera.targetTexture=rt;
+var texture=new UnityEngine.Texture2D(512,512,UnityEngine.TextureFormat.RGBA32,false);
+var previous=UnityEngine.RenderTexture.active; var rows=new System.Collections.Generic.List<object>();
+try {
+for(int frame=0;frame<4;frame++) {
+ visual.SetFrame(frame); camera.Render(); UnityEngine.RenderTexture.active=rt;
+ texture.ReadPixels(new UnityEngine.Rect(0,0,512,512),0,0); texture.Apply();
+ var pixels=texture.GetPixels32(); int minX=512,minY=512,maxX=-1,maxY=-1;
+ for(int y=0;y<512;y++) for(int x=0;x<512;x++) if(pixels[y*512+x].a>=128) {minX=System.Math.Min(minX,x); minY=System.Math.Min(minY,y);maxX=System.Math.Max(maxX,x);maxY=System.Math.Max(maxY,y);}
+ rows.Add(new {frame=frame,width=maxX-minX+1,height=maxY-minY+1,centerX=(minX+maxX)*0.5f,centerY=(minY+maxY)*0.5f});
+}
+} finally {
+camera.targetTexture=null; UnityEngine.RenderTexture.active=previous; rt.Release();
+UnityEngine.Object.DestroyImmediate(texture);UnityEngine.Object.DestroyImmediate(rt);
+UnityEngine.Object.DestroyImmediate(camObj);UnityEngine.Object.DestroyImmediate(obj);
+}
+return Newtonsoft.Json.JsonConvert.SerializeObject(rows);

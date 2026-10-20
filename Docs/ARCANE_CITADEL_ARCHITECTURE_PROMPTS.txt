@@ -1,0 +1,24 @@
+Bộ kiến trúc mới - Arcane Citadel v1
+Phương pháp: built-in image_gen. Không tái sử dụng atlas game cũ.
+Đầu ra:
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Floors_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Walls_v1.png
+
+Trạng thái: ảnh nguồn nháp, chưa tách Sprite, chưa gán vào scene hoặc RuleTile.
+Cần chuẩn hóa cạnh nối nền, hướng nhìn góc tường và vùng cắt/pivot trước khi tích hợp.
+
+FLOORS PROMPT
+Use case: stylized-concept. Asset type: NEW pixel-art FLOOR TILE atlas for an orthogonal top-down Unity dungeon crawler. Arcane Citadel theme: restrained dark blue-violet cut stone, aged bronze inset trim, sparse turquoise magical runes. Draw an EXACT 4 by 4 grid of sixteen square floor texture tiles covering the entire square canvas edge to edge, equal cells, NO gutters, NO margins, NO grid overlays, NO labels or text. All tiles are flat overhead squares, NOT isometric, NOT floating cubes, no raised bevel around individual cell perimeter. Texture-style game art with crisp pixel clusters, consistent light from upper left, low contrast so characters stand out. Do not use any existing game tile art. Each cell is fully opaque.
+Row 1: four subtle plain blue-violet stone paving variants, large square slabs, shallow mortar grooves.
+Row 2: four worn stone variants: hairline cracks, chipped slab, sparse moss in grooves, faint old scratches.
+Row 3: four ornate accent tiles: turquoise rune inset, bronze diamond inset, small circular teal sigil, bronze geometric border running horizontally through cell.
+Row 4: four more accents: bronze vertical border, bronze right-angle corner border, dark small square floor grate, pale stone center medallion.
+All sixteen cells have the same base stone hue and scale. Plain tiles should have matching edge colors suitable for repetition; avoid black backgrounds and exterior shadows. Actual source art sheet, not a screenshot, no props or walls.
+
+WALLS PROMPT
+Use case: stylized-concept. Asset type: NEW pixel-art modular WALL sprite atlas for an orthogonal top-down Unity dungeon crawler, classic straight-on north wall view with visible narrow top cap and vertical front face; NOT isometric. Theme ancient Arcane Citadel: desaturated blue-violet masonry, aged bronze trims and faint turquoise rune accents, matching stone floor in this theme. Crisp pixel clusters, consistent lighting from upper left. Square image, exact 4 columns by 4 rows of equal cells. Sixteen clearly separated square wall modules, each centered in its own cell with generous genuinely transparent gutters and margins. Nothing overlaps adjacent cells. No labels, no words, no grids, no scenery, no floor backdrop.
+Row 1: four straight horizontal north wall modules, front-facing masonry with narrow top cap: plain stone, cracked stone, bronze-trimmed stone, single glowing teal rune stone. Same height, width and cap alignment.
+Row 2: left end cap; right end cap; outside left corner; outside right corner.
+Row 3: narrow vertical west wall segment; matching vertical east wall segment; inside left corner; inside right corner.
+Row 4: front-facing arch doorway module with open transparent passage; arch doorway sealed with blue-violet stone blocks; short ruined broken wall; decorative tall masonry wall panel with bronze trim.
+These are architectural modular sprites, not room illustrations or 3D cubes. Each object is completely contained within its cell, no shadows beyond cell boundary. Deliver reusable architectural source artwork on actual transparent background.

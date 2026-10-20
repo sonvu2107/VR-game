@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public static bool isGamePaused;
     public static bool isGameOver;
     public static bool isWin;
+    public static bool isStoryPlaying;
 
     public int enemyCount;
     public GameState CurrentState { get; private set; } = GameState.Generating;
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
     public int KeysRequired { get; private set; }
     public float LevelTimeRemaining { get; private set; }
     public bool HasLevelTimeLimit => CurrentLevelDefinition?.HasTimeLimit == true;
+    public LevelOneStory Story { get; private set; }
 
     [Obsolete("Use CurrentLevel instead.")]
     public int CurrentFloor => CurrentLevel;
@@ -73,6 +75,8 @@ public class GameManager : MonoBehaviour
             sessionBridge = GetComponent<GameSessionBridge>();
 
         EnsureLevelDefinitions();
+        Story = gameObject.AddComponent<LevelOneStory>();
+        Story.Initialize(this);
         if (LanLaunch.Mode != LanMode.Solo)
         {
             LanSessionBridge lan = GetComponent<LanSessionBridge>();
@@ -102,6 +106,7 @@ public class GameManager : MonoBehaviour
 
     private void OnConfiguredEnemyDied(EnemyHealth enemy)
     {
+        Story?.RecordGuardianDeath(enemy);
         if (enemy != null && enemy.CountsForLegacyCounter && CurrentState == GameState.Playing)
             EnemyDefeated();
     }
@@ -141,10 +146,16 @@ public class GameManager : MonoBehaviour
     public void Resume()
     {
         if (LanSessionBridge.Active != null && LanSessionBridge.Active.SendClientControl("resume")) return;
-        if (CurrentState != GameState.Paused)
+        if (CurrentState != GameState.Paused && CurrentState != GameState.WaitingForPartner)
             return;
 
         SetState(GameState.Playing);
+    }
+
+    public void WaitForPartner()
+    {
+        if (sessionBridge != null && sessionBridge.HasStateAuthority && CurrentState == GameState.Playing)
+            SetState(GameState.WaitingForPartner);
     }
 
     public void Pause()
@@ -186,6 +197,7 @@ public class GameManager : MonoBehaviour
         if (CurrentState is GameState.GameOver or GameState.Victory)
             return;
 
+        Story?.Record(LevelOneStory.Beat.Kill);
         enemyCount = Mathf.Max(0, enemyCount - 1);
         UpdateCounter();
         RefreshExitState();
@@ -211,7 +223,9 @@ public class GameManager : MonoBehaviour
         advanceRequestPending = false;
         HealthController health = PlayerMovement != null ? PlayerMovement.GetComponent<HealthController>() : null;
         health?.RestoreFullHealth();
+        Story.PrepareLevel(CurrentLevel);
         SetState(GameState.Playing);
+        if (CurrentLevel == 1) Story.BeginOpening();
         LevelChanged?.Invoke(CurrentLevel, TotalLevels);
         FloorChanged?.Invoke(CurrentLevel, TotalLevels);
         RefreshExitState();
@@ -252,7 +266,7 @@ public class GameManager : MonoBehaviour
 
         if (CurrentLevel >= TotalLevels)
         {
-            Win();
+            Story.BeginEnding();
             return;
         }
 
@@ -370,7 +384,8 @@ public class GameManager : MonoBehaviour
     private void SetState(GameState newState)
     {
         CurrentState = newState;
-        isGamePaused = newState == GameState.Paused;
+        isStoryPlaying = newState == GameState.Story;
+        isGamePaused = newState is GameState.Paused or GameState.Story or GameState.WaitingForPartner;
         isGameOver = newState == GameState.GameOver;
         isWin = newState == GameState.Victory;
 
@@ -381,7 +396,7 @@ public class GameManager : MonoBehaviour
         if (winUI != null)
             winUI.SetActive(newState == GameState.Victory);
 
-        Time.timeScale = newState is GameState.Paused or GameState.GameOver or GameState.Victory ? 0f : 1f;
+        Time.timeScale = newState is GameState.Paused or GameState.Story or GameState.WaitingForPartner or GameState.GameOver or GameState.Victory ? 0f : 1f;
 
         if (PlayerMovement != null)
             PlayerMovement.enabled = newState == GameState.Playing &&
@@ -401,6 +416,23 @@ public class GameManager : MonoBehaviour
                                      enemyCount, KeysCollected, KeysRequired));
     }
 
+    public void BeginStoneStory()
+    {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return;
+        if (CurrentState == GameState.Playing) SetState(GameState.Story);
+    }
+
+    public void FinishOpeningStory()
+    {
+        if (sessionBridge != null && !sessionBridge.HasStateAuthority) return;
+        if (CurrentState != GameState.Story || !Story.IsComplete) return;
+        if (LanSessionBridge.Active != null && !LanSessionBridge.Active.IsReady) return;
+        if (Story.Ending) { Win(); return; }
+        Story.FinishOpeningPresentation();
+        SetState(GameState.Playing);
+        RefreshExitState();
+    }
+
     public bool CollectKey()
     {
         if (sessionBridge != null && !sessionBridge.HasStateAuthority) return false;
@@ -408,6 +440,7 @@ public class GameManager : MonoBehaviour
             return false;
 
         KeysCollected++;
+        Story.Record(KeysCollected == 1 ? LevelOneStory.Beat.KeyOne : LevelOneStory.Beat.KeyTwo);
         UpdateCounter();
         RefreshExitState();
         return true;

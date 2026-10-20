@@ -1,0 +1,73 @@
+KIỂM THỬ LẠI CỐT TRUYỆN — 20/10/2026
+
+CẬP NHẬT SAU KIỂM TRA
+Ba điểm bên dưới đã được sửa và kiểm thử lại. Xem
+Docs/STORY_FIXES_20261020.txt để biết thay đổi và bằng chứng mới.
+Phần còn lại giữ nguyên kết quả kiểm tra trước khi sửa.
+
+KẾT LUẬN
+Luồng chính hoàn tất từ tầng 1 đến 10 trong kiểm thử Solo/LAN.
+Chưa hoàn thiện về tính nhất quán của nhật ký, một câu Solo và dấu F
+phía Client. Lượt này chỉ kiểm tra; không sửa mã gameplay/cốt truyện.
+
+BẰNG CHỨNG MỚI
+Toàn bộ file C# dưới Assets/Scripts khớp SHA-256 với project kiểm thử
+D:/tl-story-validation-20261019 tại thời điểm bắt đầu.
+Bản chạy: D:/tl-interaction-marker-20261020/CleanupBuild/TheLabyrinth.exe.
+Log mới: D:/tl-story-audit-20261020/
+- solo.log:44370: STORY_SMOKE_PASS NARRATIVE Solo levels=1-10.
+- host.log:43797: STORY_SMOKE_PASS NARRATIVE Host levels=1-10.
+- client-intro.log:98: ngắt Client giữa cảnh mở đầu.
+- host.log:458: Host giữ cảnh để chờ vào lại.
+- client.log:3068: ngắt Client sau khi ghép nửa bệ tầng 8.
+- host.log:35660: Host chờ vào lại tại tầng 8.
+- client-rejoin.log:86–108: phục hồi chìa, nhật ký, cơ chế, nửa bệ.
+- client-rejoin.log:1492: STORY_SMOKE_PASS NARRATIVE Client levels=8-10 rejoin.
+Client trước khi ngắt đã hoàn thành tầng 1–7; sau vào lại hoàn thành 8–10.
+Không thấy Error, Exception hoặc STORY_SMOKE_FAIL trong các log mới.
+
+PHẠM VI ĐÃ ĐẠT
+- Cảnh mở đầu/kết thúc, ẩn renderer map, bỏ qua và phục hồi trạng thái.
+- Phòng xuất phát không có quái; thoại gặp quái hiển thị ở phòng chiến đấu.
+- Đọc F, cơ chế G, bỏ qua, đọc lại, nhật ký và tiếng Việt không tràn chữ.
+- Chìa, lính canh, sát thương boss, độc/thuốc, giới hạn thời gian, cổng về.
+- Tương tác 669 vật trang trí của lượt Solo này; thử chặn qua vật cản,
+  chống spam, ID không hợp lệ, ghi chú không nhân bản và đồng bộ Client.
+- Đã xem ảnh encounter-Solo-6.png và inspection-urgent-stack.png trong
+  SoloEvidence: khung vừa nội dung, hai khung tách nhau, marker F/▼.
+  Ảnh urgent-stack dùng mốc cảnh báo giả lập để kiểm tra bố cục;
+  không có nghĩa tầng 1 thực tế có giới hạn một phút.
+
+CÁC ĐIỂM CẦN SỬA
+1. Nhật ký có thể kể việc chưa làm — xác nhận qua đường gọi mã nguồn.
+   StoryInteractions.cs:168 dùng BeatText cố định, trong khi lời dẫn
+   trực tiếp dùng FlowText với điều kiện manh mối/cơ chế.
+   Ví dụ: qua tầng 6 mà không thắp lửa, nhật ký Exit vẫn nói
+   "Để ngọn lửa lại đây"; qua tầng 8 không ghép bệ, nhật ký Exit vẫn nói
+   "Ta đã có lời giải". Enter tầng 9/10 cũng có thể nhắc lời giải quá sớm.
+   Hướng sửa: lưu nội dung sự kiện theo trạng thái lúc xảy ra và đồng bộ
+   bản ghi đó; tránh tái dựng lịch sử bằng trạng thái gameplay hiện tại.
+   Bổ sung kiểm thử nhật ký ở nhánh bỏ qua bia, lửa và bệ hai chìa.
+
+2. Câu trả lời Solo tầng 6 chưa tự nhiên — xác nhận khi đọc nội dung.
+   CampaignStoryChapter.cs:63 dùng chung câu "Ta nghe thấy rồi..."
+   cho Solo và LAN. Solo đang đọc ghi chép trên đá, không có người
+   đồng hành vừa gọi. Tách phản hồi Solo/LAN cho đoạn này.
+
+3. Dấu F phía Client chưa xét vật cản — xác nhận qua mã nguồn,
+   chưa tái hiện riêng bằng ảnh Client đứng sau tường.
+   StoryDecorationInspection.cs:90 chỉ lọc khoảng cách ở Client;
+   Host dùng CanInspect có kiểm tra đường nhìn. Khi đủ gần nhưng
+   bị tường/vật rắn ngăn, Client có thể hiện F mà nhấn không có kết quả.
+   Cần thống nhất điều kiện hiển thị với xác nhận của Host.
+
+GIỚI HẠN
+Đây là kiểm thử tự động trên bản chạy riêng, save riêng. Không điều khiển
+Unity Play đang mở của người dùng; không thay đổi save đang chơi.
+Probe dùng fixture vị trí, AI, sát thương và thời gian; không thay thế
+một lượt chơi tay đầy đủ, đánh giá cân bằng hoặc mọi seed sinh map.
+LAN chạy nhiều tiến trình cùng máy, chưa thử hai máy vật lý.
+Ảnh kiểm thử có điều chỉnh đường render để chụp UI và tắt đèn 2D;
+chỉ dùng đánh giá bố cục, không kết luận về ánh sáng thực tế trong Play.
+Các PASS hiện tại không bao phủ tính đúng nghĩa của nhật ký khi bỏ qua
+toàn bộ cơ chế tùy chọn; vì vậy không phủ nhận lỗi số 1.

@@ -1,0 +1,12 @@
+Method: built-in image_gen
+Output: Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Props_v1.png
+Status: draft transparent prop sheet; not yet sliced or integrated.
+
+Create a production-oriented 2D game environment prop sprite sheet for a top-down pixel-art dungeon crawler in Unity. NEW THEME: ancient arcane citadel, dark desaturated blue-violet stone, aged bronze edging, luminous turquoise magic, tiny purple accents. Cohesive hand-crafted pixel art, crisp hard pixel clusters, readable silhouettes, restrained detail, no blurry painterly shading. Camera straight-on three-quarter top-down like classic Zelda dungeon props, NOT isometric diamond bases.
+Layout: square image, exactly 4 columns by 4 rows of equal-sized cells. One fully isolated object per cell, centered horizontally, floor contact at same baseline within each cell; generous empty transparent margins, no overlaps, no grid lines, no labels, no text, no scenery behind objects. Genuine transparent background.
+Objects row-major:
+Row1: intact square runic stone pillar; broken runic stone pillar; bronze brazier with cyan flame; carved wall torch with cyan flame.
+Row2: sealed bronze treasure chest; open treasure chest with turquoise crystals; reinforced wooden supply crate with bronze corners; pair of ceramic potion urns.
+Row3: tall turquoise crystal cluster on stone plinth; smaller purple crystal cluster; hooded stone guardian statue holding a teal orb; ancient arcane book on bronze lectern.
+Row4: isolated narrow runic stone doorway with transparent opening; small circular cyan rune seal on the ground viewed in flattened perspective; weathered blue-purple hanging banner with bronze crest; scattered cracked stone rubble.
+Objects must all fit completely within their own cells. No drop shadows extending into adjacent cells. Deliver actual reusable art, not a mockup or screenshot.

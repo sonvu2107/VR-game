@@ -67,6 +67,7 @@ public class MiniBossController : MonoBehaviour
 
     public bool TrySpecial(HealthController target)
     {
+        if (GameManager.isStoryPlaying) return false;
         if (target == null || target.currentHealth <= 0 || health == null || health.IsDead ||
             combat == null || IsUsingSpecial || Time.time < nextSpecialTime)
             return false;

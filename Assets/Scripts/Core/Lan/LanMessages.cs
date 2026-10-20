@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class LanMessage
 {
     public string type;
-    public const int CurrentProtocol = 2;
+    public const int CurrentProtocol = 12;
     public int protocol = CurrentProtocol;
     public string catalog;
     public string error;
@@ -20,6 +20,28 @@ public sealed class LanMessage
     public float timeRemaining;
     public int score;
     public int sequence;
+    public DecorationInfo[] decorations;
+    public int[] inspectableDecorationIds;
+    public DecorationNote[] decorationNotes;
+    public bool decorationNotesIncluded;
+    public int decorationId, inspectionVersion;
+    public float inspectionSeconds;
+    public string inspectionText;
+    public int[] narrativeMasks;
+    public LevelOneStory.NarrativeEntry[] narrativeHistory;
+    public bool narrativeHistoryIncluded;
+    public int narrativeCue, narrativeVersion;
+    public float narrativeSeconds;
+    public Vector3 narrativeExit;
+    public bool storyEnding, storyOpening;
+    public int storySession, mechanismStage;
+    public string[] dialogueArchive;
+    public bool guideAvailable;
+    public Vector3 guideTarget;
+    public int storyLine;
+    public bool storySkip;
+    public bool stoneRead;
+    public Vector3 stonePosition;
     public int audio;
     public float volume = 1f;
     public float pitch = 1f;

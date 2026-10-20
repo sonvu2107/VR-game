@@ -1,0 +1,95 @@
+MAP THỬ ARCANE CITADEL
+
+Mở Assets/Scenes/DungeonArcaneCitadel.unity rồi bấm Play để thử solo.
+Scene có bản xem trước trong Edit Mode, tự dọn trước khi sinh map runtime.
+Không chạy lại menu Create nếu scene đã tồn tại: công cụ từ chối ghi đè.
+
+7 phòng nối bằng hành lang rộng, dùng bố cục Courtyard và tiến trình level
+hiện có. Nền, tường hiển thị và trang trí cột/tượng/rương dùng
+3 PNG mới trong Assets/Art/MapThemes/ArcaneCitadel. Không dùng hình nền,
+tường hoặc cả bộ decor cũ trong scene này; chỉ tái sử dụng đuốc chuyển động.
+Nhân vật, quái, HUD, cổng
+gameplay giữ lại; Tilemap cũ chỉ giữ collision/NavMesh, renderer đã ẩn.
+
+Không sửa metadata sprite hoặc thêm package. Mỗi atlas dùng một mesh có
+UV chọn vùng ảnh và một material. Point filter, không mipmap/compression.
+Mesh preview lưu thành asset để mở lại scene vẫn có hình. Mesh runtime
+được dọn khi chuyển tầng/restart. Map và theme cũ vẫn giữ nguyên.
+
+Kiểm tra tại Unity 2022.3.10f1: không có lỗi Console ở lúc kiểm tra;
+Play Mode có 7 phòng, NavMesh có đường tới cả 7, 5 tim, minimap và cổng;
+preview Edit Mode không lọt vào runtime, decor cũ không sinh.
+Cảnh báo còn sẵn: Player AudioSource thiếu clip, Treasure prefab chưa gán.
+
+Giới hạn: đây là bản thử solo. LAN replication hiện dựa trên SpriteRenderer/
+Tilemap, chưa hỗ trợ nhóm mesh atlas mới; không công bố map này dùng LAN.
+Các cột, rương và tượng có BoxCollider2D nhỏ ở chân, không phải
+collider phủ toàn bộ chiều cao ảnh. NavMeshModifierVolume đánh dấu vùng
+chân là Not Walkable (có đệm cho quái), tạo trước khi bake NavMesh.
+Ô chân được giữ chỗ để không sinh người chơi/quái/vật phẩm vào vật cản.
+Rương trang trí chưa có tương tác mở/nhận đồ.
+Đuốc dùng bộ Decor/Torches/torch_1..4 cũ với AnimatedDecor, 5.5 fps và
+ánh sáng/halo nhấp nháy. Shader ArcaneTorchPalette đổi pixel lửa sáng sang
+xanh ngọc, giữ thân tối; material riêng nên đuốc của map cũ không đổi màu.
+Đuốc chỉ được tạo trong Play Mode, không lưu Sprite tạm vào preview scene.
+Đuốc có đế đồng gắn vào mặt tường, nằm lệch cột; scale cố định 0.55,
+tắt bobbing và breathing thay đổi tỷ lệ; giữ animation frame và flicker.
+Halo nhỏ/mờ hơn. Bục sách đã được bỏ khỏi phòng đầu vì không hợp bố cục.
+Thân gạch dùng chung một vùng texture cho tường ngang/dọc/các ô góc.
+Viền đá đi theo đường bao ngoài, quay UV theo hướng dọc và nối tại góc L;
+không còn ghép mặt tường ngang với một cột dọc có tỷ lệ gạch khác nhau.
+Không dùng các góc AI vẽ nghiêng; mối nối tường còn cần mỹ thuật tinh chỉnh.
+Chưa build bản Windows mới hoặc chạy lại toàn bộ 10 tầng cho scene này.
+Đã thêm scene vào Build Settings để Restart có thể nạp lại đúng tên scene.
+
+Kiểm tra bổ sung collider và đuốc:
+- Sau khi bỏ bục sách còn 16 collider/volume; không có NavMesh đi được
+  tại tâm của cả 16 chân.
+- NavMesh vẫn nối tới đủ 7 phòng; Restart còn đúng 1 root, 17 vật cản,
+  14 đuốc, không bị sinh trùng hoặc sót preview ở lần kiểm tra trước.
+- Mô phỏng Physics2D riêng mới nhất: 128 trường hợp (16 chân x 4 hướng x đi bộ/dash),
+  dùng kích thước collider Player (0.39 x 0.49), MovePosition ở 5/18.75 units/s,
+  bước 0.02 giây; không xuyên qua. Đây là test engine có kiểm soát,
+  không thay thế kiểm thử bằng bàn phím trên máy người chơi.
+- Frame đuốc có đổi theo thời gian, Light2D và halo đều xanh ngọc;
+  shader được hỗ trợ, không có lỗi compile shader hoặc lỗi Console lúc kiểm tra.
+
+BẪY GAI GÂY SÁT THƯƠNG
+- ArcaneCitadelTheme.arcaneTrapsPerCombatRoom mặc định 2; số thực tế lấy
+  giá trị lớn hơn giữa theme và cấu hình level. Level 1 có 6 bẫy / 3 phòng
+  Combat; level 4 giữ mức 3 bẫy mỗi phòng từ cấu hình chiến dịch hiện có.
+- Không đặt trong Start/Treasure/Boss/Exit hoặc hành lang. Giữ chỗ ô đặt
+  bẫy bằng PrefabPlacer, tránh vật thể, người chơi/quái/vật phẩm đã sinh.
+- Tái sử dụng SpikeTrap: an toàn 2 giây, cảnh báo 0.55 giây, bật gai
+  1.25 giây. An toàn/cảnh báo không gây sát thương; Active mới gây 1 HP
+  (nửa tim), cooldown bẫy 0.75 giây; vẫn tôn trọng miễn thương của HealthController.
+- Thay bộ gai peaks cũ bằng ArcaneCitadel_Spikes_v1.png mới, cùng đá xanh tím,
+  khung đồng và rune với map. Atlas 2x2: thu gai/xanh, cảnh báo vàng,
+  nhú gai/vàng, bật gai/đỏ. ArcaneSpikeTrapVisual đọc UV trên mesh, không sửa
+  metadata Sprite; SpriteRenderer fallback cũ được ẩn. Theme tham chiếu
+  ArcaneSpikes.mat; renderer nằm trên nền, dưới người chơi. Trigger không
+  chặn đường đi. Prompt và nguồn tạo: Docs/ARCANE_CITADEL_TRAP_PROMPT.txt.
+- Kiểm tra bằng ArcaneSpikeTrapValidation.RunDamageChecks() trong Play Mode:
+  PhysicsScene2D riêng, trigger thật và HealthController thật. Máu quan sát
+  10,10,9,10,10,9 tương ứng Safe, Warning, Active, cooldown (đã xóa i-frame
+  của mục tiêu để kiểm tra riêng cooldown bẫy), ra ngoài, vào lại.
+  Probe không di chuyển/gây sát thương người chơi thật và tự dọn scene thử.
+- ObserveCycle() quan sát sprite của bẫy thật qua đủ 4 ảnh theo thời gian.
+  Quan sát các frame atlas 0 → 1 → 2 → 3 trong Play Mode.
+  Pause giữ nguyên thời gian pha bẫy; Resume tiếp tục chu kỳ.
+  Đây là bản thử solo; chưa xác nhận bẫy trong LAN cho map mesh này.
+
+CĂN FRAME VÀ KHÓA KÍCH THƯỚC BẪY ARCANE
+- Không sửa PNG hay metadata sprite. UV lấy đúng khung đế đã đo trong ảnh
+  1254x1254, thay vì chia đều ô có khoảng trong suốt không cân nhau:
+  frame 0: (54,61,531,520), frame 1: (669,61,532,520),
+  frame 2: (54,668,531,520), frame 3: (669,668,533,520), tọa độ từ trên trái.
+- Đưa cả 4 khung vào cùng một quad rộng 0.85, cao 0.832392 đơn vị, tâm (0,0).
+  Cần đo lại các khung nếu thay ảnh atlas v1 bằng hình khác.
+- Bẫy Arcane không rung scale ±6% hoặc tăng scale 15% nữa; collider cũng
+  giữ kích thước 0.85x0.85 qua các pha. Bẫy legacy không dùng atlas vẫn giữ
+  hiệu ứng cũ. Chỉ gai/rune đổi frame; sát thương và nhịp bẫy giữ nguyên.
+- Render kiểm tra cô lập 512x512, ortho 0.65: cả 4 frame có vùng alpha>=128
+  bằng 334x328 px, cùng tâm pixel (255.5,255.5).
+- Quan sát một chu kỳ thật: ARCANE_TRAP_ALIGNMENT_PASS, không đổi tâm,
+  kích thước mesh/collider hoặc scale. Kiểm tra sát thương vẫn PASS.

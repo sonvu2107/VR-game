@@ -1,0 +1,87 @@
+HOÀN THIỆN TÁM NHÓM NHÁNH TRUYỆN — 20/10/2026
+
+THAY ĐỔI
+1. Mốc Vua Xương chết lưu số quái còn lại sau cái chết đang xử lý.
+   Không đổi thứ tự trừ quái hoặc điều kiện mở cổng trong gameplay.
+   Còn lính và không còn lính có hai câu riêng.
+2. Phản ứng sau đọc ở tầng 4/6/8 xét cơ chế và số chìa hiện tại.
+   Nhật ký không giục làm lại việc đã hoàn thành. Tóm tắt Read lấy
+   đúng nội dung đang đọc, gồm cả bệ đã hiện lời giải.
+3. Ghép ngay hai chìa ghi "Cả hai chìa đã được đặt vào bệ", không
+   dựng ra một giai đoạn thiếu chìa. Ghép từng chìa vẫn có hai bước.
+4. Toàn đoạn đáp sau boss chết ở tầng 5/10 chuyển sang kết quả trận
+   đánh; phân biệt còn lính và đã mở cổng. Manh mối thư viện giữ lại.
+5. Tất cả câu liên quan đến chìa tầng 8 xét số chìa và số nửa đã ghép.
+   Có đủ chìa không còn bị giục đi tìm; ghép nửa đầu không bị giục
+   ghép lại nửa đó.
+6. Solo/LAN cùng được giới thiệu thư viện ở bia tầng 6. Tầng 7 không
+   tự giới thiệu thư viện nếu chưa có manh mối. Bia tầng 9 nhắc tên
+   Vua Xương cùng thời hạn bốn phút, kể cả bỏ bệ tầng 8.
+7. Lời cập nhật tình huống dùng KỴ SĨ/LỜI KỂ/NGƯỜI ĐỒNG HÀNH;
+   không gắn nhãn GHI CHÉP CÒN LẠI. Lời khắc lịch sử giữ nhãn riêng.
+8. Quan sát cột/di vật xét đã đọc bia, đã biết bệ và đã giải xong.
+   Tượng tầng 10 có câu sau khi vua chết. Host tạo nội dung quan sát,
+   Client nhận cùng nội dung và ghi chú như trước.
+
+NHÁNH BỎ QUA
+- Không bắt đọc bia hoặc kích hoạt G để mở cổng.
+- Không đọc bia: dùng lời dẫn không giả định đã biết manh mối.
+- Đọc rồi bỏ qua: vẫn lưu bản chép để xem lại trong J như thiết kế.
+- Đọc muộn sau lấy chìa/kích hoạt/hạ boss: dùng trạng thái hiện tại.
+- Lời đã ghi trong nhật ký không bị manh mối tìm sau viết lại.
+- Bỏ qua mở đầu/kết thúc và thao tác trong LAN giữ cơ chế hiện có.
+
+PHẠM VI MÃ
+CampaignNarrative, StoryFlow, LevelOneStory, CampaignStoryChapter,
+StoryDecorationInspection và DecorationInspection.
+Thêm Editor/StoryBranchValidation để kiểm tra các nhánh nội dung.
+Không đổi quái, AI, sát thương, va chạm, phần thưởng, chìa, bộ đếm
+thời gian hoặc điều kiện qua tầng. Giao thức LAN vẫn là 12; catalog
+đã đổi theo mã nguồn nên cả hai bên phải dùng cùng bản cập nhật.
+
+KIỂM THỬ NHÁNH
+StoryBranchValidation.Run chạy 704 tổ hợp và 1.523 kiểm tra nội dung.
+Bao gồm đọc/không đọc, Solo/LAN, manh mối tầng trước, số chìa, cơ chế,
+đọc sau boss chết; gọi handler boss chết và TryActivateMechanism thật
+để kiểm tra nhật ký.
+Các trường hợp cụ thể:
+- Boss cuối cùng -> không ghi còn lính; boss chết còn ba lính -> vẫn
+  ghi cần xử lý lính.
+- G trước F ở tầng 4/6/8 -> phản ứng và nhật ký không giục làm lại.
+- Cầm hai chìa ghép ngay -> không có câu thiếu nửa sau.
+- Hội thoại sau boss và số chìa không tự mâu thuẫn.
+- Solo/LAN có cùng thông tin thư viện và tên Vua Xương.
+- Lời quan sát không biết trước bia/bệ; giải xong được ghi nhận.
+
+Bằng chứng: D:/tl-story-eight-fixes-20261020/
+- build.log: STORY_BRANCH_VALIDATION_PASS scenarios=704 assertions=1523.
+- matrix.jsonl: đầu ra theo từng tổ hợp trạng thái.
+- last-boss.txt và mechanism-history.txt: ghi chép từ handler thật.
+
+KIỂM THỬ GAME VÀ LAN ĐÃ HOÀN TẤT
+- build.log:6988: LAN_BUILD_SUCCESS, Unity 2022.3.10f1 Development.
+- solo.log:44876: STORY_SMOKE_PASS Solo tầng 1–10 tới kết thúc.
+- host.log:44325: STORY_SMOKE_PASS Host tầng 1–10 tới kết thúc.
+- client-intro.log:98: ngắt giữa mở đầu rồi vào lại thành công.
+- client.log:3335: ngắt tại bệ tầng 8 khi mới ghép một nửa.
+- client-rejoin.log:1842: STORY_SMOKE_PASS Client tầng 8–10 sau vào lại;
+  tiến trình chìa, bệ, nhật ký và bản chép hội thoại được phục hồi.
+- journal-parity.json: 17/17 so sánh nội dung từng tầng khớp Host:
+  tầng 1–7 trước ngắt, tầng 1–10 sau vào lại.
+- Solo kiểm tra đủ 669 đồ trang trí trong lượt map này.
+- Client vẫn ẩn F khi Host chặn đường nhìn, hiện lại khi đường thông.
+- Kiểm thử giao diện, chữ tiếng Việt, đọc lại, bỏ qua, chìa, thời gian,
+  sát thương boss và cổng về hoàn tất. Đã xem ảnh nhật ký tầng 8.
+- Không thấy STORY_SMOKE_FAIL hay exception runtime trong log lượt này.
+- Toàn bộ C# Assets/Scripts khớp project build; catalog LAN đồng bộ
+  có kiểm tra bản workspace không bị thay đổi đồng thời.
+
+Trong Unity: dừng Play, chờ biên dịch, Play lượt mới để ghi lịch sử
+đầy đủ từ đầu. Hai bên LAN dùng cùng bản mới.
+
+GIỚI HẠN
+Ma trận là kiểm thử logic, không phải 704 lượt chơi tay. Các tổ hợp
+đối chiếu không đại diện mọi seed sinh map hoặc mọi thứ tự di chuyển.
+Lượt chạy game tự động dùng save riêng và fixture vị trí/AI/sát thương/
+thời gian. LAN chạy nhiều tiến trình cùng máy, chưa thử hai máy vật lý.
+Không điều khiển cửa sổ Unity đang mở, không thay đổi save người dùng.

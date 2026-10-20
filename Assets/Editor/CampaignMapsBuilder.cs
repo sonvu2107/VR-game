@@ -185,7 +185,14 @@ public static class CampaignMapsBuilder
             string themePath = folder + "Theme.asset";
             var theme = AssetDatabase.LoadAssetAtPath<CourtyardTheme>(themePath);
             if (theme == null) { theme = ScriptableObject.CreateInstance<CourtyardTheme>(); AssetDatabase.CreateAsset(theme, themePath); }
-            theme.arcaneFloor = theme.arcaneWalls = theme.arcaneProps = theme.arcaneSpike = material;
+            // Giữ lựa chọn low-noise sau khi rebuild/import atlas, không bật lại nền nhiễu.
+            var lowNoise = AssetDatabase.LoadAssetAtPath<Material>(folder + "LowNoiseFloorWalls.mat");
+            if (lowNoise != null)
+            {
+                lowNoise.mainTexture = texture; EditorUtility.SetDirty(lowNoise); AssetDatabase.SaveAssetIfDirty(lowNoise);
+            }
+            theme.arcaneFloor = theme.arcaneWalls = lowNoise != null ? lowNoise : material;
+            theme.arcaneProps = theme.arcaneSpike = material;
             theme.arcaneTorch = torch; theme.usesCampaignAtlas = true;
             theme.layoutStyle = (CampaignLayoutStyle)i; theme.mapDisplayName = Names[i];
             theme.torchLightColor = Flames[i]; theme.atlasUvs = rects;
@@ -319,6 +326,25 @@ public static class CampaignMapsBuilder
                     level>=3 && (theme==null || !theme.usesCampaignAtlas || (int)theme.layoutStyle!=level-3))
                     throw new InvalidOperationException("Wrong campaign theme at level "+level);
                 TacticalTrapValidation.ValidateCurrent(generator);
+                if (level == 10)
+                {
+                    var candidates = generator.GetFinalBossCandidates();
+                    if (candidates.Count != 1 || candidates[0].GetComponent<SkeletonKingController>() == null)
+                        throw new InvalidOperationException("Final boss must be Skeleton King.");
+                    var finalBoss = UnityEngine.Object.FindObjectOfType<CampaignFinalBoss>();
+                    if (finalBoss == null || finalBoss.SizeMultiplier > 1.75f)
+                        throw new InvalidOperationException("Final boss scale exceeds new map budget.");
+                    var names = UnityEngine.Object.FindObjectsOfType<Transform>();
+                    if (names.Count(t => t.name == "Royal Throne Footprint") != 1 ||
+                        names.Count(t => t.name == "Royal Honor Statue Footprint") != 2 ||
+                        names.Count(t => t.name == "Throne General") != 2 || names.Count(t => t.name == "Throne Guard") != 4)
+                        throw new InvalidOperationException("Royal court formation missing or duplicated.");
+                    var royalGeometry = UnityEngine.Object.FindObjectOfType<ArcaneCitadelGeometry>();
+                    var floor = royalGeometry.GetComponentsInChildren<MeshFilter>().First(f => f.name == "Arcane Floor").sharedMesh;
+                    Vector2 emblem = new Vector2(theme.AtlasUv(3).xMin, theme.AtlasUv(3).yMin);
+                    if (floor.uv.Where((uv, index) => index % 4 == 0 && Vector2.Distance(uv, emblem) < .0001f).Count() != 1)
+                        throw new InvalidOperationException("Royal emblem must appear exactly once across the entire map.");
+                }
                 if(!generator.LastTrapPlan.RoutesVerified) failClosed++;
                 if(level>=3 && UnityEngine.Object.FindObjectsOfType<ArcaneCitadelGeometry>().Length!=1) throw new InvalidOperationException("Map geometry duplicated/missing.");
             }

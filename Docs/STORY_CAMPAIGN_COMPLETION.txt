@@ -1,0 +1,73 @@
+PHẠM VI HOÀN THIỆN CỐT TRUYỆN TẦNG 1–10
+
+1. Mỗi tầng có nhịp vào tầng, bước khám phá, gặp địch, phản ứng sau đọc,
+   tương tác đặc trưng và câu nối sang tầng sau; không lặp thoại tầng 1.
+2. Phòng Start yên tĩnh ở cả 10 tầng; chuyển suất địch sang Combat đầu,
+   giữ tổng địch, chìa, boss, thời gian và điều kiện qua tầng.
+3. Câu thoại theo sự kiện thật, hỗ trợ Enemy cũ/EnemyHealth, chỉ ghi một
+   lần; không dựa vào việc người chơi bắt buộc đọc bia.
+4. Không nói trước lời giải tầng 8; không nhắc lời nhắn chưa đọc; cập nhật
+   lời khi đã có chìa, đã thắp lửa, đã ghép bệ, đã hạ boss.
+5. Hàng đợi không để độc thoại chờ an toàn chặn chìa/boss/cổng; bỏ câu lỗi
+   thời, giãn nhịp; cảnh báo quan trọng có thể ngắt rồi tiếp tục câu còn cần.
+6. Solo và LAN có cùng mốc, câu, bỏ qua, đọc lại, nhật ký; kiểm tra Client
+   hiển thị thực và ngắt/vào lại ở mở đầu, giữa tiến trình ghép chìa.
+7. HUD tự co theo chữ, không tràn tiếng Việt; giữ cảnh đầu/cuối và ẩn map.
+8. Xác minh Unity compile, thử HUD gặp quái tất cả tầng, các tương tác
+   và kết thúc. Ghi rõ fixture tự động, không nhận là chơi tay hai máy.
+
+Tình trạng: hoàn tất phạm vi trên, xác minh ngày 20/10/2026.
+
+ĐỐI CHIẾU YÊU CẦU VÀ BẰNG CHỨNG
+
+1. StoryFlowChapters.cs có 10 câu riêng cho từng mốc bước khám phá,
+   gặp địch, hạ địch và mở cổng. StoryFlow.cs nối lời vào tầng/sau đọc
+   với CampaignStoryChapter.cs (bia tầng 2–10). Mỗi tầng đã chụp HUD
+   gặp địch trên cả Solo, Host và Client, không chỉ kiểm tra mask.
+2. InfiniteWorldGenerator chỉ đặt người chơi trong Start và cộng suất
+   địch Start vào Combat đầu. VerifyFloorEncounter kiểm tra Start rỗng,
+   Combat đầu có ít nhất 4 địch trên cả 10 tầng. Quy tắc số chìa,
+   lính canh, boss và thời gian không đổi; thử qua tầng khi thiếu chìa
+   hoặc còn địch đều bị chặn.
+3. EnteredEnemyRoom kiểm tra cả Enemy và EnemyHealth còn sống; Host xét
+   cả hai người chơi. Mốc gặp địch kiểm tra trước khi đọc bia; chờ thêm
+   1,2 giây xác nhận cue/version ổn định. RoomJourney dùng phím di chuyển
+   từ Start tới Combat tầng 1 và xác nhận thoại thực sự hiện.
+4. VerifyFlowPolicy kiểm tra chưa ghép bệ không biết trước Vua Xương ở
+   tầng 9/10; chưa đọc tầng 5 không tự biết thư viện khi vào tầng 6.
+   Các nhánh Exit xét đọc bia/thắp lửa/ghép bệ trước khi phát lời.
+   Thử G trước F ở tầng 4/6, bệ thiếu chìa/đủ chìa ở tầng 8; bản chữ
+   chưa ghép không tiết lộ đáp án. Đọc lại và bỏ qua giữ nhật ký.
+5. VerifyFlowPolicy xác nhận câu chờ an toàn không chặn nhặt chìa và
+   mở cổng không xóa lời giải vừa ghép. Hàng đợi chọn theo ưu tiên;
+   đọc bia chỉ tạm ẩn câu còn hợp lệ để tiếp tục khi đóng.
+6. Host và Solo hoàn tất 10 tầng. Client hoàn tất 1–7, ngắt ở tầng 8
+   sau khi ghép một chìa, vào lại hoàn tất 8–10. Kiểm tra phục hồi chìa,
+   nhật ký, bản hội thoại và nửa bệ. Ngắt/vào lại giữa cảnh mở đầu cũng
+   đạt; F, bỏ qua, cơ chế tương tác và kết thúc được đồng bộ.
+7. Kiểm tra toàn bộ câu theo tầng, ký tự tiếng Việt, tràn TMP và trang
+   nhật ký. Ảnh HUD Solo tầng 10/Client tầng 9 được xem trực tiếp.
+   Cảnh đầu/cuối kiểm tra ẩn toàn bộ renderer map và phục hồi khi chơi.
+8. Unity 2022.3.10f1 build thành công; bảy script thay đổi khớp SHA-256
+   giữa workspace và project kiểm thử. Catalog LAN đã đồng bộ sau khi
+   kiểm tra bản gốc không bị sửa thêm. Không có thay đổi giao thức LAN.
+
+BẢN KIỂM THỬ CUỐI
+D:/tl-campaign-complete-20261020/VerifiedBuild/TheLabyrinth.exe
+build-verified.log: LAN_BUILD_SUCCESS
+solo-verified.log: STORY_SMOKE_PASS NARRATIVE Solo levels=1-10
+host-verified.log: STORY_SMOKE_PASS NARRATIVE Host levels=1-10
+client-intro-verified.log: OPENING_CLIENT_DISCONNECT_READY
+client-campaign-verified.log: NARRATIVE_LEVEL_PASS Client 1–7,
+  NARRATIVE_CLIENT_DISCONNECT_READY tại tầng 8.
+client-rejoin-verified.log: STORY_SMOKE_PASS NARRATIVE Client levels=8-10 rejoin
+room-verified.log: STORY_SMOKE_PASS ROOM_JOURNEY Solo
+Các log và thư mục VerifiedEvidence, VerifiedHostEvidence,
+VerifiedClientEvidence, VerifiedRoomEvidence nằm trong thư mục trên.
+
+GIỚI HẠN BẰNG CHỨNG
+Kiểm thử tự động dùng fixture vị trí, sát thương và thời gian để đi qua
+đủ nhánh; không đại diện cho một lượt chơi tay hoàn chỉnh hay đánh giá
+cân bằng chiến đấu. LAN chạy nhiều tiến trình trên cùng máy, chưa thử
+hai máy vật lý. Không điều khiển trực tiếp cửa sổ Unity của người dùng.
+Trong Unity: dừng Play, chờ biên dịch, Play lượt mới để sinh lại các phòng.

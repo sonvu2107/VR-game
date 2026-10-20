@@ -1,0 +1,23 @@
+KIỂM TRA GÓI CẢNH TRUYỆN PIXEL ART — 20/10/2026
+
+Bản chạy thử: D:/tl-pixel-story-20261020/ReleasePreview/TheLabyrinth.exe
+Unity 2022.3.10f1, Development Build, build-preview.log: LAN_BUILD_SUCCESS.
+Nguồn StoryPresentation.cs, LevelOneStory.cs, NarrativeSmokeProbe.cs đã đối chiếu
+SHA-256 với project build riêng. Catalog LAN được cập nhật từ lần build này.
+
+FinalBuild: Solo đủ 10 tầng PASS; Host đủ 10 tầng PASS; Client nối lại ở
+cảnh mở đầu, sau đó nối lại ở tầng 8 và hoàn tất tầng 10 PASS.
+Kiểm tra: F đọc/bỏ qua, nhật ký, nhặt chìa, lửa thật hiển thị, bệ hiện đúng
+số chìa, cổng cuối, boss và kết thúc. Các renderer của map bị ẩn trong cảnh
+và khôi phục sau đó. TMP kiểm tra không tràn chữ trong ba nhịp mở đầu.
+Va chạm trang trí đủ 10 tầng PASS, gồm sweep vật cản và đường NavMesh tới cổng.
+
+ReleasePreview chỉ nâng nhân vật cảnh truyện thêm 65 đơn vị UI so với
+FinalBuild để khung thoại không che chân. Không đổi logic tương tác/mạng.
+Ảnh opening-0.png trong PreviewEvidence đã xem trực tiếp ở 1280x720.
+Khung tối bán trong suốt, không phải Gaussian blur.
+
+Các probe tự động dùng fixture cho vị trí/thời gian/sát thương.
+LAN chạy nhiều tiến trình trên cùng máy, chưa thử hai máy vật lý.
+Log và ảnh: D:/tl-pixel-story-20261020/.
+ReleasePreview: preview-solo.log đã đạt STORY_SMOKE_PASS NARRATIVE Solo levels=1-10, gồm cảnh mở đầu và kết thúc.

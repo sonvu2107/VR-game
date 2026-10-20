@@ -1,0 +1,99 @@
+TƯƠNG TÁC ĐỒ TRANG TRÍ — 20/10/2026
+
+Phạm vi: mọi vật trang trí thực sự được sinh trong 10 tầng, kể cả các
+quad gộp trong mesh: hài cốt, nấm, tinh thể, nến, mạng nhện, bóng hồn,
+chậu lửa, đuốc, cờ, cột, tượng, ngai, di vật, đồ chứa, bình gốm, phù điêu,
+bậc thềm và hoa văn trang trí trên nền. Gạch lát/tường cấu trúc không
+phải từng đồ vật; các hoa văn riêng trên nền có điểm quan sát riêng.
+Vật mới trong cùng các bộ dựng trang trí cũng được thu thập, với lời
+mô tả dự phòng khi chưa có loại riêng.
+
+F: quan sát vật đang chọn. Tab: chuyển qua các vật gần nhau, bao gồm
+bia nếu cùng tầm. Chữ F và mũi tên nhỏ lơ lửng trên vật giúp nhận đúng
+mục tiêu; không còn khung nhắc tên vật/phím bấm ở giữa màn hình.
+Ấn có cơ chế G hiện gọn F · G trên đầu khi còn thao tác được.
+Backspace: bỏ lời quan sát. J: đọc lại trong mục Diễn biến của nhật ký.
+Mỗi vật có ghi chép riêng, đọc lại cập nhật nội dung, không nhân bản mục.
+Không tự động bật thoại khi đến gần, không nhận thưởng hoặc đổi va chạm.
+
+Quan sát không dừng chiến đấu và nhấn F luôn hiện phản hồi ngay.
+Cảnh báo nguy hiểm, boss và mở cổng hiện ở khung riêng phía trên khi cần,
+không bị nội dung quan sát che mất. Các khung được xếp cách nhau.
+Thoại khám phá thông thường không mất thời gian đọc khi đang xem đồ vật.
+Khung chữ tự co theo nội dung, có giới hạn chiều rộng để xuống dòng.
+Hài cốt có phản ứng trước/sau gặp quái; ngai có phản ứng sau hạ Vua Xương.
+Các vật khác có mô tả theo loại và một số ngữ cảnh tầng, không giả vờ
+cho vật phẩm hay mở cơ chế mà gameplay không có.
+
+Host xác nhận ID, tầng/lượt chơi, người đọc còn sống, khoảng cách, vật
+cản và thời gian chống nhấn liên tục. Client chỉ gửi yêu cầu; Host phát
+nội dung/phiên/thời gian và ghi chép cho cả hai. Bỏ qua có kiểm tra phiên,
+gói cũ không đóng lần quan sát mới. Bản đồ gửi danh sách điểm một lần;
+ghi chép gửi khi thay đổi hoặc vào lại, không gửi lại cả nhật ký mỗi tick.
+LAN protocol 12: cả hai máy cần cùng phiên bản.
+
+KIỂM THỬ ĐÃ HOÀN TẤT
+Thư mục bằng chứng: D:/tl-decor-inspection-20261020/
+Bản cuối: CompleteBuild/TheLabyrinth.exe (Unity 2022.3.10f1 Development).
+build-complete.log: LAN_BUILD_SUCCESS, không có lỗi biên dịch C#.
+complete-solo.log: STORY_SMOKE_PASS NARRATIVE Solo levels=1-10.
+complete-host.log: STORY_SMOKE_PASS NARRATIVE Host levels=1-10.
+complete-client.log: STORY_SMOKE_PASS NARRATIVE Client levels=1-10.
+
+Từng điểm trong bản đồ được sinh: 669 vật cho mỗi lượt Solo và Host.
+Số vật theo tầng 1–10: 73, 68, 60, 71, 67, 56, 65, 81, 67, 61.
+Mỗi điểm có vị trí đứng trên NavMesh, ngoài vật cản và trong tầm thao tác;
+handler đọc nhận thành công và ghi đúng một mục nhật ký. Có thử ID lạ,
+quá xa, nhấn liên tục, vật cản, bỏ qua sai phiên và nhấn F thật mỗi tầng.
+Đếm địch/chìa và trạng thái chơi không thay đổi bởi quan sát.
+Client yêu cầu đọc/bỏ qua thành công ở cả 10 tầng; đọc lại không tăng
+số ghi chép. Toàn bộ ghi chép và các trang nhật ký đã kiểm tra không tràn.
+Solo thử thêm cảnh báo và lời quan sát đồng thời ở cả 10 tầng: cả hai
+hiện, hình chữ nhật khung không chồng nhau.
+
+Ngắt/vào lại: host.log, client-intro.log, client.log, client-rejoin.log
+thuộc ReachBuild có cùng mã mạng/tương tác, trước sửa bố cục cảnh báo
+và cách chụp. PASS ngắt giữa mở đầu và tầng 8 khi mới ghép một chìa;
+khôi phục toàn bộ ghi chép đồ vật, bệ và cốt truyện rồi hoàn tất tầng 10.
+
+ẢNH VÀ THỨ TỰ HIỂN THỊ
+HUD trong game dùng ScreenSpaceOverlay. Công cụ chụp batchmode cũ chuyển
+sang ScreenSpaceCamera nhưng giữ order 105, trong khi cột dùng depth order
+đến 29000, gây ảnh cột đè lên chữ. CaptureStory nay chuyển tất cả Canvas
+Overlay đang hiện, tạm đặt order 30000 + order gốc, rồi phục hồi trong
+finally. Không sửa depth sort của đồ vật để chữa lỗi ảnh chụp.
+Đã xem ảnh Client tầng 2 trong OverlayClientEvidence: chữ/nền trên cột,
+dấu F trên vật và lời nhắc chọn vật hiện đầy đủ.
+CompleteEvidence/inspection-urgent-stack.png kiểm tra các khung xếp riêng.
+CompleteEvidence, CompleteHostEvidence, CompleteClientEvidence chứa ảnh
+quan sát và gặp quái từng tầng, cảnh đầu/cuối và các cơ chế cốt truyện.
+
+GIỚI HẠN
+Các số trên là bản đồ sinh trong các lượt kiểm thử, không khẳng định
+số lượng cố định cho mọi seed. Probe dùng fixture vị trí/AI/sát thương
+để kiểm tra toàn bộ điểm; không thay thế một lượt chơi tay hoàn chỉnh.
+LAN là nhiều tiến trình trên một máy; chưa thử hai máy vật lý. Chưa trực
+tiếp thao tác cửa sổ Unity Play của người dùng. 11 file nguồn khớp SHA-256
+với đầu vào build; catalog LAN đã đồng bộ sau kiểm tra bản gốc không đổi.
+Trong Unity: dừng Play, chờ biên dịch, Play lượt mới để dựng điểm tương tác.
+
+RÚT GỌN DẤU TƯƠNG TÁC
+Đã xóa khung nhắc tên vật/phím F giữa màn hình. Cả bia và vật trang trí
+dùng chữ F cùng mũi tên ▼ dao động nhẹ, theo vị trí của vật, chỉ hiện
+trong tầm thao tác; ẩn khi mở nhật ký hoặc rời trạng thái chơi.
+Tab vẫn chọn các vật sát nhau. Cơ chế G chưa hoàn tất có dấu F · G.
+Không thay đổi nội dung đọc, handler tương tác hoặc giao thức LAN.
+Bản kiểm tra: D:/tl-interaction-marker-20261020/Build/TheLabyrinth.exe.
+build.log: LAN_BUILD_SUCCESS; ba file UI khớp SHA-256 với nguồn build.
+Đã xem ảnh Evidence/inspection-urgent-stack.png: chỉ có F/▼ trên bia,
+không còn khung "Bia đá cũ / F đọc lời nhắn" ở giữa màn hình.
+
+XỬ LÝ NỀN TRỐNG CÒN SÓT TRONG UNITY PLAY
+Unity có thể giữ GameObject UI cũ sau hot reload dù mã tạo nó đã bỏ.
+UpdateExploration nay vô hiệu hóa rồi hủy "Nền lời nhắc" còn sót dưới
+"Lời nhắc khám phá", đồng thời dọn HUD khám phá cũ nếu có bản trùng.
+Không xóa panel nội dung quan sát, bia hoặc lời dẫn trong trận.
+CleanupBuild/TheLabyrinth.exe đã biên dịch thành công; cleanup-solo.log
+có STORY_CHECK legacy interaction background removed after hot reload:
+probe chèn một nền cũ vào HUD đang chạy và xác nhận nó bị hủy sau Update.
+Lượt hồi quy tiếp tục hoàn tất: STORY_SMOKE_PASS NARRATIVE Solo levels=1-10.

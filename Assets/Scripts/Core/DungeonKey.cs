@@ -10,6 +10,7 @@ public sealed class DungeonKey : MonoBehaviour
     [SerializeField, Min(0.1f)] private float visualScale = 0.65f;
 
     private static Sprite runtimeSprite;
+    public static Sprite IconSprite => GetRuntimeSprite();
     private GameManager gameManager;
     private SpriteRenderer spriteRenderer;
     private Vector3 anchorPosition;

@@ -5,5 +5,7 @@ public enum GameState
     LevelCompleted,
     Paused,
     GameOver,
-    Victory
+    Victory,
+    Story,
+    WaitingForPartner
 }

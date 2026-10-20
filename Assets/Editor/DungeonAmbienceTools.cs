@@ -128,7 +128,7 @@ public static class DungeonAmbienceTools
         if (root.GetComponentsInChildren<Transform>(true).Any(t => t.name.Contains("Treasure Chest")))
             throw new InvalidOperationException("Chest footprint still present: " + path);
         var filters = root.GetComponentsInChildren<MeshFilter>();
-        if (!filters.Any(f => f.name == "Ambient Fire") || !filters.Any(f => f.name == "Ambient Details"))
+        if (!filters.Any(f => f.name.StartsWith("Ambient Fire", StringComparison.Ordinal)) || !filters.Any(f => f.name == "Ambient Details"))
             throw new InvalidOperationException("Missing ambient meshes: " + path);
         foreach (var filter in filters.Where(f => f.name.StartsWith("Ambient ", StringComparison.Ordinal)))
         {
@@ -136,8 +136,9 @@ public static class DungeonAmbienceTools
                 throw new InvalidOperationException("Preview mesh not persistent: " + path);
             if (filter.GetComponent<Collider2D>() != null) throw new InvalidOperationException("Ambient collider added.");
         }
-        var staticBounds = QuadBounds(filters.First(f => f.name == "Arcane Props")).ToArray();
-        var fireBounds = filters.Where(f => f.name == "Ambient Fire").SelectMany(QuadBounds).ToArray();
+        var staticBounds = filters.Where(f => f.name == "Arcane Props" ||
+            (!f.name.StartsWith("Ambient ", StringComparison.Ordinal) && f.name.Contains(" Depth "))).SelectMany(QuadBounds).ToArray();
+        var fireBounds = filters.Where(f => f.name.StartsWith("Ambient Fire", StringComparison.Ordinal)).SelectMany(QuadBounds).ToArray();
         foreach (var fire in fireBounds)
         {
             var clearance = new Rect(fire.xMin - 1.25f, fire.yMin - 1.25f, fire.width + 2.5f, fire.height + 2.5f);
@@ -148,10 +149,10 @@ public static class DungeonAmbienceTools
         foreach (var filter in filters.Where(f => f.name.StartsWith("Ambient ", StringComparison.Ordinal)))
         foreach (var quad in QuadBounds(filter))
         {
-            Rect bounds = filter.name == "Ambient Souls" ? new Rect(quad.x, quad.y - .12f, quad.width, quad.height + .24f) : quad;
+            Rect bounds = filter.name.StartsWith("Ambient Soul", StringComparison.Ordinal) ? new Rect(quad.x, quad.y - .12f, quad.width, quad.height + .24f) : quad;
             if (occupied.Any(other => bounds.Overlaps(other)))
                 throw new InvalidOperationException("Ambient visual overlap: " + path + "/" + filter.name);
-            if (filter.name != "Ambient Fire")
+            if (!filter.name.StartsWith("Ambient Fire", StringComparison.Ordinal))
             {
                 var clearance = new Rect(bounds.xMin - 1.25f, bounds.yMin - 1.25f, bounds.width + 2.5f, bounds.height + 2.5f);
                 if (fireBounds.Any(other => clearance.Overlaps(other)))
@@ -171,10 +172,15 @@ public static class DungeonAmbienceTools
     private static void CaptureRoom(int theme)
     {
         var root = UnityEngine.Object.FindObjectOfType<CourtyardPreviewOnly>();
-        var filter = root.GetComponentsInChildren<MeshFilter>().First(f => f.name == "Ambient Fire");
+        var filter = root.GetComponentsInChildren<MeshFilter>().First(f => f.name.StartsWith("Ambient Fire", StringComparison.Ordinal));
         // Phòng hẹp có thể chủ động bỏ chậu nếu không đủ khoảng thoáng.
         Vector3 anchor = filter.sharedMesh.vertexCount > 0 ? filter.sharedMesh.vertices[0]
             : UnityEngine.Object.FindObjectOfType<InfiniteWorldGenerator>().playerTransform.position;
+        if (theme == 7)
+        {
+            var throne = root.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Royal Throne Footprint");
+            if (throne != null) anchor = throne.position + new Vector3(-2, -2, 0);
+        }
         var go = new GameObject("Ambience Preview Capture");
         try
         {

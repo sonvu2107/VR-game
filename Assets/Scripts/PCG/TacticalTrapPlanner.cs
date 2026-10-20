@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum TacticalTrapPattern { Chicane, RangedScreen, TreasureGuard, BossFlanks }
+public enum TacticalTrapPattern { Chicane, RangedScreen, TreasureGuard, BossFlanks, DoorwayChoke }
 
 /// <summary>Chỉ chạy lúc sinh map. Bẫy không được chạm mạng đường đi kể cả khi tất cả cùng bật.</summary>
 public sealed class TacticalTrapPlanner
@@ -18,12 +18,17 @@ public sealed class TacticalTrapPlanner
     public string FailureReason { get; private set; }
     private readonly DungeonLayout layout;
     private readonly bool arcane;
+    private readonly HashSet<Vector2Int> corridorTiles;
+    private readonly Vector3 playerOrigin;
 
     public TacticalTrapPlanner(DungeonLayout layout, IEnumerable<GameObject> objects, Transform playerTransform, bool arcane)
     {
         this.layout = layout;
         this.arcane = arcane;
+        corridorTiles = new HashSet<Vector2Int>(layout.FloorTiles);
+        foreach (var room in layout.Rooms) corridorTiles.ExceptWith(room.FloorTiles);
         Vector3 player = playerTransform.position;
+        playerOrigin = player;
         var body = playerTransform.GetComponent<Collider2D>();
         Vector3 offset = body != null ? body.bounds.center - player : Vector3.zero;
         RouteBodySize = body != null ? (Vector2)body.bounds.size : Vector2.one * 0.5f;
@@ -104,6 +109,11 @@ public sealed class TacticalTrapPlanner
     }
 
     public Vector3 Position(Vector2Int tile) => arcane ? new Vector3(tile.x + 0.5f, tile.y + 0.5f, 0f) : PrefabPlacer.GetWorldPosition(tile);
+    public Vector2Int Cell(Vector3 position)
+    {
+        Vector3 origin = Position(Vector2Int.zero);
+        return new Vector2Int(Mathf.RoundToInt(position.x - origin.x), Mathf.RoundToInt(position.y - origin.y));
+    }
     private void Reserve(Vector2Int center, int radius)
     {
         for (int x = -radius; x <= radius; x++) for (int y = -radius; y <= radius; y++)
@@ -132,10 +142,31 @@ public sealed class TacticalTrapPlanner
         if (!RoutesVerified || budget <= 0 || room.Type == RoomType.Start || room.Type == RoomType.Exit) return result;
         var center = new Vector2Int(Mathf.RoundToInt((float)room.FloorTiles.Average(p => p.x)),
             Mathf.RoundToInt((float)room.FloorTiles.Average(p => p.y)));
+        var portals = TacticalTrapTopology.FindPortals(layout, room)
+            .OrderBy(p => (Position(p.Cell) - playerOrigin).sqrMagnitude).ToList();
+        bool Allowed(Vector2Int cell) => IsSafeCandidate(cell, room, occupied, pattern == TacticalTrapPattern.DoorwayChoke);
+        if (pattern == TacticalTrapPattern.DoorwayChoke)
+        {
+            // Tìm một cụm liền mạch ở cửa gần hướng tiếp cận; không rải bù ở tâm phòng.
+            var bestDoorway = new List<Vector2Int>();
+            foreach (var portal in portals)
+            foreach (var band in TacticalTrapTopology.DoorwayBands(portal))
+            {
+                var run = TacticalTrapTopology.BestRun(band, budget, Allowed);
+                if (run.Count > bestDoorway.Count) bestDoorway = run;
+                if (bestDoorway.Count == budget) return bestDoorway;
+            }
+            return bestDoorway;
+        }
         Vector2Int normal = Directions[orientation % 4], side = new Vector2Int(-normal.y, normal.x);
+        if (portals.Count > 0)
+        {
+            normal = portals[0].Inward;
+            side = new Vector2Int(-normal.y, normal.x);
+        }
         if (pattern == TacticalTrapPattern.RangedScreen || pattern == TacticalTrapPattern.TreasureGuard)
         {
-            Vector2Int delta = center - focus;
+            Vector2Int delta = (portals.Count > 0 ? portals[0].Cell : center) - focus;
             normal = Mathf.Abs(delta.x) > Mathf.Abs(delta.y) ? new Vector2Int(delta.x >= 0 ? 1 : -1, 0) :
                 new Vector2Int(0, delta.y >= 0 ? 1 : -1);
             side = new Vector2Int(-normal.y, normal.x);
@@ -148,26 +179,33 @@ public sealed class TacticalTrapPlanner
             if (pattern == TacticalTrapPattern.BossFlanks)
             {
                 int span = Mathf.Max(3, (room.FloorTiles.Max(p => p.x) - room.FloorTiles.Min(p => p.x)) / 3);
-                foreach (int sign in new[] { -1, 1 }) for (int step = -1; step <= 1; step++)
-                    cluster.Add(center + Vector2Int.right * (sign * span) + Vector2Int.up * (step + shift));
+                // Hai cụm đối xứng nguyên vẹn, không lấy vài ô rời ở hai bên boss.
+                for (int length = Mathf.Min(3, budget / 2); length >= 1; length--)
+                {
+                    cluster.Clear();
+                    foreach (int sign in new[] { -1, 1 }) for (int step = 0; step < length; step++)
+                        cluster.Add(center + Vector2Int.right * (sign * span) + Vector2Int.up * (step + shift));
+                    if (cluster.All(Allowed)) { if (cluster.Count > best.Count) best = new List<Vector2Int>(cluster); break; }
+                }
             }
             else
             {
                 Vector2Int band = pattern == TacticalTrapPattern.Chicane ? center + normal * (2 + shift) : focus + normal * (3 + shift);
-                foreach (int step in new[] { 0, -1, 1, -2, 2, -3, 3 }) cluster.Add(band + side * step);
+                for (int step = -3; step <= 3; step++) cluster.Add(band + side * step);
+                var valid = TacticalTrapTopology.BestRun(cluster, budget, Allowed);
+                if (valid.Count > best.Count) best = valid;
             }
-            var valid = cluster.Where(cell => IsSafeCandidate(cell, room, occupied)).Take(budget).ToList();
-            if (valid.Count > best.Count) best = valid;
         }
         return best;
     }
 
-    private bool IsSafeCandidate(Vector2Int tile, DungeonRoom room, HashSet<Vector2Int> occupied)
+    private bool IsSafeCandidate(Vector2Int tile, DungeonRoom room, HashSet<Vector2Int> occupied, bool allowCorridor = false)
     {
-        if (!room.FloorTiles.Contains(tile) || Reserved.Contains(tile) || occupied.Contains(tile)) return false;
+        bool inRoom = room.FloorTiles.Contains(tile);
+        if ((!inRoom && (!allowCorridor || !corridorTiles.Contains(tile))) || Reserved.Contains(tile) || occupied.Contains(tile)) return false;
         // Không sát tường, không dưới chân tượng/cột/rương. Kiểm tra thân và cả phần hình mở rộng.
         for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++)
-            if (!room.FloorTiles.Contains(tile + new Vector2Int(x, y))) return false;
+            if (!(allowCorridor ? layout.FloorTiles : room.FloorTiles).Contains(tile + new Vector2Int(x, y))) return false;
         Vector3 point = Position(tile);
         if (DistanceToSafeRoute(point) < SafeClearance) return false;
         NavMeshHit hit;

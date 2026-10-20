@@ -38,6 +38,7 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
+        WorldDepthSort.AttachActor(gameObject);
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -60,6 +61,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.isStoryPlaying) return;
         if (LanSessionBridge.Active != null && LanSessionBridge.Active.HasGuest)
         {
             HealthController closest = LanSessionBridge.Active.NearestAlivePlayer(transform.position);

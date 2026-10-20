@@ -1,0 +1,32 @@
+PHÒNG MỞ ĐẦU VÀ THOẠI KHI SANG PHÒNG — 20/10/2026
+
+Áp dụng tầng 1: phòng Start không sinh quái; chuyển suất Warrior sang
+phòng Combat đầu tiên (bộ ba Goblin + Warrior), giữ tổng số địch.
+Các tầng khác và điều kiện qua tầng giữ nguyên.
+
+Bộ kích hoạt Encounter kiểm tra vị trí người chơi trong FloorTiles của
+phòng khác Start có quái sống. Nhận diện cả EnemyHealth lẫn Enemy cũ
+(Warrior); Host xét vị trí thật của cả hai người trong LAN.
+Không còn dùng raycast/bán kính tới từng quái cho lần vào phòng đầu.
+Câu: “Quái vật! Cả căn phòng này… Rốt cuộc đây là nơi nào?
+Phải tìm cách vượt qua chúng.”
+Đọc bia không xóa câu, hạ nhanh chuyển sang phản ứng sau trận;
+Backspace bỏ qua, J xem lại. HUD khai báo rõ ScreenSpaceOverlay.
+
+Kiểm thử RoomJourney: giữ vị trí spawn, dừng AI trong fixture,
+dùng phím WASD và physics PlayerMovement đi dọc NavMesh từ phòng đầu
+sang phòng Combat; kiểm tra chữ và trạng thái active trên HUD thật.
+Có nhánh Client kiểm tra snapshot hiển thị cùng câu. Không teleport
+quái sát người chơi, không tự gọi Record(Encounter) trong probe.
+
+Unity: thay đổi bố trí có hiệu lực khi sinh map mới. Stop Play, đợi
+compile xong rồi Play lại tầng 1; không tiếp tục map đã sinh trước sửa.
+KẾT QUẢ
+build-verified.log: LAN_BUILD_SUCCESS.
+solo-verified.log, host-verified.log, client-verified.log: ROOM_JOURNEY PASS.
+Host/Solo dùng phím WASD đi trên đường NavMesh, giữ nguyên vị trí quái.
+Cả ba tiến trình xác nhận HUD active và đúng chữ, lưu ảnh room-entry-*.png.
+LAN trên cùng máy, chưa thử hai máy vật lý. Không xem trực tiếp Game view
+của Editor do công cụ computer-use lỗi package; Editor.log đã có lượt
+biên dịch mã mới. Script nguồn khớp SHA-256 với bản kiểm tra riêng.
+Bằng chứng: D:/tl-room-story-20261020/VerifiedEvidence/.

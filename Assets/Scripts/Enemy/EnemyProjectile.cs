@@ -35,6 +35,7 @@ public class EnemyProjectile : MonoBehaviour
         CombatImpactKind kind = CombatImpactKind.Arrow)
     {
         direction = travelDirection.normalized;
+        WorldDepthSort.Attach(gameObject, transform.position.y);
         damage = Mathf.Max(0, damageAmount);
         speed = Mathf.Max(0.1f, travelSpeed);
         expiresAt = Time.time + Mathf.Max(0.1f, lifetime);

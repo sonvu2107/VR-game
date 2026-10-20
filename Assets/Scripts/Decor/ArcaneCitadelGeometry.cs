@@ -9,6 +9,7 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
     private CourtyardTheme artTheme;
     private readonly List<Rect> decorImageBounds = new();
     private readonly List<Rect> fireImageBounds = new();
+    private int depthPropIndex;
 
     public static GameObject Build(DungeonLayout layout, CourtyardTheme theme, HashSet<Vector2Int> reservedCells = null)
     {
@@ -59,8 +60,14 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
             int left = room.FloorTiles.Min(c => c.x), right = room.FloorTiles.Max(c => c.x);
             int bottom = room.FloorTiles.Min(c => c.y), top = room.FloorTiles.Max(c => c.y);
             int cx = (left + right) / 2, cy = (bottom + top) / 2;
+            bool royal = theme.usesCampaignAtlas && theme.layoutStyle == CampaignLayoutStyle.CrimsonThrone;
             // Sparse accents leave the fighting area and all corridors clear.
-            floor.Quad(new Rect(cx - 1, cy - 1, 3, 3), Tile(theme.usesCampaignAtlas ? 3 : room.Type == RoomType.Boss ? 10 : 8));
+            // Huy hiệu hoàng gia chỉ xuất hiện một lần trước ngai, không rải ở mọi phòng.
+            if (!royal)
+            {
+                floor.Quad(new Rect(cx - 1, cy - 1, 3, 3), Tile(theme.usesCampaignAtlas ? 3 : room.Type == RoomType.Boss ? 10 : 8));
+                DecorationInspection.Mark(root.transform, new Rect(cx - 1, cy - 1, 3, 3));
+            }
             foreach (int x in new[] { left + 3, right - 3 })
             {
                 Vector2Int at = new(x, top - 1);
@@ -98,11 +105,28 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
                 }
             }
             // Không sinh rương trang trí hoặc footprint chặn đường; giữ nguyên phòng Treasure.
-            if (room.Type == RoomType.Boss)
+            if (royal && room.Type == RoomType.Boss)
+            {
+                // Ngai duy nhất ở đầu bắc chính điện; atlas đã có sẵn bục/bậc thềm.
+                owner.SolidProp(layout, props, "Royal Throne", 10,
+                    new Rect(cx - 1.1f, top - 3.1f, 3.2f, 3.2f),
+                    new Rect(cx - .75f, top - 3f, 2.5f, .75f), reservedCells);
+                foreach (int side in new[] { -1, 1 })
+                    owner.SolidProp(layout, props, "Royal Honor Statue", 11,
+                        new Rect(cx + side * 5 - .3f, top - 3.2f, 1.6f, 2.25f),
+                        new Rect(cx + side * 5 - .1f, top - 3.1f, 1.2f, .55f), reservedCells);
+                // Lối nghi lễ bằng đá trơn; không dùng huy hiệu làm tile lát/thảm lặp.
+                for (int y = bottom + 1; y < top - 3; y++)
+                for (int x = cx - 1; x <= cx + 1; x++)
+                    floor.Quad(new Rect(x, y, 1, 1), Tile(0));
+                floor.Quad(new Rect(cx - .75f, top - 6.25f, 2.5f, 2.5f), Tile(3));
+                DecorationInspection.Mark(root.transform, new Rect(cx - .75f, top - 6.25f, 2.5f, 2.5f));
+            }
+            if (!royal && room.Type == RoomType.Boss)
                 owner.SolidProp(layout, props, "Guardian Statue", theme.usesCampaignAtlas ? 11 : 10,
                     new Rect(cx - 0.5f, top - 2, 1.8f, 2.4f),
                     new Rect(cx - 0.32f, top - 1.9f, 1.44f, 0.55f), reservedCells);
-            if (theme.usesCampaignAtlas && (room.Type == RoomType.Start || room.Type == RoomType.Treasure || room.Type == RoomType.Boss))
+            if (theme.usesCampaignAtlas && !royal && (room.Type == RoomType.Start || room.Type == RoomType.Treasure || room.Type == RoomType.Boss))
                 owner.SolidProp(layout, props, "Theme Relic", 10,
                     new Rect(left + 2, top - 3, 1.8f, 2f),
                     new Rect(left + 2.15f, top - 2.9f, 1.5f, 0.6f), reservedCells);
@@ -110,18 +134,18 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
         owner.Emit("Arcane Floor", floor, theme.arcaneFloor, -1);
         owner.Emit("Arcane Walls", walls, theme.arcaneWalls, 0);
         owner.Emit("Arcane Props", props, theme.arcaneProps, 2);
-        owner.AppendAmbience(layout, theme);
+        owner.AppendAmbience(layout, theme, reservedCells);
         return root;
     }
 
-    public static GameObject BuildAmbienceOnly(DungeonLayout layout, CourtyardTheme theme)
+    public static GameObject BuildAmbienceOnly(DungeonLayout layout, CourtyardTheme theme, HashSet<Vector2Int> reservedCells = null)
     {
         var root = new GameObject("Pixel Dungeon Ambience");
-        root.AddComponent<ArcaneCitadelGeometry>().AppendAmbience(layout, theme);
+        root.AddComponent<ArcaneCitadelGeometry>().AppendAmbience(layout, theme, reservedCells);
         return root;
     }
 
-    private void AppendAmbience(DungeonLayout layout, CourtyardTheme theme)
+    private void AppendAmbience(DungeonLayout layout, CourtyardTheme theme, HashSet<Vector2Int> reservedCells)
     {
         var set = Resources.Load<DungeonAmbienceSet>("DungeonAmbienceSet");
         var palette = set == null ? null : set.ForTheme(theme);
@@ -151,8 +175,10 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
                     var image = new Rect(cell.x - .1f, cell.y + .2f, 1.2f, 1.6f);
                     if (fireImageBounds.Any(other => Vector2.Distance(image.center, other.center) < 5f)) continue;
                     if (!ReserveDecorImage(image, 1.25f)) continue;
+                    if (palette.fire == null || !DecorationCollision.TryPlace(layout, transform, "Ambient Brazier",
+                        new Rect(image.x + .2f, image.y + .05f, .8f, .4f), reservedCells)) continue;
                     fireImageBounds.Add(image);
-                    fire.Quad(image, CellUv(0));
+                    EmitDepthQuad("Ambient Fire", image, CellUv(0), palette.fire, image.y + .25f);
                     break; // Không có vị trí trống thì bỏ qua, không ép chồng lên đồ khác.
                 }
             }
@@ -170,7 +196,9 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
                 {
                     var image = new Rect(cell.x + (side == 0 ? .05f : -.1f), cell.y + .05f, 1.05f, 1.25f);
                     if (!ReserveDecorImage(image, .55f)) continue;
-                    details.Quad(image, CellUv(palette.accentCell)); break;
+                    if (palette.details == null || !DecorationCollision.TryPlace(layout, transform, "Ambient Accent " + palette.accentCell,
+                        new Rect(image.x + .13f, image.y + .05f, .78f, .32f), reservedCells)) continue;
+                    EmitDepthQuad("Ambient Accent", image, CellUv(palette.accentCell), palette.details, image.y + .21f); break;
                 }
             }
             int soulCount = Mathf.Min(palette.soulsPerRoom, room.Type == RoomType.Boss && area >= 250 ? 2 : 1);
@@ -182,7 +210,7 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
                     var image = new Rect(cell.x, cell.y + 1.15f, .85f, 1.15f);
                     var floatingBounds = new Rect(image.x, image.y - .12f, image.width, image.height + .24f);
                     if (!ReserveDecorImage(floatingBounds)) continue;
-                    souls.Quad(image, CellUv(4)); break;
+                    EmitDepthQuad("Ambient Soul", image, CellUv(4), palette.souls, cell.y + .5f); break;
                 }
             }
             for (int i = 0; i < Mathf.Min(palette.websPerRoom, area >= 160 ? 2 : 1); i++)
@@ -214,14 +242,6 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
     private void SolidProp(DungeonLayout layout, Batch batch, string label, int atlasIndex,
         Rect image, Rect feet, HashSet<Vector2Int> reservedCells)
     {
-        var cells = new List<Vector2Int>();
-        for (int x = Mathf.FloorToInt(feet.xMin); x <= Mathf.FloorToInt(feet.xMax - 0.001f); x++)
-        for (int y = Mathf.FloorToInt(feet.yMin); y <= Mathf.FloorToInt(feet.yMax - 0.001f); y++)
-        {
-            var cell = new Vector2Int(x, y);
-            if (!layout.FloorTiles.Contains(cell) || (reservedCells != null && reservedCells.Contains(cell))) return;
-            cells.Add(cell);
-        }
         Rect uv = artTheme.usesCampaignAtlas ? artTheme.AtlasUv(atlasIndex) : CellUv(atlasIndex);
         if (artTheme.usesCampaignAtlas && artTheme.arcaneProps.mainTexture != null)
         {
@@ -231,19 +251,17 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
             float height = width / aspect;
             image = new Rect(image.center.x - width * 0.5f, image.yMin, width, height);
         }
-        batch.Quad(image, uv);
-        decorImageBounds.Add(image); // Giữ cả hình cao của bình/tượng, không chỉ collider ở chân.
-        var blocker = new GameObject(label + " Footprint");
-        blocker.transform.SetParent(transform, false);
-        blocker.transform.position = new Vector3(feet.center.x, feet.center.y, 0);
-        var collider = blocker.AddComponent<BoxCollider2D>();
-        collider.size = feet.size;
-        // NavMeshPlus uses render geometry in this project. A modifier VOLUME is
-        // collected independently of SpriteRenderer/Collider collection mode.
-        var volume = blocker.AddComponent<NavMeshPlus.Components.NavMeshModifierVolume>();
-        volume.area = UnityEngine.AI.NavMesh.GetAreaFromName("Not Walkable");
-        volume.size = new Vector3(feet.width + 0.6f, feet.height + 0.6f, 4);
-        if (reservedCells != null) foreach (Vector2Int cell in cells) reservedCells.Add(cell);
+        if (!DecorationCollision.TryPlace(layout, transform, label, feet, reservedCells)) return;
+        EmitDepthQuad(label, image, uv, artTheme.arcaneProps, feet.center.y);
+        decorImageBounds.Add(image);
+    }
+
+    private void EmitDepthQuad(string label, Rect image, Rect uv, Material material, float groundY)
+    {
+        var single = new Batch();
+        single.Quad(image, uv);
+        // Tên duy nhất còn dùng làm khóa lưu mesh preview, không để các cột ghi đè nhau.
+        Emit(label + " Depth " + depthPropIndex++, single, material, WorldDepthSort.OrderAt(groundY));
     }
 
     private static Rect CellUv(int index) => new((index % 4) * 0.25f + 0.001f,

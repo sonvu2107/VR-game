@@ -45,6 +45,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        WorldDepthSort.AttachActor(gameObject);
         if (animator == null) animator = GetComponent<Animator>();
         if (collidersToDisableOnDeath == null || collidersToDisableOnDeath.Length == 0)
             collidersToDisableOnDeath = GetComponentsInChildren<Collider2D>();

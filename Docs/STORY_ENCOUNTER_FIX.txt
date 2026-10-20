@@ -1,0 +1,26 @@
+SỬA ĐỘC THOẠI GẶP QUÁI — 20/10/2026
+
+Nguyên nhân trong logic cũ:
+- Đánh dấu Encounter bằng bán kính 6, chưa kiểm tra tường/vật cản.
+- Mở bia xóa cue đang hiện nhưng không xóa cờ đã phát.
+- Mốc Kill làm Encounter hết hiệu lực ngay, dù chưa đủ thời gian đọc.
+- Kiểm thử cũ chỉ xác nhận mask, chưa xác nhận HUD hiển thị.
+
+Sửa:
+- Kiểm tra đường nhìn tới quái trước khi phát lần đầu.
+- Đọc bia chỉ tạm ẩn/đóng băng thời gian câu Encounter.
+- Quái chết nhanh: giữ câu và chuyển sang phản ứng sau khi hạ quái.
+- Nếu hạ quái bằng đòn xa trước lượt quét, phát phản ứng qua sự kiện Kill.
+- Bỏ qua chủ động vẫn có hiệu lực, không đổi chiến đấu hoặc điều kiện qua tầng.
+
+Kiểm thử mới cố định quái trong fixture, kiểm tra vật cản rồi HUD thật,
+đọc bia giữa câu và hạ quái nhanh; xuất ảnh trước/sau vào FinalEvidence.
+Bản chạy: D:/tl-encounter-fix-20261020/Preview/TheLabyrinth.exe
+Log: D:/tl-encounter-fix-20261020/.
+Kết quả: Solo/Host/Client 10 tầng PASS (solo-final/host-final/client-final.log).
+Đã kiểm tra và chụp HUD Encounter thật, giữ câu qua đọc bia, hạ quái nhanh.
+Preview đổi cách gọi sang “quái vật” để phù hợp nhiều loại quái đầu tầng;
+không thay logic so với bản đã kiểm tra LAN. Hai bên cần cùng bản Preview.
+LAN thử trên cùng máy; probe dùng fixture vị trí/địch, chưa chơi hai máy.
+Bản Preview: preview.log đạt STORY_SMOKE_PASS Solo 10 tầng; ảnh PreviewEvidence/encounter-Solo.png đã kiểm tra trực tiếp.
+Cập nhật tiếp theo: xem STORY_ROOM_JOURNEY.txt; kích hoạt theo phòng và hỗ trợ Enemy Warrior cũ thay cho dò đường nhìn.

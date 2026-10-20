@@ -50,7 +50,13 @@ public class PoisonArea : MonoBehaviour
             Time.time >= expiresAt) return;
         if (!nextDamageByPlayer.TryGetValue(target, out float nextTime) || Time.time >= nextTime)
         {
+            int before = target.currentHealth;
             target.TakeDamage(damage);
+            if (target.currentHealth < before)
+            {
+                var story = FindObjectOfType<GameManager>()?.Story;
+                if (story != null && story.StoryLevel == 7) story.Record(LevelOneStory.Beat.Poison);
+            }
             nextDamageByPlayer[target] = Time.time + tickInterval;
         }
     }

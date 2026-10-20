@@ -1,0 +1,41 @@
+VA CHẠM ĐỒ TRANG TRÍ — TOÀN BỘ CHIẾN DỊCH
+
+Phạm vi
+- Thùng gỗ góc phòng của DungeonDecorator.
+- Đồ chứa, bình/chậu và cụm vật thể bên tường của CourtyardDecorator.
+- Cột, tượng, di vật và ngai của ArcaneCitadelGeometry.
+- Chậu lửa, cụm nấm, tinh thể, nến và hài cốt nổi trong atlas ambience.
+- Bia đá khế ước giữ collider đã kiểm thử ở bản trước.
+- Hoa văn sàn, bậc đánh dấu lối vào, đuốc/cờ/biển treo tường,
+  linh hồn bay và mạng nhện treo không thêm vật cản giữa đường.
+
+Cách xử lý
+- DecorationCollision tạo BoxCollider2D đặc ở chân vật và NavMeshModifierVolume Not Walkable.
+- Chỉ chấp nhận vị trí nếu không đè ô đã dành cho spawn/item/bẫy và giữ sàn liên thông.
+- Vị trí không an toàn được bỏ cả hình lẫn collider; không để vật nổi vẫn đi xuyên được.
+- Không thay đổi sát thương, máu, chìa khóa, điều kiện cửa hoặc phần thưởng.
+- Vật trang trí mesh được tạo trước lần bake đầu; Dungeon cũ bake lại sau khi đặt decor.
+- Solo/Host có physics; Client nhận hình và vị trí nhân vật từ Host như cơ chế LAN hiện có.
+- Collider thuộc cây đối tượng của tầng, bị dọn cùng bản đồ khi đổi tầng/restart.
+- Không sửa các scene đang mở; đường sinh runtime và các công cụ dựng preview dùng cùng helper.
+
+Kiểm thử
+- Development flag: -decorCollisionSmoke.
+- Chạy cả 10 tầng: mọi footprint là collider đặc, có volume NavMesh,
+  phép quét hộp nhận đúng collider, trung tâm vật không thuộc vùng đi được,
+  sàn vẫn liên thông, điểm xuất phát và cửa vẫn có đường NavMesh hoàn chỉnh.
+- Kiểm tra vật sprite hiển thị không thiếu footprint và luồng qua tầng đến Victory.
+- LAN: kiểm tra Client nhận các tầng mà không tạo physics trùng với Host.
+- Fixture đặt số địch/chìa để kiểm tra tiến trình; không phải kiểm thử thắng bằng chiến đấu.
+
+Bản chạy và bằng chứng
+D:/tl-decor-collision-20261019/Build/TheLabyrinth.exe
+Chép cả thư mục Build sang máy thứ hai khi chơi LAN.
+
+Kết quả
+- build-verified.log: Build Successful.
+- solo.log: DECOR_COLLISION Solo PASS, 10 tầng, 17–45 footprint/tầng.
+- host-verified.log và client-verified.log: DECOR_COLLISION Host/Client PASS, 10 tầng.
+- stone-regression.log: STONE_COLLISION PASS, đi bộ/lướt bốn phía, đọc/bỏ qua và chuyển tầng.
+- LAN đã thử bằng hai tiến trình cùng máy; chưa thử hai máy vật lý.
+- Catalog trước sửa: LanAssetCatalog.before-decor.asset trong thư mục bằng chứng.

@@ -1,0 +1,160 @@
+RÀ TOÀN BỘ LỜI THOẠI VÀ NHÁNH BỎ QUA — 20/10/2026
+
+CẬP NHẬT
+Tám nhóm bên dưới đã được sửa và kiểm thử lại theo yêu cầu tiếp theo.
+Xem Docs/STORY_EIGHT_FIXES_20261020.txt để biết kết quả mới.
+Nội dung bên dưới giữ nguyên làm bằng chứng trước khi sửa.
+
+KẾT LUẬN
+Còn 8 nhóm vấn đề về nội dung/trạng thái. Không sửa mã nguồn trong
+lượt kiểm tra này. Không thấy các vấn đề dưới đây làm thay đổi điều kiện
+qua tầng; chúng khiến lời kể/nhật ký không khớp việc người chơi đã làm.
+
+PHƯƠNG PHÁP VÀ BẰNG CHỨNG
+- Đọc toàn bộ lời khắc 10 tầng, biến thể Solo/LAN, lời dẫn theo sự kiện,
+  cảnh đầu/cuối, mô tả đồ trang trí và mã bỏ qua/ghi nhật ký.
+- Đối chiếu điều kiện chìa, lính canh, boss, cơ chế G và bộ đếm thời gian.
+- Chạy 704 tổ hợp trạng thái bằng các phương thức C# thật trong Unity
+  batch của project kiểm thử riêng. Đây là ma trận logic, KHÔNG phải
+  704 lượt chơi tay hay 704 bản đồ. Một số tổ hợp dùng làm đối chiếu;
+  chỉ kết luận lỗi từ nhánh có thể xảy ra trong gameplay.
+- Các file runtime Assets/Scripts giữa workspace và project kiểm thử
+  khớp SHA-256. Chỉ thêm harness Editor vào project kiểm thử riêng.
+- D:/tl-story-branches-20261020/matrix.jsonl: toàn bộ đầu ra lời thoại.
+- audit-mechanisms.log:319: STORY_BRANCH_AUDIT_COMPLETE scenarios=704.
+- last-boss.txt: gọi handler GameManager với boss đã chết và enemyCount=1.
+- mechanism-history.txt: gọi TryActivateMechanism thật, rồi ghi các mốc
+  đọc/rời bia để kiểm tra lịch sử khi cơ chế đã hoàn thành.
+- StoryBranchAudit.cs trong cùng thư mục: mã tái hiện.
+- Không chạy lại mạng hai máy trong lượt này; kết luận Solo/LAN dựa
+  trên nhánh văn bản thật và luồng đồng bộ đã đọc, không phải chứng nhận
+  toàn bộ trải nghiệm LAN trực tiếp.
+
+1. VUA XƯƠNG LÀ KẺ ĐỊCH CUỐI CÙNG NHƯNG NHẬT KÝ BÁO CÒN LÍNH
+Ưu tiên: cao. Đã tái hiện bằng handler thật.
+GameManager.cs:109 ghi RecordGuardianDeath trước EnemyDefeated.
+StoryFlow.cs:130 dùng enemyCount hiện tại để chọn câu.
+Kết quả last-boss.txt: enemies=0 nhưng GuardianDead đã lưu:
+"Vua Xương đã gục, nhưng cổng vẫn chưa mở. Còn lính canh!"
+Lịch sử bất biến giữ nguyên câu sai này. Câu trực tiếp có thể bị câu
+cổng mở thay thế nên kiểm thử chỉ nhìn màn hình dễ bỏ sót.
+Hướng sửa: tính số lính còn lại sau cái chết vừa xảy ra, hoặc ghi mốc
+sau khi bộ đếm hoàn tất. Không đổi quy tắc mở cổng.
+
+2. KÍCH HOẠT TRƯỚC KHI ĐỌC VẪN GHI LỜI NHẮC LÀM LẠI VÀO NHẬT KÝ
+Ưu tiên: cao. Đã tái hiện ghi mốc bằng mã thật.
+Tầng 4: G đánh thức ấn -> F đọc -> đi xa bia:
+AfterReading vẫn ghi "Thử đánh thức nó trước".
+Tầng 6: G thắp lửa -> F đọc -> đi xa bia:
+AfterReading vẫn ghi "Trong hốc vẫn còn than. Thử nhóm lại xem".
+Tầng 8: ghép đủ bệ -> F đọc -> đi xa:
+AfterReading vẫn ghi "Đặt chúng vào bệ, phần chữ còn thiếu mới hiện ra".
+StoryFlow.cs:77 loại lời dẫn này khỏi màn hình khi đã Activated,
+nhưng CampaignNarrative.cs:72 lưu lịch sử trước bước loại lời dẫn.
+Vì vậy sửa snapshot lịch sử trước đó đã xử lý Exit nhưng chưa xử lý
+ngữ nghĩa của mọi mốc phát sinh.
+Liên quan: BeatText(Read) lấy câu khắc gốc, không lấy TextAt hiện tại.
+Đọc bệ sau khi ghép đủ có thể lưu tóm tắt Read cũ trong khi bản chép
+hội thoại hiển thị lời giải đã mở.
+Hướng sửa: lời ghi sự kiện phải theo trạng thái hiện tại; phân biệt
+phản ứng đã lỗi thời với sự kiện thực sự cần lưu, và lấy đúng bản chữ
+đang đọc. Không dùng lại trạng thái tương lai để viết lại lịch sử.
+
+3. MANG ĐỦ HAI CHÌA ĐẾN GHÉP NGAY VẪN GHI "THIẾU NỬA SAU"
+Ưu tiên: vừa. Đã tái hiện qua TryActivateMechanism.
+Tầng 8, keys=2, stage=0, nhấn G:
+StoryInteractions.cs:50 luôn Record(Activated), rồi mới Record(Assembled).
+Nhật ký ghi rằng thiếu nửa sau và dấu đang chỉ chìa còn lại, ngay trước
+câu lời giải hoàn chỉnh; thực tế không còn chìa nào cần tìm.
+Màn hình loại mốc Activated khi đã Assembled, nhưng lịch sử vẫn giữ.
+Hướng sửa: phân biệt ghép lần đầu một chìa với ghép trọn cả hai chìa;
+không tạo một giai đoạn tìm chìa chưa từng diễn ra.
+
+4. ĐỌC SAU KHI HẠ BOSS VẪN NÓI NHƯ BOSS CÒN SỐNG
+Ưu tiên: vừa. Đã xác nhận từ ma trận lời thoại.
+LevelOneStory.cs:91 chỉ thay dòng 1, các dòng đáp sau vẫn dùng bản gốc.
+Tầng 5: "Kẻ giữ cửa đã ngã rồi" -> "trước hết phải qua được nó đã".
+Tầng 10 LAN: sau xác nhận boss ngã, người đồng hành còn nói
+"Cùng đánh bại hắn, rồi cùng bước qua cổng".
+Tầng 10 Solo: kỵ sĩ vẫn quay sang nói với boss như đang thách đấu.
+Hướng sửa: đổi cả chuỗi hội thoại sau boss chết, có nhánh còn lính/
+đã sạch tầng; không chỉ thay một câu.
+
+5. HỘI THOẠI LAN TẦNG 8 TỰ MÂU THUẪN VỀ SỐ CHÌA
+Ưu tiên: vừa. Đã xác nhận từ ma trận lời thoại.
+keys=2, stage=0 hoặc 1, đọc bia:
+dòng 1 "Cả hai chìa đã đủ" -> dòng 3 "Chúng ta phải tìm đủ hai chiếc chìa"
+-> dòng 4 "Đủ hai chiếc rồi".
+LevelOneStory.TextAt đã đổi dòng 1 và 4 nhưng dòng 3 của người đồng hành
+vẫn lấy CampaignStoryChapter.cs:78.
+Hướng sửa: xét đồng thời số chìa và số nửa đã ghép cho toàn đoạn thoại.
+
+6. CÓ THỂ BIẾT THƯ VIỆN/VUA XƯƠNG MÀ CHƯA NHẬN ĐƯỢC MANH MỐI
+Ưu tiên: vừa. Đã xác nhận từ nhánh lời thoại và điều kiện mốc.
+a) Không đọc tầng 5, chỉ đọc tầng 6 trong LAN:
+   bản LAN tầng 6 không có câu nhắc thư viện; bản Solo mới có.
+   Nhưng HasBeat(6, Read) khiến Exit tầng 7 nói "Thư viện chắc ở rất gần".
+   Đọc bia tầng 7 LAN cũng tự nhắc thư viện dù bỏ cả tầng 5/6.
+b) Không ghép bệ tầng 8, đọc bia tầng 9:
+   LevelOneStory.cs:99 thay dòng vốn giới thiệu Vua Xương bằng lời nhắc
+   bốn phút cho cả Solo/LAN. Toàn đoạn đang đọc không giới thiệu tên vua.
+   Tuy vậy StoryFlow.cs:125 xem Read9 như đã biết, nên Exit9 nói
+   "Vua Xương đang ở bên dưới".
+Hướng sửa: theo dõi manh mối thực sự được tiết lộ, hoặc bảo đảm cả hai
+chế độ cùng nhận thông tin cốt lõi; có câu chuyển trung tính khi bỏ qua.
+Không bắt người chơi đọc bia/ghép bệ để được qua tầng.
+
+7. "GHI CHÉP CÒN LẠI" ĐÔI KHI NÓI NHƯ NGƯỜI ĐANG QUAN SÁT
+Ưu tiên: trau chuốt. Đã xác nhận từ đầu ra TextAt/SpeakerAt.
+Ở Solo, các câu thay theo tình huống vẫn gắn nhãn cố định của bia:
+"GHI CHÉP CÒN LẠI: Kẻ giữ cửa đã ngã rồi"
+hoặc "GHI CHÉP CÒN LẠI: Chìa đã tìm được".
+Đây là phản ứng về hành động vừa xảy ra, không phải lời người xưa
+để lại. Cảm giác bia đang tự biết việc người chơi vừa làm.
+Hướng sửa: chuyển câu cập nhật sang lời kỵ sĩ hoặc lời kể, giữ trích
+dẫn thật sự trên đá riêng trong luồng đọc. Bia phép tầng 8 có thể đổi
+chữ khi ghép chìa, nhưng cần nhất quán với cách giới thiệu cơ chế.
+
+8. MỘT SỐ CÂU QUAN SÁT ĐỒ TRANG TRÍ GIẢ ĐỊNH ĐÃ BIẾT BIA/BỆ
+Ưu tiên: trau chuốt. Xác nhận qua mã mô tả, chưa chơi tay từng vị trí.
+DecorationInspection.cs:136: cột so sánh với "lời nhắn trên bia"
+ngay cả khi chưa đọc bia.
+DecorationInspection.cs:142: di vật tầng 8 bảo tìm trên bệ khắc chữ
+ngay cả khi chưa phát hiện bệ; sau ghép đủ vẫn nói đi tìm lời giải.
+Mô tả hiện chỉ nhận level/fought/kingDead, không nhận trạng thái manh mối.
+Hướng sửa: câu trung tính trước khi biết, câu nối sau khi đã biết;
+câu sau giải xong phải phản ánh việc đã có lời giải.
+
+TỔNG KẾT THEO TẦNG
+1: mạch mất lối vào -> bia -> quái -> cổng có nhánh không đọc;
+   lời quan sát cột vẫn có giả định biết bia.
+2: không thấy lỗi chặn tiến trình; nội dung nối người đi trước.
+3: lời cung thủ/kiếm khí khớp nhóm quái và kỹ năng hiện có.
+4: điều kiện chìa + quái đúng; nhánh kích hoạt trước đọc mắc nhóm 2/7.
+5: bỏ bia có câu Exit trung tính; đọc sau boss mắc nhóm 4/7.
+6: lửa là tùy chọn; nhánh đọc sau thắp mắc nhóm 2/7;
+   thông tin thư viện Solo/LAN không tương đương.
+7: độc/thuốc có trigger gameplay; manh mối thư viện mắc nhóm 6.
+8: không bắt ghép bệ để qua tầng; mắc nhóm 2/3/5/8.
+9: bốn phút tính khi Playing, đọc bia tạm dừng theo thiết kế;
+   đọc/bỏ ghép tầng trước có lỗ hổng giới thiệu tên vua, nhóm 6.
+10: cổng về vẫn đòi hết quái; boss chết và đọc muộn mắc nhóm 1/4/7.
+
+NHÁNH BỎ QUA ĐÃ ĐỐI CHIẾU, KHÔNG COI LÀ LỖI
+- Không F: không mở thoại; cơ chế G vẫn thao tác được nếu đủ điều kiện.
+- G ở tầng 4/6/8 là tùy chọn; chỉ chìa/quái quyết định mở cổng.
+- Mở F rồi bỏ qua: đã đánh dấu Read và lưu trọn bản chép ngay khi mở.
+  Đây là hành vi hiện có để đọc lại trong J, không tương đương chưa đọc.
+- Backspace chỉ đóng lời dẫn/quan sát; không xóa sự kiện đã xảy ra.
+- Bỏ qua cảnh đầu vẫn vào gameplay; cảnh cuối chỉ tới sau điều kiện về.
+- Trong LAN, tiến trình/đọc/bỏ qua thuộc phiên chung; một người bỏ qua
+  đóng phần trình bày chung. Có kiểm tra session/line/run/level để
+  gói bỏ qua cũ không đóng nhầm lần đọc mới.
+- Tên "khế ước" còn ở vài tên GameObject/comment nội bộ; không tìm thấy
+  chúng là lời kể đang hiển thị nên không kết luận là cốt truyện cũ bị lộ.
+
+ĐỀ XUẤT THỨ TỰ XỬ LÝ
+Sửa nhóm 1/2/3 trước để dữ liệu nhật ký đúng; tiếp theo nhóm 4/5/6
+để chuỗi đối thoại liền mạch; cuối cùng chỉnh người nói và mô tả đồ vật.
+Kiểm thử nội dung từng nhánh, không chỉ kiểm tra mốc xuất hiện hoặc
+Host/Client có cùng hash: hai máy có thể đồng bộ cùng một câu sai.

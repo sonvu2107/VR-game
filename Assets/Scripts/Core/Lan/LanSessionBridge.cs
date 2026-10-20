@@ -27,6 +27,9 @@ public sealed class LanSessionBridge : GameSessionBridge
     private LanPlayerInput guestInput;
     private LanInputFrame pendingInput;
     private bool previousAttack;
+    private bool storyInputBlocked;
+    private int sentInspectionVersion = -1;
+    private int sentNarrativeCount = -1;
     private bool peerReady;
     private bool authenticated;
     private bool waitingForGuest = true;
@@ -136,7 +139,7 @@ public sealed class LanSessionBridge : GameSessionBridge
                 if (!HasStateAuthority) { Fail("Mất kết nối với Host."); return; }
                 RemoveGuest();
                 waitingForGuest = true;
-                if (manager.CurrentState == GameState.Playing) manager.Pause();
+                if (manager.CurrentState == GameState.Playing) manager.WaitForPartner();
                 Status = "Người chơi 2 đã rời phòng. Đang chờ kết nối lại.";
             }
             else if (value.StartsWith("error:")) { Fail(value.Substring(6)); return; }
@@ -160,7 +163,7 @@ public sealed class LanSessionBridge : GameSessionBridge
 
         if (HasStateAuthority)
         {
-            if (waitingForGuest && manager.CurrentState == GameState.Playing) manager.Pause();
+            if (waitingForGuest && manager.CurrentState == GameState.Playing) manager.WaitForPartner();
             if (guestInput != null && Time.realtimeSinceStartup - lastInputAt > 0.5f) guestInput.ResetInput();
             if (peerReady && Time.realtimeSinceStartup >= nextSend)
             {
@@ -208,10 +211,29 @@ public sealed class LanSessionBridge : GameSessionBridge
             return;
         }
         if (!authenticated) return;
+        if (message.type == "stone" && peerReady && message.run == run && message.level == manager.CurrentLevel && message.storySession == manager.Story.StorySession)
+        {
+            manager.Story.TryReadStone(guestHealth);
+            return;
+        }
+        if (message.type == "mechanism" && peerReady && message.run == run && message.level == manager.CurrentLevel &&
+            message.storySession == manager.Story.StorySession && message.mechanismStage == manager.Story.MechanismStage)
+        { manager.Story.TryActivateMechanism(guestHealth); return; }
+        if (message.type == "narrativeSkip" && peerReady && message.run == run && message.level == manager.CurrentLevel)
+            manager.Story.DismissCue(message.narrativeVersion);
+        if (message.type == "decorInspect" && peerReady && message.run == run && message.level == manager.CurrentLevel)
+            manager.Story.TryInspectDecoration(guestHealth, message.decorationId);
+        if (message.type == "decorSkip" && peerReady && message.run == run && message.level == manager.CurrentLevel)
+            manager.Story.DismissInspection(message.inspectionVersion);
+        if (message.type == "story" && peerReady && message.run == run && message.level == manager.CurrentLevel && message.storyEnding == manager.Story.Ending && message.storySession == manager.Story.StorySession)
+        {
+            manager.Story.AdvanceAuthoritative(message.storyLine, message.storySkip);
+            return;
+        }
         if (message.type == "ready" && message.run == run && message.level == manager.CurrentLevel)
         {
             peerReady = true;
-            if (waitingForGuest && manager.CurrentState == GameState.Paused) manager.Resume();
+            if (waitingForGuest && (manager.CurrentState == GameState.Paused || manager.CurrentState == GameState.WaitingForPartner)) manager.Resume();
             waitingForGuest = false;
             Status = "LAN · Host · 2/2 người chơi";
             SendSnapshot();
@@ -275,6 +297,10 @@ public sealed class LanSessionBridge : GameSessionBridge
         manager.PlayerMovement.transform.position = LocalState.position;
         hostHealth.ApplyLanHealth(LocalState.health, LocalState.hearts);
         scoreManager?.ApplyLanScore(message.score);
+        manager.Story.ApplyNarrativeRemote(message);
+        manager.Story.ApplyRemote(message.level, message.storyLine);
+        manager.Story.ApplyStoneRemote(message.stonePosition, message.stoneRead);
+        if ((GameState)message.state == GameState.Story) storyInputBlocked = true;
         manager.ApplyLanState(message.level, (GameState)message.state, message.enemies,
             message.keys, message.requiredKeys, message.timeRemaining);
         if (teammateDungeonLight != null) teammateDungeonLight.transform.position = message.players[0].position;
@@ -285,6 +311,16 @@ public sealed class LanSessionBridge : GameSessionBridge
 
     private void SampleInput()
     {
+        if (storyInputBlocked)
+        {
+            if (manager.CurrentState == GameState.Story || !LevelOneStory.GameplayButtonsReleased)
+            {
+                pendingInput = default;
+                previousAttack = false;
+                return;
+            }
+            storyInputBlocked = false;
+        }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         if (LanSmokeProbe.Active != null)
         {
@@ -391,8 +427,8 @@ public sealed class LanSessionBridge : GameSessionBridge
             guestHealth.ResetForLanRun();
             float radius = manager.CurrentLevelDefinition.DarknessRadius;
             ConfigurePointLight(ref guestDungeonLight, guest.transform, radius);
-            manager.PlayerMovement.enabled = true;
-            guest.enabled = true;
+            manager.PlayerMovement.enabled = manager.CurrentState == GameState.Playing;
+            guest.enabled = manager.CurrentState == GameState.Playing;
         }
         if (authenticated) SendWorld();
     }
@@ -427,8 +463,30 @@ public sealed class LanSessionBridge : GameSessionBridge
             state = (int)manager.CurrentState, enemies = manager.enemyCount,
             keys = manager.KeysCollected, requiredKeys = manager.KeysRequired, timeRemaining = manager.LevelTimeRemaining,
             score = scoreManager != null ? scoreManager.CurrentScore : 0,
+            narrativeMasks = manager.Story.NarrativeMasks, narrativeCue = manager.Story.CueId,
+            narrativeVersion = manager.Story.CueVersion, narrativeSeconds = manager.Story.CueRemaining,
+            narrativeExit = manager.Story.ExitPosition, storyEnding = manager.Story.Ending, storyOpening = manager.Story.Opening,
+            storySession = manager.Story.StorySession, dialogueArchive = manager.Story.DialogueArchive,
+            guideAvailable = manager.Story.GuideAvailable, guideTarget = manager.Story.GuideTarget,
+            storyLine = manager.Story.LineIndex,
+            inspectionText = manager.Story.InspectionText, inspectionVersion = manager.Story.InspectionVersion,
+            inspectionSeconds = manager.Story.InspectionSeconds,
+            inspectableDecorationIds = manager.Story.InspectableDecorationIds(guestHealth),
+            stoneRead = manager.Story.StoneRead, stonePosition = manager.Story.StonePosition,
             players = new[] { CapturePlayer(manager.PlayerMovement), CapturePlayer(guest) }
         };
+        if (type == "world" || sentNarrativeCount != manager.Story.NarrativeHistory.Count)
+        {
+            message.narrativeHistory = manager.Story.NarrativeHistory.ToArray();
+            message.narrativeHistoryIncluded = true;
+            sentNarrativeCount = manager.Story.NarrativeHistory.Count;
+        }
+        if (type == "world" || sentInspectionVersion != manager.Story.InspectionVersion)
+        {
+            message.decorationNotes = manager.Story.DecorationNotes.ToArray();
+            message.decorationNotesIncluded = true;
+            sentInspectionVersion = manager.Story.InspectionVersion;
+        }
         world.CaptureVisuals(message);
         return message;
     }
@@ -440,6 +498,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         LanMessage message = Capture("world");
         message.maps = world.CaptureMap();
         message.meshes = world.CaptureMeshes();
+        message.decorations = manager.Story.Decorations;
         Send(message);
     }
     private void SendSnapshot() => Send(Capture("snapshot"));
@@ -452,6 +511,44 @@ public sealed class LanSessionBridge : GameSessionBridge
         if (HasStateAuthority) return false;
         if (peerReady) Send(new LanMessage { type = command });
         return true;
+    }
+
+    public void RequestNarrativeDismiss(int version)
+    {
+        if (!HasStateAuthority && peerReady)
+            Send(new LanMessage { type = "narrativeSkip", run = clientRun, level = clientLevel, narrativeVersion = version });
+    }
+
+    public void RequestDecorationInspect(int id)
+    {
+        if (!HasStateAuthority && peerReady)
+            Send(new LanMessage { type = "decorInspect", run = clientRun, level = clientLevel, decorationId = id });
+    }
+
+    public void RequestDecorationDismiss(int version)
+    {
+        if (!HasStateAuthority && peerReady)
+            Send(new LanMessage { type = "decorSkip", run = clientRun, level = clientLevel, inspectionVersion = version });
+    }
+
+    public void RequestStoneRead()
+    {
+        if (!HasStateAuthority && peerReady)
+            Send(new LanMessage { type = "stone", run = clientRun, level = clientLevel, storySession = manager.Story.StorySession });
+    }
+
+    public void RequestMechanismActivate()
+    {
+        if (!HasStateAuthority && peerReady)
+            Send(new LanMessage { type = "mechanism", run = clientRun, level = clientLevel,
+                storySession = manager.Story.StorySession, mechanismStage = manager.Story.MechanismStage });
+    }
+
+    public void RequestStoryAdvance(int line, bool skip)
+    {
+        if (HasStateAuthority || !peerReady) return;
+        Send(new LanMessage { type = "story", run = clientRun, level = clientLevel,
+            storySession = manager.Story.StorySession, storyLine = line, storySkip = skip, storyEnding = manager.Story.Ending });
     }
 
     public HealthController NearestAlivePlayer(Vector3 position)

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-/// <summary>Trang trí thuần hình ảnh; không thêm collider, sát thương hay trạng thái gameplay.</summary>
+/// <summary>Bảng màu trang trí; vật nổi có footprint riêng, hiệu ứng bay/nền không chặn đường.</summary>
 [CreateAssetMenu(menuName = "PCG/Dungeon Ambience Set")]
 public sealed class DungeonAmbienceSet : ScriptableObject
 {

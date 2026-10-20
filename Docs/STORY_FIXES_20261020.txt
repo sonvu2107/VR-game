@@ -1,0 +1,71 @@
+SỬA BA ĐIỂM SAU KIỂM TRA CỐT TRUYỆN — 20/10/2026
+
+THAY ĐỔI
+1. Nhật ký dùng danh sách sự kiện có tầng, mốc và nội dung đã chốt
+   ngay khi Host ghi nhận. Trình bày theo thứ tự xảy ra, không lấy lại
+   câu cố định hoặc suy ngược từ trạng thái mới.
+   Bỏ qua lửa/bệ/manh mối không còn ghi thành đã thực hiện.
+   Lịch sử được gửi khi thay đổi và gửi đầy đủ khi vào lại trận.
+   Snapshot không chứa lịch sử mới không xóa lịch sử đã có ở Client.
+
+2. Câu kết ở bia tầng 6:
+   "Phải tìm đường tiếp thôi. Đi chậm một chút, để còn nhận ra những
+   lối đã qua."
+   Câu này nối được với cả ghi chép Solo và lời người đồng hành LAN.
+
+3. Host gửi ID những vật trang trí mà người chơi Client thực sự tới
+   được, dùng cùng CanInspect với handler nhấn F.
+   Client dựng hình không có collider map; vì vậy không tự raycast
+   rồi coi kết quả đó là hợp lệ. Dấu F dùng danh sách Host và khoảng
+   cách hiện tại. Host vẫn kiểm tra lại khi nhận yêu cầu nhấn F.
+   Dữ liệu được cập nhật qua snapshot và xóa khi chuẩn bị tầng mới.
+
+Giao thức LAN tăng từ 11 lên 12: hai máy cần dùng cùng bản mới.
+Không đổi sinh quái, sát thương, va chạm, chìa, thời gian, phần thưởng,
+điều kiện qua tầng hoặc quyền bỏ qua. Chỉ bổ sung dữ liệu lịch sử,
+điều kiện hiển thị tương tác và sửa lời thoại.
+
+KIỂM THỬ BỔ SUNG
+- Ghi Enter/Exit ở tầng 6, 8, 9, 10 khi chưa tìm manh mối:
+  nhật ký không được khẳng định đã thắp lửa hoặc đã biết lời giải.
+- Thay đổi trạng thái manh mối sau đó: ghi chép cũ phải giữ nguyên.
+- Kiểm tra nội dung tiếng Việt sau JSON round-trip.
+- Kiểm tra mỗi mốc có đúng một bản ghi, thứ tự bắt đầu bằng Enter.
+- Ghi SHA-256 nội dung từng tầng trên Host/Client để đối chiếu.
+- Sau vào lại tầng 8, kiểm tra lại lịch sử các tầng 1–7.
+- Vật cản chỉ đặt ở Host: Client phải bỏ chọn vật bị chắn, rồi hiện
+  lại F khi Host bỏ vật cản.
+
+Lượt đầu của ca vật cản dừng tại fixture: vật thử nằm trong đoạn cuối
+0,8m được cho phép cho vật treo tường. Đã sửa vị trí đứng thử đủ xa
+để vật cản nằm ngoài đoạn này, giữ nguyên luật tương tác của gameplay.
+Log lượt đầu được giữ trong D:/tl-story-fixes-20261020.
+
+KẾT QUẢ LƯỢT XÁC NHẬN CUỐI
+Thư mục bằng chứng: D:/tl-story-fixes-20261020.
+Bản chạy: VerifiedBuild/TheLabyrinth.exe.
+- build-verified.log:6961: LAN_BUILD_SUCCESS.
+- solo-verified.log:44876: PASS Solo tầng 1–10, tới kết thúc.
+- host-verified.log:44325: PASS Host tầng 1–10, tới kết thúc.
+- client-verified.log:179/190: F ẩn khi bị chắn, hiện lại khi đường thông.
+- client-intro-verified.log:98: Client ngắt giữa mở đầu rồi vào lại.
+- client-verified.log:3335: ngắt tại bệ ghép nửa chìa tầng 8.
+- client-rejoin-verified.log:1842: PASS Client tầng 8–10 sau vào lại.
+- journal-parity.json: 17/17 phép đối chiếu SHA-256 khớp:
+  tầng 1–7 trước ngắt và tầng 1–10 sau vào lại đều giống Host.
+- Solo kiểm tra đủ 669 vật trang trí của lượt sinh map này.
+- Không có STORY_SMOKE_FAIL hoặc lỗi exception runtime trong log
+  lượt xác nhận cuối. Ca fixture lỗi trước đó nằm ở host.log riêng.
+- Mọi file C# dưới Assets/Scripts khớp SHA-256 với project build.
+  Catalog LAN trong workspace đã đồng bộ có kiểm tra bản gốc.
+- Đã xem ảnh nhật ký Solo tầng 8; các trang được probe kiểm tra
+  không tràn chữ. Ảnh kiểm thử không đại diện ánh sáng Unity Play.
+
+Trong Unity: dừng Play, chờ biên dịch, bắt đầu lượt Play mới để có
+lịch sử sự kiện đầy đủ từ đầu. Không cần đóng Unity.
+
+GIỚI HẠN
+Kiểm thử tự động dùng save riêng, fixture vị trí/AI/sát thương/thời gian.
+Không điều khiển Unity Play đang mở hoặc thay đổi save người dùng.
+LAN nhiều tiến trình trên cùng máy, chưa xác nhận hai máy vật lý.
+Không kết luận cân bằng chiến đấu hay mọi seed sinh map.

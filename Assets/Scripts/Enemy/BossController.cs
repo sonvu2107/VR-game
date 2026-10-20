@@ -84,6 +84,7 @@ public class BossController : MonoBehaviour
         }
 
         CreateVisuals();
+        WorldDepthSort.AttachActor(gameObject);
         RegisterWithManager();
     }
 
@@ -227,7 +228,7 @@ public class BossController : MonoBehaviour
         SpriteRenderer renderer = bar.AddComponent<SpriteRenderer>();
         renderer.sprite = sprite;
         renderer.color = color;
-        renderer.sortingOrder = sortingOrder;
+        renderer.sortingOrder = 30000 + sortingOrder;
         return renderer;
     }
 

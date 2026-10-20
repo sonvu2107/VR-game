@@ -36,7 +36,7 @@ public sealed class FloorExit : MonoBehaviour
         IsUnlocked = unlocked;
 
         if (visual != null)
-            visual.color = unlocked ? unlockedColor : lockedColor;
+            visual.color = unlocked ? (gameManager != null && gameManager.CurrentLevel == 10 ? new Color(1f, .86f, .5f) : unlockedColor) : lockedColor;
 
         portalVisual?.SetUnlocked(unlocked);
     }

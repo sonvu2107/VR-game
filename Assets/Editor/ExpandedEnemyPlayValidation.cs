@@ -209,7 +209,7 @@ public static class ExpandedEnemyPlayValidation
         var generator = UnityEngine.Object.FindObjectOfType<InfiniteWorldGenerator>();
         var room = generator.GeneratedRooms.First(item => item.Type == RoomType.Boss);
         var candidates = generator.GetFinalBossCandidates();
-        Require(candidates.Count >= 11, "Final boss pool lost active enemy species.");
+        Require(candidates.Count == 1 && candidates[0].GetComponent<SkeletonKingController>() != null, "Final boss must be Skeleton King.");
         foreach (var prefab in candidates)
         {
             Require(prefab.name != "SkeletonScout" && prefab.name != "SkeletonGuard", "Removed mob entered boss pool.");

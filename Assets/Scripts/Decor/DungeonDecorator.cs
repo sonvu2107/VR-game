@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Procedurally decorates underground dungeon walls with warm wall torches and rare banners,
 /// plus wooden storage crates in room corners and room centerpieces.
-/// Leaves room floors and corridors 100% clean and unobstructed for an authentic basement setting.
+/// Keeps connected routes while solid props reserve their ground footprints.
 /// </summary>
 public static class DungeonDecorator
 {
@@ -62,7 +62,7 @@ public static class DungeonDecorator
         {
             foreach (DungeonRoom room in layout.Rooms)
             {
-                DecorateRoom(room, layout.FloorTiles, random, occupiedCells, spawnedObjects, root.transform, currentLevel, levelType);
+                DecorateRoom(room, layout, random, occupiedCells, spawnedObjects, root.transform, currentLevel, levelType);
             }
         }
     }
@@ -170,7 +170,7 @@ public static class DungeonDecorator
 
     private static void DecorateRoom(
         DungeonRoom room,
-        HashSet<Vector2Int> allFloorTiles,
+        DungeonLayout layout,
         SeededRandom random,
         HashSet<Vector2Int> occupiedCells,
         ICollection<GameObject> spawnedObjects,
@@ -181,6 +181,7 @@ public static class DungeonDecorator
         if (room == null || room.FloorTiles == null || room.FloorTiles.Count == 0)
             return;
 
+        var allFloorTiles = layout.FloorTiles;
         List<Vector2Int> cornerCells = new();
         List<Vector2Int> borderCells = new();
         List<Vector2Int> interiorCells = new();
@@ -232,8 +233,12 @@ public static class DungeonDecorator
 
             if (boxSprites != null && boxSprites.Length > 0)
             {
-                SpawnStaticProp("Crates", boxSprites[random.Range(0, boxSprites.Length)], worldPos, 3, parent, spawnedObjects);
-                occupiedCells.Add(cornerCell);
+                var prop = SpawnStaticProp("Crates", boxSprites[random.Range(0, boxSprites.Length)], worldPos, 3, parent, spawnedObjects);
+                if (prop != null && !DecorationCollision.TrySprite(layout, prop.GetComponent<SpriteRenderer>(), occupiedCells))
+                {
+                    prop.SetActive(false);
+                    if (Application.isPlaying) Object.Destroy(prop); else Object.DestroyImmediate(prop);
+                }
             }
         }
 

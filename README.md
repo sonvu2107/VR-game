@@ -43,6 +43,8 @@ Lệnh **Refresh Owned Preview Geometry** chỉ dựng lại root preview do cô
 
 ### Trang trí pixel art và hiệu ứng môi trường
 
+Nền/tường các map campaign LV 3–10 dùng material riêng `LowNoiseFloorWalls.mat`, shader `TheLabyrinth/Low Noise Pixel Map`: lọc 9 mẫu rồi lấy mẫu theo 48 pixel/ô, chặn trong cell atlas để tránh lấy màu ô bên cạnh. PNG gốc và material props/bẫy không đổi; LV 1–2 không áp dụng. Bản thử LV 3 đã được người chơi xác nhận hết nhiễu khi di chuyển. Lệnh **Apply Low Noise to Levels 4-10** sao lưu rồi cập nhật theme/preview và catalog LAN; kết quả ở `Temp/CampaignLowNoise.result.txt`. Dựng lại campaign giữ lựa chọn material này, không tự đổi về `MapAtlas.mat`.
+
 Không còn sinh rương trang trí hoặc footprint của rương; vẫn giữ phòng Treasure, chìa khóa và logic phần thưởng. Atlas nguồn có hình rương được giữ lại, không xóa dữ liệu ảnh.
 
 `DungeonAmbienceSet` cấu hình 10 phối màu: lửa cháy lặp 4 frame, linh hồn lơ lửng, mạng nhện bám mép tường, nấm ở hầm rêu, tinh thể ở kho băng/vực sâu, nến trong thư viện/điện vua và xương trong hầm mộ. Map gốc (level 1 chiến dịch) giữ đuốc tường cũ, không thêm chậu lửa; chỉ bổ sung mạng nhện, xương và linh hồn thưa. Lò rèn ưu tiên lửa, không rải linh hồn. Tất cả là trang trí thuần hình ảnh, không gây sát thương và không thêm collider.
@@ -60,8 +62,10 @@ Texture dùng Point, không mipmap/compression; mesh giữ nguyên kích thướ
 - Cổng chuyển level chỉ mở sau khi toàn bộ enemy bị tiêu diệt và đủ chìa khóa ở level có khóa.
 - Level 4 có bẫy gai và một chìa khóa; level 6 giới hạn tầm nhìn; level 8 yêu cầu hai chìa khóa; level 9 có giới hạn 4 phút.
 - Cấu hình chiến dịch đánh dấu level thường, mini-boss và boss cuối.
+- Boss cuối chỉ chọn Goblin Torch/Barrel/TNT có sheet đi và đánh nhiều frame; không chọn EliteEnemy hoặc quái dùng sprite đơn. Tỷ lệ tối đa ×1,75, kiểm tra vừa phòng trước khi đặt.
+- Map 10: chính điện nằm ở đầu bắc cao nhất, một ngai trên bục sẵn trong sprite, hai tượng hộ vệ hai bên; hai tướng và bốn lính canh thật xếp hai hàng khi sinh, sau đó tham chiến bằng AI hiện có. Đội hộ vệ được tính vào điều kiện dọn quái mở cổng. Ngai không còn xuất hiện trong phòng Start/Treasure; cổng kết thúc nằm ở cánh đông, không ở sau lưng ngai.
 - Phòng chiến đấu gồm một Goblin Torch, một TNT và một Barrel; boss tầng 10 chọn ngẫu nhiên từ pool quái hiện có và phóng lớn tối đa bốn lần nếu phòng đủ chỗ.
-- Bẫy dùng mẫu chia đường, che tuyến TNT, bảo vệ mục tiêu và hai bên phòng boss; giữ mạng đường né không có bẫy. Phòng không đủ chỗ sẽ giảm/bỏ bẫy; có cảnh báo 0,85 giây trước khi kích hoạt.
+- Bẫy ưu tiên cửa phòng thật và hành lang đủ rộng: chặn một phần lối tiếp cận hoặc tạo dải mép lối vào, không bịt làn né. Chỉ giữ cụm liền mạch; không nhặt các ô lẻ để bù số lượng. Khi cửa không đủ chỗ, có thể dùng hàng bẫy bảo vệ quái đánh xa/hỗ trợ; phòng mục tiêu và boss vẫn có mẫu riêng. Giữ kiểm tra mạng đường né, va chạm và NavMesh; không đủ chỗ thì bỏ bẫy. Cảnh báo 0,85 giây trước khi kích hoạt được giữ nguyên.
 - LAN co-op hai người trên hai máy: Host/Join bằng IPv4, Host xử lý gameplay và đồng bộ bản đồ, Player, Enemy, cổng, VFX cùng trạng thái chiến dịch.
 - Tự động tạo sàn và tường bằng Tilemap.
 - NavMesh 2D hỗ trợ enemy tìm đường và đuổi theo người chơi.
