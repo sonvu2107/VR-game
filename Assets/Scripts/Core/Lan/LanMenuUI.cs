@@ -60,34 +60,68 @@ public sealed class LanMenuUI : MonoBehaviour
         RectTransform backdrop = Panel("Backdrop", transform, new Color(0.025f, 0.025f, 0.06f, 0.96f));
         Stretch(backdrop);
         RectTransform panel = Panel("LAN Lobby", backdrop, new Color(0.10f, 0.08f, 0.16f));
-        Center(panel, new Vector2(760, 660), Vector2.zero);
-        Label(panel, "THE LABYRINTH · CHỌN MÀN", 29, new Vector2(0, 282), new Vector2(700, 48));
-        Label(panel, "Chọn level bắt đầu · chơi Solo hoặc làm Host LAN", 20, new Vector2(0, 237), new Vector2(700, 36));
+        Center(panel, new Vector2(780, 700), Vector2.zero);
+        Label(panel, "THE LABYRINTH · CHỌN NHÂN VẬT", 29, new Vector2(0, 315), new Vector2(720, 42));
+        Label(panel, "Chọn chiến binh trước khi vào mê cung", 18, new Vector2(0, 278), new Vector2(720, 30));
+
+        PlayableCharacterId[] characters = Enum.GetValues(typeof(PlayableCharacterId))
+            .Cast<PlayableCharacterId>().ToArray();
+        var characterButtons = new RectTransform[characters.Length];
+        var characterInfo = Label(panel, "", 17, new Vector2(0, 157), new Vector2(720, 28));
+        characterInfo.gameObject.name = "Selected Character";
+        for (int i = 0; i < characters.Length; i++)
+        {
+            PlayableCharacterId character = characters[i];
+            string cardName = PlayableCharacterNames.DisplayName(character).Replace(" ", "\n");
+            characterButtons[i] = Button(panel, cardName,
+                new Vector2((i - 1.5f) * 178f, 215), new Vector2(164, 72), () => SelectCharacter(character));
+            TextMeshProUGUI cardText = characterButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+            if (cardText != null) cardText.fontSize = 16;
+        }
+
+        Label(panel, "CHỌN MÀN BẮT ĐẦU", 18, new Vector2(0, 123), new Vector2(720, 28));
         int selectedLevel = Mathf.Clamp(LanLaunch.StartingLevel, 1, LanLaunch.CampaignLevelCount);
         var levelButtons = new RectTransform[LanLaunch.CampaignLevelCount];
-        var selectedLabel = Label(panel, "", 23, new Vector2(0, 37), new Vector2(700, 40));
+        var selectedLabel = Label(panel, "", 21, new Vector2(0, -13), new Vector2(700, 34));
         selectedLabel.gameObject.name = "Selected Level";
         for (int i = 0; i < levelButtons.Length; i++)
         {
             int level = i + 1;
-            levelButtons[i] = Button(panel, "LV " + level, new Vector2((i % 5 - 2) * 132, 165 - (i / 5) * 60),
-                new Vector2(116, 48), () => SelectLevel(level));
+            levelButtons[i] = Button(panel, "LV " + level, new Vector2((i % 5 - 2) * 132, 83 - (i / 5) * 54),
+                new Vector2(116, 44), () => SelectLevel(level));
         }
+        SelectCharacter(LanLaunch.SelectedCharacter);
         SelectLevel(selectedLevel);
-        Label(panel, "Tất cả level đã mở · Người Join sẽ theo màn của Host", 17, new Vector2(0, -2), new Vector2(700, 30));
-        TMP_InputField address = Field(panel, "IP máy Host", "192.168.1.10", new Vector2(-90, -55), new Vector2(390, 44));
-        TMP_InputField port = Field(panel, "Cổng", "7777", new Vector2(230, -55), new Vector2(180, 44));
+        Label(panel, "Tất cả level đã mở · Người Join sẽ theo màn của Host", 16, new Vector2(0, -44), new Vector2(700, 26));
+        TMP_InputField address = Field(panel, "IP máy Host", "192.168.1.10", new Vector2(-90, -82), new Vector2(390, 40));
+        TMP_InputField port = Field(panel, "Cổng", "7777", new Vector2(230, -82), new Vector2(180, 40));
         port.contentType = TMP_InputField.ContentType.IntegerNumber;
         port.characterLimit = 5;
         address.characterLimit = 15;
         status = Label(panel, LanLaunch.LastError ?? "Host gửi IP của mình cho người tham gia.", 18,
-            new Vector2(0, -109), new Vector2(700, 54));
+            new Vector2(0, -125), new Vector2(700, 40));
         status.color = new Color(1f, 0.85f, 0.55f);
-        Button(panel, "Tạo phòng LAN (Host)", new Vector2(-170, -170), new Vector2(320, 48), () => Launch(LanMode.Host));
-        Button(panel, "Tham gia phòng (Join)", new Vector2(170, -170), new Vector2(320, 48), () => Launch(LanMode.Client));
-        Button(panel, "Chơi một mình", new Vector2(0, -232), new Vector2(660, 48), () => Launch(LanMode.Solo));
-        Button(panel, "Quay lại", new Vector2(-126, -290), new Vector2(220, 42), () => Destroy(gameObject));
-        Button(panel, "Dừng chơi", new Vector2(126, -290), new Vector2(220, 42), menu.QuitButtonControl);
+        Button(panel, "Tạo phòng LAN (Host)", new Vector2(-170, -176), new Vector2(320, 46), () => Launch(LanMode.Host));
+        Button(panel, "Tham gia phòng (Join)", new Vector2(170, -176), new Vector2(320, 46), () => Launch(LanMode.Client));
+        Button(panel, "Chơi một mình", new Vector2(0, -232), new Vector2(660, 46), () => Launch(LanMode.Solo));
+        Button(panel, "Quay lại", new Vector2(-126, -286), new Vector2(220, 40), () => Destroy(gameObject));
+        Button(panel, "Dừng chơi", new Vector2(126, -286), new Vector2(220, 40), menu.QuitButtonControl);
+
+        void SelectCharacter(PlayableCharacterId character)
+        {
+            LanLaunch.SelectCharacter(character);
+            characterInfo.text = $"ĐÃ CHỌN: {PlayableCharacterNames.DisplayName(character)} · " +
+                PlayableCharacterNames.Description(character);
+            for (int i = 0; i < characterButtons.Length; i++)
+            {
+                if (characterButtons[i] == null) continue;
+                bool selected = characters[i] == character;
+                characterButtons[i].GetComponent<UnityEngine.UI.Image>().color = selected
+                    ? new Color(.18f, .52f, .42f) : new Color(.23f, .16f, .34f);
+                TextMeshProUGUI label = characterButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+                if (label != null) label.color = selected ? new Color(1f, .94f, .55f) : Color.white;
+            }
+        }
 
         void SelectLevel(int level)
         {
@@ -97,7 +131,6 @@ public sealed class LanMenuUI : MonoBehaviour
                 if (levelButtons[i] != null) levelButtons[i].GetComponent<UnityEngine.UI.Image>().color = i == level - 1
                     ? new Color(.18f, .48f, .38f) : new Color(.23f, .16f, .34f);
         }
-
         void Launch(LanMode mode)
         {
             try

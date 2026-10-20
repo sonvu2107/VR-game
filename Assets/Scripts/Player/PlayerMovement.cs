@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -77,12 +78,17 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask enemyLayers;
     public int attackDamage;
     public int powerUpDamage;
+    [Header("Combat Audio")]
+    [Tooltip("Shared combat clip used by dash and abilities until bespoke SFX are supplied.")]
+    public AudioClip abilityFallbackSfx;
     private float powerUpAttackCooldownActual;
     public AudioSource audioSource;
     private AudioSource swingAudioSource;
     private AudioSource impactAudioSource;
+    private AudioSource abilityAudioSource;
     private AudioClip[] comboSwingClips;
     private AudioClip swordImpactClang;
+    private AudioClip dashSfx;
 
     private Vector2 _movement;
     private Vector2 facingLeft;
@@ -187,6 +193,10 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         playerControl ??= new PlayerControls();
+        // Most production levels instantiate PlayerMovement without an
+        // inspector-assigned fallback. Load the actual recorded sword clip
+        // here so skill audio can never silently receive a null clip.
+        abilityFallbackSfx ??= Resources.Load<AudioClip>("Audio/Combat/PlayerSwordSlash");
         audioSource = GetComponent<AudioSource>();
         swingAudioSource = gameObject.AddComponent<AudioSource>();
         swingAudioSource.playOnAwake = false;
@@ -194,6 +204,9 @@ public class PlayerMovement : MonoBehaviour
         impactAudioSource = gameObject.AddComponent<AudioSource>();
         impactAudioSource.playOnAwake = false;
         impactAudioSource.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
+        abilityAudioSource = gameObject.AddComponent<AudioSource>();
+        abilityAudioSource.playOnAwake = false;
+        abilityAudioSource.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
         comboSwingClips = new[]
         {
             Resources.Load<AudioClip>("Audio/Combat/SwordSwing1"),
@@ -201,6 +214,9 @@ public class PlayerMovement : MonoBehaviour
             Resources.Load<AudioClip>("Audio/Combat/SwordSwing3")
         };
         swordImpactClang = Resources.Load<AudioClip>("Audio/Combat/SwordImpactClang");
+        // The dash starts with the player's real blade swish instead of a
+        // synthetic thruster; this keeps the action grounded in melee combat.
+        dashSfx = abilityFallbackSfx;
         player = gameObject;
         powerupController = player.GetComponent<PowerupController>();
     }
@@ -238,6 +254,11 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        // Movement is applied in FixedUpdate while Cinemachine renders every frame.
+        // Interpolation prevents the camera from following discrete physics steps.
+        if (rb != null)
+            rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        ConfigureSmoothCameraFollow();
         animator = GetComponent<Animator>();
         hasComboIndexParameter = animator != null && System.Array.Exists(animator.parameters,
             parameter => parameter.name == "ComboIndex" && parameter.type == AnimatorControllerParameterType.Int);
@@ -262,6 +283,22 @@ public class PlayerMovement : MonoBehaviour
         if (GetComponent<EnemyDirectionIndicator>() == null)
             gameObject.AddComponent<EnemyDirectionIndicator>();
         AssertSingleAuthoritativePlayerVisual("startup");
+    }
+
+    private static void ConfigureSmoothCameraFollow()
+    {
+        CinemachineBrain brain = FindObjectOfType<CinemachineBrain>();
+        if (brain != null)
+            brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.LateUpdate;
+
+        foreach (CinemachineVirtualCamera camera in FindObjectsOfType<CinemachineVirtualCamera>())
+        {
+            CinemachineFramingTransposer framing =
+                camera.GetCinemachineComponent<CinemachineFramingTransposer>();
+            if (framing == null) continue;
+            framing.m_LookaheadTime = 0f;
+            framing.m_LookaheadSmoothing = 0f;
+        }
     }
 
     private void Flip()
@@ -497,6 +534,7 @@ public class PlayerMovement : MonoBehaviour
         // zero, leaving the character visibly idle while moving several tiles.
         animator.SetFloat("Speed", 5f);
         ShowDashVfx();
+        PlayAbilitySfx(dashSfx, volume: 0.82f, pitch: 0.86f);
     }
 
     private bool WasDashPressed()
@@ -1228,6 +1266,12 @@ public class PlayerMovement : MonoBehaviour
 
     public void PlaySFX(AudioClip clip)
     {
+        // Q/E use the same body clip as a normal attack but play their own
+        // ability SFX at cast time. Never layer the legacy animation event on
+        // top of the dedicated sound.
+        if (skillController != null && skillController.IsSkillCasting)
+            return;
+
         if (!isAttacking)
         {
             if (clip != null && audioSource != null)
@@ -1246,6 +1290,26 @@ public class PlayerMovement : MonoBehaviour
         float volume = activeComboHit == 0 ? hit1SwingVolume : activeComboHit == 1 ? hit2SwingVolume : hit3SwingVolume;
         swingAudioSource.PlayOneShot(comboClip, volume);
         LanSessionBridge.Active?.PublishSound(comboClip, volume, swingAudioSource.pitch);
+    }
+
+    /// <summary>
+    /// Plays a gameplay-triggered ability sound and replicates it to the LAN guest.
+    /// The clip remains configurable on the Player so future bespoke SFX can replace
+    /// the temporary shared sword sound without changing ability code.
+    /// </summary>
+    public void PlayAbilitySfx(AudioClip clip = null, float volume = 1f, float pitch = 1f)
+    {
+        clip ??= abilityFallbackSfx;
+        if (clip == null || abilityAudioSource == null)
+        {
+            Debug.LogWarning($"[{name}] Tried to play ability SFX but no clip/source is available.", this);
+            return;
+        }
+
+        abilityAudioSource.pitch = Mathf.Clamp(pitch, 0.5f, 2f);
+        float clampedVolume = Mathf.Clamp01(volume);
+        abilityAudioSource.PlayOneShot(clip, clampedVolume);
+        LanSessionBridge.Active?.PublishSound(clip, clampedVolume, abilityAudioSource.pitch);
     }
 
     private AudioClip GetComboSwingClip(int comboHit)

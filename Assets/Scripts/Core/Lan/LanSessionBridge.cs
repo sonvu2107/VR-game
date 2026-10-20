@@ -41,6 +41,7 @@ public sealed class LanSessionBridge : GameSessionBridge
     private float lastPacketAt;
     private bool leaving;
     private int teammateHealth;
+    private PlayableCharacterId guestCharacter = PlayableCharacterId.AzureWarden;
     private AudioSource remoteAudio;
     private Transform teammateLight;
     private Vector3 lightOffset;
@@ -129,7 +130,11 @@ public sealed class LanSessionBridge : GameSessionBridge
                 authenticated = peerReady = false;
                 lastInputSequence = 0;
                 world.ResetPeerCache();
-                if (!HasStateAuthority) Send(new LanMessage { type = "hello", catalog = catalog.fingerprint });
+                if (!HasStateAuthority) Send(new LanMessage
+                {
+                    type = "hello", catalog = catalog.fingerprint,
+                    character = (int)LanLaunch.SelectedCharacter
+                });
             }
             else if (value == "disconnected")
             {
@@ -201,8 +206,18 @@ public sealed class LanSessionBridge : GameSessionBridge
                 Status = "Bản build của người tham gia không tương thích.";
                 return;
             }
+            if (!Enum.IsDefined(typeof(PlayableCharacterId), message.character))
+            {
+                Send(new LanMessage { type = "error", error = "Nhân vật được chọn không hợp lệ." });
+                return;
+            }
+            guestCharacter = (PlayableCharacterId)message.character;
             authenticated = true;
-            Send(new LanMessage { type = "welcome", catalog = catalog.fingerprint });
+            Send(new LanMessage
+            {
+                type = "welcome", catalog = catalog.fingerprint,
+                character = (int)LanLaunch.SelectedCharacter
+            });
             SpawnGuest();
             if (manager.CurrentState != GameState.Generating) SendWorld();
             return;
@@ -345,6 +360,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         guest = copy.GetComponent<PlayerMovement>();
         if (copy.GetComponent<CompanionVisual>() == null)
             copy.AddComponent<CompanionVisual>();
+        PlayerCharacterFrameAnimator.Configure(copy, guestCharacter);
         guest.enabled = false;
         guestInput = copy.AddComponent<LanPlayerInput>();
         guestHealth = copy.GetComponent<HealthController>();
@@ -420,13 +436,15 @@ public sealed class LanSessionBridge : GameSessionBridge
         if (player == null) return new LanPlayerState();
         HealthController health = player.GetComponent<HealthController>();
         PlayerSkillController skills = player.GetComponent<PlayerSkillController>();
+        PlayerCharacterFrameAnimator character = player.GetComponent<PlayerCharacterFrameAnimator>();
         return new LanPlayerState
         {
             position = player.transform.position, health = health.currentHealth, hearts = health.startHeart,
             dash = player.DashCooldownNormalized, power = player.PowerUpCooldownRemaining,
             q = skills != null ? skills.SwordWaveCooldownNormalized : 0f,
             e = skills != null ? skills.SpinSlashCooldownNormalized : 0f,
-            ultimate = skills != null ? skills.UltimateNormalized : 0f
+            ultimate = skills != null ? skills.UltimateNormalized : 0f,
+            character = character != null ? (int)character.Character : (int)PlayableCharacterId.AshenKnight
         };
     }
 

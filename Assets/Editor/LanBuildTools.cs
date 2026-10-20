@@ -22,7 +22,13 @@ public sealed class LanBuildTools : IPreprocessBuildWithReport
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             LanAssetCatalog existing = AssetDatabase.LoadAssetAtPath<LanAssetCatalog>(CatalogPath);
-            if (existing == null || existing.audioClips == null) RefreshCatalog();
+            // Combat audio is loaded dynamically from Resources, so it is not a
+            // scene dependency. Keep the shared LAN catalog in sync whenever a
+            // newly imported combat clip is missing from the existing catalog.
+            AudioClip[] combatAudio = Resources.LoadAll<AudioClip>("Audio/Combat");
+            bool missingCombatAudio = existing != null && existing.audioClips != null &&
+                combatAudio.Any(clip => clip != null && !existing.audioClips.Contains(clip));
+            if (existing == null || existing.audioClips == null || missingCombatAudio) RefreshCatalog();
         };
     }
     public void OnPreprocessBuild(BuildReport report) => RefreshCatalog();

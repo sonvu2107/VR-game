@@ -73,6 +73,9 @@ public class GameManager : MonoBehaviour
         if (PlayerMovement == null)
             PlayerMovement = FindObjectOfType<PlayerMovement>();
 
+        if (PlayerMovement != null)
+            PlayerCharacterFrameAnimator.Configure(PlayerMovement.gameObject, LanLaunch.SelectedCharacter);
+
         if (dungeonGenerator == null)
             dungeonGenerator = FindObjectOfType<InfiniteWorldGenerator>();
 

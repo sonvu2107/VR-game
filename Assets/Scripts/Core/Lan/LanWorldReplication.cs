@@ -242,7 +242,9 @@ public sealed class LanWorldReplication
         var result = new List<LanMesh>();
         foreach (var filter in Object.FindObjectsByType<MeshFilter>(FindObjectsSortMode.None))
         {
-            if (filter.GetComponentInParent<ArcaneCitadelGeometry>() == null && filter.GetComponent<ArcaneSpikeTrapVisual>() == null) continue;
+            if (filter.GetComponentInParent<ArcaneCitadelGeometry>() == null &&
+                filter.GetComponentInParent<ArrowCryptGeometry>() == null &&
+                filter.GetComponent<ArcaneSpikeTrapVisual>() == null) continue;
             var renderer = filter.GetComponent<MeshRenderer>();
             var mesh = filter.sharedMesh;
             if (renderer == null || !renderer.enabled || mesh == null) continue;

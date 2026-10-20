@@ -80,6 +80,7 @@ public class HealthController : MonoBehaviour
     [SerializeField] private float invulnerableDuration = 0.85f;
     [SerializeField] private int maxDamagePerHit = 1; // 1 máu tương đương nửa trái tim (healthPerHeart = 2)
     private float invulnerableUntil = -1f;
+    public float LastDamageAt { get; private set; } = float.NegativeInfinity;
     private SpriteRenderer[] renderers;
     private Coroutine flashRoutine;
 
@@ -95,6 +96,7 @@ public class HealthController : MonoBehaviour
         }
 
         invulnerableUntil = Time.time + invulnerableDuration;
+        LastDamageAt = Time.time;
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         if (animator != null) animator.SetTrigger("Hurt");

@@ -11,6 +11,7 @@ public static class LanLaunch
     public static int Port { get; private set; } = 7777;
     public const int CampaignLevelCount = 10;
     public static int StartingLevel { get; private set; } = 1;
+    public static PlayableCharacterId SelectedCharacter { get; private set; } = PlayableCharacterId.AshenKnight;
     public static string LastError { get; set; }
     public static bool MenuSelectionMade { get; private set; }
 
@@ -27,12 +28,26 @@ public static class LanLaunch
         StartingLevel = mode == LanMode.Client ? 1 : startingLevel; // Client nhận level có thẩm quyền từ Host.
     }
 
+    public static void SelectCharacter(PlayableCharacterId character)
+    {
+        if (!Enum.IsDefined(typeof(PlayableCharacterId), character))
+            throw new ArgumentOutOfRangeException(nameof(character));
+        SelectedCharacter = character;
+    }
+
+    public static void SelectNextCharacter()
+    {
+        int count = Enum.GetValues(typeof(PlayableCharacterId)).Length;
+        SelectedCharacter = (PlayableCharacterId)(((int)SelectedCharacter + 1) % count);
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Reset()
     {
         Mode = LanMode.Solo; Address = "127.0.0.1"; Port = 7777; LastError = null;
         StartingLevel = 1;
         MenuSelectionMade = false;
+        SelectedCharacter = PlayableCharacterId.AshenKnight;
         LanSessionBridge.Active = null;
         string[] args = Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)
@@ -40,6 +55,8 @@ public static class LanLaunch
             if (args[i] == "-lanHost") Mode = LanMode.Host;
             if (args[i] == "-lanJoin" && i + 1 < args.Length) { Mode = LanMode.Client; Address = args[++i]; }
             if (args[i] == "-lanPort" && i + 1 < args.Length && int.TryParse(args[++i], out int port)) Port = port;
+            if (args[i] == "-character" && i + 1 < args.Length &&
+                Enum.TryParse(args[++i], true, out PlayableCharacterId character)) SelectedCharacter = character;
         }
     }
 

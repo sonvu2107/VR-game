@@ -130,7 +130,7 @@ ScriptedImporter:
       y: 4
       width: 22
       height: 32
-    spriteID: 2109556d43c7cd3408994fb08a8f566f
+    spriteID: 8fab46452f8cd18448414ecaa7843245
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -150,7 +150,7 @@ ScriptedImporter:
       y: 44
       width: 22
       height: 32
-    spriteID: 36f309e2eabf664429af0c90d1f88510
+    spriteID: f6a67d35f423262479f7a01f0b99ca9c
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -170,7 +170,7 @@ ScriptedImporter:
       y: 84
       width: 22
       height: 32
-    spriteID: 694ce390c59e8774bbf41c3106219c5e
+    spriteID: 9f0052cbfb6fdec48b641c434bc6a396
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -190,7 +190,7 @@ ScriptedImporter:
       y: 4
       width: 22
       height: 32
-    spriteID: 80d115134fcc45445b53218a113b3d26
+    spriteID: 0b15bcf33da846c45aa04b76e993c275
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -215,7 +215,7 @@ ScriptedImporter:
         y: 0
         width: 22
         height: 32
-      spriteId: 2109556d43c7cd3408994fb08a8f566f
+      spriteId: 8fab46452f8cd18448414ecaa7843245
     - name: Skeleton React_Frame_1
       frameIndex: 1
       cellRect:
@@ -223,7 +223,7 @@ ScriptedImporter:
         y: 0
         width: 22
         height: 32
-      spriteId: 36f309e2eabf664429af0c90d1f88510
+      spriteId: f6a67d35f423262479f7a01f0b99ca9c
     - name: Skeleton React_Frame_2
       frameIndex: 2
       cellRect:
@@ -231,7 +231,7 @@ ScriptedImporter:
         y: 0
         width: 22
         height: 32
-      spriteId: 694ce390c59e8774bbf41c3106219c5e
+      spriteId: 9f0052cbfb6fdec48b641c434bc6a396
     - name: Skeleton React_Frame_3
       frameIndex: 3
       cellRect:
@@ -239,7 +239,7 @@ ScriptedImporter:
         y: 0
         width: 22
         height: 32
-      spriteId: 80d115134fcc45445b53218a113b3d26
+      spriteId: 0b15bcf33da846c45aa04b76e993c275
     linkedCells: []
     parentIndex: -1
   platformSettings: []

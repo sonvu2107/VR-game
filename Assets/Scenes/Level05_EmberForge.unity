@@ -12546,6 +12546,7 @@ MonoBehaviour:
     m_Bits: 64
   attackDamage: 40
   powerUpDamage: 100
+  abilityFallbackSfx: {fileID: 8300000, guid: b40652d6e0bc3c343a0f963b03b6c9e6, type: 3}
   audioSource: {fileID: 0}
 --- !u!61 &7487250323159674053
 BoxCollider2D:

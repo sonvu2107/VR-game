@@ -130,7 +130,7 @@ ScriptedImporter:
       y: 44
       width: 22
       height: 32
-    spriteID: b2adfab15cee8f9469dcb223e41ec809
+    spriteID: 78e09576fd259f44bb89608c0fed48ba
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -150,7 +150,7 @@ ScriptedImporter:
       y: 4
       width: 23
       height: 32
-    spriteID: 8f584725bfd8e1e4588fe4bc28614353
+    spriteID: 996bc6c9ad03f4248b96c5c2c7cc123c
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -170,7 +170,7 @@ ScriptedImporter:
       y: 4
       width: 23
       height: 32
-    spriteID: c9ea49441f0d254439af7b471c1c4b73
+    spriteID: 7c16a281834d87d48aa139c00f94306e
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -190,7 +190,7 @@ ScriptedImporter:
       y: 4
       width: 24
       height: 32
-    spriteID: 77a946abdd37d2e4dac91f30be616ef0
+    spriteID: 6e55d31bd1038b34ea167c737c8756d8
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -210,7 +210,7 @@ ScriptedImporter:
       y: 4
       width: 24
       height: 32
-    spriteID: 4e5c1851c4aee2142b89c508a7d1e03f
+    spriteID: f832a3cd238a2bf47a7a733f8ae1fc60
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -230,7 +230,7 @@ ScriptedImporter:
       y: 4
       width: 24
       height: 32
-    spriteID: 4aeb72ed5f428eb43974beb56a52f5ee
+    spriteID: 35c054e7da1e9b84c83c9d513bd72859
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -250,7 +250,7 @@ ScriptedImporter:
       y: 4
       width: 24
       height: 32
-    spriteID: d8c754410916e8448921cc7b123dd605
+    spriteID: 9561d15595ad1c34dabc6d2a4443b6f0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -270,7 +270,7 @@ ScriptedImporter:
       y: 4
       width: 24
       height: 32
-    spriteID: be9f6697a46a89b44a3f24526c1b3250
+    spriteID: e7235c8dcda19ab4c8a7fb384b6bbbad
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -290,7 +290,7 @@ ScriptedImporter:
       y: 4
       width: 23
       height: 31
-    spriteID: 91a693ad7d2698f44b82cbd54e7ce6c2
+    spriteID: 15dede2782359364ea9f2e6c0838f2d7
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -310,7 +310,7 @@ ScriptedImporter:
       y: 44
       width: 23
       height: 28
-    spriteID: e07ae7d76d29ab240b2f5c33e9438289
+    spriteID: e118dd14da728714d9a1e55a4a59db0a
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -330,7 +330,7 @@ ScriptedImporter:
       y: 44
       width: 24
       height: 25
-    spriteID: d948e5f6fed044940a45a9d0076194df
+    spriteID: dc83a965972ce7a4faac8ce6439bf469
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -350,7 +350,7 @@ ScriptedImporter:
       y: 44
       width: 25
       height: 16
-    spriteID: 8a10e876a98011a40a54a3c63a91be4c
+    spriteID: cd92cb4e1e0f1254d9d36d0e97058b55
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -370,7 +370,7 @@ ScriptedImporter:
       y: 44
       width: 30
       height: 8
-    spriteID: 2a9eee3cd4d41ac47a047d7cb72c4a65
+    spriteID: e339e42507fd3f24bab2f471a0a1df27
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -390,7 +390,7 @@ ScriptedImporter:
       y: 44
       width: 30
       height: 7
-    spriteID: 06c1115e45127c040b4f64b681a6a570
+    spriteID: 76c364e4e7cdffc44beb678110b92257
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -410,7 +410,7 @@ ScriptedImporter:
       y: 44
       width: 30
       height: 7
-    spriteID: dd089ee7e7860094b93c9f6aa30ceec6
+    spriteID: b90f4fb498cd25246ac429c0525fd245
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -435,7 +435,7 @@ ScriptedImporter:
         y: 0
         width: 22
         height: 32
-      spriteId: b2adfab15cee8f9469dcb223e41ec809
+      spriteId: 78e09576fd259f44bb89608c0fed48ba
     - name: Skeleton Dead_Frame_1
       frameIndex: 1
       cellRect:
@@ -443,7 +443,7 @@ ScriptedImporter:
         y: 0
         width: 23
         height: 32
-      spriteId: 8f584725bfd8e1e4588fe4bc28614353
+      spriteId: 996bc6c9ad03f4248b96c5c2c7cc123c
     - name: Skeleton Dead_Frame_2
       frameIndex: 2
       cellRect:
@@ -451,7 +451,7 @@ ScriptedImporter:
         y: 0
         width: 23
         height: 32
-      spriteId: c9ea49441f0d254439af7b471c1c4b73
+      spriteId: 7c16a281834d87d48aa139c00f94306e
     - name: Skeleton Dead_Frame_3
       frameIndex: 3
       cellRect:
@@ -459,7 +459,7 @@ ScriptedImporter:
         y: 0
         width: 24
         height: 32
-      spriteId: 77a946abdd37d2e4dac91f30be616ef0
+      spriteId: 6e55d31bd1038b34ea167c737c8756d8
     - name: Skeleton Dead_Frame_4
       frameIndex: 4
       cellRect:
@@ -467,7 +467,7 @@ ScriptedImporter:
         y: 0
         width: 24
         height: 32
-      spriteId: 4e5c1851c4aee2142b89c508a7d1e03f
+      spriteId: f832a3cd238a2bf47a7a733f8ae1fc60
     - name: Skeleton Dead_Frame_5
       frameIndex: 5
       cellRect:
@@ -475,7 +475,7 @@ ScriptedImporter:
         y: 0
         width: 24
         height: 32
-      spriteId: 4aeb72ed5f428eb43974beb56a52f5ee
+      spriteId: 35c054e7da1e9b84c83c9d513bd72859
     - name: Skeleton Dead_Frame_6
       frameIndex: 6
       cellRect:
@@ -483,7 +483,7 @@ ScriptedImporter:
         y: 0
         width: 24
         height: 32
-      spriteId: d8c754410916e8448921cc7b123dd605
+      spriteId: 9561d15595ad1c34dabc6d2a4443b6f0
     - name: Skeleton Dead_Frame_7
       frameIndex: 7
       cellRect:
@@ -491,7 +491,7 @@ ScriptedImporter:
         y: 0
         width: 24
         height: 32
-      spriteId: be9f6697a46a89b44a3f24526c1b3250
+      spriteId: e7235c8dcda19ab4c8a7fb384b6bbbad
     - name: Skeleton Dead_Frame_8
       frameIndex: 8
       cellRect:
@@ -499,7 +499,7 @@ ScriptedImporter:
         y: 0
         width: 23
         height: 31
-      spriteId: 91a693ad7d2698f44b82cbd54e7ce6c2
+      spriteId: 15dede2782359364ea9f2e6c0838f2d7
     - name: Skeleton Dead_Frame_9
       frameIndex: 9
       cellRect:
@@ -507,7 +507,7 @@ ScriptedImporter:
         y: 0
         width: 23
         height: 28
-      spriteId: e07ae7d76d29ab240b2f5c33e9438289
+      spriteId: e118dd14da728714d9a1e55a4a59db0a
     - name: Skeleton Dead_Frame_10
       frameIndex: 10
       cellRect:
@@ -515,7 +515,7 @@ ScriptedImporter:
         y: 0
         width: 24
         height: 25
-      spriteId: d948e5f6fed044940a45a9d0076194df
+      spriteId: dc83a965972ce7a4faac8ce6439bf469
     - name: Skeleton Dead_Frame_11
       frameIndex: 11
       cellRect:
@@ -523,7 +523,7 @@ ScriptedImporter:
         y: 0
         width: 25
         height: 16
-      spriteId: 8a10e876a98011a40a54a3c63a91be4c
+      spriteId: cd92cb4e1e0f1254d9d36d0e97058b55
     - name: Skeleton Dead_Frame_12
       frameIndex: 12
       cellRect:
@@ -531,7 +531,7 @@ ScriptedImporter:
         y: 0
         width: 30
         height: 8
-      spriteId: 2a9eee3cd4d41ac47a047d7cb72c4a65
+      spriteId: e339e42507fd3f24bab2f471a0a1df27
     - name: Skeleton Dead_Frame_13
       frameIndex: 13
       cellRect:
@@ -539,7 +539,7 @@ ScriptedImporter:
         y: 0
         width: 30
         height: 7
-      spriteId: 06c1115e45127c040b4f64b681a6a570
+      spriteId: 76c364e4e7cdffc44beb678110b92257
     - name: Skeleton Dead_Frame_14
       frameIndex: 14
       cellRect:
@@ -547,7 +547,7 @@ ScriptedImporter:
         y: 0
         width: 30
         height: 7
-      spriteId: dd089ee7e7860094b93c9f6aa30ceec6
+      spriteId: b90f4fb498cd25246ac429c0525fd245
     linkedCells: []
     parentIndex: -1
   platformSettings: []

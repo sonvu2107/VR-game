@@ -49,6 +49,9 @@ public class PlayerSkillController : MonoBehaviour
     private Sprite[] ultimateSlashFrames;
     private Sprite[] ultimateImpactFrames;
     private Sprite[] casterAuraFrames;
+    private AudioClip ultimateChargeSfx;
+    private AudioClip ultimateImpactSfx;
+    private AudioClip ultimateImpactCrunchSfx;
     private float nextSwordWaveAt;
     private float nextSpinSlashAt;
     private bool isSkillCasting;
@@ -75,14 +78,21 @@ public class PlayerSkillController : MonoBehaviour
         playerRenderer = GetComponent<SpriteRenderer>();
         swordWaveCoreFrames = LoadPixelFrames("Combat/Frames/SwordWavePixel_6f", 6);
         swordWaveImpactFrames = LoadPixelFrames("Combat/Frames/SwordWaveImpactPixel_6f", 6);
-        // E is a stationary spin, so every visual frame shares one centre.
-        spinSlashFrames = LoadPixelFrames("Combat/Frames/E_SpinSlash_6f", 6, FrameAnchorMode.VisualCenter);
-        runeFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentRunePixel_6f", 6, FrameAnchorMode.VisualCenter);
-        // R descends vertically. Lock its horizontal centre only, preserving
-        // the source animation's vertical progression from sky to ground.
-        ultimateSlashFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentBladesPixel_6f", 6, FrameAnchorMode.VisualCenterX);
-        ultimateImpactFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentFinalPixel_6f", 6, FrameAnchorMode.VisualCenterX);
+        // These low-resolution sequences are authored as individual images on
+        // one shared canvas. Keep the canvas centre fixed so asymmetrical windup
+        // and fade frames do not wobble around the player/strike point.
+        spinSlashFrames = LoadPixelFrames("Combat/Frames/E_SpinSlash_6f", 6,
+            FrameAnchorMode.CellCenter, 64f);
+        runeFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentRunePixel_6f", 6,
+            FrameAnchorMode.CellCenter, 64f);
+        ultimateSlashFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentBladesPixel_6f", 6,
+            FrameAnchorMode.CellCenter, 64f);
+        ultimateImpactFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentFinalPixel_6f", 6,
+            FrameAnchorMode.CellCenter, 64f);
         casterAuraFrames = LoadPixelFrames("Combat/Frames/CasterBodyAuraPixel_6f", 6, FrameAnchorMode.VisualCenter);
+        ultimateChargeSfx = Resources.Load<AudioClip>("Audio/Combat/UltimateCharge");
+        ultimateImpactSfx = Resources.Load<AudioClip>("Audio/Combat/UltimateImpact");
+        ultimateImpactCrunchSfx = Resources.Load<AudioClip>("Audio/Combat/UltimateImpactCrunch");
         if (lanInput == null && GetComponent<SkillHudController>() == null)
             gameObject.AddComponent<SkillHudController>();
 
@@ -241,6 +251,7 @@ public class PlayerSkillController : MonoBehaviour
     {
         BeginCast("sword-wave");
         player.PlaySkillBodyMotion(1);
+        player.PlayAbilitySfx(volume: 0.95f, pitch: 1.05f);
         Vector3 bodyCenter = player.VisualCenter;
         Vector2 direction = GetSwordWaveDirection(bodyCenter);
 
@@ -269,7 +280,7 @@ public class PlayerSkillController : MonoBehaviour
 
             int hitCount = player.DamageEnemiesInRadius(position, swordWaveRadius, swordWaveDamage,
                 hitEnemies, hitBosses, alreadyHitConfiguredEnemies: hitConfiguredEnemies,
-                impactKind: CombatImpactKind.SwordWave);
+                playSwordImpact: true, impactKind: CombatImpactKind.SwordWave);
             if (hitCount > 0)
             {
                 AddSkillHitCharge(15f * hitCount);
@@ -336,7 +347,7 @@ public class PlayerSkillController : MonoBehaviour
         // Keep the slash at its cast origin. The visual tail is intentionally
         // longer than the movement lock; following the player made that tail
         // slide sideways as soon as movement became available again.
-        CreateEffect("Spin Slash", spinSlashFrames, bodyCenter, 4.3f, spinSlashVfxDuration,
+        CreateEffect("Spin Slash", spinSlashFrames, bodyCenter, 1.4f, spinSlashVfxDuration,
             Quaternion.identity, null, 2, smoothFrames: true);
         AssertCastVisualInvariant("spin-slash-effects-created");
         float[] pulseTimes = { 0.14f, 0.34f, 0.54f };
@@ -348,8 +359,11 @@ public class PlayerSkillController : MonoBehaviour
             elapsed += Time.deltaTime;
             if (nextPulse < pulseTimes.Length && elapsed >= pulseTimes[nextPulse])
             {
+                // Use the project's recorded blade swish for each of E's three
+                // physical strikes, rather than one generic effect at cast time.
+                player.PlayAbilitySfx(volume: 0.94f, pitch: 0.93f + nextPulse * 0.05f);
                 int hits = player.DamageEnemiesInRadius(transform.position, spinSlashRadius, spinSlashDamagePerPulse,
-                    impactKind: CombatImpactKind.SpinSlash);
+                    playSwordImpact: true, impactKind: CombatImpactKind.SpinSlash);
                 if (hits > 0)
                     AddSkillHitCharge(8f * hits);
                 nextPulse++;
@@ -377,14 +391,24 @@ public class PlayerSkillController : MonoBehaviour
         BeginCast("ashen-judgment");
         float castStartedAt = Time.time;
         player.PlaySkillBodyMotion(3, true);
+        player.PlayAbilitySfx(ultimateChargeSfx, volume: 0.9f);
         Vector3 strikePosition = transform.position;
-        CreateEffect("Ashen Judgment Rune", runeFrames, strikePosition, 3.85f, 0.94f,
-            Quaternion.identity, null, -1, smoothFrames: true);
+        Vector3 bodyCenter = player.VisualCenter;
+        Vector3 bodyOffset = bodyCenter - transform.position;
+        // Reuse Q's body aura for R's opening charge. It follows the locked
+        // player only during the windup, then clears before the final impact.
+        CreateEffect("Ashen Judgment Caster Aura", casterAuraFrames, bodyCenter, 2.15f, 0.42f,
+            Quaternion.identity, transform, 1, bodyOffset);
+        // R covers the whole damage radius, so all of its large silhouettes
+        // render behind the player. The character remains readable even when
+        // the central sword and impact reach their brightest frames.
+        CreateEffect("Ashen Judgment Rune", runeFrames, strikePosition, 2.2f, 0.94f,
+            Quaternion.identity, null, -2, smoothFrames: true);
         AssertCastVisualInvariant("ashen-judgment-effects-created");
         StartCoroutine(ShakeMainCamera(0.18f, 0.035f));
         yield return new WaitForSeconds(0.18f);
-        CreateEffect("Ashen Judgment Blade Storm", ultimateSlashFrames, strikePosition, 3.1f, 0.76f,
-            Quaternion.identity, null, 2, smoothFrames: true);
+        CreateEffect("Ashen Judgment Blade Storm", ultimateSlashFrames, strikePosition, 1.65f, 0.76f,
+            Quaternion.identity, null, -1, smoothFrames: true);
 
         for (int pulse = 0; pulse < 3; pulse++)
         {
@@ -395,8 +419,10 @@ public class PlayerSkillController : MonoBehaviour
         }
 
         float finalStartedAt = Time.time;
-        CreateEffect("Ashen Judgment Final", ultimateImpactFrames, strikePosition, 4.75f, ultimateFinalVfxDuration,
-            Quaternion.identity, null, 3, smoothFrames: true);
+        CreateEffect("Ashen Judgment Final", ultimateImpactFrames, strikePosition, 1.75f, ultimateFinalVfxDuration,
+            Quaternion.identity, null, -1, smoothFrames: true);
+        player.PlayAbilitySfx(ultimateImpactSfx, volume: 1f);
+        player.PlayAbilitySfx(ultimateImpactCrunchSfx, volume: 0.85f);
         player.DamageEnemiesInRadius(strikePosition, ultimateRadius * 1.15f, ultimateImpactDamage,
             impactKind: CombatImpactKind.Ashen);
         yield return StartCoroutine(PlayImpactFeedback(0.28f, 0.14f, 0.075f));
@@ -543,7 +569,7 @@ public class PlayerSkillController : MonoBehaviour
     /// an original frame edge while keeping the frame anchored consistently.
     /// </summary>
     internal static Sprite[] LoadPixelFrames(string resourcePath, int frameCount,
-        FrameAnchorMode anchorMode = FrameAnchorMode.CellCenter)
+        FrameAnchorMode anchorMode = FrameAnchorMode.CellCenter, float pixelsPerUnit = 512f)
     {
         if (frameCount <= 0)
         {
@@ -636,7 +662,7 @@ public class PlayerSkillController : MonoBehaviour
 
             frames[frame] = Sprite.Create(paddedTexture,
                 new Rect(0f, 0f, paddedWidth, paddedHeight), pivot,
-                512f, 0, SpriteMeshType.FullRect);
+                Mathf.Max(1f, pixelsPerUnit), 0, SpriteMeshType.FullRect);
             frames[frame].name = $"{resourcePath}_{frame:00}";
         }
 

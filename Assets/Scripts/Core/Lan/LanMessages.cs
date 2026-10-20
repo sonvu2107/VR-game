@@ -24,6 +24,7 @@ public sealed class LanMessage
     public float timeRemaining;
     public int score;
     public int sequence;
+    public int character;
     public int audio;
     public float volume = 1f;
     public float pitch = 1f;
@@ -72,6 +73,7 @@ public sealed class LanPlayerState
     public float e;
     public float ultimate;
     public float power;
+    public int character;
 }
 
 [Serializable]
