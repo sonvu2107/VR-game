@@ -158,7 +158,10 @@ public static class CampaignMapsBuilder
             AssetDatabase.ImportAsset(image, ImportAssetOptions.ForceSynchronousImport);
             var importer = (TextureImporter)AssetImporter.GetAtPath(image);
             importer.textureType = TextureImporterType.Default;
-            importer.filterMode = FilterMode.Point; importer.mipmapEnabled = false;
+            // These atlases are minified heavily at the gameplay camera scale.
+            // Point sampling without mipmaps creates temporal aliasing while the
+            // camera scrolls, which reads as movement jitter on themed maps.
+            importer.filterMode = FilterMode.Bilinear; importer.mipmapEnabled = true;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.wrapMode = TextureWrapMode.Clamp; importer.maxTextureSize = 2048;
             importer.isReadable = true; importer.alphaIsTransparency = true; importer.SaveAndReimport();
@@ -172,7 +175,10 @@ public static class CampaignMapsBuilder
                 material = new Material(shader) { name = Ids[i] + " Atlas" };
                 AssetDatabase.CreateAsset(material, folder + "MapAtlas.mat");
             }
-            material.mainTexture = texture; EditorUtility.SetDirty(material); AssetDatabase.SaveAssetIfDirty(material);
+            material.mainTexture = texture;
+            material.DisableKeyword("PIXELSNAP_ON");
+            if (material.HasProperty("PixelSnap")) material.SetFloat("PixelSnap", 0f);
+            EditorUtility.SetDirty(material); AssetDatabase.SaveAssetIfDirty(material);
             var torch = AssetDatabase.LoadAssetAtPath<Material>(folder + "Torch.mat");
             if (torch == null)
             {
@@ -347,10 +353,47 @@ public static class CampaignMapsBuilder
                 }
                 if(!generator.LastTrapPlan.RoutesVerified) failClosed++;
                 if(level>=3 && UnityEngine.Object.FindObjectsOfType<ArcaneCitadelGeometry>().Length!=1) throw new InvalidOperationException("Map geometry duplicated/missing.");
+                ValidatePlayerBoundary(generator, level);
             }
-            Debug.Log($"CAMPAIGN_GENERATION_PASS levels=10 uniqueThemes=10 trapsValidated=true failClosed={failClosed}");
+            Debug.Log($"CAMPAIGN_GENERATION_PASS levels=10 uniqueThemes=10 trapsValidated=true playerBoundary=true failClosed={failClosed}");
         }
         finally { EditorSceneManager.OpenScene("Assets/Scenes/Dungeon.unity"); }
+    }
+
+    private static void ValidatePlayerBoundary(InfiniteWorldGenerator generator, int level)
+    {
+        if (generator.GeneratedFloorTiles == null || generator.GeneratedRooms == null)
+            throw new InvalidOperationException("Missing generated floor data at level " + level);
+
+        var floor = new HashSet<Vector2Int>(generator.GeneratedFloorTiles);
+        PlayerMovement movement = generator.playerTransform != null
+            ? generator.playerTransform.GetComponent<PlayerMovement>()
+            : null;
+        if (movement == null || !movement.HasWalkableAreaConstraint)
+            throw new InvalidOperationException("Player boundary is not configured at level " + level);
+
+        Vector2 lookupOffset = new(.5f, -.5f);
+        Vector2[] directions =
+        {
+            Vector2.left, Vector2.right, Vector2.up, Vector2.down,
+            new Vector2(1,1).normalized, new Vector2(-1,1).normalized,
+            new Vector2(1,-1).normalized, new Vector2(-1,-1).normalized
+        };
+
+        foreach (DungeonRoom room in generator.GeneratedRooms)
+        foreach (Vector2 direction in directions)
+        {
+            Vector2 start = PrefabPlacer.GetWorldPosition(room.SpawnPoint);
+            if (!WalkableAreaConstraint.ContainsFootprint(
+                floor, start, Vector2.zero, Vector2.zero, cellLookupOffset: lookupOffset))
+                throw new InvalidOperationException($"Invalid player footprint at level {level}, room {room.Type}.");
+
+            Vector2 result = start + WalkableAreaConstraint.ConstrainDelta(
+                floor, start, direction * 100f, Vector2.zero, Vector2.zero, lookupOffset);
+            if (!WalkableAreaConstraint.ContainsFootprint(
+                floor, result, Vector2.zero, Vector2.zero, cellLookupOffset: lookupOffset))
+                throw new InvalidOperationException($"Boundary escape at level {level}, room {room.Type}, direction {direction}.");
+        }
     }
 
     private static List<RoomType> Sequence(int count)

@@ -90,6 +90,7 @@ public class BossController : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0f) return;
         if (LanSessionBridge.Active != null && LanSessionBridge.Active.HasGuest)
         {
             HealthController closest = LanSessionBridge.Active.NearestAlivePlayer(transform.position);
@@ -130,6 +131,7 @@ public class BossController : MonoBehaviour
         if (enraged && distance > attackRange * 1.1f && distance <= dashRange && Time.time >= nextDashAt)
         {
             dashDirection = ((Vector2)(player.position - transform.position)).normalized;
+            EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.BossDash, 1f);
             isDashing = true;
             dashEndsAt = Time.time + dashDuration;
             nextDashAt = Time.time + enragedDashCooldown;
@@ -144,6 +146,7 @@ public class BossController : MonoBehaviour
 
         if (Time.time >= nextAttackAt)
         {
+            EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.Elite, 0.92f, 0.88f);
             isWindingUp = true;
             windupEndsAt = Time.time + attackWindup;
         }
@@ -304,6 +307,7 @@ public class BossController : MonoBehaviour
     private void Die()
     {
         isDead = true;
+        EnemyDefeatFeedback.Spawn(transform.position, EnemyDefeatFeedback.Tier.Boss, spriteRenderer);
         if (healthBarBack != null)
             Destroy(healthBarBack.gameObject);
         if (healthBarFill != null)

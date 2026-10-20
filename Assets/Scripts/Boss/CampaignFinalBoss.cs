@@ -41,8 +41,8 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         if (isSkeletonKing) stats.displayName = "Vua Xương";
         stats.scoreValue = Mathf.Max(300, stats.scoreValue * 10);
         stats.detectionRange = 30f;
-        stats.attackCooldown = Mathf.Max(1.5f, stats.attackCooldown);
-        stats.attackWindup = Mathf.Max(0.65f, stats.attackWindup);
+        stats.attackCooldown = Mathf.Clamp(stats.attackCooldown * 0.72f, 1.15f, 2.4f);
+        stats.attackWindup = Mathf.Clamp(stats.attackWindup * 0.75f, 0.35f, 0.58f);
         // Barrel boss nổ theo hồi chiêu, không tự sát như Barrel thường.
         stats.selfDestructOnAttack = false;
         marker.runtimeConfig = stats;
@@ -59,6 +59,8 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         root.GetComponent<EnemySummoner>()?.Configure(stats);
         var sheet = root.GetComponent<EnemySheetAnimation>();
         if (sheet != null) sheet.Renderer.sprite = sheet.Art.Frame(0, sheet.Art.idle, 0);
+        if (root.GetComponent<SkeletonKingController>() != null)
+            EnemyRuntimeSpriteAnimation.TryAttach(movement, root.GetComponent<SpriteRenderer>());
 
         // Full sprite rectangle gồm cả khoảng cho animation đánh; chừa thêm một ô né đòn.
         bool found = false;

@@ -81,6 +81,8 @@ public class HealthController : MonoBehaviour
     [SerializeField] private float invulnerableDuration = 0.85f;
     [SerializeField] private int maxDamagePerHit = 1; // 1 máu tương đương nửa trái tim (healthPerHeart = 2)
     private float invulnerableUntil = -1f;
+    public float LastDamageAt { get; private set; } = float.NegativeInfinity;
+    public bool IsTemporarilyInvulnerable => Time.time < invulnerableUntil;
     private SpriteRenderer[] renderers;
     private Coroutine flashRoutine;
 
@@ -88,6 +90,7 @@ public class HealthController : MonoBehaviour
     {
         if (GameManager.isStoryPlaying) return;
         if (LanLaunch.Mode == LanMode.Client || amount <= 0 || currentHealth <= 0) return;
+        if (gameManager != null && gameManager.CurrentState == GameState.Story) return;
         if (Time.time < invulnerableUntil) return;
 
         if (maxDamagePerHit > 0)
@@ -96,6 +99,7 @@ public class HealthController : MonoBehaviour
         }
 
         invulnerableUntil = Time.time + invulnerableDuration;
+        LastDamageAt = Time.time;
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         if (animator != null) animator.SetTrigger("Hurt");
@@ -113,6 +117,18 @@ public class HealthController : MonoBehaviour
         {
             StartInvulnerabilityFlash();
         }
+    }
+
+    /// <summary>
+    /// Grants a short, explicit protection window for defensive player skills.
+    /// It only extends protection; it never shortens the normal post-hit i-frame.
+    /// </summary>
+    public void GrantTemporaryInvulnerability(float duration)
+    {
+        if (duration <= 0f || currentHealth <= 0)
+            return;
+
+        invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + duration);
     }
 
     private void StartInvulnerabilityFlash()

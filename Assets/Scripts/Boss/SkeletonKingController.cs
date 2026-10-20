@@ -19,6 +19,7 @@ public class SkeletonKingController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private int phaseIndex;
+    private BossPhaseConfigSO runtimePhaseConfig;
 
     private HealthController target;
     private float nextTargetScan;
@@ -41,6 +42,15 @@ public class SkeletonKingController : MonoBehaviour
         if (summoner == null) summoner = GetComponent<EnemySummoner>();
         if (animator == null) animator = GetComponent<Animator>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (phaseConfig != null)
+        {
+            runtimePhaseConfig = Instantiate(phaseConfig);
+            runtimePhaseConfig.name = "Runtime_" + phaseConfig.name;
+            if (runtimePhaseConfig.phases != null)
+                foreach (BossPhaseDefinition phase in runtimePhaseConfig.phases)
+                    if (phase != null) phase.attackCooldown = Mathf.Clamp(phase.attackCooldown * 0.72f, 1.1f, 1.8f);
+            phaseConfig = runtimePhaseConfig;
+        }
     }
 
     private void OnEnable()
@@ -62,6 +72,13 @@ public class SkeletonKingController : MonoBehaviour
         }
         if (combat != null) combat.AttackFinished -= OnAttackFinished;
         if (phaseRoutine != null) StopCoroutine(phaseRoutine);
+    }
+
+    private void OnDestroy()
+    {
+        if (runtimePhaseConfig == null) return;
+        if (Application.isPlaying) Destroy(runtimePhaseConfig);
+        else DestroyImmediate(runtimePhaseConfig);
     }
 
     private void Start()
@@ -136,6 +153,7 @@ public class SkeletonKingController : MonoBehaviour
         BossAttackTelegraph?.Invoke(this, phaseIndex + 1);
         if (phase.fireSwordWaves)
         {
+            EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.BossWave, 0.96f, 0.98f + phaseIndex * 0.03f);
             Vector2 aim = ((Vector2)target.transform.position - (Vector2)transform.position).normalized;
             combat?.FireProjectileDirection(aim, phaseConfig.waveSpeed);
             combat?.FireProjectileDirection(Rotate(aim, 18f), phaseConfig.waveSpeed);
@@ -146,7 +164,11 @@ public class SkeletonKingController : MonoBehaviour
         if (phase.createHazards && Time.time >= nextHazardTime)
         {
             nextHazardTime = Time.time + phaseConfig.hazardCooldown;
-            if (combat != null) combat.SpawnPoison(target.transform.position, 1.8f);
+            if (combat != null)
+            {
+                EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.Poison, 0.82f, 0.88f);
+                combat.SpawnPoison(target.transform.position, 1.8f);
+            }
         }
 
         if (phase.repositionAfterAttack)

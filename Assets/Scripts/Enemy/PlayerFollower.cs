@@ -40,6 +40,10 @@ public class Enemy : MonoBehaviour
     {
         WorldDepthSort.AttachActor(gameObject);
         audioSource = GetComponent<AudioSource>();
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        currentHealth = maxHealth;
+        manager = FindObjectOfType<GameManager>();
     }
 
     private void Start()
@@ -47,14 +51,12 @@ public class Enemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         GameObject managerObject = GameObject.FindGameObjectWithTag("GameManager");
-        manager = managerObject != null ? managerObject.GetComponent<GameManager>() : null;
+        manager = managerObject != null ? managerObject.GetComponent<GameManager>() : manager;
         
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         agent.speed = chaseSpeed;
         wanderSpeedActual = wanderSpeed;
-        currentHealth = maxHealth;
-
         target = GameObject.Find("Player");
         playerHealthController = target != null ? target.GetComponent<HealthController>() : null;
     }
@@ -62,6 +64,7 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (GameManager.isStoryPlaying) return;
+        if (Time.timeScale == 0f) return;
         if (LanSessionBridge.Active != null && LanSessionBridge.Active.HasGuest)
         {
             HealthController closest = LanSessionBridge.Active.NearestAlivePlayer(transform.position);
@@ -81,13 +84,13 @@ public class Enemy : MonoBehaviour
 
         if (distance < maxDistance && distance > minDistance)
         {
-            animator.SetFloat("WalkSpeed", 101);
+            animator?.SetFloat("WalkSpeed", 101);
             agent.speed = chaseSpeed;
             agent.SetDestination(target.transform.position);
         }
         else if (distance > maxDistance)
         {
-            animator.SetFloat("WalkSpeed", wanderSpeedActual);
+            animator?.SetFloat("WalkSpeed", wanderSpeedActual);
             agent.speed = wanderSpeedActual;
             Vector3 toMove = new Vector3(Mathf.Cos(angleChange * Mathf.Deg2Rad),
                 Mathf.Sin(angleChange * Mathf.Deg2Rad), 0f);
@@ -99,7 +102,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            animator.SetFloat("WalkSpeed", 0);
+            animator?.SetFloat("WalkSpeed", 0);
             agent.ResetPath();
             AttackPlayer();
         }
@@ -133,7 +136,8 @@ public class Enemy : MonoBehaviour
         if (attackBlocked)
             return;
         
-        animator.SetTrigger("Attack");
+        animator?.SetTrigger("Attack");
+        EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.Melee, 0.72f, Random.Range(0.96f, 1.05f));
         attackBlocked = true;
         StartCoroutine(DelayAttack());
     }
@@ -155,7 +159,7 @@ public class Enemy : MonoBehaviour
             return;
 
         currentHealth -= damage;
-        animator.SetTrigger("Hurt");
+        animator?.SetTrigger("Hurt");
 
         if (currentHealth <= 0)
         {
@@ -174,6 +178,8 @@ public class Enemy : MonoBehaviour
             return;
 
         isDead = true;
+        EnemyDefeatFeedback.Spawn(transform.position, EnemyDefeatFeedback.Tier.Enemy,
+            GetComponentInChildren<SpriteRenderer>());
         if (countsForLevelClear)
             manager?.EnemyDefeated();
         

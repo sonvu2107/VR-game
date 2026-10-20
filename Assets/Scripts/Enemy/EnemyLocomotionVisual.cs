@@ -28,6 +28,8 @@ public sealed class EnemyLocomotionVisual : MonoBehaviour
 
     private float walkPhase;
     private float hurtUntil;
+    private float attackUntil;
+    private Vector2 attackDirection;
     private Color originalDisplayColor = Color.white;
 
     public SpriteRenderer Renderer => display != null ? display : source;
@@ -129,7 +131,8 @@ public sealed class EnemyLocomotionVisual : MonoBehaviour
 
     public void TriggerAttackLunge(Vector2 targetDirection)
     {
-        // Có thể mở rộng nếu cần
+        attackDirection = targetDirection.sqrMagnitude > 0.001f ? targetDirection.normalized : Vector2.right;
+        attackUntil = Time.time + 0.26f;
     }
 
     private void Update()
@@ -153,12 +156,10 @@ public sealed class EnemyLocomotionVisual : MonoBehaviour
 
         // 2. Phản ứng lao tới khi đánh
         Vector3 attackOffset = Vector3.zero;
-        if (combat != null && combat.IsAttacking)
+        if (Time.time < attackUntil || combat != null && combat.IsAttacking)
         {
-            bool isFacingLeft = display != null && display.flipX;
-            float flipSign = isFacingLeft ? -1f : 1f;
-            float lungeCycle = Mathf.Sin(Time.time * 16f);
-            attackOffset = new Vector3(flipSign * Mathf.Max(0f, lungeCycle) * 0.18f, 0f, 0f);
+            float lungeCycle = Mathf.Sin((Time.time - (attackUntil - 0.26f)) / 0.26f * Mathf.PI);
+            attackOffset = (Vector3)(attackDirection * Mathf.Max(0f, lungeCycle) * 0.24f);
         }
 
         // Nghiêng nhẹ 3D theo hướng di chuyển (Banking tilt)

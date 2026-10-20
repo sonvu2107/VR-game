@@ -15434,7 +15434,7 @@ MonoBehaviour:
   speed: 5
   attackMoveSpeedMultiplier: 0.65
   dashDuration: 0.16
-  dashDistance: 3
+  dashDistance: 4.5
   dashCooldown: 0.7
   dashVfxDuration: 0.22
   dashVfxScale: 1.7
@@ -15480,6 +15480,7 @@ MonoBehaviour:
     m_Bits: 64
   attackDamage: 40
   powerUpDamage: 100
+  abilityFallbackSfx: {fileID: 8300000, guid: b40652d6e0bc3c343a0f963b03b6c9e6, type: 3}
   audioSource: {fileID: 0}
 --- !u!61 &7487250323159674053
 BoxCollider2D:

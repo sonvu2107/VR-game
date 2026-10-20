@@ -30,4 +30,12 @@ public sealed class CourtyardTheme : ScriptableObject
         return new Rect((index % 4) * 0.25f + 0.001f, 1f - (index / 4 + 1) * 0.25f + 0.001f, 0.248f, 0.248f);
     }
     public bool UsesArcaneArt => arcaneFloor != null && arcaneWalls != null && arcaneProps != null;
+
+    [Header("Optional Arrow Crypt individual-image art")]
+    public Material arrowCryptFloor;
+    public Material arrowCryptWalls;
+    [Min(0)] public int arrowCryptTrapsPerCombatRoom = 2;
+
+    public bool UsesArrowCryptArt => arrowCryptFloor != null && arrowCryptWalls != null;
+    public bool UsesCustomGeometry => UsesArcaneArt || UsesArrowCryptArt;
 }

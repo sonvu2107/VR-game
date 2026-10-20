@@ -22,7 +22,13 @@ public sealed class LanBuildTools : IPreprocessBuildWithReport
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             LanAssetCatalog existing = AssetDatabase.LoadAssetAtPath<LanAssetCatalog>(CatalogPath);
-            if (existing == null || existing.audioClips == null) RefreshCatalog();
+            // Combat audio is loaded dynamically from Resources, so it is not a
+            // scene dependency. Keep the shared LAN catalog in sync whenever a
+            // newly imported combat clip is missing from the existing catalog.
+            AudioClip[] combatAudio = Resources.LoadAll<AudioClip>("Audio/Combat");
+            bool missingCombatAudio = existing != null && existing.audioClips != null &&
+                combatAudio.Any(clip => clip != null && !existing.audioClips.Contains(clip));
+            if (existing == null || existing.audioClips == null || missingCombatAudio) RefreshCatalog();
         };
     }
     public void OnPreprocessBuild(BuildReport report) => RefreshCatalog();
@@ -32,10 +38,14 @@ public sealed class LanBuildTools : IPreprocessBuildWithReport
     {
         string[] scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray();
         var paths = new SortedSet<string>(AssetDatabase.GetDependencies(scenes, true), StringComparer.Ordinal);
-        foreach (string path in AssetDatabase.GetAllAssetPaths())
-            if (path != CatalogPath && (path.StartsWith("Assets/", StringComparison.Ordinal) && path.Contains("/Resources/") ||
-                path.StartsWith("Assets/Scripts/", StringComparison.Ordinal) && path.EndsWith(".cs", StringComparison.Ordinal) ||
-                path.StartsWith("Assets/Input/", StringComparison.Ordinal)))
+        string[] assetPaths = AssetDatabase.GetAllAssetPaths();
+        string[] resources = assetPaths.Where(path => path.StartsWith("Assets/", StringComparison.Ordinal) &&
+            path.Contains("/Resources/") && path != CatalogPath).ToArray();
+        foreach (string path in AssetDatabase.GetDependencies(resources, true)) paths.Add(path);
+        foreach (string path in resources) paths.Add(path);
+        foreach (string path in assetPaths)
+            if (path.StartsWith("Assets/Scripts/", StringComparison.Ordinal) && path.EndsWith(".cs", StringComparison.Ordinal) ||
+                path.StartsWith("Assets/Input/", StringComparison.Ordinal))
                 paths.Add(path);
         // Resources.Load cũng kéo theo material/texture ngoài thư mục Resources.
         // Ví dụ DungeonAmbienceSet -> Level01_Details: scene không tham chiếu trực tiếp.

@@ -29,12 +29,14 @@ public sealed class SpikeTrap : MonoBehaviour
 
     private static Sprite runtimeSprite;
     private ArcaneSpikeTrapVisual atlasVisual;
+    private ArrowTrapFrameVisual frameVisual;
     private SpriteRenderer spriteRenderer;
     private TrapState state;
     private float stateTimeRemaining;
     private float nextDamageAt;
     private int damage;
     private Vector3 baseScale;
+    private bool hasActivated;
     private readonly HashSet<HealthController> damagedThisActivation = new();
 
     public bool IsDangerous => state == TrapState.Active;
@@ -59,6 +61,17 @@ public sealed class SpikeTrap : MonoBehaviour
         child.transform.SetParent(transform, false);
         atlasVisual = child.AddComponent<ArcaneSpikeTrapVisual>();
         atlasVisual.Initialize(material, frameRects);
+        spriteRenderer.enabled = false;
+    }
+
+    public void ConfigureArrowCryptVisual()
+    {
+        EnsureComponents();
+        if (frameVisual != null) return;
+        var child = new GameObject("Arrow Crypt Trap Visual");
+        child.transform.SetParent(transform, false);
+        frameVisual = child.AddComponent<ArrowTrapFrameVisual>();
+        frameVisual.Initialize();
         spriteRenderer.enabled = false;
     }
 
@@ -101,6 +114,9 @@ public sealed class SpikeTrap : MonoBehaviour
         stateTimeRemaining -= Time.deltaTime;
         if (stateTimeRemaining > 0f)
         {
+            if (state == TrapState.Safe && frameVisual != null && frameVisual.CurrentFrame == 3 &&
+                stateTimeRemaining < safeDuration - 0.28f)
+                frameVisual.SetFrame(0);
             if (state == TrapState.Warning)
             {
                 if (atlasVisual == null)
@@ -149,18 +165,22 @@ public sealed class SpikeTrap : MonoBehaviour
                 stateTimeRemaining = safeDuration;
                 spriteRenderer.color = safeColor;
                 atlasVisual?.SetFrame(0);
+                frameVisual?.SetFrame(hasActivated ? 3 : 0);
                 break;
             case TrapState.Warning:
                 stateTimeRemaining = warningDuration;
                 spriteRenderer.color = warningColor;
                 atlasVisual?.SetFrame(1);
+                frameVisual?.SetFrame(1);
                 break;
             default:
                 damagedThisActivation.Clear();
                 stateTimeRemaining = activeDuration;
                 spriteRenderer.color = activeColor;
                 atlasVisual?.SetFrame(3);
-                if (atlasVisual == null) transform.localScale = baseScale * 1.15f;
+                frameVisual?.SetFrame(2);
+                hasActivated = true;
+                if (atlasVisual == null && frameVisual == null) transform.localScale = baseScale * 1.15f;
                 break;
         }
     }

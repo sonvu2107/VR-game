@@ -17,7 +17,9 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
         var owner = root.AddComponent<ArcaneCitadelGeometry>();
         owner.artTheme = theme;
         if (theme.usesCampaignAtlas) root.name = theme.mapDisplayName + " - Atlas Geometry";
-        Rect Tile(int index) => theme.usesCampaignAtlas ? theme.AtlasUv(index) : CellUv(index);
+        Rect Tile(int index) => theme.usesCampaignAtlas
+            ? PixelSafeUv(theme.AtlasUv(index), theme.arcaneFloor != null ? theme.arcaneFloor.mainTexture : null)
+            : CellUv(index);
         var floor = new Batch();
         var walls = new Batch();
         var props = new Batch();
@@ -264,8 +266,17 @@ public sealed class ArcaneCitadelGeometry : MonoBehaviour
         Emit(label + " Depth " + depthPropIndex++, single, material, WorldDepthSort.OrderAt(groundY));
     }
 
-    private static Rect CellUv(int index) => new((index % 4) * 0.25f + 0.001f,
-        1f - (index / 4 + 1) * 0.25f + 0.001f, 0.248f, 0.248f);
+    private static Rect CellUv(int index) => new((index % 4) * 0.25f + 0.004f,
+        1f - (index / 4 + 1) * 0.25f + 0.004f, 0.242f, 0.242f);
+
+    private static Rect PixelSafeUv(Rect uv, Texture texture)
+    {
+        if (texture == null || texture.width <= 0 || texture.height <= 0) return uv;
+        float insetX = 0.5f / texture.width;
+        float insetY = 0.5f / texture.height;
+        return Rect.MinMaxRect(uv.xMin + insetX, uv.yMin + insetY,
+            uv.xMax - insetX, uv.yMax - insetY);
+    }
 
     // The new wall sheet is 1254 square; these rectangles exclude transparent gutters.
     private static Rect FromTop(float x, float y, float width, float height) =>

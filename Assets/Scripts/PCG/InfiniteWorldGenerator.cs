@@ -48,17 +48,19 @@ public class InfiniteWorldGenerator : MonoBehaviour
     [Header("Campaign Map Progression")]
     [Tooltip("Optional: switch to this map from level 2 without resetting the session.")]
     [SerializeField] private CourtyardTheme campaignSecondMap;
+    [Tooltip("Optional: use a distinct map only for level 3 without resetting the session.")]
+    [SerializeField] private CourtyardTheme campaignThirdMap;
     [SerializeField] private CampaignMapSet campaignMaps;
     // Không thay serialized theme gốc khi đổi level, tránh ghi nhầm Arcane lên map đầu.
     public CourtyardTheme ActiveTheme
     {
         get
         {
+            if (currentLevel == 3 && campaignThirdMap != null) return campaignThirdMap;
             if (campaignMaps != null && campaignMaps.TryGetTheme(currentLevel, out var theme)) return theme;
             return campaignSecondMap != null && currentLevel >= 2 ? campaignSecondMap : courtyardTheme;
         }
     }
-
     private RoomGenerator roomGenerator;
     private CorridorGenerator corridorGenerator;
     private SeededRandom random;
@@ -73,6 +75,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private LevelDefinition currentLevelDefinition;
 
     public IReadOnlyList<DungeonRoom> GeneratedRooms => dungeonLayout?.Rooms;
+    public IReadOnlyCollection<Vector2Int> GeneratedFloorTiles => dungeonLayout?.FloorTiles;
 
     private void Awake()
     {
@@ -122,12 +125,14 @@ public class InfiniteWorldGenerator : MonoBehaviour
 
         tilemapVisualizer.PaintFloorTiles(dungeonLayout.FloorTiles);
         WallGenerator.CreateWalls(dungeonLayout.FloorTiles, tilemapVisualizer);
-        if (ActiveTheme != null && ActiveTheme.UsesArcaneArt)
+        if (ActiveTheme != null && ActiveTheme.UsesCustomGeometry)
         {
             // Static props and non-walkable volumes must exist BEFORE the bake.
             // Their footprint cells also keep player/items/enemies from spawning inside them.
             tilemapVisualizer.SetMapArtVisible(false);
-            spawnedObjects.Add(ArcaneCitadelGeometry.Build(dungeonLayout, ActiveTheme, occupiedCells));
+            spawnedObjects.Add(ActiveTheme.UsesArrowCryptArt
+                ? ArrowCryptGeometry.Build(dungeonLayout, ActiveTheme, occupiedCells)
+                : ArcaneCitadelGeometry.Build(dungeonLayout, ActiveTheme, occupiedCells));
             Physics2D.SyncTransforms();
         }
         tilemapVisualizer.SynchronizeColliders();
@@ -149,7 +154,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
         PlaceTacticalTraps();
         ConfigureLevelLighting();
 
-        if (ActiveTheme == null || !ActiveTheme.UsesArcaneArt)
+        if (ActiveTheme == null || !ActiveTheme.UsesCustomGeometry)
         {
             tilemapVisualizer.SetMapArtVisible(true);
             DungeonDecorator.DecorateDungeon(
@@ -324,7 +329,11 @@ public class InfiniteWorldGenerator : MonoBehaviour
         if (!TryClaimRoomSpawn(room, "Player", out Vector2Int spawnPoint))
             return;
 
-        playerTransform.position = PrefabPlacer.GetWorldPosition(spawnPoint);
+        Vector3 spawnPosition = PrefabPlacer.GetWorldPosition(spawnPoint);
+        playerTransform.position = spawnPosition;
+        PlayerMovement movement = playerTransform.GetComponent<PlayerMovement>();
+        if (movement != null)
+            movement.ConfigureWalkableArea(dungeonLayout.FloorTiles, spawnPosition);
     }
 
     // Phòng chiến đấu dùng bộ ba vai trò; phòng boss thật dành riêng cho boss.
@@ -451,8 +460,10 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private void PlaceTacticalTraps()
     {
         bool arcane = ActiveTheme != null && ActiveTheme.UsesArcaneArt;
+        bool arrowCrypt = ActiveTheme != null && ActiveTheme.UsesArrowCryptArt;
+        bool themedLayout = arcane || arrowCrypt;
         Physics2D.SyncTransforms();
-        LastTrapPlan = new TacticalTrapPlanner(dungeonLayout, spawnedObjects, playerTransform, arcane);
+        LastTrapPlan = new TacticalTrapPlanner(dungeonLayout, spawnedObjects, playerTransform, themedLayout);
         // Decor được sinh sau bước này phải nhường cả lối đi và tầm nhìn của bẫy.
         occupiedCells.UnionWith(LastTrapPlan.Reserved);
         if (!LastTrapPlan.RoutesVerified)
@@ -460,8 +471,10 @@ public class InfiniteWorldGenerator : MonoBehaviour
             Debug.LogWarning("TACTICAL_TRAPS_SKIPPED: " + LastTrapPlan.FailureReason + "; no hazards added.");
             return;
         }
+        int themedBudget = arcane ? ActiveTheme.arcaneTrapsPerCombatRoom :
+            arrowCrypt ? ActiveTheme.arrowCryptTrapsPerCombatRoom : 0;
         int budget = Mathf.Max(currentLevelDefinition.TrapsPerCombatRoom,
-            arcane ? ActiveTheme.arcaneTrapsPerCombatRoom : currentLevel >= 3 ? 2 : 0);
+            themedLayout ? themedBudget : currentLevel >= 3 ? 2 : 0);
         budget = Mathf.Min(budget, currentLevel == 1 ? 1 : currentLevel < 4 ? 2 : currentLevel < 7 ? 3 : 4);
         foreach (DungeonRoom room in dungeonLayout.Rooms)
         {
@@ -518,6 +531,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
                 trap.ConfigureTacticalCycle(rest, 0.85f, 0.9f);
                 if (arcane) trap.ConfigureAtlasVisual(ActiveTheme.arcaneSpike, ActiveTheme.usesCampaignAtlas
                     ? Enumerable.Range(12, 4).Select(ActiveTheme.AtlasUv).ToArray() : null);
+                else if (arrowCrypt) trap.ConfigureArrowCryptVisual();
                 for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) occupiedCells.Add(cell + new Vector2Int(x, y));
             }
             Debug.Log($"TACTICAL_TRAP_GROUP level={currentLevel} pattern={pattern} count={cells.Count} clearance={group.MinimumClearance:F2}");
@@ -637,6 +651,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
                 ? PrefabPlacer.GetWorldPosition(new Vector2Int(0, room.FloorTiles.Max(p => p.y) - 9))
                 : PrefabPlacer.GetWorldPosition(spawnPoint);
             var finalBoss = CampaignFinalBoss.Create(selectedPrefab, arena, preferred);
+            BossWaveAttackController.Attach(finalBoss.gameObject);
             spawnedObjects.Add(finalBoss.gameObject);
             return 1 + formationCount;
         }
@@ -647,6 +662,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
         }
 
         GameObject boss = Instantiate(selectedPrefab, PrefabPlacer.GetWorldPosition(spawnPoint), Quaternion.identity);
+        BossWaveAttackController.Attach(boss);
         spawnedObjects.Add(boss);
         // Bosses remain inside their own room instead of chasing through a
         // corridor or walking their large sprite beyond the room walls.
@@ -662,16 +678,19 @@ public class InfiniteWorldGenerator : MonoBehaviour
             return 0;
         }
 
-        // Level 9 uses a tougher Bone Sentinel without modifying the shared asset from level 5.
-        if (currentLevel == 9 && health.Config != null)
+        // Tune a per-run mini-boss config so levels 5 and 9 do not mutate shared assets.
+        if (health.Config != null && boss.GetComponent<MiniBossController>() != null)
         {
             EnemyConfigSO variant = Instantiate(health.Config);
-            variant.maxHealth = 260;
-            variant.attackCooldown = 1.75f;
-            health.Configure(variant);
-            boss.GetComponent<EnemyCombat>()?.Configure(variant);
-            boss.GetComponent<EnemySummoner>()?.Configure(variant);
-            boss.GetComponent<MiniBossController>()?.SetVariantColor(new Color(0.9f, 0.72f, 1f));
+            if (currentLevel == 9)
+            {
+                variant.maxHealth = 260;
+                variant.attackCooldown = 1.75f;
+                boss.GetComponent<MiniBossController>()?.SetVariantColor(new Color(0.9f, 0.72f, 1f));
+            }
+            variant.attackCooldown = Mathf.Clamp(variant.attackCooldown * 0.72f, 1.15f, 2.4f);
+            variant.attackWindup = Mathf.Clamp(variant.attackWindup * 0.75f, 0.35f, 0.58f);
+            boss.GetComponent<MiniBossController>()?.ConfigureRuntimeVariant(variant);
         }
 
         return 1;

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 380ef2651ca683246a6ef3dad7adeecc, type: 3}
+  m_Name: ArrowCryptTheme
+  m_EditorClassIdentifier: 
+  storageProps: []
+  potteryProps: []
+  remainsProps: []
+  entranceSteps: {fileID: 0}
+  wallDetails: []
+  wallBanner: {fileID: 0}
+  pavingSprites: []
+  arcaneFloor: {fileID: 0}
+  arcaneWalls: {fileID: 0}
+  arcaneProps: {fileID: 0}
+  arcaneTorch: {fileID: 0}
+  arcaneTrapsPerCombatRoom: 2
+  arcaneSpike: {fileID: 0}
+  arrowCryptFloor: {fileID: 2100000, guid: 849b44764ef11c146bde99e3029e1d03, type: 2}
+  arrowCryptWalls: {fileID: 2100000, guid: 7ba3d60691363ea4494f772566661e66, type: 2}
+  arrowCryptTrapsPerCombatRoom: 2

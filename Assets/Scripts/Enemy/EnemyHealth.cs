@@ -113,6 +113,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
                 if (hitCollider != null) hitCollider.enabled = false;
         if (animator != null && HasParameter(animator, "isDead", AnimatorControllerParameterType.Bool))
             animator.SetBool("isDead", true);
+        StartCoroutine(PlayDeathSequence());
     }
 
     public void Die()
@@ -156,9 +157,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private System.Collections.IEnumerator PlayDeathSequence()
     {
-        // 1. Hiệu ứng nổ/bùng cháy khi chết
-        CombatImpactKind impact = deathKind == DeathKind.Boss ? CombatImpactKind.Boss : CombatImpactKind.EnemyMelee;
-        CombatHitVfx.Spawn(transform.position, impact, deathKind == DeathKind.Boss ? 1.5f : 0.85f);
+        SpriteRenderer primaryRenderer = GetComponentInChildren<SpriteRenderer>();
+        EnemyDefeatFeedback.Tier feedbackTier = deathKind == DeathKind.Boss
+            ? EnemyDefeatFeedback.Tier.Boss
+            : deathKind == DeathKind.MiniBoss
+                ? EnemyDefeatFeedback.Tier.MiniBoss
+                : EnemyDefeatFeedback.Tier.Enemy;
+        EnemyDefeatFeedback.Spawn(transform.position, feedbackTier, primaryRenderer);
 
         // 2. Thu thập toàn bộ SpriteRenderer (bao gồm cả renderer con tạo bởi EnemyLocomotionVisual)
         SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();

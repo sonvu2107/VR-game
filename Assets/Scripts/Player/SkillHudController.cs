@@ -10,6 +10,7 @@ public class SkillHudController : MonoBehaviour
     private const float SlotSize = 132f;
     private const float SlotGap = 14f;
     private const float LabelHeight = 22f;
+    private const string SlotFramePath = "UI/SkillHud/SkillSlotFrame_ObsidianCyan_v2";
 
     private PlayerMovement movement;
     private PlayerSkillController skills;
@@ -18,6 +19,7 @@ public class SkillHudController : MonoBehaviour
     private HudSlot spinSlashSlot;
     private HudSlot ultimateSlot;
     private GameObject canvasObject;
+    private PlayableCharacterId displayedCharacter = (PlayableCharacterId)(-1);
 
     private void Start()
     {
@@ -32,10 +34,26 @@ public class SkillHudController : MonoBehaviour
             spinSlashSlot == null || ultimateSlot == null)
             return;
 
-        dashSlot.SetCooldown(movement.DashCooldownNormalized, new Color(0.20f, 0.85f, 1f));
-        swordWaveSlot.SetCooldown(skills.SwordWaveCooldownNormalized, new Color(0.20f, 0.85f, 1f));
-        spinSlashSlot.SetCooldown(skills.SpinSlashCooldownNormalized, new Color(0.33f, 0.92f, 1f));
-        ultimateSlot.SetUltimate(skills.UltimateNormalized);
+        RefreshCharacterLabels();
+        Color standardReady = displayedCharacter switch
+        {
+            PlayableCharacterId.AzureWarden => new Color(0.18f, 0.76f, 1f),
+            PlayableCharacterId.Chronoblade => new Color(0.78f, 0.34f, 1f),
+            PlayableCharacterId.GravewindRanger => new Color(0.28f, 1f, 0.58f),
+            _ => new Color(0.20f, 0.85f, 1f)
+        };
+        Color ultimateReady = displayedCharacter switch
+        {
+            PlayableCharacterId.AzureWarden => new Color(0.30f, 0.82f, 1f),
+            PlayableCharacterId.Chronoblade => new Color(0.92f, 0.36f, 1f),
+            PlayableCharacterId.GravewindRanger => new Color(0.30f, 1f, 0.48f),
+            _ => new Color(1f, 0.58f, 0.18f)
+        };
+
+        dashSlot.SetCooldown(movement.DashCooldownNormalized, standardReady);
+        swordWaveSlot.SetCooldown(skills.SwordWaveCooldownNormalized, standardReady);
+        spinSlashSlot.SetCooldown(skills.SpinSlashCooldownNormalized, standardReady);
+        ultimateSlot.SetUltimate(skills.UltimateNormalized, ultimateReady);
     }
 
     private void CreateHud()
@@ -64,6 +82,65 @@ public class SkillHudController : MonoBehaviour
         swordWaveSlot = CreateSlot(holder.transform, 1, "Q", "SWORD WAVE", "UI/Skills/IconSwordWave");
         spinSlashSlot = CreateSlot(holder.transform, 2, "E", "SPIN SLASH", "UI/Skills/IconSpinSlash");
         ultimateSlot = CreateSlot(holder.transform, 3, "R", "ASHEN JUDGMENT", "UI/Skills/IconAshenJudgment");
+        RefreshCharacterLabels();
+    }
+
+    private void RefreshCharacterLabels()
+    {
+        PlayerCharacterFrameAnimator animator = GetComponent<PlayerCharacterFrameAnimator>();
+        PlayableCharacterId character = animator != null ? animator.Character : PlayableCharacterId.AshenKnight;
+        if (character == displayedCharacter || dashSlot == null)
+            return;
+
+        displayedCharacter = character;
+        switch (character)
+        {
+            case PlayableCharacterId.AzureWarden:
+                dashSlot.SetLabel("AEGIS RUSH");
+                swordWaveSlot.SetLabel("AEGIS LANCE");
+                spinSlashSlot.SetLabel("WARDBREAKER");
+                ultimateSlot.SetLabel("CITADEL VERDICT");
+                dashSlot.SetIcon("UI/Skills/AzureWarden/IconAegisRush");
+                swordWaveSlot.SetIcon("UI/Skills/AzureWarden/IconAegisLance");
+                spinSlashSlot.SetIcon("UI/Skills/AzureWarden/IconWardbreaker");
+                ultimateSlot.SetIcon("UI/Skills/AzureWarden/IconCitadelVerdict");
+                break;
+            case PlayableCharacterId.Chronoblade:
+                dashSlot.SetLabel("RIFT STEP");
+                swordWaveSlot.SetLabel("RIFT CUTTER");
+                spinSlashSlot.SetLabel("TIME FRACTURE");
+                ultimateSlot.SetLabel("ZERO HOUR");
+                dashSlot.SetIcon("UI/Skills/Chronoblade/IconRiftStep");
+                swordWaveSlot.SetIcon("UI/Skills/Chronoblade/IconRiftCutter");
+                spinSlashSlot.SetIcon("UI/Skills/Chronoblade/IconTimeFracture");
+                ultimateSlot.SetIcon("UI/Skills/Chronoblade/IconZeroHour");
+                break;
+            case PlayableCharacterId.GravewindRanger:
+                dashSlot.SetLabel("MIST STEP");
+                swordWaveSlot.SetLabel("WRAITH FAN");
+                spinSlashSlot.SetLabel("GRAVE SNARE");
+                ultimateSlot.SetLabel("NIGHTFALL");
+                dashSlot.SetIcon("UI/Skills/GravewindRanger/IconMistStep");
+                swordWaveSlot.SetIcon("UI/Skills/GravewindRanger/IconWraithFan");
+                spinSlashSlot.SetIcon("UI/Skills/GravewindRanger/IconGraveSnare");
+                ultimateSlot.SetIcon("UI/Skills/GravewindRanger/IconNightfall");
+                break;
+            default:
+                dashSlot.SetLabel("DASH");
+                swordWaveSlot.SetLabel("SWORD WAVE");
+                spinSlashSlot.SetLabel("SPIN SLASH");
+                ultimateSlot.SetLabel("ASHEN JUDGMENT");
+                SetDefaultIcons();
+                break;
+        }
+    }
+
+    private void SetDefaultIcons()
+    {
+        dashSlot.SetIcon("UI/Skills/IconDash");
+        swordWaveSlot.SetIcon("UI/Skills/IconSwordWave");
+        spinSlashSlot.SetIcon("UI/Skills/IconSpinSlash");
+        ultimateSlot.SetIcon("UI/Skills/IconAshenJudgment");
     }
 
     private static HudSlot CreateSlot(Transform parent, int index, string key, string label, string iconPath)
@@ -86,10 +163,14 @@ public class SkillHudController : MonoBehaviour
         cooldown.fillMethod = Image.FillMethod.Vertical;
         cooldown.fillOrigin = 1;
 
-        // The previous null-sprite Image covered the entire slot. SetCooldown
-        // then changed its color to opaque white, completely hiding the art.
-        Image[] border = CreateBorder(slot.transform);
-        Image icon = CreateIcon(slot.transform, iconPath);
+        Image readyGlow = CreateIcon(slot.transform, iconPath, "Ready Glow");
+        readyGlow.enabled = false;
+        SetAnchors(readyGlow.rectTransform,
+            new Vector2(0.04f, 0.03f + LabelHeight / (SlotSize + LabelHeight)), new Vector2(0.96f, 0.97f), 0f);
+        Image icon = CreateIcon(slot.transform, iconPath, "Skill Icon");
+        // Keep the hollow frame above the icon. Its centre is transparent, so
+        // only the metal/rune edge overlays the skill art.
+        Image[] border = CreateFrame(slot.transform);
 
         Image keyBadge = CreateImage(slot.transform, "Key Badge", new Color(0.018f, 0.075f, 0.10f, 0.96f));
         SetAnchors(keyBadge.rectTransform, new Vector2(0.10f, 0.69f), new Vector2(0.40f, 0.89f), 0f);
@@ -101,10 +182,27 @@ public class SkillHudController : MonoBehaviour
         Text labelText = CreateText(labelPlate.transform, label, 11, FontStyle.Bold, new Color(0.63f, 0.88f, 0.96f));
         Stretch(labelText.rectTransform, 1f);
 
-        return new HudSlot(baseImage, cooldown, border, icon, keyBadge, keyText, labelText);
+        return new HudSlot(baseImage, cooldown, border, readyGlow, icon, keyBadge, keyText, labelText);
     }
 
-    private static Image[] CreateBorder(Transform parent)
+    private static Image[] CreateFrame(Transform parent)
+    {
+        Sprite sprite = LoadSprite(SlotFramePath);
+        if (sprite == null)
+        {
+            Debug.LogError($"Missing HUD frame at Resources/{SlotFramePath}.png; using simple border fallback.");
+            return CreateBorderFallback(parent);
+        }
+
+        Image frame = CreateImage(parent, "Skill Slot Frame", Color.white);
+        frame.sprite = sprite;
+        frame.preserveAspect = true;
+        float bottom = LabelHeight / (SlotSize + LabelHeight);
+        SetAnchors(frame.rectTransform, new Vector2(0f, bottom), Vector2.one, 0f);
+        return new[] { frame };
+    }
+
+    private static Image[] CreateBorderFallback(Transform parent)
     {
         float bottom = LabelHeight / (SlotSize + LabelHeight);
         float vertical = 3f / (SlotSize + LabelHeight);
@@ -122,10 +220,10 @@ public class SkillHudController : MonoBehaviour
         return parts;
     }
 
-    private static Image CreateIcon(Transform parent, string resourcePath)
+    private static Image CreateIcon(Transform parent, string resourcePath, string objectName)
     {
         Sprite sprite = LoadSprite(resourcePath);
-        Image icon = CreateImage(parent, "Skill Icon", Color.white);
+        Image icon = CreateImage(parent, objectName, Color.white);
         icon.sprite = sprite;
         icon.enabled = sprite != null;
         icon.preserveAspect = true;
@@ -199,16 +297,19 @@ public class SkillHudController : MonoBehaviour
         private readonly Image background;
         private readonly Image cooldown;
         private readonly Image[] border;
+        private readonly Image readyGlow;
         private readonly Image icon;
         private readonly Image keyBadge;
         private readonly Text key;
         private readonly Text label;
 
-        public HudSlot(Image background, Image cooldown, Image[] border, Image icon, Image keyBadge, Text key, Text label)
+        public HudSlot(Image background, Image cooldown, Image[] border, Image readyGlow, Image icon,
+            Image keyBadge, Text key, Text label)
         {
             this.background = background;
             this.cooldown = cooldown;
             this.border = border;
+            this.readyGlow = readyGlow;
             this.icon = icon;
             this.keyBadge = keyBadge;
             this.key = key;
@@ -218,6 +319,7 @@ public class SkillHudController : MonoBehaviour
         public void SetCooldown(float normalizedCooldown, Color readyColor)
         {
             bool ready = normalizedCooldown <= 0.01f;
+            readyGlow.enabled = false;
             cooldown.fillAmount = Mathf.Clamp01(normalizedCooldown);
             Color contentColor = ready ? readyColor : new Color(0.53f, 0.61f, 0.66f, 1f);
             key.color = contentColor;
@@ -230,20 +332,46 @@ public class SkillHudController : MonoBehaviour
                     new Color(0.45f, 0.50f, 0.54f, 0.95f);
         }
 
-        public void SetUltimate(float charge)
+        public void SetUltimate(float charge, Color readyColor)
         {
             float clampedCharge = Mathf.Clamp01(charge);
             bool ready = clampedCharge >= 0.999f;
-            Color color = ready ? new Color(1f, 0.58f, 0.18f, 1f) : new Color(0.62f, 0.76f, 0.86f, 1f);
+            float pulse = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 5.5f);
+            Color color = ready ? readyColor : new Color(0.62f, 0.76f, 0.86f, 1f);
             cooldown.fillAmount = 1f - clampedCharge;
             key.color = color;
             label.color = color;
-            keyBadge.color = ready ? new Color(0.22f, 0.07f, 0.015f, 0.98f) : new Color(0.035f, 0.05f, 0.065f, 0.96f);
-            background.color = ready ? new Color(0.12f, 0.025f, 0.008f, 0.98f) : new Color(0.025f, 0.02f, 0.035f, 0.98f);
+            keyBadge.color = ready ? new Color(readyColor.r * 0.17f, readyColor.g * 0.11f,
+                readyColor.b * 0.15f, 0.98f) : new Color(0.035f, 0.05f, 0.065f, 0.96f);
+            background.color = ready ? new Color(readyColor.r * 0.10f, readyColor.g * 0.075f,
+                readyColor.b * 0.10f, 0.98f) : new Color(0.025f, 0.02f, 0.035f, 0.98f);
             icon.color = ready ? Color.white : new Color(0.70f, 0.73f, 0.78f, 0.90f);
+            readyGlow.enabled = ready;
+            readyGlow.color = new Color(readyColor.r, readyColor.g, readyColor.b, 0.20f + pulse * 0.24f);
+            readyGlow.rectTransform.localScale = Vector3.one * (1.04f + pulse * 0.09f);
             foreach (Image edge in border)
-                edge.color = ready ? new Color(1f, 0.75f, 0.32f, 1f) :
+                edge.color = ready ? new Color(readyColor.r, readyColor.g, readyColor.b,
+                    0.82f + pulse * 0.18f) :
                     new Color(0.55f, 0.62f, 0.70f, 0.95f);
+        }
+
+        public void SetIcon(string resourcePath)
+        {
+            Sprite sprite = LoadSprite(resourcePath);
+            if (sprite == null)
+            {
+                Debug.LogError($"Missing HUD icon at Resources/{resourcePath}.png");
+                return;
+            }
+
+            icon.sprite = sprite;
+            icon.enabled = true;
+            readyGlow.sprite = sprite;
+        }
+
+        public void SetLabel(string value)
+        {
+            label.text = value;
         }
     }
 }

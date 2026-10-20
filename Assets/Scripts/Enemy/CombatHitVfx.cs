@@ -8,6 +8,8 @@ public enum CombatImpactKind
     SwordWave,
     SpinSlash,
     Ashen,
+    Azure,
+    Chrono,
     Arrow,
     Bat,
     Mage,
@@ -96,6 +98,8 @@ public sealed class CombatHitVfx : MonoBehaviour
             case CombatImpactKind.SwordWave: return new Color(0.35f, 0.91f, 1f);
             case CombatImpactKind.SpinSlash: return new Color(0.37f, 1f, 0.78f);
             case CombatImpactKind.Ashen: return new Color(1f, 0.54f, 0.22f);
+            case CombatImpactKind.Azure: return new Color(0.18f, 0.72f, 1f);
+            case CombatImpactKind.Chrono: return new Color(0.76f, 0.28f, 1f);
             case CombatImpactKind.Arrow: return new Color(1f, 0.9f, 0.58f);
             case CombatImpactKind.Bat: return new Color(1f, 0.35f, 0.48f);
             case CombatImpactKind.Mage: return new Color(0.72f, 0.48f, 1f);

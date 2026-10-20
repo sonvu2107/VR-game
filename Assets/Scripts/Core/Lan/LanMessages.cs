@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class LanMessage
 {
     public string type;
-    public const int CurrentProtocol = 12;
+    public const int CurrentProtocol = 13;
     public int protocol = CurrentProtocol;
     public string catalog;
     public string error;
@@ -42,6 +42,7 @@ public sealed class LanMessage
     public bool storySkip;
     public bool stoneRead;
     public Vector3 stonePosition;
+    public int character;
     public int audio;
     public float volume = 1f;
     public float pitch = 1f;
@@ -90,6 +91,7 @@ public sealed class LanPlayerState
     public float e;
     public float ultimate;
     public float power;
+    public int character;
 }
 
 [Serializable]
