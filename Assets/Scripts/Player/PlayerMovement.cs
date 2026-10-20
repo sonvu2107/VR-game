@@ -8,11 +8,17 @@ using System.Collections.Generic;
 public class PlayerMovement : MonoBehaviour
 {
     private const int HeavyStrikeFrameCount = 12;
+    // PrefabPlacer maps a logical tile (x,y) to world (x,y+1). The half-cell
+    // shift makes each spawn coordinate the centre of its allowed tile region.
+    private static readonly Vector2 WalkableCellLookupOffset = new(0.5f, -0.5f);
     // Frames 5 and 6 in the imported HeavyStrikeBody sheet contain detached
     // sword fragments.  Hold the last clean raised-sword pose while charging
     // instead of exposing that broken artwork.
     private static readonly int[] HeavyChargeFrameMap = { 0, 1, 2, 3, 4, 4, 4 };
     private Rigidbody2D rb;
+    private Collider2D movementCollider;
+    private PhysicsMaterial2D frictionlessMovementMaterial;
+    private HashSet<Vector2Int> walkableFloorTiles;
     private PowerupCircleController powerupCircleController;
     private PowerupChargeVfx powerupChargeVfx;
     private Animator animator;
@@ -89,6 +95,9 @@ public class PlayerMovement : MonoBehaviour
     private AudioClip[] comboSwingClips;
     private AudioClip swordImpactClang;
     private AudioClip dashSfx;
+    private AudioClip azureDashSfx;
+    private AudioClip chronoDashSfx;
+    private AudioClip gravewindDashSfx;
 
     private Vector2 _movement;
     private Vector2 facingLeft;
@@ -114,6 +123,7 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer playerSpriteRenderer;
     private SpriteRenderer dashVfxRenderer;
     private Sprite[] dashVfxFrames;
+    private PlayableCharacterId dashVfxCharacter = PlayableCharacterId.AshenKnight;
     private Vector2 dashDirection;
     private bool isDashing;
     private bool skillPositionLocked;
@@ -122,6 +132,8 @@ public class PlayerMovement : MonoBehaviour
     private float nextDashAt;
     private float dashVfxShownAt;
     private float dashVfxHideAt;
+    private float activeDashDuration;
+    private float activeDashDistance;
     private Sprite[] heavyStrikeFrames;
     private bool heavyManualSpriteActive;
     private bool heavyInputPending;
@@ -181,14 +193,50 @@ public class PlayerMovement : MonoBehaviour
     public bool IsHeavyLocked => isHeavyCharging || isHeavyAttacking;
     public bool IsHeavyInputPending => heavyInputPending;
     public Vector2 FacingDirection => isFacingLeft ? Vector2.left : Vector2.right;
+    private PlayableCharacterId CurrentCharacter
+    {
+        get
+        {
+            PlayerCharacterFrameAnimator frameAnimator = GetComponent<PlayerCharacterFrameAnimator>();
+            return frameAnimator != null ? frameAnimator.Character : PlayableCharacterId.AshenKnight;
+        }
+    }
     // The Player object's transform is the movement/collider anchor, not
     // necessarily the visual centre of every animation frame.
     public Vector3 VisualCenter => playerSpriteRenderer != null
         ? playerSpriteRenderer.bounds.center
         : transform.position;
     public float DashCooldownRemaining => Mathf.Max(0f, nextDashAt - Time.time);
+    public bool HasWalkableAreaConstraint => walkableFloorTiles != null && walkableFloorTiles.Count > 0;
     public float DashCooldownNormalized => LanLaunch.Mode == LanMode.Client && LanSessionBridge.Active?.LocalState != null
-        ? LanSessionBridge.Active.LocalState.dash : dashCooldown <= 0f ? 0f : DashCooldownRemaining / dashCooldown;
+        ? LanSessionBridge.Active.LocalState.dash : GetDashProfile().cooldown <= 0f ? 0f :
+            DashCooldownRemaining / GetDashProfile().cooldown;
+
+    /// <summary>
+    /// Repositions the player for a skill while preserving the same floor sweep
+    /// used by the normal dash. The returned position is always inside the
+    /// generated map's walkable area.
+    /// </summary>
+    public Vector2 BlinkForSkill(Vector2 direction, float distance)
+    {
+        rb ??= GetComponent<Rigidbody2D>();
+        if (rb == null || direction.sqrMagnitude < 0.001f || distance <= 0f)
+            return transform.position;
+
+        Vector2 start = rb.position;
+        Vector2 requestedDelta = direction.normalized * distance;
+        Vector2 allowedDelta = ConstrainToWalkableArea(requestedDelta);
+        Vector2 destination = start + allowedDelta;
+        rb.position = destination;
+        rb.velocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+        // Skill casts pin the body in FixedUpdate. Update that anchor too so
+        // a blink cannot be pulled back to its pre-cast position next frame.
+        skillLockedPosition = destination;
+        skillPositionLocked = true;
+        Physics2D.SyncTransforms();
+        return destination;
+    }
 
     private void Awake()
     {
@@ -214,9 +262,10 @@ public class PlayerMovement : MonoBehaviour
             Resources.Load<AudioClip>("Audio/Combat/SwordSwing3")
         };
         swordImpactClang = Resources.Load<AudioClip>("Audio/Combat/SwordImpactClang");
-        // The dash starts with the player's real blade swish instead of a
-        // synthetic thruster; this keeps the action grounded in melee combat.
-        dashSfx = abilityFallbackSfx;
+        dashSfx = Resources.Load<AudioClip>("Audio/Combat/DashBurst") ?? abilityFallbackSfx;
+        azureDashSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/Dash");
+        chronoDashSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/Dash");
+        gravewindDashSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/Dash_MistStep");
         player = gameObject;
         powerupController = player.GetComponent<PowerupController>();
     }
@@ -254,10 +303,17 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        movementCollider = GetComponent<Collider2D>();
         // Movement is applied in FixedUpdate while Cinemachine renders every frame.
         // Interpolation prevents the camera from following discrete physics steps.
         if (rb != null)
+        {
             rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+            // Dash speed can exceed 40 units/second. Continuous collision keeps
+            // the physical wall response reliable between fixed updates.
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        }
+        ConfigureFrictionlessMovement();
         ConfigureSmoothCameraFollow();
         animator = GetComponent<Animator>();
         hasComboIndexParameter = animator != null && System.Array.Exists(animator.parameters,
@@ -283,6 +339,36 @@ public class PlayerMovement : MonoBehaviour
         if (GetComponent<EnemyDirectionIndicator>() == null)
             gameObject.AddComponent<EnemyDirectionIndicator>();
         AssertSingleAuthoritativePlayerVisual("startup");
+    }
+
+    /// <summary>Called after every generated level places the persistent player.</summary>
+    public void ConfigureWalkableArea(IEnumerable<Vector2Int> floorTiles, Vector2 spawnPosition)
+    {
+        walkableFloorTiles = floorTiles != null
+            ? new HashSet<Vector2Int>(floorTiles)
+            : null;
+        rb ??= GetComponent<Rigidbody2D>();
+
+        if (rb != null)
+        {
+            rb.position = spawnPosition;
+            rb.velocity = Vector2.zero;
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            Physics2D.SyncTransforms();
+        }
+    }
+
+    private void ConfigureFrictionlessMovement()
+    {
+        if (movementCollider == null)
+            return;
+
+        frictionlessMovementMaterial = new PhysicsMaterial2D("Player Movement - No Friction")
+        {
+            friction = 0f,
+            bounciness = 0f
+        };
+        movementCollider.sharedMaterial = frictionlessMovementMaterial;
     }
 
     private static void ConfigureSmoothCameraFollow()
@@ -528,13 +614,27 @@ public class PlayerMovement : MonoBehaviour
             ? _movement.normalized
             : isFacingLeft ? Vector2.left : Vector2.right;
         isDashing = true;
-        dashEndsAt = Time.time + dashDuration;
-        nextDashAt = Time.time + dashCooldown;
+        DashProfile profile = GetDashProfile();
+        activeDashDuration = profile.duration;
+        activeDashDistance = profile.distance;
+        dashEndsAt = Time.time + activeDashDuration;
+        nextDashAt = Time.time + profile.cooldown;
         // The run clip is the dash body pose.  Previously this was forced to
         // zero, leaving the character visibly idle while moving several tiles.
         animator.SetFloat("Speed", 5f);
         ShowDashVfx();
-        PlayAbilitySfx(dashSfx, volume: 0.82f, pitch: 0.86f);
+        PlayAbilitySfx(GetDashSfxForCharacter(), volume: 0.84f, pitch: 1f);
+    }
+
+    private AudioClip GetDashSfxForCharacter()
+    {
+        return CurrentCharacter switch
+        {
+            PlayableCharacterId.AzureWarden => azureDashSfx ?? dashSfx,
+            PlayableCharacterId.Chronoblade => chronoDashSfx ?? dashSfx,
+            PlayableCharacterId.GravewindRanger => gravewindDashSfx ?? dashSfx,
+            _ => dashSfx
+        };
     }
 
     private bool WasDashPressed()
@@ -793,7 +893,17 @@ public class PlayerMovement : MonoBehaviour
         if (hasComboIndexParameter)
             animator.SetInteger("ComboIndex", activeComboHit + 1);
         animator.SetTrigger("Attack");
-        ShowSlashVfx(activeComboHit);
+        if (CurrentCharacter == PlayableCharacterId.GravewindRanger)
+        {
+            // Gravewind's basic attack is resolved as an arrow at the impact
+            // frame. Never flash the shared Ashen Knight sword arc on top.
+            if (slashVfxRenderer != null)
+                slashVfxRenderer.enabled = false;
+        }
+        else
+        {
+            ShowSlashVfx(activeComboHit);
+        }
     }
 
     private void CreateSlashVfx()
@@ -871,8 +981,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void CreateDashVfx()
     {
-        dashVfxFrames = PlayerSkillController.LoadPixelFrames("Combat/Frames/DashBurstPixel_6f", 6);
-
         GameObject dashVfx = new GameObject("Dash Burst VFX");
         dashVfxRenderer = dashVfx.AddComponent<SpriteRenderer>();
         Material vfxMaterial = PlayerSkillController.GetVfxMaterial();
@@ -885,10 +993,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
         dashVfxRenderer.enabled = false;
+        EnsureDashVfxForCharacter(true);
     }
 
     private void ShowDashVfx()
     {
+        EnsureDashVfxForCharacter();
         if (dashVfxRenderer == null || dashVfxFrames == null || dashVfxFrames.Length == 0)
             return;
 
@@ -918,6 +1028,50 @@ public class PlayerMovement : MonoBehaviour
         int frameIndex = Mathf.Min((int)(progress * dashVfxFrames.Length), dashVfxFrames.Length - 1);
         dashVfxRenderer.sprite = dashVfxFrames[frameIndex];
         dashVfxRenderer.transform.position = transform.position - (Vector3)dashDirection * 0.2f;
+    }
+
+    private void EnsureDashVfxForCharacter(bool force = false)
+    {
+        PlayerCharacterFrameAnimator frameAnimator = GetComponent<PlayerCharacterFrameAnimator>();
+        PlayableCharacterId character = frameAnimator != null ? frameAnimator.Character : PlayableCharacterId.AshenKnight;
+        if (!force && character == dashVfxCharacter && dashVfxFrames != null && dashVfxFrames.Length > 0)
+            return;
+
+        dashVfxCharacter = character;
+        string path = character switch
+        {
+            PlayableCharacterId.AzureWarden => "Combat/Frames/AzureWardenDash_6f",
+            PlayableCharacterId.Chronoblade => "Combat/Frames/ChronobladeDash_6f",
+            PlayableCharacterId.GravewindRanger => "Combat/Frames/GravewindRangerDash_6f",
+            _ => "Combat/Frames/DashBurstPixel_6f"
+        };
+        dashVfxFrames = PlayerSkillController.LoadPixelFrames(path, 6);
+    }
+
+    private DashProfile GetDashProfile()
+    {
+        PlayerCharacterFrameAnimator frameAnimator = GetComponent<PlayerCharacterFrameAnimator>();
+        return frameAnimator != null ? frameAnimator.Character switch
+        {
+            PlayableCharacterId.AzureWarden => new DashProfile(0.20f, 3.8f, 0.86f),
+            PlayableCharacterId.Chronoblade => new DashProfile(0.12f, 5.35f, 0.64f),
+            PlayableCharacterId.GravewindRanger => new DashProfile(0.15f, 4.85f, 0.72f),
+            _ => new DashProfile(dashDuration, dashDistance, dashCooldown)
+        } : new DashProfile(dashDuration, dashDistance, dashCooldown);
+    }
+
+    private readonly struct DashProfile
+    {
+        public readonly float duration;
+        public readonly float distance;
+        public readonly float cooldown;
+
+        public DashProfile(float duration, float distance, float cooldown)
+        {
+            this.duration = duration;
+            this.distance = distance;
+            this.cooldown = cooldown;
+        }
     }
 
     /// <summary>
@@ -959,6 +1113,8 @@ public class PlayerMovement : MonoBehaviour
         // reference and explicitly released with its owner.
         if (dashVfxRenderer != null)
             Destroy(dashVfxRenderer.gameObject);
+        if (frictionlessMovementMaterial != null)
+            Destroy(frictionlessMovementMaterial);
     }
 
     private float GetComboDuration(int comboHit)
@@ -991,8 +1147,14 @@ public class PlayerMovement : MonoBehaviour
                 break;
         }
 
-        DamageEnemies(attackPoint.position, attackRange * rangeMultiplier,
-            Mathf.Max(1, Mathf.RoundToInt(attackDamage * damageMultiplier)), true);
+        int damage = Mathf.Max(1, Mathf.RoundToInt(attackDamage * damageMultiplier));
+        if (CurrentCharacter == PlayableCharacterId.GravewindRanger && skillController != null)
+        {
+            skillController.FireGravewindBasicArrow(damage, activeComboHit);
+            return;
+        }
+
+        DamageEnemies(attackPoint.position, attackRange * rangeMultiplier, damage, true);
     }
 
     private void DamageEnemies(Vector2 center, float radius, int damage, bool playSwordImpact = false)
@@ -1161,9 +1323,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (rb == null)
+            return;
+
         if (isDashing)
         {
-            rb.MovePosition(rb.position + dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime);
+            float duration = activeDashDuration > 0f ? activeDashDuration : dashDuration;
+            float distance = activeDashDistance > 0f ? activeDashDistance : dashDistance;
+            Vector2 requestedDelta = dashDirection * (distance / duration) * Time.fixedDeltaTime;
+            Vector2 allowedDelta = ConstrainToWalkableArea(requestedDelta);
+            rb.MovePosition(rb.position + allowedDelta);
+            if ((allowedDelta - requestedDelta).sqrMagnitude > 0.0001f)
+            {
+                isDashing = false;
+                rb.velocity = Vector2.zero;
+                if (animator != null)
+                    animator.SetFloat("Speed", _movement == Vector2.zero ? 0f : 5f);
+            }
             return;
         }
 
@@ -1208,7 +1384,23 @@ public class PlayerMovement : MonoBehaviour
         // no longer lost between physics ticks.
         float movementMultiplier = isHeavyCharging ? heavyChargeMoveSpeedMultiplier :
             isAttacking ? attackMoveSpeedMultiplier : 1f;
+        // Ordinary movement remains fully physics-driven. Applying the tile
+        // sweep to every tiny keyboard step made a valid spawn look blocked
+        // on maps whose art/collider pivot is offset from the tile centre.
         rb.velocity = _movement * (speed * movementMultiplier);
+    }
+
+    private Vector2 ConstrainToWalkableArea(Vector2 desiredDelta)
+    {
+        if (!HasWalkableAreaConstraint)
+            return desiredDelta;
+
+        // The generator's logical player anchor is stable across every
+        // character sprite and collider pivot. Sweep that anchor for dash;
+        // Continuous Rigidbody2D collision still protects the full collider.
+        return WalkableAreaConstraint.ConstrainDelta(
+            walkableFloorTiles, rb.position, desiredDelta, Vector2.zero, Vector2.zero,
+            WalkableCellLookupOffset);
     }
 
     /// <summary>
@@ -1270,6 +1462,11 @@ public class PlayerMovement : MonoBehaviour
         // ability SFX at cast time. Never layer the legacy animation event on
         // top of the dedicated sound.
         if (skillController != null && skillController.IsSkillCasting)
+            return;
+
+        // The legacy attack clip raises sword-swing audio events. Gravewind
+        // uses a projectile and must not inherit that melee sound layer.
+        if (CurrentCharacter == PlayableCharacterId.GravewindRanger)
             return;
 
         if (!isAttacking)

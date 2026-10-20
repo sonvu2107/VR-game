@@ -94,6 +94,7 @@ public class MiniBossController : MonoBehaviour
         EnemyAttackCueVisual.Show(combat, target, config != null ? config.attackWindup : 0.55f, true);
         GetComponent<EnemyRuntimeSpriteAnimation>()?.TriggerAttack((config != null ? config.attackWindup : 0.55f) + 0.25f);
         CombatHitVfx.Spawn(transform.position, CombatImpactKind.Boss, 0.85f);
+        EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.MiniBoss, 0.95f);
         if (spriteRenderer != null) spriteRenderer.color = new Color(0.4f, 1f, 0.55f);
         SpecialTelegraph?.Invoke(this, target);
         yield return new WaitForSeconds(config != null ? config.attackWindup : 0.55f);

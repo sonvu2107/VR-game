@@ -135,6 +135,7 @@ public class Enemy : MonoBehaviour
             return;
         
         animator?.SetTrigger("Attack");
+        EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.Melee, 0.72f, Random.Range(0.96f, 1.05f));
         attackBlocked = true;
         StartCoroutine(DelayAttack());
     }
@@ -175,6 +176,8 @@ public class Enemy : MonoBehaviour
             return;
 
         isDead = true;
+        EnemyDefeatFeedback.Spawn(transform.position, EnemyDefeatFeedback.Tier.Enemy,
+            GetComponentInChildren<SpriteRenderer>());
         if (countsForLevelClear)
             manager?.EnemyDefeated();
         

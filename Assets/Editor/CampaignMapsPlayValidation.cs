@@ -84,6 +84,8 @@ public static class CampaignMapsPlayValidation
             if(!visited.Add(level)) return;
             if(level==1) originalPlayerId=manager.PlayerMovement.GetInstanceID();
             Require(manager.PlayerMovement.GetInstanceID()==originalPlayerId,"Changing map replaced the player/session.");
+            Require(manager.PlayerMovement.HasWalkableAreaConstraint,
+                "Player map-boundary constraint was not configured at level "+level);
             var theme=manager.dungeonGenerator.ActiveTheme;
             string identity=theme==null?"OriginalDungeon":AssetDatabase.GetAssetPath(theme);
             Require(themes.Add(identity),"Level reused a previous theme: "+level);

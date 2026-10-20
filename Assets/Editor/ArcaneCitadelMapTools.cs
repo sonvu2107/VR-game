@@ -68,14 +68,16 @@ public static class ArcaneCitadelMapTools
         AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
         var importer = (TextureImporter)AssetImporter.GetAtPath(path);
         // Texture-only settings; Sprite slicing/pivots/metadata remain untouched.
-        importer.filterMode = FilterMode.Point;
-        importer.mipmapEnabled = false;
+        importer.filterMode = FilterMode.Bilinear;
+        importer.mipmapEnabled = true;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.maxTextureSize = 2048;
         importer.wrapMode = TextureWrapMode.Clamp;
         importer.SaveAndReimport();
         var material = new Material(shader) { name = Path.GetFileNameWithoutExtension(output) };
         material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        material.DisableKeyword("PIXELSNAP_ON");
+        if (material.HasProperty("PixelSnap")) material.SetFloat("PixelSnap", 0f);
         AssetDatabase.CreateAsset(material, Art + output);
         return material;
     }

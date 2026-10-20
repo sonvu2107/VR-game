@@ -41,6 +41,7 @@ public class PlayerSkillController : MonoBehaviour
     [Min(1)] public int ultimateImpactDamage = 110;
 
     private PlayerMovement player;
+    private HealthController playerHealth;
     private SpriteRenderer playerRenderer;
     private Sprite[] swordWaveCoreFrames;
     private Sprite[] swordWaveImpactFrames;
@@ -49,9 +50,19 @@ public class PlayerSkillController : MonoBehaviour
     private Sprite[] ultimateSlashFrames;
     private Sprite[] ultimateImpactFrames;
     private Sprite[] casterAuraFrames;
+    private Sprite[] azureAegisLanceFrames, azureWardbreakerFrames, azureCitadelVerdictFrames;
+    private Sprite[] chronoRiftCutterFrames, chronoTimeFractureFrames, chronoZeroHourFrames;
+    private Sprite[] graveWraithFanFrames, graveSnareFrames, graveNightfallFrames;
+    private Sprite[] gravewindArrowFrames;
     private AudioClip ultimateChargeSfx;
     private AudioClip ultimateImpactSfx;
     private AudioClip ultimateImpactCrunchSfx;
+    private AudioClip swordWaveSfx;
+    private AudioClip spinSlashSfx;
+    private AudioClip azureAegisLanceSfx, azureWardbreakerSfx, azureCitadelVerdictSfx;
+    private AudioClip chronoRiftCutterSfx, chronoTimeFractureSfx, chronoZeroHourSfx;
+    private AudioClip gravewindBasicArrowSfx, graveWraithFanSfx, graveSnareSfx;
+    private AudioClip graveNightfallSfx, graveNightfallImpactSfx;
     private float nextSwordWaveAt;
     private float nextSpinSlashAt;
     private bool isSkillCasting;
@@ -74,6 +85,7 @@ public class PlayerSkillController : MonoBehaviour
     private void Start()
     {
         player = GetComponent<PlayerMovement>();
+        playerHealth = GetComponent<HealthController>();
         lanInput = GetComponent<LanPlayerInput>();
         playerRenderer = GetComponent<SpriteRenderer>();
         swordWaveCoreFrames = LoadPixelFrames("Combat/Frames/SwordWavePixel_6f", 6);
@@ -90,9 +102,38 @@ public class PlayerSkillController : MonoBehaviour
         ultimateImpactFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentFinalPixel_6f", 6,
             FrameAnchorMode.CellCenter, 64f);
         casterAuraFrames = LoadPixelFrames("Combat/Frames/CasterBodyAuraPixel_6f", 6, FrameAnchorMode.VisualCenter);
+        azureAegisLanceFrames = LoadPixelFrames("Combat/Frames/AzureAegisLance_v2_6f", 6, FrameAnchorMode.CellCenter, 64f);
+        azureWardbreakerFrames = LoadPixelFrames("Combat/Frames/AzureWardbreaker_v2_6f", 6, FrameAnchorMode.CellCenter, 64f);
+        azureCitadelVerdictFrames = LoadPixelFrames("Combat/Frames/AzureCitadelVerdict_v2_6f", 6, FrameAnchorMode.CellCenter, 64f);
+        // The Chronoblade sheets are 512 px canvases, but their visible effects
+        // are authored to cover several world units. At 512 PPU they rendered
+        // at roughly half their gameplay hit radius and looked disconnected
+        // from the damage. 256 PPU keeps the VFX and hit areas in sync.
+        chronoRiftCutterFrames = LoadPixelFrames("Combat/Frames/ChronoRiftCutter_6f", 6, FrameAnchorMode.CellCenter, 256f);
+        chronoTimeFractureFrames = LoadPixelFrames("Combat/Frames/ChronoTimeFracture_6f", 6, FrameAnchorMode.CellCenter, 256f);
+        chronoZeroHourFrames = LoadPixelFrames("Combat/Frames/ChronoZeroHour_6f", 6, FrameAnchorMode.CellCenter, 256f);
+        graveWraithFanFrames = LoadPixelFrames("Combat/Frames/GraveWraithFan_6f", 6, FrameAnchorMode.CellCenter, 512f);
+        graveSnareFrames = LoadPixelFrames("Combat/Frames/GraveSnareRanged_6f", 6,
+            FrameAnchorMode.CellCenter, 512f);
+        graveNightfallFrames = LoadPixelFrames("Combat/Frames/GraveNightfallRain_6f", 6,
+            FrameAnchorMode.CellCenter, 512f);
+        gravewindArrowFrames = EnemyArrowAnimation.LoadFrames();
         ultimateChargeSfx = Resources.Load<AudioClip>("Audio/Combat/UltimateCharge");
         ultimateImpactSfx = Resources.Load<AudioClip>("Audio/Combat/UltimateImpact");
         ultimateImpactCrunchSfx = Resources.Load<AudioClip>("Audio/Combat/UltimateImpactCrunch");
+        swordWaveSfx = Resources.Load<AudioClip>("Audio/Combat/SwordWave");
+        spinSlashSfx = Resources.Load<AudioClip>("Audio/Combat/SpinSlash");
+        azureAegisLanceSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/Q_AegisLance");
+        azureWardbreakerSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/E_Wardbreaker");
+        azureCitadelVerdictSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/R_CitadelVerdict");
+        chronoRiftCutterSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/Q_RiftCutter");
+        chronoTimeFractureSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/E_TimeFracture");
+        chronoZeroHourSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/R_ZeroHour");
+        gravewindBasicArrowSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/BasicArrow");
+        graveWraithFanSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/Q_WraithFan");
+        graveSnareSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/E_GraveSnare");
+        graveNightfallSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/R_Nightfall");
+        graveNightfallImpactSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/NightfallImpact");
         if (lanInput == null && GetComponent<SkillHudController>() == null)
             gameObject.AddComponent<SkillHudController>();
 
@@ -132,17 +173,17 @@ public class PlayerSkillController : MonoBehaviour
         if (castQ)
         {
             nextSwordWaveAt = Time.time + swordWaveCooldown;
-            StartCoroutine(CastSwordWave());
+            StartCoroutine(CastQForCharacter());
         }
         else if (castE)
         {
             nextSpinSlashAt = Time.time + spinSlashCooldown;
-            StartCoroutine(CastSpinSlash());
+            StartCoroutine(CastEForCharacter());
         }
         else if (castR)
         {
             ultimateCharge = 0f;
-            StartCoroutine(CastAshenJudgment());
+            StartCoroutine(CastRForCharacter());
         }
     }
 
@@ -247,11 +288,484 @@ public class PlayerSkillController : MonoBehaviour
         isSkillCasting = hitStopActive = false;
     }
 
+    private PlayableCharacterId CurrentCharacter
+    {
+        get
+        {
+            PlayerCharacterFrameAnimator animator = GetComponent<PlayerCharacterFrameAnimator>();
+            return animator != null ? animator.Character : PlayableCharacterId.AshenKnight;
+        }
+    }
+
+    private IEnumerator CastQForCharacter()
+    {
+        switch (CurrentCharacter)
+        {
+            case PlayableCharacterId.AzureWarden:
+                yield return StartCoroutine(CastAegisLance());
+                yield break;
+            case PlayableCharacterId.Chronoblade:
+                yield return StartCoroutine(CastRiftCutter());
+                yield break;
+            case PlayableCharacterId.GravewindRanger:
+                yield return StartCoroutine(CastWraithFan());
+                yield break;
+            default:
+                yield return StartCoroutine(CastSwordWave());
+                yield break;
+        }
+    }
+
+    private IEnumerator CastEForCharacter()
+    {
+        switch (CurrentCharacter)
+        {
+            case PlayableCharacterId.AzureWarden:
+                yield return StartCoroutine(CastWardbreaker());
+                yield break;
+            case PlayableCharacterId.Chronoblade:
+                yield return StartCoroutine(CastTimeFracture());
+                yield break;
+            case PlayableCharacterId.GravewindRanger:
+                yield return StartCoroutine(CastGraveSnare());
+                yield break;
+            default:
+                yield return StartCoroutine(CastSpinSlash());
+                yield break;
+        }
+    }
+
+    private IEnumerator CastRForCharacter()
+    {
+        switch (CurrentCharacter)
+        {
+            case PlayableCharacterId.AzureWarden:
+                yield return StartCoroutine(CastCitadelVerdict());
+                yield break;
+            case PlayableCharacterId.Chronoblade:
+                yield return StartCoroutine(CastZeroHour());
+                yield break;
+            case PlayableCharacterId.GravewindRanger:
+                yield return StartCoroutine(CastNightfall());
+                yield break;
+            default:
+                yield return StartCoroutine(CastAshenJudgment());
+                yield break;
+        }
+    }
+
+    private IEnumerator CastAegisLance()
+    {
+        BeginCast("aegis-lance");
+        player.PlaySkillBodyMotion(1);
+        player.PlayAbilitySfx(azureAegisLanceSfx, 0.92f, 1f);
+        // The lance is a guarded advance rather than a fragile ranged spell:
+        // Azure can absorb the counter-hit while committing to the front line.
+        GrantAzureGuard(0.34f);
+        Vector2 direction = GetSwordWaveDirection(player.VisualCenter);
+        yield return StartCoroutine(FirePiercingBolt("Aegis Lance", azureAegisLanceFrames, direction, Color.white,
+            12f, 0.60f, 0.78f, 42, CombatImpactKind.Azure, true, true));
+        EndCast("aegis-lance");
+    }
+
+    private IEnumerator CastRiftCutter()
+    {
+        BeginCast("rift-cutter");
+        player.PlaySkillBodyMotion(1);
+        player.PlayAbilitySfx(chronoRiftCutterSfx, 0.90f, 1f);
+        Vector3 start = player.VisualCenter;
+        Vector2 direction = GetSwordWaveDirection(start);
+        Vector3 targetPoint = GetRangedTargetPoint(start, 8f, 3.9f);
+        float targetDistance = Vector2.Distance((Vector2)start, (Vector2)targetPoint);
+        // A real assassin opener: cross the line, arrive on the far side, and
+        // cut only the compact area around the landing point.
+        player.BlinkForSkill(direction, Mathf.Clamp(targetDistance + 0.35f, 1.6f, 3.9f));
+        Vector3 landing = player.VisualCenter;
+        Quaternion rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+        CreateTintedEffect("Rift Cutter", chronoRiftCutterFrames, landing, 0.82f, 0.48f,
+            rotation, Color.white, smoothFrames: true, sortingOffset: 2);
+        yield return new WaitForSeconds(0.14f);
+        int hits = player.DamageEnemiesInRadius(landing, 0.88f, 76,
+            playSwordImpact: true, impactKind: CombatImpactKind.Chrono);
+        if (hits > 0)
+        {
+            AddSkillHitCharge(13f * hits);
+            yield return StartCoroutine(PlayImpactFeedback(0.09f, 0.055f, 0.03f));
+        }
+        yield return new WaitForSeconds(0.24f);
+        EndCast("rift-cutter");
+    }
+
+    private IEnumerator CastWraithFan()
+    {
+        BeginCast("wraith-fan");
+        player.PlaySkillBodyMotion(1);
+        player.PlayAbilitySfx(graveWraithFanSfx, 0.92f, 1f);
+        Vector2 direction = GetSwordWaveDirection(player.VisualCenter);
+        for (int i = -1; i <= 1; i++)
+        {
+            float angle = i * 16f;
+            Vector2 fanDirection = Quaternion.Euler(0f, 0f, angle) * direction;
+            StartCoroutine(FirePiercingBolt("Wraith Fan", graveWraithFanFrames, fanDirection, Color.white,
+                14f, 0.56f, 0.43f, 30, CombatImpactKind.Arrow, false));
+        }
+        yield return new WaitForSeconds(0.56f);
+        EndCast("wraith-fan");
+    }
+
+    private IEnumerator FirePiercingBolt(string effectName, Sprite[] frames, Vector2 direction, Color tint, float speed,
+        float duration, float radius, int damage, CombatImpactKind impactKind = CombatImpactKind.SwordWave,
+        bool playSwordImpact = true, bool stopAtWalls = false)
+    {
+        direction = direction.sqrMagnitude > 0.001f ? direction.normalized : player.FacingDirection;
+        Vector3 position = player.VisualCenter + (Vector3)direction * 0.62f;
+        Quaternion rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+        GameObject effect = CreateTintedEffect(effectName, frames, position, 0.60f, duration, rotation, tint);
+        HashSet<Enemy> enemies = new HashSet<Enemy>();
+        HashSet<BossController> bosses = new HashSet<BossController>();
+        HashSet<EnemyHealth> configured = new HashSet<EnemyHealth>();
+        LayerMask wallLayers = stopAtWalls ? EnemyCombat.ResolveWallLayers() : 0;
+        bool impactFeedbackPlayed = false;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float step = speed * Time.deltaTime;
+            if (stopAtWalls)
+            {
+                RaycastHit2D wall = Physics2D.Raycast(position, direction, step, wallLayers);
+                if (wall.collider != null && !wall.collider.isTrigger)
+                {
+                    position = wall.point;
+                    if (effect != null) effect.transform.position = position;
+                    break;
+                }
+            }
+
+            elapsed += Time.deltaTime;
+            position += (Vector3)direction * step;
+            if (effect != null) effect.transform.position = position;
+            int hits = player.DamageEnemiesInRadius(position, radius, damage, enemies, bosses,
+                playSwordImpact: playSwordImpact, alreadyHitConfiguredEnemies: configured,
+                impactKind: impactKind);
+            if (hits > 0)
+            {
+                AddSkillHitCharge(9f * hits);
+                if (!impactFeedbackPlayed && impactKind != CombatImpactKind.Arrow)
+                {
+                    impactFeedbackPlayed = true;
+                    StartCoroutine(PlayImpactFeedback(0.08f, 0.045f, 0.025f));
+                }
+            }
+            yield return null;
+        }
+    }
+
+    private IEnumerator CastWardbreaker()
+    {
+        BeginCast("wardbreaker");
+        player.PlaySkillBodyMotion(2);
+        player.PlayAbilitySfx(azureWardbreakerSfx, 0.96f, 0.98f);
+        GrantAzureGuard(0.78f);
+        Vector3 origin = player.VisualCenter;
+        Vector2 direction = GetSwordWaveDirection(origin);
+        Vector3 impactPoint = origin + (Vector3)direction * 1.05f;
+        CreateTintedEffect("Wardbreaker Impact", azureWardbreakerFrames, impactPoint, 1.40f, 0.76f,
+            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: 1);
+
+        float[] radii = { 1.45f, 2.30f };
+        int[] damages = { 30, 54 };
+        for (int pulse = 0; pulse < radii.Length; pulse++)
+        {
+            yield return new WaitForSeconds(pulse == 0 ? 0.20f : 0.24f);
+            int hits = player.DamageEnemiesInRadius(impactPoint, radii[pulse], damages[pulse],
+                playSwordImpact: true, impactKind: CombatImpactKind.Azure);
+            if (hits > 0)
+                AddSkillHitCharge(9f * hits);
+            StartCoroutine(ShakeMainCamera(0.07f, 0.045f + pulse * 0.025f));
+        }
+
+        yield return new WaitForSeconds(0.12f);
+        EndCast("wardbreaker");
+    }
+
+    private IEnumerator CastTimeFracture()
+    {
+        BeginCast("time-fracture");
+        player.PlaySkillBodyMotion(2);
+        player.PlayAbilitySfx(chronoTimeFractureSfx, 0.94f, 1.03f);
+        Vector3 origin = player.VisualCenter;
+        Vector3 fracturePoint = GetRangedTargetPoint(origin, 10f, 4.5f);
+        CreateTintedEffect("Time Fracture", chronoTimeFractureFrames, fracturePoint, 1.72f, 0.84f,
+            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: 2);
+
+        // Keep the fracture surgical: it rewards marking a priority target,
+        // instead of turning the assassin into a second area-damage caster.
+        float[] radii = { 0.72f, 0.94f, 1.18f };
+        int[] damages = { 34, 48, 86 };
+        for (int pulse = 0; pulse < radii.Length; pulse++)
+        {
+            yield return new WaitForSeconds(0.18f);
+            int hits = player.DamageEnemiesInRadius(fracturePoint, radii[pulse], damages[pulse],
+                impactKind: CombatImpactKind.Chrono);
+            if (hits > 0)
+                AddSkillHitCharge(8f * hits);
+            StartCoroutine(ShakeMainCamera(0.05f, 0.025f + pulse * 0.012f));
+        }
+
+        yield return new WaitForSeconds(0.10f);
+        EndCast("time-fracture");
+    }
+
+    private IEnumerator CastGraveSnare()
+    {
+        BeginCast("grave-snare");
+        player.PlaySkillBodyMotion(2);
+        player.PlayAbilitySfx(graveSnareSfx, 0.94f, 1f);
+        Vector3 origin = player.VisualCenter;
+        Vector3 target = GetRangedTargetPoint(origin, 11f, 5.25f);
+        const float pulseInterval = 0.20f;
+        CreateTintedEffect("Grave Snare", graveSnareFrames, target, 1.62f, 0.86f,
+            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: 1);
+
+        float[] radii = { 0.9f, 1.25f, 1.55f };
+        int[] damages = { 30, 38, 52 };
+        for (int i = 0; i < radii.Length; i++)
+        {
+            yield return new WaitForSeconds(pulseInterval);
+            int hits = player.DamageEnemiesInRadius(target, radii[i], damages[i],
+                impactKind: CombatImpactKind.Arrow);
+            if (hits > 0) AddSkillHitCharge(9f * hits);
+            StartCoroutine(ShakeMainCamera(0.05f, 0.025f + i * 0.008f));
+        }
+
+        yield return new WaitForSeconds(0.12f);
+        EndCast("grave-snare");
+    }
+
+    private IEnumerator CastCitadelVerdict()
+    {
+        BeginCast("citadel-verdict");
+        player.PlaySkillBodyMotion(3, true);
+        player.PlayAbilitySfx(azureCitadelVerdictSfx, 1f, 0.96f);
+        // The tank ultimate owns space and lets Azure survive inside the mob.
+        GrantAzureGuard(1.85f);
+        Vector3 origin = player.VisualCenter;
+        CreateTintedEffect("Citadel Verdict", azureCitadelVerdictFrames, origin, 1.75f, 1.02f,
+            Quaternion.identity, Color.white, smoothFrames: true, sortingOffset: 1);
+        float[] radii = { 2.10f, 3.0f, 3.75f };
+        int[] damages = { 38, 52, 78 };
+        for (int pulse = 0; pulse < radii.Length; pulse++)
+        {
+            yield return new WaitForSeconds(0.23f);
+            player.DamageEnemiesInRadius(origin, radii[pulse], damages[pulse],
+                playSwordImpact: pulse == radii.Length - 1, impactKind: CombatImpactKind.Azure);
+            StartCoroutine(ShakeMainCamera(0.07f, 0.04f + pulse * 0.015f));
+        }
+        yield return new WaitForSeconds(0.22f);
+        EndCast("citadel-verdict");
+    }
+
+    private IEnumerator CastZeroHour()
+    {
+        BeginCast("zero-hour");
+        player.PlaySkillBodyMotion(3, true);
+        player.PlayAbilitySfx(chronoZeroHourSfx, 1f, 0.98f);
+        Vector3 origin = player.VisualCenter;
+        Vector3 zeroPoint = GetRangedTargetPoint(origin, 12f, 5.5f);
+        Vector2 direction = ((Vector2)zeroPoint - (Vector2)origin).normalized;
+        if (direction.sqrMagnitude < 0.001f)
+            direction = player.FacingDirection;
+        player.BlinkForSkill(direction, Mathf.Min(7.5f, Vector2.Distance((Vector2)origin, (Vector2)zeroPoint)));
+        zeroPoint = player.VisualCenter;
+        CreateTintedEffect("Zero Hour", chronoZeroHourFrames, zeroPoint, 1.70f, 0.82f,
+            Quaternion.identity, Color.white, smoothFrames: true, sortingOffset: 2);
+
+        float[] radii = { 0.95f, 1.15f, 1.40f, 1.65f };
+        int[] damages = { 48, 64, 82, 138 };
+        for (int pulse = 0; pulse < radii.Length; pulse++)
+        {
+            yield return new WaitForSeconds(0.17f);
+            player.DamageEnemiesInRadius(zeroPoint, radii[pulse], damages[pulse],
+                impactKind: CombatImpactKind.Chrono);
+            StartCoroutine(ShakeMainCamera(0.06f, 0.035f + pulse * 0.014f));
+        }
+
+        yield return StartCoroutine(PlayImpactFeedback(0.20f, 0.10f, 0.055f));
+        yield return new WaitForSeconds(0.16f);
+        EndCast("zero-hour");
+    }
+
+    private void GrantAzureGuard(float duration)
+    {
+        if (playerHealth == null)
+            playerHealth = GetComponent<HealthController>();
+        playerHealth?.GrantTemporaryInvulnerability(duration);
+    }
+
+    private IEnumerator CastNightfall()
+    {
+        BeginCast("nightfall");
+        player.PlaySkillBodyMotion(3, true);
+        player.PlayAbilitySfx(graveNightfallSfx, 1f, 1f);
+        Vector3 origin = player.VisualCenter;
+        Vector3 target = GetRangedTargetPoint(origin, 13f, 6.5f);
+        Vector2 direction = ((Vector2)(target - origin)).normalized;
+        if (direction.sqrMagnitude < 0.001f)
+            direction = player.FacingDirection;
+
+        CreateTintedEffect("Nightfall Target", graveNightfallFrames, target, 1.92f, 1.08f,
+            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: 2);
+
+        float[] radii = { 1.45f, 1.9f, 2.4f };
+        int[] damages = { 38, 52, 78 };
+        for (int wave = 0; wave < radii.Length; wave++)
+        {
+            yield return new WaitForSeconds(0.20f);
+            player.PlayAbilitySfx(graveNightfallImpactSfx, 0.70f + wave * 0.08f, 0.94f + wave * 0.05f);
+            for (int arrow = -2; arrow <= 2; arrow++)
+            {
+                float angle = arrow * 7f + (wave % 2 == 0 ? 0f : 3.5f);
+                Vector2 volleyDirection = Quaternion.Euler(0f, 0f, angle) * direction;
+                StartCoroutine(FireGravewindArrow(volleyDirection, 20f + wave * 2f, 0.72f,
+                    0.28f, 18 + wave * 4, true, true, 1.05f));
+            }
+
+            int hits = player.DamageEnemiesInRadius(target, radii[wave], damages[wave],
+                impactKind: CombatImpactKind.Arrow);
+            if (hits > 0) AddSkillHitCharge(10f * hits);
+            StartCoroutine(ShakeMainCamera(0.08f, 0.04f + wave * 0.012f));
+        }
+
+        yield return new WaitForSeconds(0.24f);
+        EndCast("nightfall");
+    }
+
+    public void FireGravewindBasicArrow(int damage, int comboHit)
+    {
+        if (player == null)
+            player = GetComponent<PlayerMovement>();
+        if (player == null)
+            return;
+
+        if (gravewindArrowFrames == null || gravewindArrowFrames.Length == 0)
+            gravewindArrowFrames = EnemyArrowAnimation.LoadFrames();
+
+        Vector2 direction = GetSwordWaveDirection(player.VisualCenter);
+        int combo = Mathf.Clamp(comboHit, 0, 2);
+        player.PlayAbilitySfx(gravewindBasicArrowSfx, 0.68f + combo * 0.08f, 0.96f + combo * 0.04f);
+        StartCoroutine(FireGravewindArrow(direction, 17f + combo * 1.5f, 0.78f,
+            0.26f + combo * 0.025f, damage, false, false, 0.9f + combo * 0.08f));
+    }
+
+    private IEnumerator FireGravewindArrow(Vector2 direction, float speed, float duration, float radius,
+        int damage, bool piercing, bool awardSkillCharge, float visualScale)
+    {
+        direction = direction.sqrMagnitude > 0.001f ? direction.normalized : player.FacingDirection;
+        Vector3 position = player.VisualCenter + (Vector3)direction * 0.52f;
+        GameObject arrow = CreateGravewindArrowVisual(position, direction, visualScale);
+        HashSet<Enemy> enemies = new HashSet<Enemy>();
+        HashSet<BossController> bosses = new HashSet<BossController>();
+        HashSet<EnemyHealth> configured = new HashSet<EnemyHealth>();
+        LayerMask wallLayers = EnemyCombat.ResolveWallLayers();
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float step = speed * Time.deltaTime;
+            RaycastHit2D wall = Physics2D.Raycast(position, direction, step, wallLayers);
+            if (wall.collider != null && !wall.collider.isTrigger)
+            {
+                position = wall.point;
+                break;
+            }
+
+            elapsed += Time.deltaTime;
+            position += (Vector3)direction * step;
+            if (arrow != null)
+                arrow.transform.position = position;
+
+            int hits = player.DamageEnemiesInRadius(position, radius, damage, enemies, bosses,
+                playSwordImpact: false, alreadyHitConfiguredEnemies: configured,
+                impactKind: CombatImpactKind.Arrow);
+            if (hits > 0)
+            {
+                if (awardSkillCharge)
+                    AddSkillHitCharge(7f * hits);
+                if (!piercing)
+                    break;
+            }
+
+            yield return null;
+        }
+
+        activeEffects.Remove(arrow);
+        if (arrow != null)
+            Destroy(arrow);
+    }
+
+    private GameObject CreateGravewindArrowVisual(Vector3 position, Vector2 direction, float scale)
+    {
+        if (gravewindArrowFrames == null || gravewindArrowFrames.Length == 0)
+            return null;
+
+        GameObject arrow = new GameObject("Gravewind Arrow");
+        activeEffects.Add(arrow);
+        arrow.transform.position = position;
+        arrow.transform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
+        arrow.transform.localScale = Vector3.one * scale;
+        SpriteRenderer renderer = arrow.AddComponent<SpriteRenderer>();
+        renderer.sprite = gravewindArrowFrames[0];
+        renderer.color = new Color(0.72f, 1f, 0.82f);
+        if (playerRenderer != null)
+        {
+            renderer.sortingLayerID = playerRenderer.sortingLayerID;
+            renderer.sortingOrder = playerRenderer.sortingOrder + 3;
+        }
+        arrow.AddComponent<EnemyArrowAnimation>().SetFrames(gravewindArrowFrames);
+        return arrow;
+    }
+
+    private Vector3 GetRangedTargetPoint(Vector3 origin, float maxDistance, float fallbackDistance)
+    {
+        Vector2 direction = GetSwordWaveDirection(origin);
+        RaycastHit2D targetHit = Physics2D.Raycast(origin, direction, maxDistance, player.enemyLayers);
+        if (targetHit.collider != null)
+            return targetHit.collider.bounds.center;
+        return origin + (Vector3)direction * Mathf.Min(maxDistance, fallbackDistance);
+    }
+
+    private IEnumerator CastPulseSkill(string castName, Color tint, Sprite[] frames, float[] radii, int[] damages,
+        float interval, float scale, int bodyMotion, CombatImpactKind impactKind,
+        bool ultimate = false, AudioClip abilitySfx = null)
+    {
+        BeginCast(castName);
+        player.PlaySkillBodyMotion(bodyMotion, ultimate);
+        player.PlayAbilitySfx(abilitySfx, ultimate ? 1f : 0.90f, 1f);
+        Vector3 origin = player.VisualCenter;
+        CreateTintedEffect(castName + " visual", frames, origin, scale, interval * (radii.Length + 1),
+            Quaternion.identity, tint, smoothFrames: false, sortingOffset: ultimate ? -1 : 1);
+        for (int i = 0; i < radii.Length; i++)
+        {
+            yield return new WaitForSeconds(interval);
+            int hits = player.DamageEnemiesInRadius(origin, radii[i], damages[i], impactKind: impactKind);
+            if (!ultimate && hits > 0) AddSkillHitCharge(8f * hits);
+            StartCoroutine(ShakeMainCamera(0.06f, 0.035f + i * 0.01f));
+        }
+        EndCast(castName);
+    }
+
+    private GameObject CreateTintedEffect(string name, Sprite[] frames, Vector3 position, float scale, float duration,
+        Quaternion rotation, Color tint, bool smoothFrames = false, int sortingOffset = 2)
+    {
+        return CreateEffect(name, frames, position, scale, duration, rotation, null, sortingOffset,
+            default, smoothFrames, tint);
+    }
+
     private IEnumerator CastSwordWave()
     {
         BeginCast("sword-wave");
         player.PlaySkillBodyMotion(1);
-        player.PlayAbilitySfx(volume: 0.95f, pitch: 1.05f);
+        player.PlayAbilitySfx(swordWaveSfx, volume: 0.95f, pitch: 1.05f);
         Vector3 bodyCenter = player.VisualCenter;
         Vector2 direction = GetSwordWaveDirection(bodyCenter);
 
@@ -343,6 +857,7 @@ public class PlayerSkillController : MonoBehaviour
         BeginCast("spin-slash");
         float castStartedAt = Time.time;
         player.PlaySkillBodyMotion(2);
+        player.PlayAbilitySfx(spinSlashSfx, volume: 0.96f, pitch: 1f);
         Vector3 bodyCenter = player.VisualCenter;
         // Keep the slash at its cast origin. The visual tail is intentionally
         // longer than the movement lock; following the player made that tail
@@ -359,9 +874,6 @@ public class PlayerSkillController : MonoBehaviour
             elapsed += Time.deltaTime;
             if (nextPulse < pulseTimes.Length && elapsed >= pulseTimes[nextPulse])
             {
-                // Use the project's recorded blade swish for each of E's three
-                // physical strikes, rather than one generic effect at cast time.
-                player.PlayAbilitySfx(volume: 0.94f, pitch: 0.93f + nextPulse * 0.05f);
                 int hits = player.DamageEnemiesInRadius(transform.position, spinSlashRadius, spinSlashDamagePerPulse,
                     playSwordImpact: true, impactKind: CombatImpactKind.SpinSlash);
                 if (hits > 0)
@@ -458,7 +970,7 @@ public class PlayerSkillController : MonoBehaviour
 
     private GameObject CreateEffect(string effectName, Sprite[] frames, Vector3 position, float scale,
         float duration, Quaternion rotation, Transform followTarget, int sortingOffset = 2,
-        Vector3 followOffset = default, bool smoothFrames = false)
+        Vector3 followOffset = default, bool smoothFrames = false, Color? tint = null)
     {
         if (frames == null || frames.Length == 0)
             return null;
@@ -470,7 +982,7 @@ public class PlayerSkillController : MonoBehaviour
         effect.transform.localScale = Vector3.one * scale;
         SpriteRenderer renderer = effect.AddComponent<SpriteRenderer>();
         renderer.sprite = frames[0];
-        renderer.color = Color.white;
+        renderer.color = tint ?? Color.white;
         Material vfxMaterial = GetVfxMaterial();
         if (vfxMaterial != null)
             renderer.sharedMaterial = vfxMaterial;
@@ -494,12 +1006,12 @@ public class PlayerSkillController : MonoBehaviour
         }
 
         StartCoroutine(AnimateEffect(effect, renderer, frameTrail, frames, duration,
-            followTarget, followOffset, smoothFrames));
+            followTarget, followOffset, smoothFrames, tint ?? Color.white));
         return effect;
     }
 
     private IEnumerator AnimateEffect(GameObject effect, SpriteRenderer renderer, SpriteRenderer frameTrail,
-        Sprite[] frames, float duration, Transform followTarget, Vector3 followOffset, bool smoothFrames)
+        Sprite[] frames, float duration, Transform followTarget, Vector3 followOffset, bool smoothFrames, Color tint)
     {
         float elapsed = 0f;
         int previousFrameIndex = 0;
@@ -532,7 +1044,7 @@ public class PlayerSkillController : MonoBehaviour
                 float fadeIn = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(progress / 0.08f));
                 float fadeOut = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((1f - progress) / 0.24f));
                 float envelope = Mathf.Min(fadeIn, fadeOut);
-                renderer.color = new Color(1f, 1f, 1f, envelope);
+                renderer.color = new Color(tint.r, tint.g, tint.b, envelope * tint.a);
 
                 if (frameTrail != null)
                 {
@@ -540,7 +1052,7 @@ public class PlayerSkillController : MonoBehaviour
                     // Keep just a hint of motion. At 30% this read as a
                     // duplicate body during close-range casts.
                     float trailAlpha = 0.10f * (1f - Mathf.Clamp01(framePhase / 0.72f)) * envelope;
-                    frameTrail.color = new Color(0.72f, 0.93f, 1f, trailAlpha);
+                    frameTrail.color = new Color(tint.r, tint.g, tint.b, trailAlpha * tint.a);
                 }
             }
 

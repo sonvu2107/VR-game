@@ -150,6 +150,7 @@ public class SkeletonKingController : MonoBehaviour
         BossAttackTelegraph?.Invoke(this, phaseIndex + 1);
         if (phase.fireSwordWaves)
         {
+            EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.BossWave, 0.96f, 0.98f + phaseIndex * 0.03f);
             Vector2 aim = ((Vector2)target.transform.position - (Vector2)transform.position).normalized;
             combat?.FireProjectileDirection(aim, phaseConfig.waveSpeed);
             combat?.FireProjectileDirection(Rotate(aim, 18f), phaseConfig.waveSpeed);
@@ -160,7 +161,11 @@ public class SkeletonKingController : MonoBehaviour
         if (phase.createHazards && Time.time >= nextHazardTime)
         {
             nextHazardTime = Time.time + phaseConfig.hazardCooldown;
-            if (combat != null) combat.SpawnPoison(target.transform.position, 1.8f);
+            if (combat != null)
+            {
+                EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.Poison, 0.82f, 0.88f);
+                combat.SpawnPoison(target.transform.position, 1.8f);
+            }
         }
 
         if (phase.repositionAfterAttack)

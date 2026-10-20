@@ -93,6 +93,8 @@ public class EnemyCombat : MonoBehaviour
         GetComponent<EnemyRuntimeSpriteAnimation>()?.TriggerAttack(
             (config != null ? config.attackWindup : 0.4f) + (config != null ? config.attackRecovery : 0.45f));
         EnemyAttackCueVisual.Show(this, target, config != null ? config.attackWindup : 0.4f, special);
+        EnemyCombatAudio.PlayAttack(gameObject,
+            config != null ? config.archetype : EnemyArchetype.Melee, special);
 
         if (animator != null)
         {

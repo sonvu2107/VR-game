@@ -49,6 +49,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
         EnemyAttackCueVisual.Show(combat, target, windup, true);
         GetComponent<EnemyRuntimeSpriteAnimation>()?.TriggerAttack(windup + 0.4f);
         CombatHitVfx.Spawn(transform.position, CombatImpactKind.Boss, 0.9f);
+        EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.BossWave, 0.98f, 0.96f + kind * 0.04f);
         yield return new WaitForSeconds(windup);
         if (health == null || health.IsDead || target == null || target.currentHealth <= 0)
         {

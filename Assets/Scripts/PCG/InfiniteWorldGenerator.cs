@@ -75,6 +75,7 @@ public class InfiniteWorldGenerator : MonoBehaviour
     private LevelDefinition currentLevelDefinition;
 
     public IReadOnlyList<DungeonRoom> GeneratedRooms => dungeonLayout?.Rooms;
+    public IReadOnlyCollection<Vector2Int> GeneratedFloorTiles => dungeonLayout?.FloorTiles;
 
     private void Awake()
     {
@@ -324,7 +325,11 @@ public class InfiniteWorldGenerator : MonoBehaviour
         if (!TryClaimRoomSpawn(room, "Player", out Vector2Int spawnPoint))
             return;
 
-        playerTransform.position = PrefabPlacer.GetWorldPosition(spawnPoint);
+        Vector3 spawnPosition = PrefabPlacer.GetWorldPosition(spawnPoint);
+        playerTransform.position = spawnPosition;
+        PlayerMovement movement = playerTransform.GetComponent<PlayerMovement>();
+        if (movement != null)
+            movement.ConfigureWalkableArea(dungeonLayout.FloorTiles, spawnPosition);
     }
 
     // Phòng chiến đấu dùng bộ ba vai trò; phòng boss thật dành riêng cho boss.
