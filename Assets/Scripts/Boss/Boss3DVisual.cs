@@ -55,6 +55,12 @@ public class Boss3DVisual : MonoBehaviour
     private EnemyCombat combat;
     private SpriteRenderer sourceRenderer;
     private SpriteRenderer displayRenderer;
+    private SpriteRenderer leftLegRenderer;
+    private SpriteRenderer rightLegRenderer;
+    private Transform leftLegTransform;
+    private Transform rightLegTransform;
+    private Sprite rigSourceSprite;
+    private Sprite rigTorsoSprite;
 
     // Hierarchy transforms
     private Transform visualPivot;
@@ -168,6 +174,9 @@ public class Boss3DVisual : MonoBehaviour
         displayRenderer.sortingOrder = Mathf.Max(5, sourceRenderer.sortingOrder);
         displayRenderer.sharedMaterial = sourceRenderer.sharedMaterial;
 
+        if (bossKind == BossVisualKind.BoneSentinel || bossKind == BossVisualKind.SkeletonKing)
+            BuildWalkingLegs();
+
         // Giữ sourceRenderer ẩn đi nhưng lưu dữ liệu
         sourceRenderer.enabled = false;
 
@@ -193,6 +202,38 @@ public class Boss3DVisual : MonoBehaviour
         movement?.SetVisualRenderer(displayRenderer);
         GetComponent<MiniBossController>()?.SetVisualRenderer(displayRenderer);
         GetComponent<SkeletonKingController>()?.SetVisualRenderer(displayRenderer);
+    }
+
+    private void BuildWalkingLegs()
+    {
+        string path = bossKind == BossVisualKind.SkeletonKing ? "Boss/LegRig/SkeletonKing" : "Boss/LegRig/BoneSentinel";
+        rigTorsoSprite = Resources.Load<Sprite>(path + "Torso");
+        Sprite left = Resources.Load<Sprite>(path + "LeftLeg");
+        Sprite right = Resources.Load<Sprite>(path + "RightLeg");
+        if (rigTorsoSprite == null || left == null || right == null) return;
+        rigSourceSprite = sourceRenderer.sprite;
+        displayRenderer.sprite = rigTorsoSprite;
+        leftLegRenderer = CreateLeg("Left walking leg", left, out leftLegTransform);
+        rightLegRenderer = CreateLeg("Right walking leg", right, out rightLegTransform);
+        // The shared legacy Animator swaps the large boss art for a tiny
+        // UndeadKing sheet. The rig owns locomotion and attack motion instead.
+        Animator legacyAnimator = GetComponent<Animator>();
+        if (legacyAnimator != null) legacyAnimator.enabled = false;
+    }
+
+    private SpriteRenderer CreateLeg(string objectName, Sprite sprite, out Transform legTransform)
+    {
+        GameObject leg = new GameObject(objectName);
+        leg.transform.SetParent(visualPivot, false);
+        legTransform = leg.transform;
+        SpriteRenderer renderer = leg.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.color = sourceRenderer.color;
+        renderer.flipX = sourceRenderer.flipX;
+        renderer.sortingLayerID = displayRenderer.sortingLayerID;
+        renderer.sortingOrder = displayRenderer.sortingOrder + 1;
+        renderer.sharedMaterial = displayRenderer.sharedMaterial;
+        return renderer;
     }
 
     private void CreateDynamicShadow()
@@ -307,8 +348,21 @@ public class Boss3DVisual : MonoBehaviour
         // it in sync so runtime sprite-sheet animations remain visible on bosses.
         if (sourceRenderer != null && displayRenderer != null)
         {
-            displayRenderer.sprite = sourceRenderer.sprite;
-            displayRenderer.flipX = sourceRenderer.flipX;
+            bool rigReady = rigTorsoSprite != null && sourceRenderer.sprite == rigSourceSprite;
+            displayRenderer.sprite = rigReady ? rigTorsoSprite : sourceRenderer.sprite;
+            // EnemyMovement owns facing through the display renderer.
+            if (leftLegRenderer != null)
+            {
+                leftLegRenderer.enabled = rigReady;
+                leftLegRenderer.flipX = displayRenderer.flipX;
+                leftLegRenderer.color = displayRenderer.color;
+            }
+            if (rightLegRenderer != null)
+            {
+                rightLegRenderer.enabled = rigReady;
+                rightLegRenderer.flipX = displayRenderer.flipX;
+                rightLegRenderer.color = displayRenderer.color;
+            }
         }
         if (visualPivot == null || (health != null && health.IsDead)) return;
 
@@ -346,12 +400,13 @@ public class Boss3DVisual : MonoBehaviour
             {
                 walkCycle += Time.deltaTime * Mathf.Max(speed * 4.2f, 7f);
                 float stepSin = Mathf.Sin(walkCycle);
-                float stepLift = Mathf.Abs(stepSin) * 0.11f;
+                float stepLift = Mathf.Abs(stepSin) * 0.035f;
                 pseudoZHeight = stepLift;
 
                 float squash = stepSin * 0.05f;
                 dynamicScale = new Vector3(dynamicScale.x * (1f - squash), dynamicScale.y * (1f + squash), 1f);
                 visualPivot.localPosition = basePivotPosition + new Vector3(0f, stepLift, 0f);
+                UpdateWalkingLegs(stepSin, stepLift);
             }
             else
             {
@@ -360,6 +415,7 @@ public class Boss3DVisual : MonoBehaviour
                 pseudoZHeight = breathe * 0.02f;
                 dynamicScale = new Vector3(dynamicScale.x * (1f + breathe * 0.035f), dynamicScale.y * (1f - breathe * 0.035f), 1f);
                 visualPivot.localPosition = basePivotPosition + new Vector3(0f, breathe * 0.02f, 0f);
+                UpdateWalkingLegs(0f, 0f);
             }
         }
 
@@ -392,6 +448,17 @@ public class Boss3DVisual : MonoBehaviour
 
         // 8. Cập nhật Nguồn Sáng & Tàn Ảnh (Ghost Trails)
         UpdateLightAndAfterimages(isMoving, speed);
+    }
+
+    private void UpdateWalkingLegs(float step, float torsoLift)
+    {
+        if (leftLegTransform == null || rightLegTransform == null) return;
+        // Alternating support foot: one leg swings forward as the other stays
+        // low, while the torso lift is canceled at each foot anchor.
+        leftLegTransform.localPosition = new Vector3(step * 0.035f,
+            Mathf.Max(0f, step) * 0.055f - torsoLift, 0f);
+        rightLegTransform.localPosition = new Vector3(-step * 0.035f,
+            Mathf.Max(0f, -step) * 0.055f - torsoLift, 0f);
     }
 
     private void UpdateRuneMagicCircle(bool isMoving, float speed)

@@ -104,7 +104,11 @@ public sealed class LanMenuUI : MonoBehaviour
         Button(panel, "Tạo phòng LAN (Host)", new Vector2(-170, -176), new Vector2(320, 46), () => Launch(LanMode.Host));
         Button(panel, "Tham gia phòng (Join)", new Vector2(170, -176), new Vector2(320, 46), () => Launch(LanMode.Client));
         Button(panel, "Chơi một mình", new Vector2(0, -232), new Vector2(660, 46), () => Launch(LanMode.Solo));
-        Button(panel, "Quay lại", new Vector2(-126, -286), new Vector2(220, 40), () => Destroy(gameObject));
+        Button(panel, "Quay lại", new Vector2(-126, -286), new Vector2(220, 40), () =>
+        {
+            Destroy(gameObject);
+            menu.ShowTitleScreen();
+        });
         Button(panel, "Dừng chơi", new Vector2(126, -286), new Vector2(220, 40), menu.QuitButtonControl);
 
         void SelectCharacter(PlayableCharacterId character)

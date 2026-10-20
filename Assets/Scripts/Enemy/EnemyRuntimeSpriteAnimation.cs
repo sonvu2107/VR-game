@@ -214,9 +214,12 @@ public sealed class EnemyRuntimeSpriteAnimation : MonoBehaviour
     private static Profile GetProfile(string objectName, EnemyConfigSO config)
     {
         string id = config != null ? config.displayName : objectName;
-        if (id.Contains("SkeletonKing") || id.Contains("BoneSentinel") || objectName.Contains("SkeletonKing") || objectName.Contains("BoneSentinel"))
-            return new Profile { idle = "UndeadKing", move = "UndeadKing", attack = "UndeadKing", cell = 32, columns = 3, rows = 8,
-                idleCount = 1, moveCount = 3, attackCount = 3, fps = 8, layout = Layout.Directional };
+        // These campaign bosses have full-resolution art and a dedicated
+        // articulated Boss3DVisual rig. The generic 32px UndeadKing sheet
+        // replaced their sprite at runtime and made them look like tiny mobs.
+        if (id.Contains("SkeletonKing") || id.Contains("BoneSentinel") ||
+            objectName.Contains("SkeletonKing") || objectName.Contains("BoneSentinel"))
+            return null;
         if (id.Contains("Archer"))
             return new Profile { idle = "SkeletonArcher", move = "SkeletonArcher", attack = "SkeletonArcher", hurt = "SkeletonArcher", death = "SkeletonArcher",
                 cell = 32, columns = 4, rows = 4, idleCount = 2, moveCount = 4, attackCount = 4, hurtCount = 2, deathCount = 2, fps = 9, layout = Layout.Grid };
