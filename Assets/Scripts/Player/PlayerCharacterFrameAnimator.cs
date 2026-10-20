@@ -20,6 +20,7 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
     private Sprite[] idle, run, attack, dash, hurt, death;
     private BodyState state;
     private float stateStartedAt;
+    private int lastAttackSequence = -1;
 
     public static PlayerCharacterFrameAnimator Configure(GameObject player, PlayableCharacterId character)
     {
@@ -77,10 +78,14 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
             legacyAnimator.enabled = false;
 
         BodyState next = ResolveState();
-        if (next != state)
+        bool newBasicAttack = next == BodyState.Attack && movement != null && movement.IsAttacking &&
+                              movement.AttackSequence != lastAttackSequence;
+        if (next != state || newBasicAttack)
         {
             state = next;
             stateStartedAt = Time.time;
+            if (newBasicAttack)
+                lastAttackSequence = movement.AttackSequence;
         }
 
         Sprite[] frames = FramesFor(state);
@@ -88,6 +93,8 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
         float fps = state switch
         {
             BodyState.Run => 10f,
+            BodyState.Attack when movement != null && movement.IsAttacking =>
+                frames.Length / Mathf.Max(0.05f, movement.ActiveComboDuration),
             BodyState.Attack => 13f,
             BodyState.Dash => 15f,
             BodyState.Hurt => 9f,
@@ -95,7 +102,9 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
             _ => 6f
         };
         int raw = Mathf.FloorToInt((Time.time - stateStartedAt) * fps);
-        bool loop = state is BodyState.Idle or BodyState.Run or BodyState.Attack or BodyState.Dash;
+        // Each basic hit owns one complete six-frame pass. Chained clicks reset
+        // stateStartedAt through AttackSequence instead of looping mid-swing.
+        bool loop = state is BodyState.Idle or BodyState.Run or BodyState.Dash;
         int index = loop ? raw % frames.Length : Mathf.Min(raw, frames.Length - 1);
         spriteRenderer.sprite = frames[Mathf.Max(0, index)];
     }

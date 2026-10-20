@@ -97,23 +97,23 @@ public class SkillHudController : MonoBehaviour
         {
             case PlayableCharacterId.AzureWarden:
                 dashSlot.SetLabel("AEGIS RUSH");
-                swordWaveSlot.SetLabel("AEGIS LANCE");
-                spinSlashSlot.SetLabel("WARDBREAKER");
-                ultimateSlot.SetLabel("CITADEL VERDICT");
+                swordWaveSlot.SetLabel("AEGIS RAM");
+                spinSlashSlot.SetLabel("BASTION GUARD");
+                ultimateSlot.SetLabel("CITADEL COLLAPSE");
                 dashSlot.SetIcon("UI/Skills/AzureWarden/IconAegisRush");
-                swordWaveSlot.SetIcon("UI/Skills/AzureWarden/IconAegisLance");
-                spinSlashSlot.SetIcon("UI/Skills/AzureWarden/IconWardbreaker");
-                ultimateSlot.SetIcon("UI/Skills/AzureWarden/IconCitadelVerdict");
+                swordWaveSlot.SetIcon("UI/Skills/AzureWarden/IconAegisRam");
+                spinSlashSlot.SetIcon("UI/Skills/AzureWarden/IconBastionGuard");
+                ultimateSlot.SetIcon("UI/Skills/AzureWarden/IconCitadelCollapse");
                 break;
             case PlayableCharacterId.Chronoblade:
                 dashSlot.SetLabel("RIFT STEP");
                 swordWaveSlot.SetLabel("RIFT CUTTER");
-                spinSlashSlot.SetLabel("TIME FRACTURE");
+                spinSlashSlot.SetLabel("ECHO REND");
                 ultimateSlot.SetLabel("ZERO HOUR");
                 dashSlot.SetIcon("UI/Skills/Chronoblade/IconRiftStep");
-                swordWaveSlot.SetIcon("UI/Skills/Chronoblade/IconRiftCutter");
-                spinSlashSlot.SetIcon("UI/Skills/Chronoblade/IconTimeFracture");
-                ultimateSlot.SetIcon("UI/Skills/Chronoblade/IconZeroHour");
+                swordWaveSlot.SetIcon("UI/Skills/Chronoblade/IconRiftCutterV2");
+                spinSlashSlot.SetIcon("UI/Skills/Chronoblade/IconEchoRend");
+                ultimateSlot.SetIcon("UI/Skills/Chronoblade/IconZeroHourV2");
                 break;
             case PlayableCharacterId.GravewindRanger:
                 dashSlot.SetLabel("MIST STEP");
@@ -347,8 +347,8 @@ public class SkillHudController : MonoBehaviour
                 readyColor.b * 0.10f, 0.98f) : new Color(0.025f, 0.02f, 0.035f, 0.98f);
             icon.color = ready ? Color.white : new Color(0.70f, 0.73f, 0.78f, 0.90f);
             readyGlow.enabled = ready;
-            readyGlow.color = new Color(readyColor.r, readyColor.g, readyColor.b, 0.20f + pulse * 0.24f);
-            readyGlow.rectTransform.localScale = Vector3.one * (1.04f + pulse * 0.09f);
+            readyGlow.color = new Color(readyColor.r, readyColor.g, readyColor.b, 0.38f + pulse * 0.38f);
+            readyGlow.rectTransform.localScale = Vector3.one * (1.08f + pulse * 0.12f);
             foreach (Image edge in border)
                 edge.color = ready ? new Color(readyColor.r, readyColor.g, readyColor.b,
                     0.82f + pulse * 0.18f) :

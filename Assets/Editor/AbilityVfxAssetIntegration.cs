@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -16,10 +17,22 @@ public sealed class AbilityVfxAssetIntegration : AssetPostprocessor
         "AzureAegisLance_v2_6f",
         "AzureWardbreaker_v2_6f",
         "AzureCitadelVerdict_v2_6f",
+        "AzureAegisRam_6f",
+        "AzureBastionGuard_6f",
+        "AzureCitadelCollapse_6f",
+        "AzureBasicShieldSweep_6f",
+        "AzureBasicLanceThrust_6f",
+        "AzureBasicShieldSlam_6f",
         "ChronobladeDash_6f",
         "ChronoRiftCutter_6f",
         "ChronoTimeFracture_6f",
         "ChronoZeroHour_6f",
+        "ChronoBasicRisingCut_6f",
+        "ChronoBasicReverseCut_6f",
+        "ChronoBasicCrossFinish_6f",
+        "ChronoRiftCutter_v2_6f",
+        "ChronoEchoRend_6f",
+        "ChronoZeroHour_v2_6f",
         "GravewindRangerDash_6f",
         "GraveWraithFan_6f",
         "GraveSnare_6f",
@@ -128,6 +141,15 @@ public sealed class AbilityVfxAssetIntegration : AssetPostprocessor
         foreach (string folder in Folders)
         {
             string resourcePath = $"Combat/Frames/{folder}";
+            HashSet<int> uniqueFrameHashes = new HashSet<int>();
+            bool requiresDistinctFrames = folder.StartsWith("AzureBasic", StringComparison.Ordinal) ||
+                                          folder == "AzureAegisRam_6f" ||
+                                          folder == "AzureBastionGuard_6f" ||
+                                          folder == "AzureCitadelCollapse_6f" ||
+                                          folder.StartsWith("ChronoBasic", StringComparison.Ordinal) ||
+                                          folder == "ChronoRiftCutter_v2_6f" ||
+                                          folder == "ChronoEchoRend_6f" ||
+                                          folder == "ChronoZeroHour_v2_6f";
             for (int frame = 0; frame < 6; frame++)
             {
                 string assetPath = $"Assets/Resources/{resourcePath}/Frame_{frame:00}.png";
@@ -140,8 +162,23 @@ public sealed class AbilityVfxAssetIntegration : AssetPostprocessor
                     throw new InvalidOperationException($"Invalid player skill frame: {assetPath}");
                 }
 
+                if (requiresDistinctFrames)
+                {
+                    unchecked
+                    {
+                        int frameHash = 17;
+                        foreach (Color32 pixel in texture.GetPixels32())
+                            frameHash = frameHash * 31 + pixel.GetHashCode();
+                        uniqueFrameHashes.Add(frameHash);
+                    }
+                }
+
                 validated++;
             }
+
+            if (requiresDistinctFrames && uniqueFrameHashes.Count != 6)
+                throw new InvalidOperationException(
+                    $"Sequence must contain six distinct standalone frames: {resourcePath}");
 
             Type controllerType = typeof(PlayerSkillController);
             Type anchorType = controllerType.GetNestedType("FrameAnchorMode", BindingFlags.NonPublic);
@@ -166,6 +203,7 @@ public sealed class AbilityVfxAssetIntegration : AssetPostprocessor
             }
         }
 
-        Debug.Log($"PLAYER_SKILL_VFX_RUNTIME_PASS frames={validated} sequences={Folders.Length} fallback=false");
+        Debug.Log($"PLAYER_SKILL_VFX_RUNTIME_PASS frames={validated} sequences={Folders.Length} " +
+                  "fallback=false azureStandaloneFrames=36 chronoStandaloneFrames=36 unique=true individualPng=true");
     }
 }

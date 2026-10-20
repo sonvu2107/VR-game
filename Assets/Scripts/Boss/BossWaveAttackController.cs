@@ -8,6 +8,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
     private EnemyHealth health;
     private EnemyCombat combat;
     private EnemyMovement movement;
+    private bool isFinalBoss;
     private int pattern;
     private float nextWaveTime;
     private bool attacking;
@@ -23,6 +24,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
         health = GetComponent<EnemyHealth>();
         combat = GetComponent<EnemyCombat>();
         movement = GetComponent<EnemyMovement>();
+        isFinalBoss = GetComponent<CampaignFinalBoss>() != null;
         nextWaveTime = Time.time + 1.7f;
     }
 
@@ -66,7 +68,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
         {
             Color color = new Color(1f, 0.28f, 0.12f);
             for (int i = -3; i <= 3; i++)
-                combat.FireProjectileDirection(Rotate(aim, i * 13f), damage, speed, life, color);
+                FireWaveProjectile(Rotate(aim, i * 13f), damage, speed, life, color);
             CombatHitVfx.Spawn(target.transform.position, CombatImpactKind.Boss, 1.1f);
         }
         else if (kind == 1)
@@ -74,7 +76,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
             Color color = new Color(0.72f, 0.25f, 1f);
             for (int i = 0; i < 10; i++)
             {
-                combat.FireProjectileDirection(Rotate(aim, i * 36f), damage, speed * 0.88f, life, color);
+                FireWaveProjectile(Rotate(aim, i * 36f), damage, speed * 0.88f, life, color);
                 if (i == 4) yield return new WaitForSeconds(0.09f);
             }
         }
@@ -86,9 +88,9 @@ public sealed class BossWaveAttackController : MonoBehaviour
                 Vector2 lead = target != null
                     ? ((Vector2)target.transform.position - (Vector2)transform.position).normalized
                     : aim;
-                combat.FireProjectileDirection(Rotate(lead, -8f), damage, speed * 1.12f, life, colors[burst]);
-                combat.FireProjectileDirection(lead, damage, speed * 1.12f, life, colors[burst]);
-                combat.FireProjectileDirection(Rotate(lead, 8f), damage, speed * 1.12f, life, colors[burst]);
+                FireWaveProjectile(Rotate(lead, -8f), damage, speed * 1.12f, life, colors[burst]);
+                FireWaveProjectile(lead, damage, speed * 1.12f, life, colors[burst]);
+                FireWaveProjectile(Rotate(lead, 8f), damage, speed * 1.12f, life, colors[burst]);
                 yield return new WaitForSeconds(0.16f);
             }
         }
@@ -104,5 +106,13 @@ public sealed class BossWaveAttackController : MonoBehaviour
         float cos = Mathf.Cos(radians);
         return new Vector2(direction.x * cos - direction.y * sin,
             direction.x * sin + direction.y * cos).normalized;
+    }
+
+    private void FireWaveProjectile(Vector2 direction, int damage, float speed, float life, Color color)
+    {
+        if (isFinalBoss)
+            combat.FireBossProjectileDirection(direction, damage, speed, life);
+        else
+            combat.FireProjectileDirection(direction, damage, speed, life, color);
     }
 }

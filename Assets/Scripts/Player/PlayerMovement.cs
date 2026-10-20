@@ -96,7 +96,11 @@ public class PlayerMovement : MonoBehaviour
     private AudioClip swordImpactClang;
     private AudioClip dashSfx;
     private AudioClip azureDashSfx;
+    private AudioClip[] azureComboSwingClips;
+    private AudioClip azureShieldImpactSfx;
     private AudioClip chronoDashSfx;
+    private AudioClip[] chronoComboSwingClips;
+    private AudioClip chronoImpactSfx;
     private AudioClip gravewindDashSfx;
 
     private Vector2 _movement;
@@ -110,12 +114,14 @@ public class PlayerMovement : MonoBehaviour
     private bool hitApplied;
     private int activeComboHit;
     private int nextComboHit;
+    private int attackSequence;
     private readonly Collider2D[] enemyHitBuffer = new Collider2D[16];
     private readonly HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
     private readonly HashSet<BossController> hitBosses = new HashSet<BossController>();
     private readonly HashSet<EnemyHealth> hitConfiguredEnemies = new HashSet<EnemyHealth>();
     private SpriteRenderer slashVfxRenderer;
     private Sprite[][] slashVfxFrames;
+    private PlayableCharacterId slashVfxCharacter = (PlayableCharacterId)(-1);
     private float slashVfxShownAt;
     private float slashVfxHideAt;
     private float slashVfxBaseScale;
@@ -192,6 +198,9 @@ public class PlayerMovement : MonoBehaviour
     public bool IsHeavyAttacking => isHeavyAttacking;
     public bool IsHeavyLocked => isHeavyCharging || isHeavyAttacking;
     public bool IsHeavyInputPending => heavyInputPending;
+    public int AttackSequence => attackSequence;
+    public int ActiveComboHit => activeComboHit;
+    public float ActiveComboDuration => GetComboDuration(activeComboHit);
     public Vector2 FacingDirection => isFacingLeft ? Vector2.left : Vector2.right;
     private PlayableCharacterId CurrentCharacter
     {
@@ -246,15 +255,9 @@ public class PlayerMovement : MonoBehaviour
         // here so skill audio can never silently receive a null clip.
         abilityFallbackSfx ??= Resources.Load<AudioClip>("Audio/Combat/PlayerSwordSlash");
         audioSource = GetComponent<AudioSource>();
-        swingAudioSource = gameObject.AddComponent<AudioSource>();
-        swingAudioSource.playOnAwake = false;
-        swingAudioSource.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
-        impactAudioSource = gameObject.AddComponent<AudioSource>();
-        impactAudioSource.playOnAwake = false;
-        impactAudioSource.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
-        abilityAudioSource = gameObject.AddComponent<AudioSource>();
-        abilityAudioSource.playOnAwake = false;
-        abilityAudioSource.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
+        swingAudioSource = CreateCombatAudioSource("Combo Swing Audio");
+        impactAudioSource = CreateCombatAudioSource("Combat Impact Audio");
+        abilityAudioSource = CreateCombatAudioSource("Ability Audio");
         comboSwingClips = new[]
         {
             Resources.Load<AudioClip>("Audio/Combat/SwordSwing1"),
@@ -264,10 +267,38 @@ public class PlayerMovement : MonoBehaviour
         swordImpactClang = Resources.Load<AudioClip>("Audio/Combat/SwordImpactClang");
         dashSfx = Resources.Load<AudioClip>("Audio/Combat/DashBurst") ?? abilityFallbackSfx;
         azureDashSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/Dash");
+        azureComboSwingClips = new[]
+        {
+            Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/BasicShieldSweep"),
+            Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/BasicLanceThrust"),
+            Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/BasicShieldSlam")
+        };
+        azureShieldImpactSfx = Resources.Load<AudioClip>(
+            "Audio/Combat/Characters/AzureWarden/BasicShieldImpact");
         chronoDashSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/Dash");
+        chronoComboSwingClips = new[]
+        {
+            Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/BasicRisingCut"),
+            Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/BasicReverseCut"),
+            Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/BasicCrossFinish")
+        };
+        chronoImpactSfx = Resources.Load<AudioClip>(
+            "Audio/Combat/Characters/Chronoblade/BasicChronoImpact");
         gravewindDashSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/Dash_MistStep");
         player = gameObject;
         powerupController = player.GetComponent<PowerupController>();
+    }
+
+    private AudioSource CreateCombatAudioSource(string sourceName)
+    {
+        GameObject sourceObject = new GameObject(sourceName);
+        sourceObject.SetActive(false);
+        sourceObject.transform.SetParent(transform, false);
+        AudioSource source = sourceObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.spatialBlend = audioSource != null ? audioSource.spatialBlend : 0f;
+        sourceObject.SetActive(true);
+        return source;
     }
 
     private void OnEnable()
@@ -883,6 +914,7 @@ public class PlayerMovement : MonoBehaviour
     private void StartAttack(int comboHit)
     {
         activeComboHit = Mathf.Clamp(comboHit, 0, 2);
+        attackSequence++;
         isAttacking = true;
         hitApplied = false;
         float duration = GetComboDuration(activeComboHit);
@@ -903,28 +935,14 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             ShowSlashVfx(activeComboHit);
+            if (CurrentCharacter == PlayableCharacterId.AzureWarden ||
+                CurrentCharacter == PlayableCharacterId.Chronoblade)
+                PlayCurrentComboSwing();
         }
     }
 
     private void CreateSlashVfx()
     {
-        slashVfxFrames = new Sprite[3][];
-        for (int hit = 0; hit < slashVfxFrames.Length; hit++)
-        {
-            // Hit 2 is the new five-frame sequence. The folder keeps its
-            // legacy name so existing Resources paths remain valid.
-            int frameCount = hit == 1 ? 5 : 6;
-            Sprite[] frames = PlayerSkillController.LoadPixelFrames(
-                $"Combat/Frames/SlashVfxHit{hit + 1}_6f", frameCount);
-            if (frames.Length < frameCount)
-            {
-                slashVfxFrames = null;
-                return;
-            }
-
-            slashVfxFrames[hit] = frames;
-        }
-
         GameObject slashVfx = new GameObject("Slash VFX");
         slashVfx.transform.SetParent(transform, false);
         slashVfxRenderer = slashVfx.AddComponent<SpriteRenderer>();
@@ -936,15 +954,76 @@ public class PlayerMovement : MonoBehaviour
         }
 
         slashVfxRenderer.enabled = false;
+        EnsureSlashVfxForCharacter(true);
+    }
+
+    private void EnsureSlashVfxForCharacter(bool force = false)
+    {
+        PlayableCharacterId character = CurrentCharacter;
+        if (!force && slashVfxCharacter == character && slashVfxFrames != null)
+            return;
+
+        slashVfxCharacter = character;
+        if (character == PlayableCharacterId.GravewindRanger)
+        {
+            slashVfxFrames = null;
+            return;
+        }
+
+        slashVfxFrames = new Sprite[3][];
+        if (character == PlayableCharacterId.AzureWarden)
+        {
+            string[] azureFolders =
+            {
+                "AzureBasicShieldSweep_6f",
+                "AzureBasicLanceThrust_6f",
+                "AzureBasicShieldSlam_6f"
+            };
+            for (int hit = 0; hit < azureFolders.Length; hit++)
+                slashVfxFrames[hit] = PlayerSkillController.LoadPixelFrames(
+                    $"Combat/Frames/{azureFolders[hit]}", 6,
+                    PlayerSkillController.FrameAnchorMode.CellCenter, 256f);
+            return;
+        }
+
+        if (character == PlayableCharacterId.Chronoblade)
+        {
+            string[] chronoFolders =
+            {
+                "ChronoBasicRisingCut_6f",
+                "ChronoBasicReverseCut_6f",
+                "ChronoBasicCrossFinish_6f"
+            };
+            for (int hit = 0; hit < chronoFolders.Length; hit++)
+                slashVfxFrames[hit] = PlayerSkillController.LoadPixelFrames(
+                    $"Combat/Frames/{chronoFolders[hit]}", 6,
+                    PlayerSkillController.FrameAnchorMode.CellCenter, 256f);
+            return;
+        }
+
+        for (int hit = 0; hit < slashVfxFrames.Length; hit++)
+        {
+            // Hit 2 is the five-frame Ashen sequence. The folder keeps its
+            // legacy name so existing Resources paths remain valid.
+            int frameCount = hit == 1 ? 5 : 6;
+            slashVfxFrames[hit] = PlayerSkillController.LoadPixelFrames(
+                $"Combat/Frames/SlashVfxHit{hit + 1}_6f", frameCount);
+        }
     }
 
     private void ShowSlashVfx(int comboHit)
     {
+        EnsureSlashVfxForCharacter();
         if (slashVfxRenderer == null || slashVfxFrames == null || attackPoint == null)
             return;
 
         activeVfxHit = comboHit;
-        slashVfxBaseScale = comboHit == 0 ? hit1VfxScale : comboHit == 1 ? hit2VfxScale : hit3VfxScale;
+        if (CurrentCharacter == PlayableCharacterId.AzureWarden)
+            slashVfxBaseScale = comboHit == 0 ? 1.05f : comboHit == 1 ? 1.22f : 1.35f;
+        else if (CurrentCharacter == PlayableCharacterId.Chronoblade)
+            slashVfxBaseScale = comboHit == 0 ? 1.08f : comboHit == 1 ? 1.16f : 1.28f;
+        else
+            slashVfxBaseScale = comboHit == 0 ? hit1VfxScale : comboHit == 1 ? hit2VfxScale : hit3VfxScale;
         slashVfxRenderer.sprite = slashVfxFrames[comboHit][0];
         // Every source sheet shares the same right-facing orientation. The parent
         // mirrors the complete effect together with the Player when facing left.
@@ -1155,6 +1234,20 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        if (CurrentCharacter == PlayableCharacterId.AzureWarden)
+        {
+            DamageEnemiesInRadius(attackPoint.position, attackRange * rangeMultiplier, damage,
+                playSwordImpact: true, impactKind: CombatImpactKind.Azure);
+            return;
+        }
+
+        if (CurrentCharacter == PlayableCharacterId.Chronoblade)
+        {
+            DamageEnemiesInRadius(attackPoint.position, attackRange * rangeMultiplier, damage,
+                playSwordImpact: true, impactKind: CombatImpactKind.Chrono);
+            return;
+        }
+
         DamageEnemies(attackPoint.position, attackRange * rangeMultiplier, damage, true);
     }
 
@@ -1241,7 +1334,7 @@ public class PlayerMovement : MonoBehaviour
     /// so enemies behind the player are never struck.
     /// </summary>
     public int DamageEnemiesInArc(Vector2 origin, Vector2 direction, float range, float halfAngleDegrees,
-        int damage, bool playSwordImpact = false)
+        int damage, bool playSwordImpact = false, CombatImpactKind impactKind = CombatImpactKind.Heavy)
     {
         if (direction.sqrMagnitude < 0.001f || range <= 0f)
             return 0;
@@ -1272,7 +1365,7 @@ public class PlayerMovement : MonoBehaviour
                 if (!configured.IsDead && hitConfiguredEnemies.Add(configured))
                 {
                     configured.TakeDamage(damage);
-                    CombatHitVfx.Spawn(targetCollider.bounds.center, CombatImpactKind.Heavy, 1f);
+                    CombatHitVfx.Spawn(targetCollider.bounds.center, impactKind, 1f);
                     damagedEnemy = true;
                     damagedCount++;
                 }
@@ -1283,7 +1376,7 @@ public class PlayerMovement : MonoBehaviour
             if (enemy != null && hitEnemies.Add(enemy))
             {
                 enemy.TakeDamage(damage);
-                CombatHitVfx.Spawn(targetCollider.bounds.center, CombatImpactKind.Heavy, 1f);
+                CombatHitVfx.Spawn(targetCollider.bounds.center, impactKind, 1f);
                 damagedEnemy = true;
                 damagedCount++;
             }
@@ -1292,14 +1385,19 @@ public class PlayerMovement : MonoBehaviour
             if (boss != null && hitBosses.Add(boss))
             {
                 boss.TakeDamage(damage);
-                CombatHitVfx.Spawn(targetCollider.bounds.center, CombatImpactKind.Heavy, 1.4f);
+                CombatHitVfx.Spawn(targetCollider.bounds.center, impactKind, 1.4f);
                 damagedEnemy = true;
                 damagedCount++;
             }
         }
 
         if (playSwordImpact && damagedEnemy)
-            PlayHeavyImpact();
+        {
+            if (impactKind == CombatImpactKind.Azure)
+                PlaySwordImpact();
+            else
+                PlayHeavyImpact();
+        }
 
         if (damagedCount > 0 && skillController != null)
             skillController.AddUltimateCharge(damagedCount * 8f);
@@ -1512,21 +1610,53 @@ public class PlayerMovement : MonoBehaviour
 
     private AudioClip GetComboSwingClip(int comboHit)
     {
-        if (comboSwingClips == null || comboHit < 0 || comboHit >= comboSwingClips.Length)
+        AudioClip[] clips = CurrentCharacter switch
+        {
+            PlayableCharacterId.AzureWarden => azureComboSwingClips,
+            PlayableCharacterId.Chronoblade => chronoComboSwingClips,
+            _ => comboSwingClips
+        };
+        if (clips == null || comboHit < 0 || comboHit >= clips.Length)
             return null;
 
-        return comboSwingClips[comboHit];
+        return clips[comboHit];
+    }
+
+    private void PlayCurrentComboSwing()
+    {
+        AudioClip clip = GetComboSwingClip(activeComboHit);
+        if (clip == null || swingAudioSource == null)
+            return;
+
+        float pitch = CurrentCharacter == PlayableCharacterId.Chronoblade
+            ? (activeComboHit == 0 ? 1.18f : activeComboHit == 1 ? 1.28f : 1.02f)
+            : (activeComboHit == 0 ? 1.02f : activeComboHit == 1 ? 1.10f : 0.88f);
+        float volume = activeComboHit == 2 ? 1f : 0.86f;
+        swingAudioSource.pitch = pitch;
+        swingAudioSource.PlayOneShot(clip, volume);
+        LanSessionBridge.Active?.PublishSound(clip, volume, pitch);
     }
 
     private void PlaySwordImpact()
     {
-        if (swordImpactClang == null || impactAudioSource == null)
+        AudioClip impactClip = CurrentCharacter switch
+        {
+            PlayableCharacterId.AzureWarden => azureShieldImpactSfx,
+            PlayableCharacterId.Chronoblade => chronoImpactSfx,
+            _ => swordImpactClang
+        };
+        if (impactClip == null || impactAudioSource == null)
             return;
 
-        impactAudioSource.pitch = activeComboHit == 2 ? 0.9f : 1.05f;
+        impactAudioSource.pitch = CurrentCharacter switch
+        {
+            PlayableCharacterId.AzureWarden => activeComboHit == 2 ? 0.82f : 1f,
+            PlayableCharacterId.Chronoblade => activeComboHit == 2 ? 0.92f : 1.14f,
+            _ => activeComboHit == 2 ? 0.9f : 1.05f
+        };
         float volume = activeComboHit == 2 ? 1f : 0.75f;
-        impactAudioSource.PlayOneShot(swordImpactClang, volume);
-        LanSessionBridge.Active?.PublishSound(swordImpactClang, volume, impactAudioSource.pitch);
+        impactAudioSource.PlayOneShot(impactClip, volume);
+        LanSessionBridge.Active?.PublishSound(impactClip, volume, impactAudioSource.pitch);
     }
 
     private void PlayHeavyImpact()

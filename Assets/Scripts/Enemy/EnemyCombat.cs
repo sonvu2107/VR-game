@@ -287,7 +287,19 @@ public class EnemyCombat : MonoBehaviour
         FireProjectileDirection(direction, damage, speed, lifetime, (Color?)color);
     }
 
+    /// <summary>Fires the authored final-boss projectile instead of inheriting a monster's normal shot.</summary>
+    public void FireBossProjectileDirection(Vector2 direction, int damage, float speed, float lifetime)
+    {
+        FireProjectileDirection(direction, damage, speed, lifetime, null, true);
+    }
+
     private void FireProjectileDirection(Vector2 direction, int damage, float speed, float lifetime, Color? visualColor)
+    {
+        FireProjectileDirection(direction, damage, speed, lifetime, visualColor, false);
+    }
+
+    private void FireProjectileDirection(Vector2 direction, int damage, float speed, float lifetime,
+        Color? visualColor, bool forceBossVisual)
     {
         if (health == null || health.IsDead) return;
         direction = direction.sqrMagnitude > 0.001f ? direction.normalized : Vector2.right;
@@ -296,7 +308,7 @@ public class EnemyCombat : MonoBehaviour
 
         GameObject projectileObject;
         bool needsDefaultVisual = false;
-        if (config != null && config.projectilePrefab != null)
+        if (!forceBossVisual && config != null && config.projectilePrefab != null)
             projectileObject = Instantiate(config.projectilePrefab, transform.position, Quaternion.identity);
         else
         {
@@ -315,23 +327,27 @@ public class EnemyCombat : MonoBehaviour
             SpriteRenderer visual = projectileObject.AddComponent<SpriteRenderer>();
             bool isArrow = config != null && config.archetype == EnemyArchetype.Ranged;
             Sprite[] arrowFrames = isArrow ? EnemyArrowAnimation.LoadFrames() : null;
-            visual.sprite = arrowFrames != null ? arrowFrames[0] : EnemyEffectSpriteFactory.Disc;
+            Sprite[] bossFrames = forceBossVisual ? BossProjectileAnimation.LoadFrames() : null;
+            bool usesBossVisual = bossFrames != null;
+            visual.sprite = usesBossVisual ? bossFrames[0] : arrowFrames != null ? arrowFrames[0] : EnemyEffectSpriteFactory.Disc;
             visual.sortingOrder = 2;
-            visual.color = visualColor ?? (isArrow ? Color.white : config != null && config.archetype == EnemyArchetype.Summoner
+            visual.color = usesBossVisual ? Color.white : visualColor ?? (isArrow ? Color.white : config != null && config.archetype == EnemyArchetype.Summoner
                 ? new Color(0.78f, 0.36f, 1f)
                 : config != null && config.archetype == EnemyArchetype.MiniBoss
                     ? new Color(0.35f, 1f, 0.72f)
                     : new Color(1f, 0.78f, 0.22f));
             projectileObject.transform.rotation = Quaternion.FromToRotation(
                 isArrow && arrowFrames != null ? Vector3.up : Vector3.right, direction);
-            projectileObject.transform.localScale = isArrow && arrowFrames != null
+            projectileObject.transform.localScale = usesBossVisual ? Vector3.one * 0.38f : isArrow && arrowFrames != null
                 ? Vector3.one : Vector3.one * 0.24f;
-            if (arrowFrames != null)
+            if (usesBossVisual)
+                projectileObject.AddComponent<BossProjectileAnimation>().SetFrames(bossFrames);
+            else if (arrowFrames != null)
                 projectileObject.AddComponent<EnemyArrowAnimation>().SetFrames(arrowFrames);
         }
 
         EnemyProjectile projectile = projectileObject.GetComponent<EnemyProjectile>();
-        if (visualColor.HasValue)
+        if (visualColor.HasValue && !forceBossVisual)
         {
             SpriteRenderer projectileVisual = projectileObject.GetComponentInChildren<SpriteRenderer>();
             if (projectileVisual != null) projectileVisual.color = visualColor.Value;

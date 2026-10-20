@@ -81,8 +81,11 @@ public class HealthController : MonoBehaviour
     [SerializeField] private float invulnerableDuration = 0.85f;
     [SerializeField] private int maxDamagePerHit = 1; // 1 máu tương đương nửa trái tim (healthPerHeart = 2)
     private float invulnerableUntil = -1f;
+    private float barrierUntil = -1f;
+    private int barrierHits;
     public float LastDamageAt { get; private set; } = float.NegativeInfinity;
     public bool IsTemporarilyInvulnerable => Time.time < invulnerableUntil;
+    public int BarrierHits => Time.time < barrierUntil ? barrierHits : 0;
     private SpriteRenderer[] renderers;
     private Coroutine flashRoutine;
 
@@ -92,6 +95,14 @@ public class HealthController : MonoBehaviour
         if (LanLaunch.Mode == LanMode.Client || amount <= 0 || currentHealth <= 0) return;
         if (gameManager != null && gameManager.CurrentState == GameState.Story) return;
         if (Time.time < invulnerableUntil) return;
+        if (Time.time < barrierUntil && barrierHits > 0)
+        {
+            barrierHits--;
+            if (barrierHits == 0) barrierUntil = -1f;
+            invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + 0.18f);
+            CombatHitVfx.Spawn(transform.position, CombatImpactKind.Azure, 1.05f);
+            return;
+        }
 
         if (maxDamagePerHit > 0)
         {
@@ -129,6 +140,16 @@ public class HealthController : MonoBehaviour
             return;
 
         invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + duration);
+    }
+
+    /// <summary>Absorbs a fixed number of incoming hits for tanker abilities.</summary>
+    public void GrantBarrier(int hits, float duration)
+    {
+        if (hits <= 0 || duration <= 0f || currentHealth <= 0)
+            return;
+
+        barrierHits = Mathf.Max(BarrierHits, hits);
+        barrierUntil = Mathf.Max(barrierUntil, Time.time + duration);
     }
 
     private void StartInvulnerabilityFlash()
@@ -224,6 +245,8 @@ public class HealthController : MonoBehaviour
     private void ResetDamageFeedback()
     {
         invulnerableUntil = -1f;
+        barrierUntil = -1f;
+        barrierHits = 0;
         if (flashRoutine != null) StopCoroutine(flashRoutine);
         flashRoutine = null;
         if (renderers == null) return;

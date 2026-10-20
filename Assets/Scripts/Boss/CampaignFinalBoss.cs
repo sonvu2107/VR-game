@@ -75,7 +75,7 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         Vector3 location = spawn;
         float factor = 1f;
         bool fits = false;
-        // Tối đa 1.75 lần, đồng thời giới hạn khung sprite vào khoảng 3.5 ô map.
+        // Maximum 1.75x scale while keeping the sprite bounds around 3.5 map tiles.
         float maxFactor = Mathf.Clamp(3.5f / Mathf.Max(.01f, Mathf.Max(relative.size.x, relative.size.y)), 1f, 1.75f);
         for (float test = maxFactor; test >= .99f && !fits; test = test > 1f ? Mathf.Max(1f, test - .25f) : 0f)
         foreach (var tile in room.FloorTiles.OrderBy(p => ((Vector2)p - (Vector2)spawn).sqrMagnitude).ThenBy(p => p.y).ThenBy(p => p.x))
@@ -100,6 +100,8 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         if (stats.blastRadius > 0f) stats.blastRadius = Mathf.Max(stats.blastRadius, 2f);
         root.transform.SetParent(null, true);
         root.SetActive(true);
+        if (root.GetComponent<FinalBossHealthBar>() == null)
+            root.AddComponent<FinalBossHealthBar>();
         if (Application.isPlaying) Destroy(staging); else DestroyImmediate(staging);
         movement.ConfigureBossArena(room.FloorTiles, (Vector2)(relative.extents * factor + new Vector3(Mathf.Abs(offset.x), Mathf.Abs(offset.y)) * factor));
         Debug.Log($"FINAL_BOSS_SELECTED source={prefab.name} multiplier={factor} hp={stats.maxHealth}");
