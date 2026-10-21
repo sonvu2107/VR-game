@@ -31,7 +31,7 @@ public class LevelBanner : MonoBehaviour
 
     private void HandleLevelChanged(int level, int total)
     {
-        label.text = level >= total ? "FINAL LEVEL" : $"LEVEL {level}";
+        label.text = level >= total ? "MÀN CUỐI" : $"MÀN {level}";
         timer = 0f;
         group.alpha = 1f;
     }

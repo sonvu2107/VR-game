@@ -146,7 +146,7 @@ public sealed class LanSessionBridge : GameSessionBridge
             }
             else if (value == "disconnected")
             {
-                if (!HasStateAuthority) { Fail("Mất kết nối với Host."); return; }
+                if (!HasStateAuthority) { Fail("Mất kết nối với máy chủ."); return; }
                 RemoveGuest();
                 waitingForGuest = true;
                 if (manager.CurrentState == GameState.Playing) manager.WaitForPartner();
@@ -277,7 +277,7 @@ public sealed class LanSessionBridge : GameSessionBridge
             peerReady = true;
             if (waitingForGuest && (manager.CurrentState == GameState.Paused || manager.CurrentState == GameState.WaitingForPartner)) manager.Resume();
             waitingForGuest = false;
-            Status = "LAN · Host · 2/2 người chơi";
+            Status = "LAN · Chủ phòng · 2/2 người chơi";
             SendSnapshot();
         }
         else if (message.type == "input" && peerReady && message.run == run && message.level == manager.CurrentLevel &&
@@ -301,7 +301,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         {
             if (message.protocol != LanMessage.CurrentProtocol || message.catalog != catalog.fingerprint) { Fail("Hai máy cần dùng cùng một bản build."); return; }
             authenticated = true;
-            Status = "Đã kết nối. Đang nhận bản đồ từ Host…";
+            Status = "Đã kết nối. Đang nhận bản đồ từ chủ phòng…";
         }
         else if (authenticated && message.type == "world")
         {

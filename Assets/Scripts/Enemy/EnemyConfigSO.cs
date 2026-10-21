@@ -17,7 +17,7 @@ public enum EnemyArchetype
 public class EnemyConfigSO : ScriptableObject
 {
     [Header("Identity")]
-    public string displayName = "Enemy";
+    public string displayName = "Kẻ địch";
     public EnemyArchetype archetype = EnemyArchetype.Melee;
 
     [Header("Vitals")]

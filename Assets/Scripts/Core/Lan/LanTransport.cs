@@ -49,7 +49,7 @@ public sealed class LanTransport : IDisposable
     {
         ValidatePort(port);
         if (!IPAddress.TryParse(address, out IPAddress ip) || ip.AddressFamily != AddressFamily.InterNetwork)
-            throw new ArgumentException("Nhập địa chỉ IPv4 của máy Host.");
+            throw new ArgumentException("Nhập địa chỉ IPv4 của máy chủ.");
         Task.Run(async () =>
         {
             TcpClient connecting = new TcpClient();
@@ -71,10 +71,10 @@ public sealed class LanTransport : IDisposable
                 if (!disposed)
                 {
                     string detail = ex is TimeoutException
-                        ? "Hết thời gian chờ (5 giây). Kiểm tra IPv4 Wi-Fi của Host, Firewall và mạng Wi-Fi có cô lập thiết bị không."
+                        ? "Hết thời gian chờ (5 giây). Kiểm tra IPv4 Wi-Fi của máy chủ, tường lửa và mạng Wi-Fi có cô lập thiết bị không."
                         : ex is SocketException socket && socket.SocketErrorCode == SocketError.ConnectionRefused
-                            ? "Host chưa mở phòng hoặc sai cổng."
-                            : "Kiểm tra IPv4 Wi-Fi của Host, cổng và Firewall.";
+                            ? "Máy chủ chưa mở phòng hoặc sai cổng."
+                            : "Kiểm tra IPv4 Wi-Fi của máy chủ, cổng và tường lửa.";
                     events.Enqueue("error:Không kết nối được " + address + ":" + port + ". " + detail);
                 }
             }

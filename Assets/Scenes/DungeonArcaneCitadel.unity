@@ -413,7 +413,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Quit Game
+  m_text: 'Thoát trò chơi
 
 '
   m_isRightToLeft: 0
@@ -820,7 +820,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Resume
+  m_text: 'Tiếp tục
 
 '
   m_isRightToLeft: 0
@@ -1031,7 +1031,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Controls
+  m_text: 'Điều khiển
 
 '
   m_isRightToLeft: 0
@@ -1167,7 +1167,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Score : 0
+  m_text: 'Điểm : 0
 
 '
   m_isRightToLeft: 0
@@ -1682,7 +1682,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'HIGHEST LEVEL : 1/10'
+  m_text: 'MÀN CAO NHẤT : 1/10'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
@@ -1986,7 +1986,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Settings
+  m_text: 'Cài đặt
 
 '
   m_isRightToLeft: 0
@@ -2194,7 +2194,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: VICTORY
+  m_text: CHIẾN THẮNG
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
@@ -2519,21 +2519,21 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'WASD  -  Move
+  m_text: 'WASD  -  Di chuyển
 
-    Left Click  -  Attack
+    Chuột trái  -  Tấn công
 
-    Shift  -  Dash
+    Shift  -  Lướt
 
     Q  - 
-    Sword Wave
+    Sóng kiếm
 
-    E  -  Spin Slash
+    E  -  Chém xoay
 
-    R  -  Ashen Judgment (when fully charged)
+    R  -  Phán quyết tro tàn (khi nạp đầy)
 
     Esc 
-    -  Pause'
+    -  Tạm dừng'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
@@ -2742,7 +2742,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'High Score : 0
+  m_text: 'Điểm cao : 0
 
 '
   m_isRightToLeft: 0
@@ -2878,7 +2878,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Score : 0
+  m_text: 'Điểm : 0
 
 '
   m_isRightToLeft: 0
@@ -3148,7 +3148,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Quit Game
+  m_text: Thoát trò chơi
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
@@ -21262,7 +21262,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: powered up!
+  m_text: Đã cường hoá!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
@@ -22378,7 +22378,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Back
+  m_text: 'Quay lại
 
 '
   m_isRightToLeft: 0
@@ -22747,7 +22747,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Play Again
+  m_text: 'Chơi lại
 
 '
   m_isRightToLeft: 0
@@ -23016,7 +23016,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Quit Game
+  m_text: 'Thoát trò chơi
 
 '
   m_isRightToLeft: 0
@@ -29668,7 +29668,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Sound
+  m_Text: 'Âm thanh
 
 '
 --- !u!222 &1172889429
@@ -30491,7 +30491,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'CONTROLS
+  m_text: 'ĐIỀU KHIỂN
 
 '
   m_isRightToLeft: 0
@@ -31223,7 +31223,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Game Over
+  m_text: TRÒ CHƠI KẾT THÚC
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
@@ -31500,7 +31500,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Level 1
+  m_text: Màn 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 268f22c0d7a924245a357d745dceed41, type: 2}
   m_sharedMaterial: {fileID: -6678175218788587944, guid: 268f22c0d7a924245a357d745dceed41, type: 2}
@@ -32512,7 +32512,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Restart
+  m_text: 'Chơi lại
 
 '
   m_isRightToLeft: 0
@@ -33529,7 +33529,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Enemies \nRemaining: 23\n"
+  m_text: "Kẻ địch \nCòn lại: 23\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
@@ -33738,7 +33738,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'High Score : 0
+  m_text: 'Điểm cao : 0
 
 '
   m_isRightToLeft: 0
@@ -34229,7 +34229,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Back
+  m_text: 'Quay lại
 
 '
   m_isRightToLeft: 0
@@ -34365,7 +34365,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ' SETTINGS'
+  m_text: ' CÀI ĐẶT'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}
   m_sharedMaterial: {fileID: 7689629844582707789, guid: 892ee66825a1b5745bdded83b012b3f1, type: 2}

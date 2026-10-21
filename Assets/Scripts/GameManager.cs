@@ -309,20 +309,20 @@ public class GameManager : MonoBehaviour
 
         if (CurrentState == GameState.Generating)
         {
-            EnemyCounter.text = $"Level {CurrentLevel}/{TotalLevels} - Generating...";
+            EnemyCounter.text = $"Màn {CurrentLevel}/{TotalLevels} - Đang tạo...";
             return;
         }
 
-        string counter = $"Level {CurrentLevel}/{TotalLevels} - Enemies Remaining: {enemyCount}";
+        string counter = $"Màn {CurrentLevel}/{TotalLevels} - Kẻ địch còn lại: {enemyCount}";
         if (KeysRequired > 0)
-            counter += $" | Keys: {KeysCollected}/{KeysRequired}";
+            counter += $" | Chìa khóa: {KeysCollected}/{KeysRequired}";
 
         if (HasLevelTimeLimit)
         {
             int secondsRemaining = Mathf.Max(0, Mathf.CeilToInt(LevelTimeRemaining));
             int minutes = secondsRemaining / 60;
             int seconds = secondsRemaining % 60;
-            counter += $" | Time: {minutes:00}:{seconds:00}";
+            counter += $" | Thời gian: {minutes:00}:{seconds:00}";
         }
 
         EnemyCounter.text = counter;

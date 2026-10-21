@@ -122,13 +122,13 @@ public class ScoreManager : MonoBehaviour
         int total = gameManager != null ? gameManager.TotalLevels : 0;
         string levelLabel = total > 0 ? $"{highestLevel}/{total}" : highestLevel.ToString();
 
-        if (scoreText != null) scoreText.text = $"Score: {score}";
-        if (highScoreText != null) highScoreText.text = $"Best: {best}";
-        if (highestLevelText != null) highestLevelText.text = $"Highest Level: {levelLabel}";
+        if (scoreText != null) scoreText.text = $"Điểm: {score}";
+        if (highScoreText != null) highScoreText.text = $"Điểm cao: {best}";
+        if (highestLevelText != null) highestLevelText.text = $"Màn cao nhất: {levelLabel}";
 
-        SetAll(finalScoreTexts, $"Score : {score}");
-        SetAll(finalHighScoreTexts, $"High Score : {best}");
-        SetAll(finalHighestLevelTexts, $"Highest Level : {levelLabel}");
+        SetAll(finalScoreTexts, $"Điểm : {score}");
+        SetAll(finalHighScoreTexts, $"Điểm cao : {best}");
+        SetAll(finalHighestLevelTexts, $"Màn cao nhất : {levelLabel}");
     }
 
     public void ResetLanRun()

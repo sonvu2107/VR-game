@@ -10,11 +10,15 @@ public sealed class MenuCharacterPreview : MonoBehaviour
     private int action;
     private float started;
     private bool knight;
+    private bool usesFastRun;
 
     public void SetCharacter(PlayableCharacterId character)
     {
         image = GetComponent<RawImage>();
         knight = character == PlayableCharacterId.AshenKnight;
+        usesFastRun = character is PlayableCharacterId.AzureWarden or
+            PlayableCharacterId.Chronoblade or
+            PlayableCharacterId.GravewindRanger;
         if (knight)
         {
             var library = Resources.Load<MenuPreviewLibrary>("MenuPreviewLibrary");
@@ -25,10 +29,17 @@ public sealed class MenuCharacterPreview : MonoBehaviour
         else
         {
             string root = $"Characters/{character}/Frames/";
-            string[] folders = { "Idle_6f", "Run_8f", "Attack_6f" };
-            int[] counts = { 6, 8, 6 };
+            string[] folders = { "Idle_6f", "Run_10f", "Attack_6f" };
+            int[] counts = { 6, 10, 6 };
             for (int i = 0; i < frames.Length; i++)
             {
+                // Preserve compatibility with characters that still only have
+                // the earlier eight-frame run cycle.
+                if (i == 1 && Resources.Load<Sprite>($"{root}{folders[i]}/Frame_00") == null)
+                {
+                    folders[i] = "Run_8f";
+                    counts[i] = 8;
+                }
                 frames[i] = new Sprite[counts[i]];
                 for (int j = 0; j < counts[i]; j++)
                     frames[i][j] = Resources.Load<Sprite>($"{root}{folders[i]}/Frame_{j:00}");
@@ -46,7 +57,8 @@ public sealed class MenuCharacterPreview : MonoBehaviour
 
     private void Update()
     {
-        float fps = knight ? 12f : action == 0 ? 6f : action == 1 ? 10f : 13f;
+        float fps = knight ? 12f : action == 0 ? 6f : action == 1 ?
+            (usesFastRun ? 12f : 10f) : 13f;
         RenderFrame(Mathf.FloorToInt((Time.unscaledTime - started) * fps));
     }
 

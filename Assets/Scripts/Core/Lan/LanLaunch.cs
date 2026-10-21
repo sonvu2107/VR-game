@@ -30,7 +30,7 @@ public static class LanLaunch
             throw new ArgumentOutOfRangeException(nameof(startingLevel), "Chọn level từ 1 đến 10.");
         if (mode == LanMode.Client && (!System.Net.IPAddress.TryParse(address, out var ip) ||
             ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork))
-            throw new ArgumentException("Nhập địa chỉ IPv4 của máy Host.");
+            throw new ArgumentException("Nhập địa chỉ IPv4 của máy chủ.");
         Mode = mode; Address = address; Port = port; LastError = null;
         MenuSelectionMade = true;
         StartingLevel = mode == LanMode.Client ? 1 : startingLevel; // Client nhận level có thẩm quyền từ Host.

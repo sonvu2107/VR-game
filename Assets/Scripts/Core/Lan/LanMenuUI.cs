@@ -88,14 +88,14 @@ public sealed partial class LanMenuUI : MonoBehaviour
                 nextAddressRefresh = Time.realtimeSinceStartup + 3f;
                 try { hostAddresses = LanNetworkAddresses.Describe(); } catch (Exception) { }
             }
-            cooldowns.text = "IP Host: " + hostAddresses + " · cổng " + LanLaunch.Port;
+            cooldowns.text = "IP máy chủ: " + hostAddresses + " · cổng " + LanLaunch.Port;
         }
         else if (session.LocalState != null)
         {
             LanPlayerState state = session.LocalState;
-            cooldowns.text = "HP " + state.health + " · Space " + Mathf.CeilToInt(state.power) + "s · Q " +
+            cooldowns.text = "HP " + state.health + " · Phím cách " + Mathf.CeilToInt(state.power) + "s · Q " +
                 Mathf.CeilToInt(state.q * 2.2f) + "s · E " + Mathf.CeilToInt(state.e * 4.5f) +
-                "s · R " + Mathf.RoundToInt(state.ultimate * 100f) + "% · Restart: Host";
+                "s · R " + Mathf.RoundToInt(state.ultimate * 100f) + "% · Chơi lại: Chủ phòng";
         }
     }
 

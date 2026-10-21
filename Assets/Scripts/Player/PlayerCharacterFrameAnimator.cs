@@ -58,7 +58,9 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
 
         string root = $"Characters/{character}/Frames";
         idle = Load(root + "/Idle_6f", 6);
-        run = Load(root + "/Run_8f", 8);
+        // Prefer the full ten-pose cycle, while keeping legacy eight-frame
+        // characters usable until their upgraded artwork is available.
+        run = LoadFirstAvailable(root + "/Run_10f", 10, root + "/Run_8f", 8);
         attack = Load(root + "/Attack_6f", 6);
         dash = Load(root + "/Dash_6f", 6);
         hurt = Load(root + "/Hurt_3f", 3);
@@ -114,6 +116,9 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
         bool skillAttack = state == BodyState.Attack && skills != null && skills.IsSkillCasting;
         float fps = state switch
         {
+            BodyState.Run when Character is PlayableCharacterId.AzureWarden or
+                PlayableCharacterId.Chronoblade or
+                PlayableCharacterId.GravewindRanger => 15f,
             BodyState.Run => 10f,
             BodyState.Attack when movement != null && movement.IsAttacking =>
                 frames.Length / Mathf.Max(0.05f, movement.ActiveComboDuration),
@@ -164,6 +169,24 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
             frames[i] = Resources.Load<Sprite>($"{path}/Frame_{i:00}");
             if (frames[i] == null)
                 Debug.LogError($"Missing standalone character frame: Resources/{path}/Frame_{i:00}.png");
+        }
+        return frames;
+    }
+
+    private static Sprite[] LoadFirstAvailable(string preferredPath, int preferredCount,
+                                                string fallbackPath, int fallbackCount)
+    {
+        Sprite first = Resources.Load<Sprite>($"{preferredPath}/Frame_00");
+        if (first == null)
+            return Load(fallbackPath, fallbackCount);
+
+        Sprite[] frames = new Sprite[preferredCount];
+        frames[0] = first;
+        for (int i = 1; i < preferredCount; i++)
+        {
+            frames[i] = Resources.Load<Sprite>($"{preferredPath}/Frame_{i:00}");
+            if (frames[i] == null)
+                Debug.LogError($"Missing standalone character frame: Resources/{preferredPath}/Frame_{i:00}.png");
         }
         return frames;
     }

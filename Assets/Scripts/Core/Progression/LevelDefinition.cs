@@ -26,7 +26,7 @@ public sealed class LevelDefinition
     [SerializeField, HideInInspector] private int mechanicsSchemaVersion;
 
     public int LevelNumber => Mathf.Max(1, levelNumber);
-    public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? $"Level {LevelNumber}" : displayName;
+    public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? $"Màn {LevelNumber}" : displayName;
     public int RoomCount => Mathf.Max(5, roomCount);
     public int EnemyCountBonus => Mathf.Max(0, enemyCountBonus);
     public LevelType Type => levelType;

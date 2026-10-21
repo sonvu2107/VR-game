@@ -78,10 +78,10 @@ public class SkillHudController : MonoBehaviour
         holderRect.sizeDelta = new Vector2(SlotSize * 4f + SlotGap * 3f, SlotSize + LabelHeight);
         holderRect.anchoredPosition = new Vector2(0f, 28f);
 
-        dashSlot = CreateSlot(holder.transform, 0, "SHIFT", "DASH", "UI/Skills/IconDash");
-        swordWaveSlot = CreateSlot(holder.transform, 1, "Q", "SWORD WAVE", "UI/Skills/IconSwordWave");
-        spinSlashSlot = CreateSlot(holder.transform, 2, "E", "SPIN SLASH", "UI/Skills/IconSpinSlash");
-        ultimateSlot = CreateSlot(holder.transform, 3, "R", "ASHEN JUDGMENT", "UI/Skills/IconAshenJudgment");
+        dashSlot = CreateSlot(holder.transform, 0, "SHIFT", "LƯỚT", "UI/Skills/IconDash");
+        swordWaveSlot = CreateSlot(holder.transform, 1, "Q", "SÓNG KIẾM", "UI/Skills/IconSwordWave");
+        spinSlashSlot = CreateSlot(holder.transform, 2, "E", "CHÉM XOAY", "UI/Skills/IconSpinSlash");
+        ultimateSlot = CreateSlot(holder.transform, 3, "R", "PHÁN QUYẾT TRO TÀN", "UI/Skills/IconAshenJudgment");
         RefreshCharacterLabels();
     }
 
@@ -96,40 +96,40 @@ public class SkillHudController : MonoBehaviour
         switch (character)
         {
             case PlayableCharacterId.AzureWarden:
-                dashSlot.SetLabel("AEGIS RUSH");
-                swordWaveSlot.SetLabel("AEGIS RAM");
-                spinSlashSlot.SetLabel("BASTION GUARD");
-                ultimateSlot.SetLabel("CITADEL COLLAPSE");
+                dashSlot.SetLabel("XUNG KÍCH HỘ VỆ");
+                swordWaveSlot.SetLabel("HÚC HỘ VỆ");
+                spinSlashSlot.SetLabel("THỦ THÀNH");
+                ultimateSlot.SetLabel("SỤP ĐỔ THÀNH TRÌ");
                 dashSlot.SetIcon("UI/Skills/AzureWarden/IconAegisRush");
                 swordWaveSlot.SetIcon("UI/Skills/AzureWarden/IconAegisRam");
                 spinSlashSlot.SetIcon("UI/Skills/AzureWarden/IconBastionGuard");
                 ultimateSlot.SetIcon("UI/Skills/AzureWarden/IconCitadelCollapse");
                 break;
             case PlayableCharacterId.Chronoblade:
-                dashSlot.SetLabel("RIFT STEP");
-                swordWaveSlot.SetLabel("RIFT CUTTER");
-                spinSlashSlot.SetLabel("ECHO REND");
-                ultimateSlot.SetLabel("ZERO HOUR");
+                dashSlot.SetLabel("BƯỚC KHE NỨT");
+                swordWaveSlot.SetLabel("TRẢM KHE NỨT");
+                spinSlashSlot.SetLabel("XÉ VANG VỌNG");
+                ultimateSlot.SetLabel("GIỜ KHẮC SỐ KHÔNG");
                 dashSlot.SetIcon("UI/Skills/Chronoblade/IconRiftStep");
                 swordWaveSlot.SetIcon("UI/Skills/Chronoblade/IconRiftCutterV2");
                 spinSlashSlot.SetIcon("UI/Skills/Chronoblade/IconEchoRend");
                 ultimateSlot.SetIcon("UI/Skills/Chronoblade/IconZeroHourV2");
                 break;
             case PlayableCharacterId.GravewindRanger:
-                dashSlot.SetLabel("MIST STEP");
-                swordWaveSlot.SetLabel("WRAITH FAN");
-                spinSlashSlot.SetLabel("GRAVE SNARE");
-                ultimateSlot.SetLabel("NIGHTFALL");
+                dashSlot.SetLabel("BƯỚC TRONG SƯƠNG");
+                swordWaveSlot.SetLabel("QUẠT HỒN MA");
+                spinSlashSlot.SetLabel("BẪY MỘ");
+                ultimateSlot.SetLabel("ĐÊM BUÔNG");
                 dashSlot.SetIcon("UI/Skills/GravewindRanger/IconMistStep");
                 swordWaveSlot.SetIcon("UI/Skills/GravewindRanger/IconWraithFan");
                 spinSlashSlot.SetIcon("UI/Skills/GravewindRanger/IconGraveSnare");
                 ultimateSlot.SetIcon("UI/Skills/GravewindRanger/IconNightfall");
                 break;
             default:
-                dashSlot.SetLabel("DASH");
-                swordWaveSlot.SetLabel("SWORD WAVE");
-                spinSlashSlot.SetLabel("SPIN SLASH");
-                ultimateSlot.SetLabel("ASHEN JUDGMENT");
+                dashSlot.SetLabel("LƯỚT");
+                swordWaveSlot.SetLabel("SÓNG KIẾM");
+                spinSlashSlot.SetLabel("CHÉM XOAY");
+                ultimateSlot.SetLabel("PHÁN QUYẾT TRO TÀN");
                 SetDefaultIcons();
                 break;
         }

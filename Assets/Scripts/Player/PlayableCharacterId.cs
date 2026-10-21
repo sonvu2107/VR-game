@@ -10,10 +10,10 @@ public static class PlayableCharacterNames
 {
     public static string DisplayName(PlayableCharacterId id) => id switch
     {
-        PlayableCharacterId.AzureWarden => "AZURE WARDEN",
-        PlayableCharacterId.Chronoblade => "CHRONOBLADE",
-        PlayableCharacterId.GravewindRanger => "GRAVEWIND RANGER",
-        _ => "ASHEN KNIGHT"
+        PlayableCharacterId.AzureWarden => "HỘ VỆ LAM",
+        PlayableCharacterId.Chronoblade => "KIẾM SĨ THỜI GIAN",
+        PlayableCharacterId.GravewindRanger => "XẠ THỦ U PHONG",
+        _ => "KỴ SĨ TRO TÀN"
     };
 
     public static string Description(PlayableCharacterId id) => id switch
