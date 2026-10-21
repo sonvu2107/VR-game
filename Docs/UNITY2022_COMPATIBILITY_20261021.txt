@@ -1,0 +1,29 @@
+CHUYỂN VỀ UNITY 2022.3.10f1
+
+Nguồn: main 9c826a3, gồm cập nhật combat/Skeleton King, animation và luồng tiếng Việt mới nhất, cùng tên LAN local.
+Nhánh dự phòng: codex/backup-before-unity2022-20261021.
+
+THAY ĐỔI
+- Khôi phục manifest/lock, ProjectVersion, cấu hình Player/Graphics/URP và Renderer2D tương thích từ 9b6106e.
+- Dùng URP 14.0.8, Input System 1.7.0, TextMeshPro 3.0.9, AI Navigation 1.1.5.
+- Chuyển Rigidbody2D.linearVelocity về velocity; chuyển API NavMesh Editor về bản 2022.
+- Khôi phục wrapper PlayerControls sinh bởi Input System 1.7; file inputactions không thay đổi giữa hai phiên bản.
+- Import lại metadata texture bằng Unity 2022. Khôi phục metadata 42 nguồn Aseprite từ bản 2022 để tránh importer sinh lại sprite ID; nguồn .ase/.aseprite không thay đổi so với bản đó.
+- Đối chiếu 445 metadata: không đổi GUID gốc/sprite ID so với nguồn tương ứng (9b6106e cho Aseprite, HEAD cho texture khác).
+- Giữ nguyên source boss, UI, scene, story và nội dung ảnh mới; các sửa đổi PlayerMovement/PlayerCharacterFrameAnimator chỉ đổi tên API velocity.
+- Tạo lại LAN catalog qua build preprocessor.
+
+KIỂM CHỨNG
+- Unity 2022.3.10f1 biên dịch thành công cả runtime/editor.
+- Build Windows Development thành công, Editor thoát mã 0.
+- Build/Unity2022Latest/TheLabyrinth.exe
+- Temp/unity2022-build.log: LAN_BUILD_SUCCESS.
+- LanTransportProbe: PASS 9 kiểm tra.
+- Hai tiến trình game Host/Client: PASS; Client nhận 204 snapshot; tên Minh Đức/Ngọc Sơn hiển thị đúng trên cả hai phía.
+- Ảnh/report: Captures/Unity2022Compatibility/host.png, client.png, host.txt, client.txt.
+
+GIỚI HẠN
+- Bộ HealthAndLevelValidation cũ dừng vì yêu cầu Archer scale 0.65 không khớp dữ liệu hiện tại. Không đổi gameplay để ép bài kiểm tra này qua; EnemyDistributionValidation phía sau chưa chạy.
+- Không kiểm chứng lại toàn bộ trận boss/campaign hoặc mạng LAN trên hai máy vật lý.
+- Probe tên LAN có khởi tạo sorting layers riêng khi chụp camera cho đèn tạo động URP 14, như đã ghi trong LAN_DISPLAY_NAMES_20261021.txt; kết quả này không xác nhận bản standalone sạch mọi lỗi ánh sáng.
+- Thay đổi chuyển về 2022 được đưa cùng bản sửa menu: bỏ mô tả trùng bên dưới tên nhân vật, giữ tiêu đề và preview.

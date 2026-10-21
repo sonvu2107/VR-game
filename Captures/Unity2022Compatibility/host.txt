@@ -1,0 +1,1 @@
+PASS samples=4877 names=Minh Đức|Ngọc Sơn maxAnchorError=3.26835E-05 traveled=2.985046,11.65677 snapshots=0

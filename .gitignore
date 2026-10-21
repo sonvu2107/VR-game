@@ -51,6 +51,7 @@ sysinfo.txt
 *.unitypackage
 *.app
 *.pfx
+*.pfx.meta
 
 crashlytics-build.properties
 

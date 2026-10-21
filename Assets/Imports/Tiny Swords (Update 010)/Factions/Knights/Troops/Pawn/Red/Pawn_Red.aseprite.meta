@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -78,14 +77,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 0
@@ -93,14 +89,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 0
   textureAssetName: 
@@ -110,7 +103,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -132,7 +124,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.0847458}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 70
@@ -153,7 +144,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.0847458}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 136
@@ -174,7 +164,6 @@ ScriptedImporter:
     pivot: {x: 0.5172414, y: -1.122807}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 202
@@ -195,7 +184,6 @@ ScriptedImporter:
     pivot: {x: 0.5172414, y: -1.1428572}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 400
@@ -216,7 +204,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.122807}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 268
@@ -237,7 +224,6 @@ ScriptedImporter:
     pivot: {x: 0.48275867, y: -1.1034484}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -258,7 +244,6 @@ ScriptedImporter:
     pivot: {x: 0.48275867, y: -1.0847458}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 202
@@ -279,7 +264,6 @@ ScriptedImporter:
     pivot: {x: 0.53448284, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 141
@@ -300,7 +284,6 @@ ScriptedImporter:
     pivot: {x: 0.5172414, y: -1.0847458}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 268
@@ -321,7 +304,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.1636364}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 243
@@ -342,7 +324,6 @@ ScriptedImporter:
     pivot: {x: 0.48387095, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -363,7 +344,6 @@ ScriptedImporter:
     pivot: {x: 0.49152538, y: -1.0847458}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 74
@@ -384,7 +364,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.1636364}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 309
@@ -405,7 +384,6 @@ ScriptedImporter:
     pivot: {x: 0.49230766, y: -0.85333335}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 150
@@ -426,7 +404,6 @@ ScriptedImporter:
     pivot: {x: 0.50769234, y: -0.83116883}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -447,7 +424,6 @@ ScriptedImporter:
     pivot: {x: 0.50769234, y: -0.83116883}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 77
@@ -468,7 +444,6 @@ ScriptedImporter:
     pivot: {x: 0.34782606, y: -0.969697}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -489,7 +464,6 @@ ScriptedImporter:
     pivot: {x: 0.3483146, y: -1.1428572}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 414
@@ -510,7 +484,6 @@ ScriptedImporter:
     pivot: {x: 0.3421052, y: -1.1034484}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 389
@@ -531,7 +504,6 @@ ScriptedImporter:
     pivot: {x: 0.654321, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 223
@@ -552,7 +524,6 @@ ScriptedImporter:
     pivot: {x: 0.6704546, y: -1}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 222
@@ -573,7 +544,6 @@ ScriptedImporter:
     pivot: {x: 0.6704546, y: -1}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 318
@@ -594,7 +564,6 @@ ScriptedImporter:
     pivot: {x: 0.3909091, y: -1.1851852}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 104
@@ -615,7 +584,6 @@ ScriptedImporter:
     pivot: {x: 0.33333334, y: -1.1428572}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -636,7 +604,6 @@ ScriptedImporter:
     pivot: {x: 0.53623194, y: -0.8484849}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 312
@@ -657,7 +624,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 207
@@ -678,7 +644,6 @@ ScriptedImporter:
     pivot: {x: 0.5172414, y: -1.0847458}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 334
@@ -699,7 +664,6 @@ ScriptedImporter:
     pivot: {x: 0.5172414, y: -1.1034484}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 70
@@ -720,7 +684,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.122807}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 334
@@ -741,7 +704,6 @@ ScriptedImporter:
     pivot: {x: 0.48275867, y: -1.1034484}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 136
@@ -762,7 +724,6 @@ ScriptedImporter:
     pivot: {x: 0.48275867, y: -1.0847458}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 400
@@ -783,7 +744,6 @@ ScriptedImporter:
     pivot: {x: 0.53448284, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 273
@@ -804,7 +764,6 @@ ScriptedImporter:
     pivot: {x: 0.5172414, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 339
@@ -825,7 +784,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.1428572}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 111
@@ -846,7 +804,6 @@ ScriptedImporter:
     pivot: {x: 0.46551725, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 405
@@ -867,7 +824,6 @@ ScriptedImporter:
     pivot: {x: 0.48275867, y: -1.0666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -888,7 +844,6 @@ ScriptedImporter:
     pivot: {x: 0.49999997, y: -1.1428572}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 177
@@ -905,347 +860,304 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 177, y: 78}
   spriteSheetImportData: []
-  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 2453150660
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: -1841816636
+    guid: -1056764172
     name: Pawn_Red
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Frame_0
+    - name: Pawn_Red_Frame_0
       frameIndex: 0
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 59
       spriteId: 79446607980560e4c8b6a596b6d336a2
-    - name: Frame_1
+    - name: Pawn_Red_Frame_1
       frameIndex: 1
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 59
       spriteId: 34f21f4ddc84a4a49ae1da9d94eef849
-    - name: Frame_2
+    - name: Pawn_Red_Frame_2
       frameIndex: 2
-      additiveSortOrder: 0
       cellRect:
         x: 66
         y: 64
         width: 58
         height: 57
       spriteId: 3ef57224939262d4abdcf3c33b6608bb
-    - name: Frame_3
+    - name: Pawn_Red_Frame_3
       frameIndex: 3
-      additiveSortOrder: 0
       cellRect:
         x: 66
         y: 64
         width: 58
         height: 56
       spriteId: a2b294b241200bf4da9d89e829c3e0ba
-    - name: Frame_4
+    - name: Pawn_Red_Frame_4
       frameIndex: 4
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 57
       spriteId: 74ca20e441b15a841b861f0f1a41a537
-    - name: Frame_5
+    - name: Pawn_Red_Frame_5
       frameIndex: 5
-      additiveSortOrder: 0
       cellRect:
         x: 68
         y: 64
         width: 58
         height: 58
       spriteId: 68bed3e4fff5275418030a2c9ff31640
-    - name: Frame_6
+    - name: Pawn_Red_Frame_6
       frameIndex: 6
-      additiveSortOrder: 0
       cellRect:
         x: 68
         y: 64
         width: 58
         height: 59
       spriteId: f4ece5d461d4e0849b09f53c856f49d6
-    - name: Frame_7
+    - name: Pawn_Red_Frame_7
       frameIndex: 7
-      additiveSortOrder: 0
       cellRect:
         x: 65
         y: 64
         width: 58
         height: 60
       spriteId: c9a5ede505515e0419bcd8120e468887
-    - name: Frame_8
+    - name: Pawn_Red_Frame_8
       frameIndex: 8
-      additiveSortOrder: 0
       cellRect:
         x: 66
         y: 64
         width: 58
         height: 59
       spriteId: 53efc8c2fd85c81469d655b4a2a9e0c7
-    - name: Frame_9
+    - name: Pawn_Red_Frame_9
       frameIndex: 9
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 55
       spriteId: 84fc52695f3e4e849a3fd26768905f39
-    - name: Frame_10
+    - name: Pawn_Red_Frame_10
       frameIndex: 10
-      additiveSortOrder: 0
       cellRect:
         x: 66
         y: 64
         width: 62
         height: 60
       spriteId: 1e1a30bcff3f9c34d98e31473e7727ee
-    - name: Frame_11
+    - name: Pawn_Red_Frame_11
       frameIndex: 11
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 59
         height: 59
       spriteId: d9c7f1e33f2101648979368293a05b70
-    - name: Frame_12
+    - name: Pawn_Red_Frame_12
       frameIndex: 12
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 55
       spriteId: 74d29759d15abd24e9f126b3e1efa511
-    - name: Frame_13
+    - name: Pawn_Red_Frame_13
       frameIndex: 13
-      additiveSortOrder: 0
       cellRect:
         x: 64
         y: 64
         width: 65
         height: 75
       spriteId: 9a33eca95eed7ad4e8581c94e8f9ba52
-    - name: Frame_14
+    - name: Pawn_Red_Frame_14
       frameIndex: 14
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 64
         width: 65
         height: 77
       spriteId: 8fc133ee38626e4479a0c2691691a0a7
-    - name: Frame_15
+    - name: Pawn_Red_Frame_15
       frameIndex: 15
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 64
         width: 65
         height: 77
       spriteId: 1cb1031315a088e4b8ccd533324108ca
-    - name: Frame_16
+    - name: Pawn_Red_Frame_16
       frameIndex: 16
-      additiveSortOrder: 0
       cellRect:
         x: 64
         y: 64
         width: 92
         height: 66
       spriteId: 6f715a1537257ed408dd2cc72dd6a103
-    - name: Frame_17
+    - name: Pawn_Red_Frame_17
       frameIndex: 17
-      additiveSortOrder: 0
       cellRect:
         x: 65
         y: 64
         width: 89
         height: 56
       spriteId: 65726bef50f03fa4dbc453e4f8c04e0b
-    - name: Frame_18
+    - name: Pawn_Red_Frame_18
       frameIndex: 18
-      additiveSortOrder: 0
       cellRect:
         x: 70
         y: 64
         width: 76
         height: 58
       spriteId: 2b4d71cd48095ce498af3ee1f7d7b452
-    - name: Frame_19
+    - name: Pawn_Red_Frame_19
       frameIndex: 19
-      additiveSortOrder: 0
       cellRect:
         x: 43
         y: 64
         width: 81
         height: 60
       spriteId: b660a0b0af4eed5448a81f5b38692478
-    - name: Frame_20
+    - name: Pawn_Red_Frame_20
       frameIndex: 20
-      additiveSortOrder: 0
       cellRect:
         x: 37
         y: 64
         width: 88
         height: 64
       spriteId: a82e5bdfeb5ee4042a77186d3cd8063e
-    - name: Frame_21
+    - name: Pawn_Red_Frame_21
       frameIndex: 21
-      additiveSortOrder: 0
       cellRect:
         x: 37
         y: 64
         width: 88
         height: 64
       spriteId: c1497e2de53696c4bb0ac9c23a682927
-    - name: Frame_22
+    - name: Pawn_Red_Frame_22
       frameIndex: 22
-      additiveSortOrder: 0
       cellRect:
         x: 53
         y: 64
         width: 110
         height: 54
       spriteId: bc251f3125a49b749ab176b5984cb37c
-    - name: Frame_23
+    - name: Pawn_Red_Frame_23
       frameIndex: 23
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 64
         width: 99
         height: 56
       spriteId: 34ef359da4a988c49a8d11a2748a05c9
-    - name: Frame_24
+    - name: Pawn_Red_Frame_24
       frameIndex: 24
-      additiveSortOrder: 0
       cellRect:
         x: 59
         y: 56
         width: 69
         height: 66
       spriteId: 263bd9d2338dfbf46874050f0614c65e
-    - name: Frame_25
+    - name: Pawn_Red_Frame_25
       frameIndex: 25
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 60
       spriteId: e210e35531d57a84a95cada3b5d9daa3
-    - name: Frame_26
+    - name: Pawn_Red_Frame_26
       frameIndex: 26
-      additiveSortOrder: 0
       cellRect:
         x: 66
         y: 64
         width: 58
         height: 59
       spriteId: 84a690d11ad193144b619656a2540632
-    - name: Frame_27
+    - name: Pawn_Red_Frame_27
       frameIndex: 27
-      additiveSortOrder: 0
       cellRect:
         x: 66
         y: 64
         width: 58
         height: 58
       spriteId: 6440b41b2619a254db31627be7eee21b
-    - name: Frame_28
+    - name: Pawn_Red_Frame_28
       frameIndex: 28
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 57
       spriteId: b3f235f46dab8a34787969286e4eb9e7
-    - name: Frame_29
+    - name: Pawn_Red_Frame_29
       frameIndex: 29
-      additiveSortOrder: 0
       cellRect:
         x: 68
         y: 64
         width: 58
         height: 58
       spriteId: 6f3e46a447dc80544a276ccbf9017ac7
-    - name: Frame_30
+    - name: Pawn_Red_Frame_30
       frameIndex: 30
-      additiveSortOrder: 0
       cellRect:
         x: 68
         y: 64
         width: 58
         height: 59
       spriteId: 1862a59eca89f2446a0c931c26edf3fb
-    - name: Frame_31
+    - name: Pawn_Red_Frame_31
       frameIndex: 31
-      additiveSortOrder: 0
       cellRect:
         x: 65
         y: 64
         width: 58
         height: 60
       spriteId: f7a048163f3dae246b27af6a29cdf416
-    - name: Frame_32
+    - name: Pawn_Red_Frame_32
       frameIndex: 32
-      additiveSortOrder: 0
       cellRect:
         x: 66
         y: 64
         width: 58
         height: 60
       spriteId: 43212af8e56f2a341b32bb0ddfcf3f66
-    - name: Frame_33
+    - name: Pawn_Red_Frame_33
       frameIndex: 33
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
         width: 58
         height: 56
       spriteId: 2f735b57555293848af5708f6f36af46
-    - name: Frame_34
+    - name: Pawn_Red_Frame_34
       frameIndex: 34
-      additiveSortOrder: 0
       cellRect:
         x: 69
         y: 64
         width: 58
         height: 60
       spriteId: 8bad914941e53de4fb31196db2af3183
-    - name: Frame_35
+    - name: Pawn_Red_Frame_35
       frameIndex: 35
-      additiveSortOrder: 0
       cellRect:
         x: 68
         y: 64
         width: 58
         height: 60
       spriteId: f6c36cf2d455e2f488ce99730185e156
-    - name: Frame_36
+    - name: Pawn_Red_Frame_36
       frameIndex: 36
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 64
@@ -1253,13 +1165,8 @@ ScriptedImporter:
         height: 56
       spriteId: 2d93e1c000414a447b28c4af98094488
     linkedCells: []
-    tileCells: []
-    tileSetIndex: 0
     parentIndex: -1
-  tileSets: []
   platformSettings: []
-  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 192, y: 192}
-  previousTextureSize: {x: 512, y: 512}

@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -78,14 +77,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 0
@@ -93,14 +89,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 0
   textureAssetName: 
@@ -110,7 +103,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -132,7 +124,6 @@ ScriptedImporter:
     pivot: {x: 0.42307693, y: -0.61538464}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 809
@@ -153,7 +144,6 @@ ScriptedImporter:
     pivot: {x: 0.42307693, y: -0.61538464}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 895
@@ -174,7 +164,6 @@ ScriptedImporter:
     pivot: {x: 0.42307693, y: -0.61538464}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 241
@@ -195,7 +184,6 @@ ScriptedImporter:
     pivot: {x: 0.42500004, y: -0.62921345}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 721
@@ -216,7 +204,6 @@ ScriptedImporter:
     pivot: {x: 0.42500004, y: -0.6436781}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 413
@@ -237,7 +224,6 @@ ScriptedImporter:
     pivot: {x: 0.42307693, y: -0.6363636}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 501
@@ -258,7 +244,6 @@ ScriptedImporter:
     pivot: {x: 0.42307693, y: -0.61538464}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 327
@@ -279,7 +264,6 @@ ScriptedImporter:
     pivot: {x: 0.41666672, y: -0.6021505}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 956
@@ -300,7 +284,6 @@ ScriptedImporter:
     pivot: {x: 0.40579712, y: -0.59574467}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 661
@@ -321,7 +304,6 @@ ScriptedImporter:
     pivot: {x: 0.41025642, y: -0.7}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 825
@@ -342,7 +324,6 @@ ScriptedImporter:
     pivot: {x: 0.44210526, y: -0.6021505}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 538
@@ -363,7 +344,6 @@ ScriptedImporter:
     pivot: {x: 0.43820223, y: -0.59574467}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 641
@@ -384,7 +364,6 @@ ScriptedImporter:
     pivot: {x: 0.4177215, y: -0.7}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 738
@@ -405,7 +384,6 @@ ScriptedImporter:
     pivot: {x: 0.5352112, y: -0.5185185}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 162
@@ -426,7 +404,6 @@ ScriptedImporter:
     pivot: {x: 0.5492958, y: -0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -447,7 +424,6 @@ ScriptedImporter:
     pivot: {x: 0.5492958, y: -0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 83
@@ -468,7 +444,6 @@ ScriptedImporter:
     pivot: {x: 0.18691586, y: -0.49107146}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 858
@@ -489,7 +464,6 @@ ScriptedImporter:
     pivot: {x: 0.20560749, y: -0.57608694}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 841
@@ -510,7 +484,6 @@ ScriptedImporter:
     pivot: {x: 0.28999996, y: -0.62921345}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 430
@@ -531,7 +504,6 @@ ScriptedImporter:
     pivot: {x: 0.75609756, y: -0.62921345}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 631
@@ -552,7 +524,6 @@ ScriptedImporter:
     pivot: {x: 0.7619048, y: -0.62921345}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 359
@@ -573,7 +544,6 @@ ScriptedImporter:
     pivot: {x: 0.7619048, y: -0.62921345}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 451
@@ -594,7 +564,6 @@ ScriptedImporter:
     pivot: {x: 0.30894306, y: -0.45999998}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 593
@@ -615,7 +584,6 @@ ScriptedImporter:
     pivot: {x: 0.29508197, y: -0.59574467}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 508
@@ -636,7 +604,6 @@ ScriptedImporter:
     pivot: {x: 0.40000004, y: -0.6363636}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 916
@@ -657,7 +624,6 @@ ScriptedImporter:
     pivot: {x: 0.4871795, y: -0.55445546}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 186
@@ -678,7 +644,6 @@ ScriptedImporter:
     pivot: {x: 0.49397585, y: -0.5436893}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -699,7 +664,6 @@ ScriptedImporter:
     pivot: {x: 0.49397585, y: -0.5436893}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 95
@@ -720,7 +684,6 @@ ScriptedImporter:
     pivot: {x: 0.42372882, y: -0.09489051}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -741,7 +704,6 @@ ScriptedImporter:
     pivot: {x: 0.6179775, y: -0.20161289}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 638
@@ -762,7 +724,6 @@ ScriptedImporter:
     pivot: {x: 0.6363636, y: -0.5252526}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 587
@@ -783,7 +744,6 @@ ScriptedImporter:
     pivot: {x: 0.75, y: -0.6021505}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 543
@@ -804,7 +764,6 @@ ScriptedImporter:
     pivot: {x: 0.7530864, y: -0.59574467}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 738
@@ -825,7 +784,6 @@ ScriptedImporter:
     pivot: {x: 0.7530864, y: -0.59574467}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 827
@@ -846,7 +804,6 @@ ScriptedImporter:
     pivot: {x: 0.39041096, y: -0.23931624}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -867,7 +824,6 @@ ScriptedImporter:
     pivot: {x: 0.24137934, y: -0.24786326}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 469
@@ -888,7 +844,6 @@ ScriptedImporter:
     pivot: {x: 0.34343436, y: -0.59574467}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -909,7 +864,6 @@ ScriptedImporter:
     pivot: {x: 0.65254235, y: -0.56565654}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 382
@@ -930,7 +884,6 @@ ScriptedImporter:
     pivot: {x: 0.6355932, y: -0.55445546}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 130
@@ -951,7 +904,6 @@ ScriptedImporter:
     pivot: {x: 0.6355932, y: -0.55445546}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 256
@@ -972,7 +924,6 @@ ScriptedImporter:
     pivot: {x: 0.5037038, y: -0.53271025}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 326
@@ -993,7 +944,6 @@ ScriptedImporter:
     pivot: {x: 0.26530612, y: -0.53271025}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 735
@@ -1014,7 +964,6 @@ ScriptedImporter:
     pivot: {x: 0.25316453, y: -0.5833333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 272
@@ -1035,7 +984,6 @@ ScriptedImporter:
     pivot: {x: 0.20618555, y: -0.6086956}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 325
@@ -1056,7 +1004,6 @@ ScriptedImporter:
     pivot: {x: 0.20202018, y: -0.61538464}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 111
@@ -1077,7 +1024,6 @@ ScriptedImporter:
     pivot: {x: 0.20202018, y: -0.61538464}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 218
@@ -1098,7 +1044,6 @@ ScriptedImporter:
     pivot: {x: 0.54375005, y: -0.57}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 158
@@ -1119,7 +1064,6 @@ ScriptedImporter:
     pivot: {x: 0.72222227, y: -0.58762884}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 724
@@ -1140,7 +1084,6 @@ ScriptedImporter:
     pivot: {x: 0.59782606, y: -0.58947366}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -1157,455 +1100,400 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 4, y: 376}
   spriteSheetImportData: []
-  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 652271667
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: 652271667
+    guid: 1253814039
     name: Warrior_Purple
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Frame_0
+    - name: Warrior_Purple_Frame_0
       frameIndex: 0
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 56
         width: 78
         height: 91
       spriteId: 554b064d4b7547240a698ecd5d3dae25
-    - name: Frame_1
+    - name: Warrior_Purple_Frame_1
       frameIndex: 1
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 56
         width: 78
         height: 91
       spriteId: f2d67cf710571be4e8719287aa60d457
-    - name: Frame_2
+    - name: Warrior_Purple_Frame_2
       frameIndex: 2
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 56
         width: 78
         height: 91
       spriteId: 9046fc02849196841a33adf540dde008
-    - name: Frame_3
+    - name: Warrior_Purple_Frame_3
       frameIndex: 3
-      additiveSortOrder: 0
       cellRect:
         x: 62
         y: 56
         width: 80
         height: 89
       spriteId: df94114d3af871a4f9e06537cd38956a
-    - name: Frame_4
+    - name: Warrior_Purple_Frame_4
       frameIndex: 4
-      additiveSortOrder: 0
       cellRect:
         x: 62
         y: 56
         width: 80
         height: 87
       spriteId: cc407d61c53c0934bb1f695363b205e2
-    - name: Frame_5
+    - name: Warrior_Purple_Frame_5
       frameIndex: 5
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 56
         width: 78
         height: 88
       spriteId: 4c41a5e793caf754d83e04fde4018d90
-    - name: Frame_6
+    - name: Warrior_Purple_Frame_6
       frameIndex: 6
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 56
         width: 78
         height: 91
       spriteId: 4c76dd08d7440e24f83bb474fb1f0590
-    - name: Frame_7
+    - name: Warrior_Purple_Frame_7
       frameIndex: 7
-      additiveSortOrder: 0
       cellRect:
         x: 71
         y: 56
         width: 60
         height: 93
       spriteId: 30318439a5f8c1a4ba3d92f962c2666f
-    - name: Frame_8
+    - name: Warrior_Purple_Frame_8
       frameIndex: 8
-      additiveSortOrder: 0
       cellRect:
         x: 68
         y: 56
         width: 69
         height: 94
       spriteId: 22d77f39b4ad22741a9795a9cf480d04
-    - name: Frame_9
+    - name: Warrior_Purple_Frame_9
       frameIndex: 9
-      additiveSortOrder: 0
       cellRect:
         x: 64
         y: 56
         width: 78
         height: 80
       spriteId: a8c2b5f5049c7d14f8f411a550d065ae
-    - name: Frame_10
+    - name: Warrior_Purple_Frame_10
       frameIndex: 10
-      additiveSortOrder: 0
       cellRect:
         x: 54
         y: 56
         width: 95
         height: 93
       spriteId: 1443affd2bc9c6b499315d413de8798f
-    - name: Frame_11
+    - name: Warrior_Purple_Frame_11
       frameIndex: 11
-      additiveSortOrder: 0
       cellRect:
         x: 57
         y: 56
         width: 89
         height: 94
       spriteId: d19bc1ba8fc5a06498b2c5886661405e
-    - name: Frame_12
+    - name: Warrior_Purple_Frame_12
       frameIndex: 12
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 56
         width: 79
         height: 80
       spriteId: 9de09a2fb95e08a4ba8e99127e588d0e
-    - name: Frame_13
+    - name: Warrior_Purple_Frame_13
       frameIndex: 13
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 56
         width: 71
         height: 108
       spriteId: aafb489e85a23d5459e6aef090c6025d
-    - name: Frame_14
+    - name: Warrior_Purple_Frame_14
       frameIndex: 14
-      additiveSortOrder: 0
       cellRect:
         x: 57
         y: 56
         width: 71
         height: 112
       spriteId: 6f6b7ad7302b0aa48984353eabcd42ac
-    - name: Frame_15
+    - name: Warrior_Purple_Frame_15
       frameIndex: 15
-      additiveSortOrder: 0
       cellRect:
         x: 57
         y: 56
         width: 71
         height: 112
       spriteId: 12b7a5a54cc2731478240e5d42e72aea
-    - name: Frame_16
+    - name: Warrior_Purple_Frame_16
       frameIndex: 16
-      additiveSortOrder: 0
       cellRect:
         x: 76
         y: 55
         width: 107
         height: 112
       spriteId: c1f8465dadb4ec94690e32274715665d
-    - name: Frame_17
+    - name: Warrior_Purple_Frame_17
       frameIndex: 17
-      additiveSortOrder: 0
       cellRect:
         x: 74
         y: 53
         width: 107
         height: 92
       spriteId: 6b818eb1db70e164f82360b820d45e13
-    - name: Frame_18
+    - name: Warrior_Purple_Frame_18
       frameIndex: 18
-      additiveSortOrder: 0
       cellRect:
         x: 67
         y: 56
         width: 100
         height: 89
       spriteId: 6bc8bfbda763a6849bcc9a28aa2b361b
-    - name: Frame_19
+    - name: Warrior_Purple_Frame_19
       frameIndex: 19
-      additiveSortOrder: 0
       cellRect:
         x: 34
         y: 56
         width: 82
         height: 89
       spriteId: b1e758f0c34dc7b40881326e51d9b836
-    - name: Frame_20
+    - name: Warrior_Purple_Frame_20
       frameIndex: 20
-      additiveSortOrder: 0
       cellRect:
         x: 32
         y: 56
         width: 84
         height: 89
       spriteId: d966d5489b7fc874f8cb666d57890df1
-    - name: Frame_21
+    - name: Warrior_Purple_Frame_21
       frameIndex: 21
-      additiveSortOrder: 0
       cellRect:
         x: 32
         y: 56
         width: 84
         height: 89
       spriteId: cfbb23fbdb327cb498be3ff394ba2824
-    - name: Frame_22
+    - name: Warrior_Purple_Frame_22
       frameIndex: 22
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 46
         width: 123
         height: 100
       spriteId: b1d36b77bad4a3a41a0d0ac88817a96a
-    - name: Frame_23
+    - name: Warrior_Purple_Frame_23
       frameIndex: 23
-      additiveSortOrder: 0
       cellRect:
         x: 60
         y: 56
         width: 122
         height: 94
       spriteId: 79355ec55fa174e4b9af27235708fa7a
-    - name: Frame_24
+    - name: Warrior_Purple_Frame_24
       frameIndex: 24
-      additiveSortOrder: 0
       cellRect:
         x: 62
         y: 56
         width: 85
         height: 88
       spriteId: 69c55140befa93c4bbcf168c6b7da12b
-    - name: Frame_25
+    - name: Warrior_Purple_Frame_25
       frameIndex: 25
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 56
         width: 78
         height: 101
       spriteId: 45925db2cfb96ef499ef33a3c4da6101
-    - name: Frame_26
+    - name: Warrior_Purple_Frame_26
       frameIndex: 26
-      additiveSortOrder: 0
       cellRect:
         x: 55
         y: 56
         width: 83
         height: 103
       spriteId: e5f698d50f925e54d999059248332ca4
-    - name: Frame_27
+    - name: Warrior_Purple_Frame_27
       frameIndex: 27
-      additiveSortOrder: 0
       cellRect:
         x: 55
         y: 56
         width: 83
         height: 103
       spriteId: f3ae8b0876be53e43b966325e62b70f4
-    - name: Frame_28
+    - name: Warrior_Purple_Frame_28
       frameIndex: 28
-      additiveSortOrder: 0
       cellRect:
         x: 46
         y: 13
         width: 118
         height: 137
       spriteId: 49b7570327970ff438b5a1c4e28cdd22
-    - name: Frame_29
+    - name: Warrior_Purple_Frame_29
       frameIndex: 29
-      additiveSortOrder: 0
       cellRect:
         x: 41
         y: 25
         width: 89
         height: 124
       spriteId: 658e8ee3e44c56842b4953eecc1e7cba
-    - name: Frame_30
+    - name: Warrior_Purple_Frame_30
       frameIndex: 30
-      additiveSortOrder: 0
       cellRect:
         x: 54
         y: 52
         width: 66
         height: 99
       spriteId: 4a7a50ea73609a442aa8efd0b3be2b6c
-    - name: Frame_31
+    - name: Warrior_Purple_Frame_31
       frameIndex: 31
-      additiveSortOrder: 0
       cellRect:
         x: 36
         y: 56
         width: 80
         height: 93
       spriteId: 56285d393ca4c254d855cd781f760051
-    - name: Frame_32
+    - name: Warrior_Purple_Frame_32
       frameIndex: 32
-      additiveSortOrder: 0
       cellRect:
         x: 35
         y: 56
         width: 81
         height: 94
       spriteId: cb488d2091742cc40b312f72cec148ce
-    - name: Frame_33
+    - name: Warrior_Purple_Frame_33
       frameIndex: 33
-      additiveSortOrder: 0
       cellRect:
         x: 35
         y: 56
         width: 81
         height: 94
       spriteId: ae11a36c7b97e754da63fff9ededb501
-    - name: Frame_34
+    - name: Warrior_Purple_Frame_34
       frameIndex: 34
-      additiveSortOrder: 0
       cellRect:
         x: 39
         y: 28
         width: 146
         height: 117
       spriteId: 5a1c46d3cc0cca740ae94e05c952b379
-    - name: Frame_35
+    - name: Warrior_Purple_Frame_35
       frameIndex: 35
-      additiveSortOrder: 0
       cellRect:
         x: 68
         y: 29
         width: 116
         height: 117
       spriteId: 25ad3305127506a4eaadee3ae42c96c7
-    - name: Frame_36
+    - name: Warrior_Purple_Frame_36
       frameIndex: 36
-      additiveSortOrder: 0
       cellRect:
         x: 62
         y: 56
         width: 99
         height: 94
       spriteId: 492b5e38e22df2b42bea62971d476a4f
-    - name: Frame_37
+    - name: Warrior_Purple_Frame_37
       frameIndex: 37
-      additiveSortOrder: 0
       cellRect:
         x: 19
         y: 56
         width: 118
         height: 99
       spriteId: bc07f55c31d90764597c18f4b4e0e0d0
-    - name: Frame_38
+    - name: Warrior_Purple_Frame_38
       frameIndex: 38
-      additiveSortOrder: 0
       cellRect:
         x: 21
         y: 56
         width: 118
         height: 101
       spriteId: a58179d742b6485499ca5c4a7987964a
-    - name: Frame_39
+    - name: Warrior_Purple_Frame_39
       frameIndex: 39
-      additiveSortOrder: 0
       cellRect:
         x: 21
         y: 56
         width: 118
         height: 101
       spriteId: f553463f23bd54e489488210d2c3fb27
-    - name: Frame_40
+    - name: Warrior_Purple_Frame_40
       frameIndex: 40
-      additiveSortOrder: 0
       cellRect:
         x: 28
         y: 57
         width: 135
         height: 107
       spriteId: 540de7ff319feb04ea72555642dc3d5b
-    - name: Frame_41
+    - name: Warrior_Purple_Frame_41
       frameIndex: 41
-      additiveSortOrder: 0
       cellRect:
         x: 70
         y: 57
         width: 98
         height: 107
       spriteId: 5780d0f5ba1de5446821dc9a95d7a2a4
-    - name: Frame_42
+    - name: Warrior_Purple_Frame_42
       frameIndex: 42
-      additiveSortOrder: 0
       cellRect:
         x: 76
         y: 56
         width: 79
         height: 96
       spriteId: af1ed6da326508b49a6ab6dfd76da487
-    - name: Frame_43
+    - name: Warrior_Purple_Frame_43
       frameIndex: 43
-      additiveSortOrder: 0
       cellRect:
         x: 76
         y: 56
         width: 97
         height: 92
       spriteId: 9d116343edd532a41b25cecb2bf2555a
-    - name: Frame_44
+    - name: Warrior_Purple_Frame_44
       frameIndex: 44
-      additiveSortOrder: 0
       cellRect:
         x: 76
         y: 56
         width: 99
         height: 91
       spriteId: ec107923ea5c1a64e83dd0fa93182b27
-    - name: Frame_45
+    - name: Warrior_Purple_Frame_45
       frameIndex: 45
-      additiveSortOrder: 0
       cellRect:
         x: 76
         y: 56
         width: 99
         height: 91
       spriteId: 7f3e60f76ec7c5147b6ee2ed91c8ac43
-    - name: Frame_46
+    - name: Warrior_Purple_Frame_46
       frameIndex: 46
-      additiveSortOrder: 0
       cellRect:
         x: 9
         y: 57
         width: 160
         height: 100
       spriteId: 79d38a29cae7b2d4d8e82123f247dae5
-    - name: Frame_47
+    - name: Warrior_Purple_Frame_47
       frameIndex: 47
-      additiveSortOrder: 0
       cellRect:
         x: 5
         y: 57
         width: 126
         height: 97
       spriteId: 962b579d258d23d4f88fa24d0d56289a
-    - name: Frame_48
+    - name: Warrior_Purple_Frame_48
       frameIndex: 48
-      additiveSortOrder: 0
       cellRect:
         x: 41
         y: 56
@@ -1613,13 +1501,8 @@ ScriptedImporter:
         height: 95
       spriteId: 207470a7b98dc7f439105979a103bb5b
     linkedCells: []
-    tileCells: []
-    tileSetIndex: 0
     parentIndex: -1
-  tileSets: []
   platformSettings: []
-  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 192, y: 192}
-  previousTextureSize: {x: 1024, y: 1024}

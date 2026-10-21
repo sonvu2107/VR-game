@@ -147,7 +147,7 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
         if (movement != null && movement.IsDashing) return BodyState.Dash;
         if ((movement != null && (movement.IsAttacking || movement.IsHeavyLocked)) ||
             (skills != null && skills.IsSkillCasting)) return BodyState.Attack;
-        if (body != null && body.linearVelocity.sqrMagnitude > 0.02f) return BodyState.Run;
+        if (body != null && body.velocity.sqrMagnitude > 0.02f) return BodyState.Run;
         return BodyState.Idle;
     }
 

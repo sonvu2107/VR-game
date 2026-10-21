@@ -21,7 +21,7 @@ public sealed partial class LanMenuUI
     private MenuStep menuStep;
     private LanMode chosenMode;
     private int chosenLevel;
-    private TextMeshProUGUI heading, characterName, characterDescription, selectionSummary;
+    private TextMeshProUGUI heading, characterName, selectionSummary;
     private TextMeshProUGUI nextText, backText;
     private Button nextButton;
     private RectTransform levelGroup, networkGroup, hostPortGroup, nameGroup;
@@ -106,8 +106,6 @@ public sealed partial class LanMenuUI
         preview = imageObject.AddComponent<MenuCharacterPreview>();
         characterName = Label(stage, "", 24, new Vector2(148, 78), new Vector2(280, 70));
         characterName.color = Gold;
-        characterDescription = Label(stage, "", 19, new Vector2(148, -9), new Vector2(270, 90));
-        characterDescription.color = Muted;
         string[] actions = { "Đứng yên", "Chạy", "Tấn công" };
         var actionButtons = new Button[3];
         for (int i = 0; i < actions.Length; i++)
@@ -181,12 +179,6 @@ public sealed partial class LanMenuUI
     {
         LanLaunch.SelectCharacter(id);
         characterName.text = PlayableCharacterNames.DisplayName(id);
-        characterDescription.text = id switch {
-            PlayableCharacterId.AzureWarden => "Giáp nặng · Kiếm năng lượng",
-            PlayableCharacterId.Chronoblade => "Kiếm sĩ thời gian",
-            PlayableCharacterId.GravewindRanger => "Lãng khách u phong",
-            _ => "Kiếm sĩ tro tàn"
-        };
         preview.SetCharacter(id);
         for (int i = 0; i < characterChoices.Length; i++)
         {

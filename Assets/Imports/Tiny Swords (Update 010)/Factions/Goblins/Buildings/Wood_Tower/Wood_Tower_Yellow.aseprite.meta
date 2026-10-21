@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -78,14 +77,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 0
@@ -93,14 +89,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 0
   textureAssetName: 
@@ -110,7 +103,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -132,7 +124,6 @@ ScriptedImporter:
     pivot: {x: 0.5, y: -0.13548388}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -153,7 +144,6 @@ ScriptedImporter:
     pivot: {x: 0.5, y: -0.13548388}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 158
@@ -174,7 +164,6 @@ ScriptedImporter:
     pivot: {x: 0.5, y: -0.13548388}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 296
@@ -195,7 +184,6 @@ ScriptedImporter:
     pivot: {x: 0.5, y: -0.13548388}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -216,7 +204,6 @@ ScriptedImporter:
     pivot: {x: 0.5, y: -0.13548388}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 142
@@ -233,59 +220,48 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 142, y: 167}
   spriteSheetImportData: []
-  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 1938021026
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: 1938021026
+    guid: 595201338
     name: Wood_Tower_Yellow
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Frame_0
+    - name: Wood_Tower_Yellow_Frame_0
       frameIndex: 0
-      additiveSortOrder: 0
       cellRect:
         x: 55
         y: 21
         width: 146
         height: 155
       spriteId: 88f888a176cf8e14b8f99e1d9d4be10e
-    - name: Frame_1
+    - name: Wood_Tower_Yellow_Frame_1
       frameIndex: 1
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 21
         width: 130
         height: 155
       spriteId: 7d0e64794268a144eaa90ab439e613e2
-    - name: Frame_2
+    - name: Wood_Tower_Yellow_Frame_2
       frameIndex: 2
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 21
         width: 130
         height: 155
       spriteId: 57ed46397c0e601448a2a68803cb4645
-    - name: Frame_3
+    - name: Wood_Tower_Yellow_Frame_3
       frameIndex: 3
-      additiveSortOrder: 0
       cellRect:
         x: 63
         y: 21
         width: 130
         height: 155
       spriteId: cb1d91ef3a133ea49b5613e9727acdcc
-    - name: Frame_4
+    - name: Wood_Tower_Yellow_Frame_4
       frameIndex: 4
-      additiveSortOrder: 0
       cellRect:
         x: 65
         y: 21
@@ -293,13 +269,8 @@ ScriptedImporter:
         height: 155
       spriteId: 5617aa0fa35ab1f44a7325bf74e953ae
     linkedCells: []
-    tileCells: []
-    tileSetIndex: 0
     parentIndex: -1
-  tileSets: []
   platformSettings: []
-  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 256, y: 192}
-  previousTextureSize: {x: 512, y: 512}

@@ -197,7 +197,7 @@ public class PlayerMovement : MonoBehaviour
         }
         Vector2 delta = ConstrainToWalkableArea(direction.normalized * distance);
         rb.position += delta;
-        rb.linearVelocity = Vector2.zero;
+        rb.velocity = Vector2.zero;
         Physics2D.SyncTransforms();
     }
 
@@ -207,7 +207,7 @@ public class PlayerMovement : MonoBehaviour
         _movement = Vector2.zero;
         powerupChargeVfx?.Hide();
         skillController?.ResetForLanRun();
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        if (rb != null) rb.velocity = Vector2.zero;
     }
 
     public void ResetForLanRun()
@@ -222,7 +222,7 @@ public class PlayerMovement : MonoBehaviour
         attackEndsAt = hitAt = comboExpiresAt = dashEndsAt = slashVfxHideAt = dashVfxHideAt = 0f;
         powerupChargeVfx?.Hide();
         RestoreAnimatorAfterHeavyStrike();
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        if (rb != null) rb.velocity = Vector2.zero;
         if (animator != null) { animator.Rebind(); animator.Update(0f); }
         skillController?.ResetForLanRun();
     }
@@ -272,7 +272,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 allowedDelta = ConstrainToWalkableArea(requestedDelta);
         Vector2 destination = start + allowedDelta;
         rb.position = destination;
-        rb.linearVelocity = Vector2.zero;
+        rb.velocity = Vector2.zero;
         rb.angularVelocity = 0f;
         // Skill casts pin the body in FixedUpdate. Update that anchor too so
         // a blink cannot be pulled back to its pre-cast position next frame.
@@ -418,7 +418,7 @@ public class PlayerMovement : MonoBehaviour
         if (rb != null)
         {
             rb.position = spawnPosition;
-            rb.linearVelocity = Vector2.zero;
+            rb.velocity = Vector2.zero;
             rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             Physics2D.SyncTransforms();
         }
@@ -731,7 +731,7 @@ public class PlayerMovement : MonoBehaviour
         isHeavyAttacking = false;
         heavyPositionLocked = false;
         isDashing = false;
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        if (rb != null) rb.velocity = Vector2.zero;
         if (slashVfxRenderer != null) slashVfxRenderer.enabled = false;
         if (dashVfxRenderer != null) dashVfxRenderer.enabled = false;
         if (playerSpriteRenderer != null) playerSpriteRenderer.color = Color.white;
@@ -1496,7 +1496,7 @@ public class PlayerMovement : MonoBehaviour
             if (allowedDelta.sqrMagnitude < 0.0001f)
             {
                 isDashing = false;
-                rb.linearVelocity = Vector2.zero;
+                rb.velocity = Vector2.zero;
                 if (animator != null)
                     animator.SetFloat("Speed", _movement == Vector2.zero ? 0f : 5f);
             }
@@ -1511,7 +1511,7 @@ public class PlayerMovement : MonoBehaviour
                 heavyPositionLocked = true;
             }
 
-            rb.linearVelocity = Vector2.zero;
+            rb.velocity = Vector2.zero;
             rb.angularVelocity = 0f;
             rb.MovePosition(heavyLockedPosition);
             return;
@@ -1530,7 +1530,7 @@ public class PlayerMovement : MonoBehaviour
             // Rigidbody2D is Dynamic and has no linear drag. Clear any velocity
             // left by the previous MovePosition, then pin it to the cast point
             // so collisions cannot create a final-frame horizontal slip.
-            rb.linearVelocity = Vector2.zero;
+            rb.velocity = Vector2.zero;
             rb.angularVelocity = 0f;
             rb.MovePosition(skillLockedPosition);
             return;
@@ -1549,7 +1549,7 @@ public class PlayerMovement : MonoBehaviour
         // Ordinary movement remains fully physics-driven. Applying the tile
         // sweep to every tiny keyboard step made a valid spawn look blocked
         // on maps whose art/collider pivot is offset from the tile centre.
-        rb.linearVelocity = _movement * (speed * movementMultiplier);
+        rb.velocity = _movement * (speed * movementMultiplier);
     }
 
     private Vector2 ConstrainToWalkableArea(Vector2 desiredDelta)

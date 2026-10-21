@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -78,14 +77,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 0
@@ -93,14 +89,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 0
   textureAssetName: 
@@ -110,7 +103,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -132,7 +124,6 @@ ScriptedImporter:
     pivot: {x: 0.44705883, y: -0.826087}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -153,7 +144,6 @@ ScriptedImporter:
     pivot: {x: 0.44186047, y: -0.8382353}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 97
@@ -174,7 +164,6 @@ ScriptedImporter:
     pivot: {x: 0.44578314, y: -0.8382353}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 380
@@ -195,7 +184,6 @@ ScriptedImporter:
     pivot: {x: 0.43373492, y: -0.8382353}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 88
@@ -216,7 +204,6 @@ ScriptedImporter:
     pivot: {x: 0.4302326, y: -0.8636364}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 286
@@ -237,7 +224,6 @@ ScriptedImporter:
     pivot: {x: 0.4534884, y: -0.8769231}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 179
@@ -258,7 +244,6 @@ ScriptedImporter:
     pivot: {x: 0.44827586, y: -0.8636364}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 191
@@ -279,7 +264,6 @@ ScriptedImporter:
     pivot: {x: 0.45000002, y: -0.921875}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 97
@@ -300,7 +284,6 @@ ScriptedImporter:
     pivot: {x: 0.4375, y: -0.880597}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -321,7 +304,6 @@ ScriptedImporter:
     pivot: {x: 0.43373492, y: -0.9833333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 185
@@ -342,7 +324,6 @@ ScriptedImporter:
     pivot: {x: 0.44705883, y: -0.921875}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -363,7 +344,6 @@ ScriptedImporter:
     pivot: {x: 0.47560975, y: -0.880597}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 358
@@ -384,7 +364,6 @@ ScriptedImporter:
     pivot: {x: 0.475, y: -0.9833333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 276
@@ -405,7 +384,6 @@ ScriptedImporter:
     pivot: {x: 0.5324675, y: -0.7916667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 273
@@ -426,7 +404,6 @@ ScriptedImporter:
     pivot: {x: 0.59210527, y: -0.76}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -447,7 +424,6 @@ ScriptedImporter:
     pivot: {x: 0.53333336, y: -0.95}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 231
@@ -468,7 +444,6 @@ ScriptedImporter:
     pivot: {x: 0.51351345, y: -0.9047619}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 364
@@ -489,7 +464,6 @@ ScriptedImporter:
     pivot: {x: 0.53424656, y: -0.8382353}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 76
@@ -510,7 +484,6 @@ ScriptedImporter:
     pivot: {x: 0.640625, y: -0.7037037}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -531,7 +504,6 @@ ScriptedImporter:
     pivot: {x: 0.5606061, y: -0.7916667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 157
@@ -552,7 +524,6 @@ ScriptedImporter:
     pivot: {x: 0.44444445, y: -1.4705882}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 481
@@ -573,7 +544,6 @@ ScriptedImporter:
     pivot: {x: 0.44444445, y: -1.4423077}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 446
@@ -594,7 +564,6 @@ ScriptedImporter:
     pivot: {x: 0.46153846, y: -1.4705882}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 314
@@ -615,7 +584,6 @@ ScriptedImporter:
     pivot: {x: 0.48, y: -1.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 483
@@ -636,7 +604,6 @@ ScriptedImporter:
     pivot: {x: 0.44444445, y: -1.4705882}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 448
@@ -657,7 +624,6 @@ ScriptedImporter:
     pivot: {x: 0.42857143, y: -1.4705882}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 471
@@ -674,248 +640,216 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 471, y: 4}
   spriteSheetImportData: []
-  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 3793803016
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: -501164280
+    guid: -1393723544
     name: TNT_Red
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Frame_0
+    - name: TNT_Red_Frame_0
       frameIndex: 0
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 57
         width: 85
         height: 69
       spriteId: b6d92f9f589c3b24b982b19325fed913
-    - name: Frame_1
+    - name: TNT_Red_Frame_1
       frameIndex: 1
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 57
         width: 86
         height: 68
       spriteId: ef903a37a94719240b9c0b79e3eb2b74
-    - name: Frame_2
+    - name: TNT_Red_Frame_2
       frameIndex: 2
-      additiveSortOrder: 0
       cellRect:
         x: 59
         y: 57
         width: 83
         height: 68
       spriteId: e9a50621d02c11f45b5922b089adaace
-    - name: Frame_3
+    - name: TNT_Red_Frame_3
       frameIndex: 3
-      additiveSortOrder: 0
       cellRect:
         x: 60
         y: 57
         width: 83
         height: 68
       spriteId: 1e1974a06832d6541892878c7e3e5137
-    - name: Frame_4
+    - name: TNT_Red_Frame_4
       frameIndex: 4
-      additiveSortOrder: 0
       cellRect:
         x: 59
         y: 57
         width: 86
         height: 66
       spriteId: 6dbb939f0f8b76c4e8af554cfa1ae1fc
-    - name: Frame_5
+    - name: TNT_Red_Frame_5
       frameIndex: 5
-      additiveSortOrder: 0
       cellRect:
         x: 57
         y: 57
         width: 86
         height: 65
       spriteId: 65f069989f37f1040b5d5019245a3bd8
-    - name: Frame_6
+    - name: TNT_Red_Frame_6
       frameIndex: 6
-      additiveSortOrder: 0
       cellRect:
         x: 57
         y: 57
         width: 87
         height: 66
       spriteId: 6e65b4ad95215fe4bac0eafc84441e21
-    - name: Frame_7
+    - name: TNT_Red_Frame_7
       frameIndex: 7
-      additiveSortOrder: 0
       cellRect:
         x: 60
         y: 59
         width: 80
         height: 64
       spriteId: 02ceed0ec951527479f1ac0c0932e193
-    - name: Frame_8
+    - name: TNT_Red_Frame_8
       frameIndex: 8
-      additiveSortOrder: 0
       cellRect:
         x: 61
         y: 59
         width: 80
         height: 67
       spriteId: b5849cfad31ba96408cfd269591c0afb
-    - name: Frame_9
+    - name: TNT_Red_Frame_9
       frameIndex: 9
-      additiveSortOrder: 0
       cellRect:
         x: 60
         y: 59
         width: 83
         height: 60
       spriteId: 031114bac64faa4408dca86f289f0608
-    - name: Frame_10
+    - name: TNT_Red_Frame_10
       frameIndex: 10
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 59
         width: 85
         height: 64
       spriteId: 2ee95054007995a4fb102dd5ea7d6ded
-    - name: Frame_11
+    - name: TNT_Red_Frame_11
       frameIndex: 11
-      additiveSortOrder: 0
       cellRect:
         x: 57
         y: 59
         width: 82
         height: 67
       spriteId: 507dc35d0b1066041adbec26edd2c4ad
-    - name: Frame_12
+    - name: TNT_Red_Frame_12
       frameIndex: 12
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 59
         width: 80
         height: 60
       spriteId: fc9f3a7496661ca44a3274ace75f7ce1
-    - name: Frame_13
+    - name: TNT_Red_Frame_13
       frameIndex: 13
-      additiveSortOrder: 0
       cellRect:
         x: 55
         y: 57
         width: 77
         height: 72
       spriteId: 9fc4e61b0bd1d124b826a2cabc606e9f
-    - name: Frame_14
+    - name: TNT_Red_Frame_14
       frameIndex: 14
-      additiveSortOrder: 0
       cellRect:
         x: 51
         y: 57
         width: 76
         height: 75
       spriteId: b46c6503ce8c5474993b1fcd89d89807
-    - name: Frame_15
+    - name: TNT_Red_Frame_15
       frameIndex: 15
-      additiveSortOrder: 0
       cellRect:
         x: 56
         y: 57
         width: 75
         height: 60
       spriteId: 1927a497242c20045b9360685834de6f
-    - name: Frame_16
+    - name: TNT_Red_Frame_16
       frameIndex: 16
-      additiveSortOrder: 0
       cellRect:
         x: 58
         y: 57
         width: 74
         height: 63
       spriteId: 3977c4039c5e47a42b3301b5dcec3466
-    - name: Frame_17
+    - name: TNT_Red_Frame_17
       frameIndex: 17
-      additiveSortOrder: 0
       cellRect:
         x: 57
         y: 57
         width: 73
         height: 68
       spriteId: d83539e88d9e5de4188ce9af3bfc452b
-    - name: Frame_18
+    - name: TNT_Red_Frame_18
       frameIndex: 18
-      additiveSortOrder: 0
       cellRect:
         x: 55
         y: 57
         width: 64
         height: 81
       spriteId: ce7b77609f6b077418884beb3f291898
-    - name: Frame_19
+    - name: TNT_Red_Frame_19
       frameIndex: 19
-      additiveSortOrder: 0
       cellRect:
         x: 59
         y: 57
         width: 66
         height: 72
       spriteId: 748394b997a6a264e9d9bf17a04481d6
-    - name: Frame_20
+    - name: TNT_Red_Frame_20
       frameIndex: 20
-      additiveSortOrder: 0
       cellRect:
         x: 84
         y: 75
         width: 27
         height: 51
       spriteId: 41f7bdfa53a41294b9682948a1d5ceba
-    - name: Frame_21
+    - name: TNT_Red_Frame_21
       frameIndex: 21
-      additiveSortOrder: 0
       cellRect:
         x: 84
         y: 75
         width: 27
         height: 52
       spriteId: e45a2d5d7038c844eb1ca6b7584cbd36
-    - name: Frame_22
+    - name: TNT_Red_Frame_22
       frameIndex: 22
-      additiveSortOrder: 0
       cellRect:
         x: 84
         y: 75
         width: 26
         height: 51
       spriteId: 1d3b9ae827ec85b45a9bb38765731a69
-    - name: Frame_23
+    - name: TNT_Red_Frame_23
       frameIndex: 23
-      additiveSortOrder: 0
       cellRect:
         x: 84
         y: 75
         width: 25
         height: 50
       spriteId: e22587af566d5cf49b0346ac1487c7b4
-    - name: Frame_24
+    - name: TNT_Red_Frame_24
       frameIndex: 24
-      additiveSortOrder: 0
       cellRect:
         x: 84
         y: 75
         width: 27
         height: 51
       spriteId: b4142c89e46c88540adc2920ada9003f
-    - name: Frame_25
+    - name: TNT_Red_Frame_25
       frameIndex: 25
-      additiveSortOrder: 0
       cellRect:
         x: 84
         y: 75
@@ -923,13 +857,8 @@ ScriptedImporter:
         height: 51
       spriteId: 8e70309f0e751c5409fca9d28130744c
     linkedCells: []
-    tileCells: []
-    tileSetIndex: 0
     parentIndex: -1
-  tileSets: []
   platformSettings: []
-  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 192, y: 192}
-  previousTextureSize: {x: 512, y: 512}

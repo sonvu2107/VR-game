@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -78,14 +77,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 0
@@ -93,14 +89,11 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
-    generateIndividualEvents: 1
-    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 0
   textureAssetName: 
@@ -110,7 +103,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -132,7 +124,6 @@ ScriptedImporter:
     pivot: {x: 0.5, y: -0.26136366}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 68
@@ -153,7 +144,6 @@ ScriptedImporter:
     pivot: {x: 0.4923077, y: -0.27272728}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 168
@@ -174,7 +164,6 @@ ScriptedImporter:
     pivot: {x: 0.49315068, y: -0.25274727}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 87
@@ -195,7 +184,6 @@ ScriptedImporter:
     pivot: {x: 0.49333334, y: -0.25}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -216,7 +204,6 @@ ScriptedImporter:
     pivot: {x: 0.5, y: -0.17346938}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -237,7 +224,6 @@ ScriptedImporter:
     pivot: {x: 0.4791667, y: -0.14736843}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 136
@@ -258,7 +244,6 @@ ScriptedImporter:
     pivot: {x: 0.46938774, y: -0.18681319}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 192
@@ -275,77 +260,64 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 192, y: 104}
   spriteSheetImportData: []
-  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 3457519710
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: -837447586
+    guid: -1754209850
     name: Fire
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Frame_0
+    - name: Fire_Frame_0
       frameIndex: 0
-      additiveSortOrder: 0
       cellRect:
         x: 34
         y: 23
         width: 60
         height: 88
       spriteId: 19ad63bfaee0790469348c56cf54ba4a
-    - name: Frame_1
+    - name: Fire_Frame_1
       frameIndex: 1
-      additiveSortOrder: 0
       cellRect:
         x: 32
         y: 24
         width: 65
         height: 88
       spriteId: c2bc5cdd20acd47468ed185aba8d136e
-    - name: Frame_2
+    - name: Fire_Frame_2
       frameIndex: 2
-      additiveSortOrder: 0
       cellRect:
         x: 28
         y: 23
         width: 73
         height: 91
       spriteId: d664eb83ea3f93243804364ca4350927
-    - name: Frame_3
+    - name: Fire_Frame_3
       frameIndex: 3
-      additiveSortOrder: 0
       cellRect:
         x: 27
         y: 23
         width: 75
         height: 92
       spriteId: c7d7be64301d87c4e9b6e589e7d2d8f4
-    - name: Frame_4
+    - name: Fire_Frame_4
       frameIndex: 4
-      additiveSortOrder: 0
       cellRect:
         x: 36
         y: 17
         width: 56
         height: 98
       spriteId: 50cdb1d62a19d6f45be47981c3fea337
-    - name: Frame_5
+    - name: Fire_Frame_5
       frameIndex: 5
-      additiveSortOrder: 0
       cellRect:
         x: 41
         y: 14
         width: 48
         height: 95
       spriteId: d643943451c40224ba441aa600db5078
-    - name: Frame_6
+    - name: Fire_Frame_6
       frameIndex: 6
-      additiveSortOrder: 0
       cellRect:
         x: 41
         y: 17
@@ -353,13 +325,8 @@ ScriptedImporter:
         height: 91
       spriteId: fdb75a65d65ecaf41bba09f5f98de20f
     linkedCells: []
-    tileCells: []
-    tileSetIndex: 0
     parentIndex: -1
-  tileSets: []
   platformSettings: []
-  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 128, y: 128}
-  previousTextureSize: {x: 256, y: 256}
