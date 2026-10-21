@@ -453,7 +453,7 @@ public sealed class LanSessionBridge : GameSessionBridge
         // Both bodies start in the valid spawn cell; player/player collision is ignored.
         guest.transform.position = manager.PlayerMovement.transform.position;
         var body = guest.GetComponent<Rigidbody2D>();
-        if (body != null) { body.position = guest.transform.position; body.velocity = Vector2.zero; }
+        if (body != null) { body.position = guest.transform.position; body.linearVelocity = Vector2.zero; }
         guestInput.ResetInput();
     }
 

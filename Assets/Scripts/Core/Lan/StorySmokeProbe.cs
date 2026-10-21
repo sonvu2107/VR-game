@@ -163,16 +163,16 @@ public sealed partial class StorySmokeProbe : MonoBehaviour
                 {
                     Vector2 center = stone.bounds.center;
                     rb.position = center - direction * 1.2f - offset;
-                    rb.velocity = Vector2.zero;
+                    rb.linearVelocity = Vector2.zero;
                     Physics2D.SyncTransforms();
                     float startDistance = Vector2.Dot((Vector2)body.bounds.center - center, direction);
                     for (int tick = 0; tick < 22; tick++)
                     {
                         if (dash) rb.MovePosition(rb.position + direction * (player.dashDistance / player.dashDuration) * Time.fixedDeltaTime);
-                        else rb.velocity = direction * player.speed;
+                        else rb.linearVelocity = direction * player.speed;
                         yield return new WaitForFixedUpdate();
                     }
-                    rb.velocity = Vector2.zero;
+                    rb.linearVelocity = Vector2.zero;
                     Physics2D.SyncTransforms();
                     float distance = Vector2.Dot((Vector2)body.bounds.center - center, direction);
                     Check(distance > startDistance + 0.05f && distance < -0.1f,
@@ -181,7 +181,7 @@ public sealed partial class StorySmokeProbe : MonoBehaviour
                 }
             }
             rb.position = original;
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             player.enabled = enabledBefore;
         }
         Physics2D.SyncTransforms();

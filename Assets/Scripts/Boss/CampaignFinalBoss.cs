@@ -37,12 +37,18 @@ public sealed class CampaignFinalBoss : MonoBehaviour
         var stats = health.Config != null ? Instantiate(health.Config) : ScriptableObject.CreateInstance<EnemyConfigSO>();
         stats.name = "RunBoss_" + prefab.name;
         bool isSkeletonKing = root.GetComponent<SkeletonKingController>() != null;
-        stats.maxHealth = isSkeletonKing ? 600 : Mathf.Max(600, stats.maxHealth * 5);
+        // Level 10 is the campaign finale: make every possible boss roll feel
+        // meaningfully tougher without changing the source prefab's balance.
+        stats.maxHealth = isSkeletonKing ? 1400 : Mathf.Max(900, stats.maxHealth * 7);
         if (isSkeletonKing) stats.displayName = "Vua Xương";
         stats.scoreValue = Mathf.Max(300, stats.scoreValue * 10);
         stats.detectionRange = 30f;
-        stats.attackCooldown = Mathf.Clamp(stats.attackCooldown * 0.72f, 1.15f, 2.4f);
-        stats.attackWindup = Mathf.Clamp(stats.attackWindup * 0.75f, 0.35f, 0.58f);
+        stats.attackDamage = Mathf.Max(2, Mathf.CeilToInt(stats.attackDamage * 2f));
+        stats.contactDamage = Mathf.Max(2, Mathf.CeilToInt(stats.contactDamage * 2f));
+        stats.attackCooldown = Mathf.Clamp(stats.attackCooldown * 0.42f, 0.45f, 0.9f);
+        stats.attackWindup = Mathf.Clamp(stats.attackWindup * 0.55f, 0.2f, 0.38f);
+        stats.attackRecovery = Mathf.Clamp(stats.attackRecovery * 0.55f, 0.2f, 0.42f);
+        stats.specialCooldown = Mathf.Clamp(stats.specialCooldown * 0.4f, 0.65f, 1.4f);
         // Barrel boss nổ theo hồi chiêu, không tự sát như Barrel thường.
         stats.selfDestructOnAttack = false;
         marker.runtimeConfig = stats;
@@ -104,7 +110,7 @@ public sealed class CampaignFinalBoss : MonoBehaviour
             root.AddComponent<FinalBossHealthBar>();
         if (Application.isPlaying) Destroy(staging); else DestroyImmediate(staging);
         movement.ConfigureBossArena(room.FloorTiles, (Vector2)(relative.extents * factor + new Vector3(Mathf.Abs(offset.x), Mathf.Abs(offset.y)) * factor));
-        Debug.Log($"FINAL_BOSS_SELECTED source={prefab.name} multiplier={factor} hp={stats.maxHealth}");
+        Debug.Log($"FINAL_BOSS_SELECTED source={prefab.name} multiplier={factor} hp={stats.maxHealth} damage={stats.attackDamage} cooldown={stats.attackCooldown:F2}");
         return marker;
     }
 

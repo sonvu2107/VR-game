@@ -112,6 +112,8 @@ public class PlayerMovement : MonoBehaviour
     private AudioClip gravewindDashSfx;
 
     private Vector2 _movement;
+    private float movementSlowUntil = -1f;
+    private float movementSlowMultiplier = 1f;
     private Vector2 facingLeft;
     private bool isFacingLeft;
     private bool isAttacking;
@@ -174,13 +176,38 @@ public class PlayerMovement : MonoBehaviour
     public bool HasRemoteInput => lanInput != null;
     public float PowerUpCooldownRemaining => Mathf.Max(0f, powerUpAttackCooldownActual);
 
+    /// <summary>Applies a temporary floor-hazard slow; dash movement remains an escape option.</summary>
+    public void ApplyMovementSlow(float duration, float multiplier)
+    {
+        if (duration <= 0f) return;
+        if (Time.time >= movementSlowUntil) movementSlowMultiplier = 1f;
+        movementSlowUntil = Mathf.Max(movementSlowUntil, Time.time + duration);
+        movementSlowMultiplier = Mathf.Min(movementSlowMultiplier, Mathf.Clamp(multiplier, 0.1f, 1f));
+    }
+
+    /// <summary>Small constrained displacement used by clearly telegraphed enemy impacts.</summary>
+    public void ApplyExternalKnockback(Vector2 direction, float distance)
+    {
+        if (direction.sqrMagnitude < 0.001f || distance <= 0f) return;
+        rb ??= GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            transform.position += (Vector3)(direction.normalized * distance);
+            return;
+        }
+        Vector2 delta = ConstrainToWalkableArea(direction.normalized * distance);
+        rb.position += delta;
+        rb.linearVelocity = Vector2.zero;
+        Physics2D.SyncTransforms();
+    }
+
     public void CancelLanActions()
     {
         StopAllCoroutines();
         _movement = Vector2.zero;
         powerupChargeVfx?.Hide();
         skillController?.ResetForLanRun();
-        if (rb != null) rb.velocity = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
     }
 
     public void ResetForLanRun()
@@ -195,7 +222,7 @@ public class PlayerMovement : MonoBehaviour
         attackEndsAt = hitAt = comboExpiresAt = dashEndsAt = slashVfxHideAt = dashVfxHideAt = 0f;
         powerupChargeVfx?.Hide();
         RestoreAnimatorAfterHeavyStrike();
-        if (rb != null) rb.velocity = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
         if (animator != null) { animator.Rebind(); animator.Update(0f); }
         skillController?.ResetForLanRun();
     }
@@ -245,7 +272,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 allowedDelta = ConstrainToWalkableArea(requestedDelta);
         Vector2 destination = start + allowedDelta;
         rb.position = destination;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.angularVelocity = 0f;
         // Skill casts pin the body in FixedUpdate. Update that anchor too so
         // a blink cannot be pulled back to its pre-cast position next frame.
@@ -391,7 +418,7 @@ public class PlayerMovement : MonoBehaviour
         if (rb != null)
         {
             rb.position = spawnPosition;
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             Physics2D.SyncTransforms();
         }
@@ -704,7 +731,7 @@ public class PlayerMovement : MonoBehaviour
         isHeavyAttacking = false;
         heavyPositionLocked = false;
         isDashing = false;
-        if (rb != null) rb.velocity = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
         if (slashVfxRenderer != null) slashVfxRenderer.enabled = false;
         if (dashVfxRenderer != null) dashVfxRenderer.enabled = false;
         if (playerSpriteRenderer != null) playerSpriteRenderer.color = Color.white;
@@ -904,6 +931,13 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void PlaySkillBodyMotion(int comboIndex, bool usePowerupPose = false)
     {
+        PlayerCharacterFrameAnimator frameAnimator = GetComponent<PlayerCharacterFrameAnimator>();
+        if (frameAnimator != null && frameAnimator.Character != PlayableCharacterId.AshenKnight)
+        {
+            frameAnimator.PlaySkillMotion(usePowerupPose);
+            return;
+        }
+
         if (animator == null)
             return;
 
@@ -1033,17 +1067,36 @@ public class PlayerMovement : MonoBehaviour
         else
             slashVfxBaseScale = comboHit == 0 ? hit1VfxScale : comboHit == 1 ? hit2VfxScale : hit3VfxScale;
         slashVfxRenderer.sprite = slashVfxFrames[comboHit][0];
-        // Every source sheet shares the same right-facing orientation. The parent
-        // mirrors the complete effect together with the Player when facing left.
-        slashVfxRenderer.flipX = false;
+        // Chronoblade's generated combo frames do not share one source-facing
+        // direction: Rising Cut is already authored forward, while Reverse Cut
+        // and Cross Finish need one extra horizontal flip. The effect then
+        // inherits the Player transform for the actual left/right direction.
+        // Other characters keep their authored orientation.
+        slashVfxRenderer.flipX = CurrentCharacter == PlayableCharacterId.Chronoblade && comboHit != 0;
         slashVfxRenderer.flipY = false;
         slashVfxRenderer.color = Color.white;
-        slashVfxRenderer.transform.localPosition = transform.InverseTransformPoint(attackPoint.position);
+        slashVfxRenderer.transform.localPosition = GetSlashVfxLocalPosition(comboHit);
         slashVfxRenderer.transform.localRotation = Quaternion.identity;
         slashVfxRenderer.transform.localScale = Vector3.one * slashVfxBaseScale;
         slashVfxRenderer.enabled = true;
         slashVfxShownAt = Time.time;
         slashVfxHideAt = Time.time + slashVfxDuration;
+    }
+
+    private Vector3 GetSlashVfxLocalPosition(int comboHit)
+    {
+        Vector3 localAttackPoint = transform.InverseTransformPoint(attackPoint.position);
+
+        // Rising Cut and Reverse Cut travel into the target, so they belong at
+        // the forward attack point. Cross Finish is a centred X-shaped strike;
+        // anchoring it to that same forward point visibly shifts its final hit
+        // away from the character. Centre only its horizontal pivot while
+        // retaining the authored vertical weapon height and the existing
+        // gameplay hit circle.
+        if (CurrentCharacter == PlayableCharacterId.Chronoblade && comboHit == 2)
+            localAttackPoint.x = 0f;
+
+        return localAttackPoint;
     }
 
     private void UpdateSlashVfx()
@@ -1443,7 +1496,7 @@ public class PlayerMovement : MonoBehaviour
             if (allowedDelta.sqrMagnitude < 0.0001f)
             {
                 isDashing = false;
-                rb.velocity = Vector2.zero;
+                rb.linearVelocity = Vector2.zero;
                 if (animator != null)
                     animator.SetFloat("Speed", _movement == Vector2.zero ? 0f : 5f);
             }
@@ -1458,7 +1511,7 @@ public class PlayerMovement : MonoBehaviour
                 heavyPositionLocked = true;
             }
 
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
             rb.MovePosition(heavyLockedPosition);
             return;
@@ -1477,7 +1530,7 @@ public class PlayerMovement : MonoBehaviour
             // Rigidbody2D is Dynamic and has no linear drag. Clear any velocity
             // left by the previous MovePosition, then pin it to the cast point
             // so collisions cannot create a final-frame horizontal slip.
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
             rb.MovePosition(skillLockedPosition);
             return;
@@ -1491,10 +1544,12 @@ public class PlayerMovement : MonoBehaviour
         // no longer lost between physics ticks.
         float movementMultiplier = isHeavyCharging ? heavyChargeMoveSpeedMultiplier :
             isAttacking ? attackMoveSpeedMultiplier : 1f;
+        if (Time.time >= movementSlowUntil) movementSlowMultiplier = 1f;
+        else movementMultiplier *= movementSlowMultiplier;
         // Ordinary movement remains fully physics-driven. Applying the tile
         // sweep to every tiny keyboard step made a valid spawn look blocked
         // on maps whose art/collider pivot is offset from the tile centre.
-        rb.velocity = _movement * (speed * movementMultiplier);
+        rb.linearVelocity = _movement * (speed * movementMultiplier);
     }
 
     private Vector2 ConstrainToWalkableArea(Vector2 desiredDelta)

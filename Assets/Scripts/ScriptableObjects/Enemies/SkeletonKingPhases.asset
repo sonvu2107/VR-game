@@ -38,3 +38,17 @@ MonoBehaviour:
   maximumSummons: 4
   hazardCooldown: 6
   waveSpeed: 3.8
+  boneCageTelegraphDuration: 0.8
+  boneCageImpactDelay: 1.1
+  boneCageCooldownMin: 8
+  boneCageCooldownMax: 10
+  boneCageRadius: 3.25
+  boneChargeTelegraphDuration: 0.65
+  boneChargeDashDuration: 0.32
+  boneChargeRecoveryDuration: 0.65
+  boneChargeDistance: 5.5
+  boneChargeCooldownMin: 9
+  boneChargeCooldownMax: 11
+  boneChargeImpactRadius: 1.05
+  boneChargeCrackDuration: 2
+  boneChargeSlowMultiplier: 0.55

@@ -191,6 +191,56 @@ public class EnemyMovement : MonoBehaviour
         agent.isStopped = false;
     }
 
+    /// <summary>Moves a boss through a brief, authored charge without calculating a new path.</summary>
+    public void MoveDirect(Vector3 worldDelta)
+    {
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.Move(worldDelta);
+            return;
+        }
+        transform.position += worldDelta;
+    }
+
+    /// <summary>
+    /// Picks a forward charge endpoint that remains inside the configured boss arena.
+    /// This prevents LateUpdate from snapping a charging boss back toward its start.
+    /// </summary>
+    public bool TryGetForwardChargeDestination(Vector3 origin, Vector2 direction,
+        float maximumDistance, out Vector3 destination)
+    {
+        direction = direction.sqrMagnitude > 0.001f ? direction.normalized : Vector2.right;
+        maximumDistance = Mathf.Max(0.5f, maximumDistance);
+        destination = origin;
+
+        if (bossArenaCells.Count > 0)
+        {
+            float bestScore = float.NegativeInfinity;
+            foreach (Vector3 cell in bossArenaCells)
+            {
+                Vector2 offset = (Vector2)(cell - origin);
+                float forward = Vector2.Dot(offset, direction);
+                float lateral = Mathf.Abs(direction.x * offset.y - direction.y * offset.x);
+                if (forward < 0.75f || forward > maximumDistance + 0.75f || lateral > 1.15f)
+                    continue;
+
+                float score = forward - lateral * 0.45f;
+                if (score <= bestScore) continue;
+                bestScore = score;
+                destination = cell;
+            }
+            return bestScore > float.NegativeInfinity;
+        }
+
+        Vector3 desired = origin + (Vector3)(direction * maximumDistance);
+        if (agent != null && agent.enabled && agent.isOnNavMesh &&
+            NavMesh.SamplePosition(desired, out NavMeshHit hit, 1.5f, NavMesh.AllAreas))
+            destination = hit.position;
+        else destination = desired;
+        return Vector2.Dot((Vector2)(destination - origin), direction) > 0.5f;
+    }
+
     /// <summary>Temporarily slows or stops this enemy without disabling its NavMeshAgent.</summary>
     public void ApplyCrowdControl(float duration, float speedMultiplier)
     {

@@ -48,7 +48,7 @@ public static class MduchdIntegrationProbe
         var body = player.GetComponent<Rigidbody2D>();
         var skills = player.GetComponent<PlayerSkillController>();
         bool playerEnabled = player.enabled, skillsEnabled = skills.enabled;
-        Vector2 originalPosition = body.position, originalVelocity = body.velocity;
+        Vector2 originalPosition = body.position, originalVelocity = body.linearVelocity;
         SimulationMode2D simulation = Physics2D.simulationMode;
         GameObject wall = null, bridgeRoot = null;
         LanPlayerInput remote = null;
@@ -88,7 +88,7 @@ public static class MduchdIntegrationProbe
 
             Physics2D.simulationMode = SimulationMode2D.Script;
             body.position = new Vector2(10000, 10000);
-            body.velocity = Vector2.zero;
+            body.linearVelocity = Vector2.zero;
             Physics2D.SyncTransforms();
             var collider = player.GetComponent<Collider2D>();
             float startX = body.position.x;
@@ -106,11 +106,11 @@ public static class MduchdIntegrationProbe
                 "Velocity movement passed through the wall.");
             remote.Apply(default);
             Call(player, "Update"); Call(player, "FixedUpdate");
-            Require(body.velocity == Vector2.zero, "Release input did not stop movement.");
+            Require(body.linearVelocity == Vector2.zero, "Release input did not stop movement.");
             manager.Pause();
             remote.Apply(new LanInputFrame { movement = Vector2.right });
             Call(player, "Update"); Call(player, "FixedUpdate");
-            Require(body.velocity == Vector2.zero, "Paused input moved the player.");
+            Require(body.linearVelocity == Vector2.zero, "Paused input moved the player.");
             manager.Resume();
             Debug.Log("MDUCHD_INPUT_PHYSICS_PASS keyboardFallback=true normalized=true soloRightMouse=true lanRightMouse=true remoteAuthority=true velocity=true wallCollision=true release=true pause=true");
         }
@@ -125,7 +125,7 @@ public static class MduchdIntegrationProbe
             Set(player, "lanInput", null);
             if (remote != null) UnityEngine.Object.DestroyImmediate(remote);
             player.ResetForLanRun();
-            body.position = originalPosition; body.velocity = originalVelocity;
+            body.position = originalPosition; body.linearVelocity = originalVelocity;
             Physics2D.SyncTransforms();
             player.enabled = playerEnabled; skills.enabled = skillsEnabled;
         }

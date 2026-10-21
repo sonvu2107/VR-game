@@ -14,13 +14,27 @@ public static class EnemyCombatAudio
         Elite,
         MiniBoss,
         BossWave,
-        BossDash
+        BossDash,
+        BossMelee,
+        BossTelegraph,
+        BoneRise,
+        BoneImpact,
+        BossDeathCollapse,
+        BossSummon
     }
 
     private static readonly Dictionary<Cue, AudioClip> Clips = new Dictionary<Cue, AudioClip>();
 
     public static void PlayAttack(GameObject owner, EnemyArchetype archetype, bool special = false)
     {
+        // The Skeleton King must not sound like a regular melee minion.
+        if (owner != null && owner.GetComponent<SkeletonKingController>() != null)
+        {
+            Play(owner, Cue.BossMelee, special ? 0.94f : 0.84f,
+                Random.Range(0.92f, 0.99f));
+            return;
+        }
+
         Cue cue;
         switch (archetype)
         {
@@ -60,6 +74,7 @@ public static class EnemyCombatAudio
         if (Clips.TryGetValue(cue, out AudioClip cached)) return cached;
 
         string name;
+        string path = null;
         switch (cue)
         {
             case Cue.Ranged: name = "EnemyArrowShot"; break;
@@ -68,12 +83,19 @@ public static class EnemyCombatAudio
             case Cue.Summoner: name = "SummonerCast"; break;
             case Cue.Elite: name = "EliteAttack"; break;
             case Cue.MiniBoss: name = "MiniBossSpecial"; break;
-            case Cue.BossWave: name = "BossWave"; break;
-            case Cue.BossDash: name = "BossDash"; break;
+            case Cue.BossWave: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingWave"; name = null; break;
+            case Cue.BossDash: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingDash"; name = null; break;
+            case Cue.BossMelee: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingMelee"; name = null; break;
+            case Cue.BossTelegraph: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingRoar"; name = null; break;
+            case Cue.BoneRise: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingBoneRise"; name = null; break;
+            case Cue.BoneImpact: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingBoneImpact"; name = null; break;
+            case Cue.BossDeathCollapse: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingSoulDeath"; name = null; break;
+            case Cue.BossSummon: path = "Audio/Combat/Enemies/SkeletonKing/SkeletonKingSummon"; name = null; break;
             default: name = "EnemyMeleeAttack"; break;
         }
 
-        AudioClip clip = Resources.Load<AudioClip>("Audio/Combat/Enemies/" + name);
+        if (string.IsNullOrEmpty(path)) path = "Audio/Combat/Enemies/" + name;
+        AudioClip clip = Resources.Load<AudioClip>(path);
         Clips[cue] = clip;
         return clip;
     }
