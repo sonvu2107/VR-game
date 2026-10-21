@@ -62,8 +62,6 @@ public class Boss3DVisual : MonoBehaviour
     private SpriteRenderer shadowRenderer;
     private Transform runeCircleTransform;
     private SpriteRenderer runeCircleRenderer;
-    private Transform crownTransform;
-    private SpriteRenderer crownRenderer;
     private Light2D bossLight;
 
     // Motion states
@@ -75,8 +73,6 @@ public class Boss3DVisual : MonoBehaviour
     private float nextGhostTime;
     private float currentPhaseScaleMultiplier = 1f;
     private Color originalDisplayColor = Color.white;
-    private Vector3 crownVelocity;
-    private Vector3 targetCrownLocalPos;
 
     // Procedural Sprites Cache
     private static Sprite cachedSoftShadow;
@@ -177,11 +173,9 @@ public class Boss3DVisual : MonoBehaviour
         // 3. Tạo 3D Magic Rune Circle xoay tròn trên mặt đất
         CreateRuneMagicCircle();
 
-        // 4. Nếu là Skeleton King, tạo vương miện 3D có độ trễ thị sai (Parallax Crown)
-        if (bossKind == BossVisualKind.SkeletonKing)
-        {
-            CreateParallaxCrown();
-        }
+        // The floating crown used to overlap the world-space boss health bar.
+        // Do not recreate it, and remove either legacy runtime name if present.
+        RemoveCrownDecoration();
 
         // 5. Tạo nguồn sáng Light2D ma quái chiếu rọi hầm ngục
         if (enableDynamicLight)
@@ -225,24 +219,15 @@ public class Boss3DVisual : MonoBehaviour
         runeCircleRenderer.sortingOrder = 1; // Nằm trên bóng đổ nhưng dưới chân Boss
     }
 
-    private void CreateParallaxCrown()
+    private void RemoveCrownDecoration()
     {
-        // Xóa crown cũ (nếu từng tạo bởi SkeletonKingController cũ)
         Transform oldCrown = transform.Find("King Crown");
         if (oldCrown != null && oldCrown != transform)
             Destroy(oldCrown.gameObject);
 
-        GameObject crownObj = new GameObject("3D Parallax Royal Crown");
-        crownObj.transform.SetParent(transform, false);
-        crownTransform = crownObj.transform;
-        targetCrownLocalPos = new Vector3(0.02f, 1.05f, 0f);
-        crownTransform.localPosition = targetCrownLocalPos;
-        crownTransform.localScale = Vector3.one * 0.85f;
-
-        crownRenderer = crownObj.AddComponent<SpriteRenderer>();
-        crownRenderer.sprite = GetKingCrownSprite();
-        crownRenderer.sortingLayerID = displayRenderer.sortingLayerID;
-        crownRenderer.sortingOrder = displayRenderer.sortingOrder + 2; // Nổi bật phía trước đầu Boss
+        Transform parallaxCrown = transform.Find("3D Parallax Royal Crown");
+        if (parallaxCrown != null && parallaxCrown != transform)
+            Destroy(parallaxCrown.gameObject);
     }
 
     private void CreateBossLight()
@@ -288,7 +273,6 @@ public class Boss3DVisual : MonoBehaviour
         if (runeCircleRenderer != null) runeCircleRenderer.enabled = false;
         if (shadowRenderer != null) shadowRenderer.enabled = false;
         if (bossLight != null) bossLight.enabled = false;
-        if (crownRenderer != null) crownRenderer.enabled = false;
     }
 
     private IEnumerator FlashDamageRoutine()
@@ -387,8 +371,6 @@ public class Boss3DVisual : MonoBehaviour
         // 6. Cập nhật Bóng Đổ 3D: Co giãn & mờ dần theo độ cao Z tương đối
         UpdateDynamicShadow(pseudoZHeight);
 
-        // 7. Cập nhật Vương Miện Thị Sai Parallax (nếu có)
-        UpdateParallaxCrown();
 
         // 8. Cập nhật Nguồn Sáng & Tàn Ảnh (Ghost Trails)
         UpdateLightAndAfterimages(isMoving, speed);
@@ -434,20 +416,6 @@ public class Boss3DVisual : MonoBehaviour
         Color shadowCol = shadowRenderer.color;
         shadowCol.a = Mathf.Lerp(0.52f, 0.22f, heightFactor);
         shadowRenderer.color = shadowCol;
-    }
-
-    private void UpdateParallaxCrown()
-    {
-        if (crownTransform == null) return;
-
-        // Đầu nhún nhảy, vương miện lơ lửng đi theo với độ trễ (Spring latency) tạo chiều sâu 3D
-        Vector3 targetPos = targetCrownLocalPos;
-        // Hiệu ứng bồng bềnh độc lập của vương miện
-        targetPos.y += Mathf.Sin(Time.time * 2.2f + 1f) * 0.035f;
-
-        crownTransform.localPosition = Vector3.SmoothDamp(crownTransform.localPosition, targetPos, ref crownVelocity, 0.08f);
-        // Vương miện hơi nghiêng nhẹ theo góc nghiêng của thân nhưng có độ trễ
-        crownTransform.localRotation = Quaternion.Slerp(crownTransform.localRotation, Quaternion.Euler(0f, 0f, currentTiltZ * 0.65f), Time.deltaTime * 12f);
     }
 
     private void UpdateLightAndAfterimages(bool isMoving, float speed)

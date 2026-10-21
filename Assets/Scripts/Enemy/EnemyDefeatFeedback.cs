@@ -13,6 +13,8 @@ public sealed class EnemyDefeatFeedback : MonoBehaviour
     private static AudioClip enemyClip;
     private static AudioClip miniBossClip;
     private static AudioClip bossClip;
+    private static AudioClip skeletonKingDeathClip;
+    private static AudioClip bossCollapseClip;
 
     private Transform[] shards;
     private SpriteRenderer[] shardRenderers;
@@ -20,6 +22,7 @@ public sealed class EnemyDefeatFeedback : MonoBehaviour
     private float[] angularVelocities;
     private Vector3[] initialScales;
     private Tier tier;
+    private bool skeletonKing;
     private Vector3 burstPosition;
 
     public static void Spawn(Vector3 position, Tier defeatTier, SpriteRenderer reference = null)
@@ -29,6 +32,7 @@ public sealed class EnemyDefeatFeedback : MonoBehaviour
 
         EnemyDefeatFeedback feedback = effect.AddComponent<EnemyDefeatFeedback>();
         feedback.tier = defeatTier;
+        feedback.skeletonKing = reference != null && reference.GetComponentInParent<SkeletonKingController>() != null;
         feedback.burstPosition = position;
         feedback.BuildShards(reference);
         feedback.PlayAudio();
@@ -49,7 +53,7 @@ public sealed class EnemyDefeatFeedback : MonoBehaviour
         initialScales = new Vector3[count];
 
         Color baseColor = tier == Tier.Boss
-            ? new Color(0.58f, 1f, 0.42f, 1f)
+            ? new Color(0.94f, 0.84f, 0.58f, 1f)
             : tier == Tier.MiniBoss
                 ? new Color(0.72f, 0.42f, 1f, 1f)
                 : new Color(1f, 0.34f, 0.20f, 1f);
@@ -67,11 +71,23 @@ public sealed class EnemyDefeatFeedback : MonoBehaviour
 
             SpriteRenderer renderer = shard.AddComponent<SpriteRenderer>();
             renderer.sprite = GetPixelSprite();
-            renderer.color = Color.Lerp(baseColor, Color.white, Random.Range(0f, 0.42f));
+            if (tier == Tier.Boss)
+            {
+                // Alternate ivory bone, ember and blood-red fragments so the finale
+                // reads as a king shattering apart rather than a generic green burst.
+                renderer.color = i % 3 == 0
+                    ? new Color(1f, 0.92f, 0.68f, 1f)
+                    : i % 3 == 1
+                        ? new Color(1f, 0.34f, 0.12f, 1f)
+                        : new Color(0.72f, 0.08f, 0.12f, 1f);
+            }
+            else renderer.color = Color.Lerp(baseColor, Color.white, Random.Range(0f, 0.42f));
             renderer.sortingLayerID = reference != null ? reference.sortingLayerID : 0;
             renderer.sortingOrder = (reference != null ? reference.sortingOrder : 0) + 8;
 
-            Vector2 direction = Random.insideUnitCircle.normalized;
+            Vector2 direction = tier == Tier.Boss
+                ? new Vector2(Mathf.Cos(i * Mathf.PI * 2f / count), Mathf.Sin(i * Mathf.PI * 2f / count)).normalized
+                : Random.insideUnitCircle.normalized;
             direction.y = Mathf.Abs(direction.y) + 0.28f;
             velocities[i] = direction.normalized * Random.Range(1.25f, tier == Tier.Boss ? 4.4f : 3.1f);
             angularVelocities[i] = Random.Range(-420f, 420f);
@@ -86,7 +102,13 @@ public sealed class EnemyDefeatFeedback : MonoBehaviour
         enemyClip ??= Resources.Load<AudioClip>("Audio/Combat/Enemies/EnemyDefeat");
         miniBossClip ??= Resources.Load<AudioClip>("Audio/Combat/Enemies/MiniBossDefeat");
         bossClip ??= Resources.Load<AudioClip>("Audio/Combat/Enemies/BossDefeat");
-        AudioClip clip = tier == Tier.Boss ? bossClip : tier == Tier.MiniBoss ? miniBossClip : enemyClip;
+        skeletonKingDeathClip ??= Resources.Load<AudioClip>(
+            "Audio/Combat/Enemies/SkeletonKing/SkeletonKingDeathVoice");
+        bossCollapseClip ??= Resources.Load<AudioClip>(
+            "Audio/Combat/Enemies/SkeletonKing/SkeletonKingSoulDeath");
+        AudioClip clip = tier == Tier.Boss
+            ? (skeletonKing && skeletonKingDeathClip != null ? skeletonKingDeathClip : bossClip)
+            : tier == Tier.MiniBoss ? miniBossClip : enemyClip;
         if (clip == null)
         {
             Debug.LogWarning($"Missing defeat SFX for {tier}.");
@@ -100,11 +122,20 @@ public sealed class EnemyDefeatFeedback : MonoBehaviour
         source.pitch = tier == Tier.Enemy ? Random.Range(0.94f, 1.07f) : 1f;
         source.clip = clip;
         source.Play();
+
+        if (tier == Tier.Boss && skeletonKing && bossCollapseClip != null)
+            StartCoroutine(PlayBossCollapseAccent());
+    }
+
+    private IEnumerator PlayBossCollapseAccent()
+    {
+        yield return new WaitForSeconds(0.24f);
+        EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.BossDeathCollapse, 0.90f, 0.72f);
     }
 
     private IEnumerator Animate()
     {
-        float duration = tier == Tier.Boss ? 1.15f : tier == Tier.MiniBoss ? 0.82f : 0.62f;
+        float duration = tier == Tier.Boss ? 1.42f : tier == Tier.MiniBoss ? 0.82f : 0.62f;
         float elapsed = 0f;
         bool secondaryBurstPlayed = false;
         while (elapsed < duration)

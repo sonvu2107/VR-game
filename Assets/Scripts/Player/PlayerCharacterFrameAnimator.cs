@@ -21,6 +21,7 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
     private BodyState state;
     private float stateStartedAt;
     private int lastAttackSequence = -1;
+    private bool skillUsesHeavyMotion;
 
     public static PlayerCharacterFrameAnimator Configure(GameObject player, PlayableCharacterId character)
     {
@@ -68,10 +69,30 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
         if (legacyAnimator != null) legacyAnimator.enabled = false;
     }
 
+    /// <summary>
+    /// Starts a visible body strike for Q/E/R on the three standalone-frame
+    /// characters. PlayerSkillController can be added after this component's
+    /// Awake, so refresh that reference here instead of relying on Awake order.
+    /// </summary>
+    public void PlaySkillMotion(bool useHeavyMotion)
+    {
+        if (Character == PlayableCharacterId.AshenKnight)
+            return;
+
+        skills ??= GetComponent<PlayerSkillController>();
+        skillUsesHeavyMotion = useHeavyMotion;
+        state = BodyState.Attack;
+        stateStartedAt = Time.time;
+    }
+
     private void LateUpdate()
     {
         if (Character == PlayableCharacterId.AshenKnight || spriteRenderer == null)
             return;
+
+        // GameManager configures the character in Awake, while PlayerMovement
+        // may add PlayerSkillController in Start. Reacquire it once available.
+        skills ??= GetComponent<PlayerSkillController>();
 
         // PlayerMovement may briefly re-enable it after a heavy strike.
         if (legacyAnimator != null && legacyAnimator.enabled)
@@ -90,11 +111,13 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
 
         Sprite[] frames = FramesFor(state);
         if (frames == null || frames.Length == 0) return;
+        bool skillAttack = state == BodyState.Attack && skills != null && skills.IsSkillCasting;
         float fps = state switch
         {
             BodyState.Run => 10f,
             BodyState.Attack when movement != null && movement.IsAttacking =>
                 frames.Length / Mathf.Max(0.05f, movement.ActiveComboDuration),
+            BodyState.Attack when skillAttack => skillUsesHeavyMotion ? 10f : 13f,
             BodyState.Attack => 13f,
             BodyState.Dash => 15f,
             BodyState.Hurt => 9f,
@@ -104,7 +127,10 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
         int raw = Mathf.FloorToInt((Time.time - stateStartedAt) * fps);
         // Each basic hit owns one complete six-frame pass. Chained clicks reset
         // stateStartedAt through AttackSequence instead of looping mid-swing.
-        bool loop = state is BodyState.Idle or BodyState.Run or BodyState.Dash;
+        // Skill VFX often lasts longer than a six-frame body strike. Loop that
+        // strike during casting so the character never freezes on its last pose
+        // while the ability continues around it.
+        bool loop = state is BodyState.Idle or BodyState.Run or BodyState.Dash || skillAttack;
         int index = loop ? raw % frames.Length : Mathf.Min(raw, frames.Length - 1);
         spriteRenderer.sprite = frames[Mathf.Max(0, index)];
     }
@@ -116,7 +142,7 @@ public sealed class PlayerCharacterFrameAnimator : MonoBehaviour
         if (movement != null && movement.IsDashing) return BodyState.Dash;
         if ((movement != null && (movement.IsAttacking || movement.IsHeavyLocked)) ||
             (skills != null && skills.IsSkillCasting)) return BodyState.Attack;
-        if (body != null && body.velocity.sqrMagnitude > 0.02f) return BodyState.Run;
+        if (body != null && body.linearVelocity.sqrMagnitude > 0.02f) return BodyState.Run;
         return BodyState.Idle;
     }
 

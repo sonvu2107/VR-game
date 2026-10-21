@@ -24,7 +24,9 @@ public class EnemySummoner : MonoBehaviour
         if (!NavMesh.SamplePosition(desired, out NavMeshHit hit, 2f, NavMesh.AllAreas)) return false;
 
         GameObject summon = Instantiate(config.summonPrefab, hit.position, Quaternion.identity);
-        EnemyCombatAudio.Play(gameObject, EnemyCombatAudio.Cue.Summoner, 0.82f, Random.Range(0.96f, 1.04f));
+        EnemyCombatAudio.Cue summonCue = GetComponent<SkeletonKingController>() != null
+            ? EnemyCombatAudio.Cue.BossSummon : EnemyCombatAudio.Cue.Summoner;
+        EnemyCombatAudio.Play(gameObject, summonCue, 0.82f, Random.Range(0.96f, 1.04f));
         activeSummons.Add(summon);
         nextSummonTime = Time.time + config.specialCooldown;
         EnemyHealth summonedHealth = summon.GetComponent<EnemyHealth>();

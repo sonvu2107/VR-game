@@ -8,6 +8,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -77,11 +78,14 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 0
@@ -89,11 +93,14 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 0
   textureAssetName: 
@@ -103,6 +110,7 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -124,6 +132,7 @@ ScriptedImporter:
     pivot: {x: 0.059561126, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -144,6 +153,7 @@ ScriptedImporter:
     pivot: {x: 0.053627763, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 648
@@ -164,6 +174,7 @@ ScriptedImporter:
     pivot: {x: 0.05660377, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -184,6 +195,7 @@ ScriptedImporter:
     pivot: {x: 0.058084775, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 650
@@ -204,6 +216,7 @@ ScriptedImporter:
     pivot: {x: 0.058084775, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1295
@@ -224,6 +237,7 @@ ScriptedImporter:
     pivot: {x: 0.059561126, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 650
@@ -244,6 +258,7 @@ ScriptedImporter:
     pivot: {x: 0.059561126, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1296
@@ -264,6 +279,7 @@ ScriptedImporter:
     pivot: {x: 0.059561126, y: 0.81535274}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -284,6 +300,7 @@ ScriptedImporter:
     pivot: {x: 0.5121951, y: -1.4193548}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1579
@@ -304,6 +321,7 @@ ScriptedImporter:
     pivot: {x: 0.53658533, y: -1.5000001}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1628
@@ -324,6 +342,7 @@ ScriptedImporter:
     pivot: {x: 0.54545456, y: -1.4193548}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1527
@@ -344,6 +363,7 @@ ScriptedImporter:
     pivot: {x: 0.54347825, y: -1.34375}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -364,6 +384,7 @@ ScriptedImporter:
     pivot: {x: 0.5319149, y: -1.2058823}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1366
@@ -384,6 +405,7 @@ ScriptedImporter:
     pivot: {x: 0.5217391, y: -1.2058823}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1421
@@ -404,6 +426,7 @@ ScriptedImporter:
     pivot: {x: 0.5227273, y: -1.2058823}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1475
@@ -424,6 +447,7 @@ ScriptedImporter:
     pivot: {x: 0.53488374, y: -1.2727273}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1994
@@ -444,6 +468,7 @@ ScriptedImporter:
     pivot: {x: 0.46153846, y: -0.78846157}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1290
@@ -464,6 +489,7 @@ ScriptedImporter:
     pivot: {x: 0.45588234, y: -0.8235294}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1290
@@ -484,6 +510,7 @@ ScriptedImporter:
     pivot: {x: 0.45070422, y: -0.754717}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -504,6 +531,7 @@ ScriptedImporter:
     pivot: {x: 0.46575344, y: -0.6909091}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -524,6 +552,7 @@ ScriptedImporter:
     pivot: {x: 0.46666667, y: -0.6607143}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -544,6 +573,7 @@ ScriptedImporter:
     pivot: {x: 0.46666667, y: -0.6909091}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1942
@@ -564,6 +594,7 @@ ScriptedImporter:
     pivot: {x: 0.47945204, y: -0.7222222}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -584,6 +615,7 @@ ScriptedImporter:
     pivot: {x: 0.47887322, y: -0.754717}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -604,6 +636,7 @@ ScriptedImporter:
     pivot: {x: 0.4819277, y: -0.516129}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -624,6 +657,7 @@ ScriptedImporter:
     pivot: {x: 0.47674417, y: -0.5666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1942
@@ -644,6 +678,7 @@ ScriptedImporter:
     pivot: {x: 0.47674417, y: -0.5666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1940
@@ -664,6 +699,7 @@ ScriptedImporter:
     pivot: {x: 0.4888889, y: -0.49206352}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1942
@@ -684,6 +720,7 @@ ScriptedImporter:
     pivot: {x: 0.48351648, y: -0.44615385}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1942
@@ -704,6 +741,7 @@ ScriptedImporter:
     pivot: {x: 0.48351648, y: -0.46875}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1942
@@ -724,6 +762,7 @@ ScriptedImporter:
     pivot: {x: 0.48351648, y: -0.46875}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1942
@@ -744,6 +783,7 @@ ScriptedImporter:
     pivot: {x: 0.4888889, y: -0.49206352}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 1942
@@ -760,264 +800,302 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 1942, y: 292}
   spriteSheetImportData: []
+  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: 1883100188
+    uuid:
+      value0: 1151510412
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 1151510412
     name: Rocks
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Rocks_Frame_0
+    - name: Frame_0
       frameIndex: 0
+      additiveSortOrder: 0
       cellRect:
         x: 26
         y: -393
         width: 638
         height: 482
       spriteId: c8e3216de5669d0419c46a698f6242c0
-    - name: Rocks_Frame_1
+    - name: Frame_1
       frameIndex: 1
+      additiveSortOrder: 0
       cellRect:
         x: 30
         y: -393
         width: 634
         height: 482
       spriteId: 7e37ee334568a9843b116a8a05fbefec
-    - name: Rocks_Frame_2
+    - name: Frame_2
       frameIndex: 2
+      additiveSortOrder: 0
       cellRect:
         x: 28
         y: -393
         width: 636
         height: 482
       spriteId: 73076a39a14c69545b9c3587ff5c2cdf
-    - name: Rocks_Frame_3
+    - name: Frame_3
       frameIndex: 3
+      additiveSortOrder: 0
       cellRect:
         x: 27
         y: -393
         width: 637
         height: 482
       spriteId: 49fd01406b0433249b994281c90acadd
-    - name: Rocks_Frame_4
+    - name: Frame_4
       frameIndex: 4
+      additiveSortOrder: 0
       cellRect:
         x: 27
         y: -393
         width: 637
         height: 482
       spriteId: c42a46d81c9577a419de7d7553e827b6
-    - name: Rocks_Frame_5
+    - name: Frame_5
       frameIndex: 5
+      additiveSortOrder: 0
       cellRect:
         x: 26
         y: -393
         width: 638
         height: 482
       spriteId: 900e639f7c5a84b45bff136539474eaf
-    - name: Rocks_Frame_6
+    - name: Frame_6
       frameIndex: 6
+      additiveSortOrder: 0
       cellRect:
         x: 26
         y: -393
         width: 638
         height: 482
       spriteId: e498b334335a9054ba3898aded15b6ac
-    - name: Rocks_Frame_7
+    - name: Frame_7
       frameIndex: 7
+      additiveSortOrder: 0
       cellRect:
         x: 26
         y: -393
         width: 638
         height: 482
       spriteId: c9ca5b46f64fe88479db61f9844fc7dc
-    - name: Rocks_Frame_8
+    - name: Frame_8
       frameIndex: 8
+      additiveSortOrder: 0
       cellRect:
         x: 43
         y: 44
         width: 41
         height: 31
       spriteId: ecf5533c5a0cd8347b5aa32c3b0d0b5d
-    - name: Rocks_Frame_9
+    - name: Frame_9
       frameIndex: 9
+      additiveSortOrder: 0
       cellRect:
         x: 42
         y: 45
         width: 41
         height: 30
       spriteId: 7b807727e2c088b4eaa3fda34c031c51
-    - name: Rocks_Frame_10
+    - name: Frame_10
       frameIndex: 10
+      additiveSortOrder: 0
       cellRect:
         x: 40
         y: 44
         width: 44
         height: 31
       spriteId: 3baf32358e6cf4f4bb379f22ae571f87
-    - name: Rocks_Frame_11
+    - name: Frame_11
       frameIndex: 11
+      additiveSortOrder: 0
       cellRect:
         x: 39
         y: 43
         width: 46
         height: 32
       spriteId: 4c7a7994df2d18746a3ec9097e767f2f
-    - name: Rocks_Frame_12
+    - name: Frame_12
       frameIndex: 12
+      additiveSortOrder: 0
       cellRect:
         x: 39
         y: 41
         width: 47
         height: 34
       spriteId: 502210159160ea140897ad40b2fa6676
-    - name: Rocks_Frame_13
+    - name: Frame_13
       frameIndex: 13
+      additiveSortOrder: 0
       cellRect:
         x: 40
         y: 41
         width: 46
         height: 34
       spriteId: af9aaa400409c834c8119bcefb7e7d0e
-    - name: Rocks_Frame_14
+    - name: Frame_14
       frameIndex: 14
+      additiveSortOrder: 0
       cellRect:
         x: 41
         y: 41
         width: 44
         height: 34
       spriteId: 748e6573ddbecc34db745934841ed8af
-    - name: Rocks_Frame_15
+    - name: Frame_15
       frameIndex: 15
+      additiveSortOrder: 0
       cellRect:
         x: 41
         y: 42
         width: 43
         height: 33
       spriteId: af49d40e9da93494f8079db01ca986aa
-    - name: Rocks_Frame_16
+    - name: Frame_16
       frameIndex: 16
+      additiveSortOrder: 0
       cellRect:
         x: 34
         y: 41
         width: 65
         height: 52
       spriteId: b560d36909590eb43a10fb89c4cf1594
-    - name: Rocks_Frame_17
+    - name: Frame_17
       frameIndex: 17
+      additiveSortOrder: 0
       cellRect:
         x: 33
         y: 42
         width: 68
         height: 51
       spriteId: 7f7c985d42b07f44a85edce8c0fa225e
-    - name: Rocks_Frame_18
+    - name: Frame_18
       frameIndex: 18
+      additiveSortOrder: 0
       cellRect:
         x: 32
         y: 40
         width: 71
         height: 53
       spriteId: 87b2c9c4b42da8b479b8adba1a184021
-    - name: Rocks_Frame_19
+    - name: Frame_19
       frameIndex: 19
+      additiveSortOrder: 0
       cellRect:
         x: 30
         y: 38
         width: 73
         height: 55
       spriteId: 1c1f5edd60ef4aa4d8c8c0953b1b24a9
-    - name: Rocks_Frame_20
+    - name: Frame_20
       frameIndex: 20
+      additiveSortOrder: 0
       cellRect:
         x: 29
         y: 37
         width: 75
         height: 56
       spriteId: 8cf6885c7e61a8243809cdb98d35edee
-    - name: Rocks_Frame_21
+    - name: Frame_21
       frameIndex: 21
+      additiveSortOrder: 0
       cellRect:
         x: 29
         y: 38
         width: 75
         height: 55
       spriteId: 3095bb8e9515cf74da1025fb0909a197
-    - name: Rocks_Frame_22
+    - name: Frame_22
       frameIndex: 22
+      additiveSortOrder: 0
       cellRect:
         x: 29
         y: 39
         width: 73
         height: 54
       spriteId: 8ddcc65da8c13b94b9166431ab3cf18d
-    - name: Rocks_Frame_23
+    - name: Frame_23
       frameIndex: 23
+      additiveSortOrder: 0
       cellRect:
         x: 30
         y: 40
         width: 71
         height: 53
       spriteId: fd92e44391aa8c84790a52261397c28d
-    - name: Rocks_Frame_24
+    - name: Frame_24
       frameIndex: 24
+      additiveSortOrder: 0
       cellRect:
         x: 24
         y: 32
         width: 83
         height: 62
       spriteId: 3c8cac263eaf2ca48b04ca22f0d60673
-    - name: Rocks_Frame_25
+    - name: Frame_25
       frameIndex: 25
+      additiveSortOrder: 0
       cellRect:
         x: 23
         y: 34
         width: 86
         height: 60
       spriteId: cb1ce787f16670247a498d5b2418a1cd
-    - name: Rocks_Frame_26
+    - name: Frame_26
       frameIndex: 26
+      additiveSortOrder: 0
       cellRect:
         x: 23
         y: 34
         width: 86
         height: 60
       spriteId: 15b5e421db6d1714889607e909a00cc3
-    - name: Rocks_Frame_27
+    - name: Frame_27
       frameIndex: 27
+      additiveSortOrder: 0
       cellRect:
         x: 20
         y: 31
         width: 90
         height: 63
       spriteId: 5ee6a55e0ce8b634980ba60d2a85c74d
-    - name: Rocks_Frame_28
+    - name: Frame_28
       frameIndex: 28
+      additiveSortOrder: 0
       cellRect:
         x: 20
         y: 29
         width: 91
         height: 65
       spriteId: b04d8a5370816114bb58fef3eebd115f
-    - name: Rocks_Frame_29
+    - name: Frame_29
       frameIndex: 29
+      additiveSortOrder: 0
       cellRect:
         x: 20
         y: 30
         width: 91
         height: 64
       spriteId: ea26206ae7b3d7d47b9820c7cb0d2435
-    - name: Rocks_Frame_30
+    - name: Frame_30
       frameIndex: 30
+      additiveSortOrder: 0
       cellRect:
         x: 20
         y: 30
         width: 91
         height: 64
       spriteId: a3c71850689a9c1478aa3d312bf55777
-    - name: Rocks_Frame_31
+    - name: Frame_31
       frameIndex: 31
+      additiveSortOrder: 0
       cellRect:
         x: 20
         y: 31
@@ -1025,8 +1103,13 @@ ScriptedImporter:
         height: 63
       spriteId: 07040914412497940b36ab77ba09d9ac
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
+  tileSets: []
   platformSettings: []
+  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 128, y: 128}
+  previousTextureSize: {x: 2048, y: 2048}

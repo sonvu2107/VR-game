@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Skeleton King
   archetype: 0
-  maxHealth: 360
+  maxHealth: 540
   contactDamage: 1
   chaseSpeed: 1.6
   wanderSpeed: 0.7

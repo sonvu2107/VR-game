@@ -179,12 +179,12 @@ public sealed partial class StorySmokeProbe
                     Check(bosses.Length == 1 && bosses[0].SourceName == "SkeletonKing", "final floor contains exactly the Skeleton King");
                     var king = bosses[0].GetComponent<SkeletonKingController>();
                     var kingHealth = bosses[0].GetComponent<EnemyHealth>();
-                    Check(king != null && kingHealth.Config.displayName == "Vua Xương" && kingHealth.MaxHealth == 600, "king identity and health match narrative");
+                    Check(king != null && kingHealth.Config.displayName == "Vua Xương" && kingHealth.MaxHealth == 1400, "king identity and health match narrative");
                     king.enabled = true;
-                    kingHealth.TakeDamage(220);
+                    kingHealth.TakeDamage(500);
                     yield return Wait(() => king.CurrentPhase == 2 && !king.IsTransitioning);
                     Check(!kingHealth.IsDead && !story.HasBeat(10, LevelOneStory.Beat.GuardianDead), "phase two is not a defeated king");
-                    kingHealth.TakeDamage(220);
+                    kingHealth.TakeDamage(500);
                     yield return Wait(() => king.CurrentPhase == 3 && !king.IsTransitioning);
                     Check(!kingHealth.IsDead, "king reaches phase three through actual damage");
                     king.enabled = false;

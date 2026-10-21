@@ -12,6 +12,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
     private int pattern;
     private float nextWaveTime;
     private bool attacking;
+    private BossAttackScheduler attackScheduler;
 
     public static void Attach(GameObject boss)
     {
@@ -24,8 +25,11 @@ public sealed class BossWaveAttackController : MonoBehaviour
         health = GetComponent<EnemyHealth>();
         combat = GetComponent<EnemyCombat>();
         movement = GetComponent<EnemyMovement>();
+        attackScheduler = GetComponent<BossAttackScheduler>() ?? gameObject.AddComponent<BossAttackScheduler>();
         isFinalBoss = GetComponent<CampaignFinalBoss>() != null;
-        nextWaveTime = Time.time + 1.7f;
+        // The level-10 boss is on the offensive immediately. Other bosses keep
+        // their gentler opening delay and cadence.
+        nextWaveTime = Time.time + (isFinalBoss ? 0.65f : 1.7f);
     }
 
     private void Update()
@@ -36,8 +40,14 @@ public sealed class BossWaveAttackController : MonoBehaviour
         if (target == null || target.currentHealth <= 0) return;
         if (Vector2.Distance(transform.position, target.transform.position) > 11f) return;
 
-        nextWaveTime = Time.time + 4.6f;
-        StartCoroutine(DoWave(target, pattern++ % 3));
+        int kind = pattern % 3;
+        float windup = kind == 0 ? 0.58f : 0.72f;
+        if (attackScheduler == null || !attackScheduler.TryReserve("boss-wave", windup + 0.85f)) return;
+        pattern++;
+        // A final boss chains patterns nearly continuously, while the shared
+        // scheduler still prevents untelegraphed overlap with its other moves.
+        nextWaveTime = Time.time + (isFinalBoss ? 1.5f : 4.6f);
+        StartCoroutine(DoWave(target, kind));
     }
 
     private IEnumerator DoWave(HealthController target, int kind)
@@ -56,6 +66,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
         if (health == null || health.IsDead || target == null || target.currentHealth <= 0)
         {
             attacking = false;
+            attackScheduler?.Release("boss-wave");
             yield break;
         }
 
@@ -97,6 +108,7 @@ public sealed class BossWaveAttackController : MonoBehaviour
 
         CombatHitVfx.Spawn(transform.position, CombatImpactKind.Boss, 0.7f);
         attacking = false;
+        attackScheduler?.Release("boss-wave");
     }
 
     private static Vector2 Rotate(Vector2 direction, float degrees)

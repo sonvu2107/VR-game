@@ -27,4 +27,21 @@ public class BossPhaseConfigSO : ScriptableObject
     [Min(1)] public int maximumSummons = 4;
     [Min(0.1f)] public float hazardCooldown = 6f;
     [Min(0.1f)] public float waveSpeed = 6f;
+    [Header("Vong Xuong Phan Quyet (phase 2+)")]
+    [Min(0.1f)] public float boneCageTelegraphDuration = 0.8f;
+    [Min(0.1f)] public float boneCageImpactDelay = 1.1f;
+    [Min(0.1f)] public float boneCageCooldownMin = 8f;
+    [Min(0.1f)] public float boneCageCooldownMax = 10f;
+    [Min(0.5f)] public float boneCageRadius = 3.25f;
+
+    [Header("Xung Phong Bat Tu (phase 3)")]
+    [Min(0.1f)] public float boneChargeTelegraphDuration = 0.65f;
+    [Min(0.1f)] public float boneChargeDashDuration = 0.32f;
+    [Min(0.1f)] public float boneChargeRecoveryDuration = 0.65f;
+    [Min(1f)] public float boneChargeDistance = 5.5f;
+    [Min(0.1f)] public float boneChargeCooldownMin = 9f;
+    [Min(0.1f)] public float boneChargeCooldownMax = 11f;
+    [Min(0.1f)] public float boneChargeImpactRadius = 1.05f;
+    [Min(0.1f)] public float boneChargeCrackDuration = 2f;
+    [Range(0.1f, 1f)] public float boneChargeSlowMultiplier = 0.55f;
 }
