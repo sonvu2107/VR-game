@@ -50,8 +50,8 @@ public class PlayerSkillController : MonoBehaviour
     private Sprite[] ultimateSlashFrames;
     private Sprite[] ultimateImpactFrames;
     private Sprite[] casterAuraFrames;
-    private Sprite[] azureAegisLanceFrames, azureWardbreakerFrames, azureCitadelVerdictFrames;
-    private Sprite[] chronoRiftCutterFrames, chronoTimeFractureFrames, chronoZeroHourFrames;
+    private Sprite[] azureAegisRamFrames, azureBastionGuardFrames, azureCitadelCollapseFrames;
+    private Sprite[] chronoRiftCutterFrames, chronoEchoRendFrames, chronoZeroHourFrames;
     private Sprite[] graveWraithFanFrames, graveSnareFrames, graveNightfallFrames;
     private Sprite[] gravewindArrowFrames;
     private AudioClip ultimateChargeSfx;
@@ -59,8 +59,9 @@ public class PlayerSkillController : MonoBehaviour
     private AudioClip ultimateImpactCrunchSfx;
     private AudioClip swordWaveSfx;
     private AudioClip spinSlashSfx;
-    private AudioClip azureAegisLanceSfx, azureWardbreakerSfx, azureCitadelVerdictSfx;
-    private AudioClip chronoRiftCutterSfx, chronoTimeFractureSfx, chronoZeroHourSfx;
+    private AudioClip azureAegisRamSfx, azureBastionGuardSfx, azureCitadelCollapseSfx;
+    private AudioClip azureCitadelCollapseImpactSfx;
+    private AudioClip chronoRiftCutterSfx, chronoEchoRendSfx, chronoZeroHourSfx, chronoZeroHourImpactSfx;
     private AudioClip gravewindBasicArrowSfx, graveWraithFanSfx, graveSnareSfx;
     private AudioClip graveNightfallSfx, graveNightfallImpactSfx;
     private float nextSwordWaveAt;
@@ -102,16 +103,12 @@ public class PlayerSkillController : MonoBehaviour
         ultimateImpactFrames = LoadPixelFrames("Combat/Frames/AshenJudgmentFinalPixel_6f", 6,
             FrameAnchorMode.CellCenter, 64f);
         casterAuraFrames = LoadPixelFrames("Combat/Frames/CasterBodyAuraPixel_6f", 6, FrameAnchorMode.VisualCenter);
-        azureAegisLanceFrames = LoadPixelFrames("Combat/Frames/AzureAegisLance_v2_6f", 6, FrameAnchorMode.CellCenter, 64f);
-        azureWardbreakerFrames = LoadPixelFrames("Combat/Frames/AzureWardbreaker_v2_6f", 6, FrameAnchorMode.CellCenter, 64f);
-        azureCitadelVerdictFrames = LoadPixelFrames("Combat/Frames/AzureCitadelVerdict_v2_6f", 6, FrameAnchorMode.CellCenter, 64f);
-        // The Chronoblade sheets are 512 px canvases, but their visible effects
-        // are authored to cover several world units. At 512 PPU they rendered
-        // at roughly half their gameplay hit radius and looked disconnected
-        // from the damage. 256 PPU keeps the VFX and hit areas in sync.
-        chronoRiftCutterFrames = LoadPixelFrames("Combat/Frames/ChronoRiftCutter_6f", 6, FrameAnchorMode.CellCenter, 256f);
-        chronoTimeFractureFrames = LoadPixelFrames("Combat/Frames/ChronoTimeFracture_6f", 6, FrameAnchorMode.CellCenter, 256f);
-        chronoZeroHourFrames = LoadPixelFrames("Combat/Frames/ChronoZeroHour_6f", 6, FrameAnchorMode.CellCenter, 256f);
+        azureAegisRamFrames = LoadPixelFrames("Combat/Frames/AzureAegisRam_6f", 6, FrameAnchorMode.CellCenter, 64f);
+        azureBastionGuardFrames = LoadPixelFrames("Combat/Frames/AzureBastionGuard_6f", 6, FrameAnchorMode.CellCenter, 64f);
+        azureCitadelCollapseFrames = LoadPixelFrames("Combat/Frames/AzureCitadelCollapse_6f", 6, FrameAnchorMode.CellCenter, 64f);
+        chronoRiftCutterFrames = LoadPixelFrames("Combat/Frames/ChronoRiftCutter_v2_6f", 6, FrameAnchorMode.CellCenter, 256f);
+        chronoEchoRendFrames = LoadPixelFrames("Combat/Frames/ChronoEchoRend_6f", 6, FrameAnchorMode.CellCenter, 256f);
+        chronoZeroHourFrames = LoadPixelFrames("Combat/Frames/ChronoZeroHour_v2_6f", 6, FrameAnchorMode.CellCenter, 256f);
         graveWraithFanFrames = LoadPixelFrames("Combat/Frames/GraveWraithFan_6f", 6, FrameAnchorMode.CellCenter, 512f);
         graveSnareFrames = LoadPixelFrames("Combat/Frames/GraveSnareRanged_6f", 6,
             FrameAnchorMode.CellCenter, 512f);
@@ -123,12 +120,14 @@ public class PlayerSkillController : MonoBehaviour
         ultimateImpactCrunchSfx = Resources.Load<AudioClip>("Audio/Combat/UltimateImpactCrunch");
         swordWaveSfx = Resources.Load<AudioClip>("Audio/Combat/SwordWave");
         spinSlashSfx = Resources.Load<AudioClip>("Audio/Combat/SpinSlash");
-        azureAegisLanceSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/Q_AegisLance");
-        azureWardbreakerSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/E_Wardbreaker");
-        azureCitadelVerdictSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/R_CitadelVerdict");
-        chronoRiftCutterSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/Q_RiftCutter");
-        chronoTimeFractureSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/E_TimeFracture");
-        chronoZeroHourSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/R_ZeroHour");
+        azureAegisRamSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/Q_AegisRam");
+        azureBastionGuardSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/E_BastionGuard");
+        azureCitadelCollapseSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/R_CitadelCollapse");
+        azureCitadelCollapseImpactSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/AzureWarden/R_CitadelCollapseImpact");
+        chronoRiftCutterSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/Q_RiftCutterV2");
+        chronoEchoRendSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/E_EchoRend");
+        chronoZeroHourSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/R_ZeroHourV2");
+        chronoZeroHourImpactSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/Chronoblade/R_ZeroHourImpact");
         gravewindBasicArrowSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/BasicArrow");
         graveWraithFanSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/Q_WraithFan");
         graveSnareSfx = Resources.Load<AudioClip>("Audio/Combat/Characters/GravewindRanger/E_GraveSnare");
@@ -302,7 +301,7 @@ public class PlayerSkillController : MonoBehaviour
         switch (CurrentCharacter)
         {
             case PlayableCharacterId.AzureWarden:
-                yield return StartCoroutine(CastAegisLance());
+                yield return StartCoroutine(CastAegisRam());
                 yield break;
             case PlayableCharacterId.Chronoblade:
                 yield return StartCoroutine(CastRiftCutter());
@@ -321,10 +320,10 @@ public class PlayerSkillController : MonoBehaviour
         switch (CurrentCharacter)
         {
             case PlayableCharacterId.AzureWarden:
-                yield return StartCoroutine(CastWardbreaker());
+                yield return StartCoroutine(CastBastionGuard());
                 yield break;
             case PlayableCharacterId.Chronoblade:
-                yield return StartCoroutine(CastTimeFracture());
+                yield return StartCoroutine(CastEchoRend());
                 yield break;
             case PlayableCharacterId.GravewindRanger:
                 yield return StartCoroutine(CastGraveSnare());
@@ -340,7 +339,7 @@ public class PlayerSkillController : MonoBehaviour
         switch (CurrentCharacter)
         {
             case PlayableCharacterId.AzureWarden:
-                yield return StartCoroutine(CastCitadelVerdict());
+                yield return StartCoroutine(CastCitadelCollapse());
                 yield break;
             case PlayableCharacterId.Chronoblade:
                 yield return StartCoroutine(CastZeroHour());
@@ -354,18 +353,31 @@ public class PlayerSkillController : MonoBehaviour
         }
     }
 
-    private IEnumerator CastAegisLance()
+    private IEnumerator CastAegisRam()
     {
-        BeginCast("aegis-lance");
+        BeginCast("aegis-ram");
         player.PlaySkillBodyMotion(1);
-        player.PlayAbilitySfx(azureAegisLanceSfx, 0.92f, 1f);
-        // The lance is a guarded advance rather than a fragile ranged spell:
-        // Azure can absorb the counter-hit while committing to the front line.
-        GrantAzureGuard(0.34f);
-        Vector2 direction = GetSwordWaveDirection(player.VisualCenter);
-        yield return StartCoroutine(FirePiercingBolt("Aegis Lance", azureAegisLanceFrames, direction, Color.white,
-            12f, 0.60f, 0.78f, 42, CombatImpactKind.Azure, true, true));
-        EndCast("aegis-lance");
+        player.PlayAbilitySfx(azureAegisRamSfx, 0.96f, 1f);
+        GrantAzureGuard(0.48f);
+
+        Vector3 origin = player.VisualCenter;
+        Vector2 direction = GetSwordWaveDirection(origin);
+        Quaternion rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+        Vector3 impactPoint = origin + (Vector3)direction * 1.18f;
+        CreateTintedEffect("Aegis Ram", azureAegisRamFrames, impactPoint, 0.68f, 0.54f,
+            rotation, Color.white, smoothFrames: false, sortingOffset: 2);
+
+        yield return new WaitForSeconds(0.22f);
+        int hits = player.DamageEnemiesInArc(origin, direction, 2.35f, 43f, 64,
+            playSwordImpact: true, impactKind: CombatImpactKind.Azure);
+        ApplyAzureControl(impactPoint, 1.42f, 0.72f, 0.55f, 0.30f, direction);
+        if (hits > 0)
+        {
+            AddSkillHitCharge(11f * hits);
+            yield return StartCoroutine(PlayImpactFeedback(0.10f, 0.06f, 0.032f));
+        }
+        yield return new WaitForSeconds(0.24f);
+        EndCast("aegis-ram");
     }
 
     private IEnumerator CastRiftCutter()
@@ -377,15 +389,28 @@ public class PlayerSkillController : MonoBehaviour
         Vector2 direction = GetSwordWaveDirection(start);
         Vector3 targetPoint = GetRangedTargetPoint(start, 8f, 3.9f);
         float targetDistance = Vector2.Distance((Vector2)start, (Vector2)targetPoint);
-        // A real assassin opener: cross the line, arrive on the far side, and
-        // cut only the compact area around the landing point.
         player.BlinkForSkill(direction, Mathf.Clamp(targetDistance + 0.35f, 1.6f, 3.9f));
         Vector3 landing = player.VisualCenter;
         Quaternion rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
-        CreateTintedEffect("Rift Cutter", chronoRiftCutterFrames, landing, 0.82f, 0.48f,
-            rotation, Color.white, smoothFrames: true, sortingOffset: 2);
+        Vector3 pathCenter = Vector3.Lerp(start, landing, 0.5f);
+        float pathLength = Vector2.Distance(start, landing);
+        CreateTintedEffect("Rift Cutter", chronoRiftCutterFrames, pathCenter,
+            Mathf.Clamp(pathLength * 0.68f, 1.70f, 2.45f), 0.48f,
+            rotation, Color.white, smoothFrames: true, sortingOffset: -1);
+
+        HashSet<Enemy> pathEnemies = new HashSet<Enemy>();
+        HashSet<BossController> pathBosses = new HashSet<BossController>();
+        HashSet<EnemyHealth> pathConfigured = new HashSet<EnemyHealth>();
+        int hits = 0;
+        for (int sample = 1; sample <= 5; sample++)
+        {
+            Vector3 samplePoint = Vector3.Lerp(start, landing, sample / 6f);
+            hits += player.DamageEnemiesInRadius(samplePoint, 0.46f, 42,
+                pathEnemies, pathBosses, false, pathConfigured, CombatImpactKind.Chrono);
+        }
+
         yield return new WaitForSeconds(0.14f);
-        int hits = player.DamageEnemiesInRadius(landing, 0.88f, 76,
+        hits += player.DamageEnemiesInRadius(landing, 0.92f, 74,
             playSwordImpact: true, impactKind: CombatImpactKind.Chrono);
         if (hits > 0)
         {
@@ -460,60 +485,61 @@ public class PlayerSkillController : MonoBehaviour
         }
     }
 
-    private IEnumerator CastWardbreaker()
+    private IEnumerator CastBastionGuard()
     {
-        BeginCast("wardbreaker");
+        BeginCast("bastion-guard");
         player.PlaySkillBodyMotion(2);
-        player.PlayAbilitySfx(azureWardbreakerSfx, 0.96f, 0.98f);
-        GrantAzureGuard(0.78f);
-        Vector3 origin = player.VisualCenter;
-        Vector2 direction = GetSwordWaveDirection(origin);
-        Vector3 impactPoint = origin + (Vector3)direction * 1.05f;
-        CreateTintedEffect("Wardbreaker Impact", azureWardbreakerFrames, impactPoint, 1.40f, 0.76f,
-            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: 1);
+        player.PlayAbilitySfx(azureBastionGuardSfx, 0.98f, 1f);
+        GrantAzureGuard(0.20f);
+        if (playerHealth == null)
+            playerHealth = GetComponent<HealthController>();
+        playerHealth?.GrantBarrier(1, 2.20f);
 
-        float[] radii = { 1.45f, 2.30f };
-        int[] damages = { 30, 54 };
-        for (int pulse = 0; pulse < radii.Length; pulse++)
+        Vector3 origin = player.VisualCenter;
+        CreateTintedEffect("Bastion Guard", azureBastionGuardFrames, origin, 0.98f, 0.86f,
+            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: -1);
+
+        int[] damages = { 18, 24, 40 };
+        for (int pulse = 0; pulse < damages.Length; pulse++)
         {
-            yield return new WaitForSeconds(pulse == 0 ? 0.20f : 0.24f);
-            int hits = player.DamageEnemiesInRadius(impactPoint, radii[pulse], damages[pulse],
-                playSwordImpact: true, impactKind: CombatImpactKind.Azure);
+            yield return new WaitForSeconds(pulse == 0 ? 0.18f : 0.21f);
+            ApplyAzureControl(origin, 2.55f, 0.38f, 1.15f, 0.48f);
+            int hits = player.DamageEnemiesInRadius(origin, 2.20f, damages[pulse],
+                playSwordImpact: pulse == damages.Length - 1, impactKind: CombatImpactKind.Azure);
             if (hits > 0)
-                AddSkillHitCharge(9f * hits);
-            StartCoroutine(ShakeMainCamera(0.07f, 0.045f + pulse * 0.025f));
+                AddSkillHitCharge(7f * hits);
+            StartCoroutine(ShakeMainCamera(0.06f, 0.025f + pulse * 0.016f));
         }
 
         yield return new WaitForSeconds(0.12f);
-        EndCast("wardbreaker");
+        EndCast("bastion-guard");
     }
 
-    private IEnumerator CastTimeFracture()
+    private IEnumerator CastEchoRend()
     {
-        BeginCast("time-fracture");
+        BeginCast("echo-rend");
         player.PlaySkillBodyMotion(2);
-        player.PlayAbilitySfx(chronoTimeFractureSfx, 0.94f, 1.03f);
+        player.PlayAbilitySfx(chronoEchoRendSfx, 0.96f, 1.06f);
         Vector3 origin = player.VisualCenter;
-        Vector3 fracturePoint = GetRangedTargetPoint(origin, 10f, 4.5f);
-        CreateTintedEffect("Time Fracture", chronoTimeFractureFrames, fracturePoint, 1.72f, 0.84f,
-            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: 2);
+        playerHealth?.GrantTemporaryInvulnerability(0.30f);
+        CreateTintedEffect("Echo Rend", chronoEchoRendFrames, origin, 2.75f, 0.68f,
+            Quaternion.identity, Color.white, smoothFrames: true, sortingOffset: -1);
 
-        // Keep the fracture surgical: it rewards marking a priority target,
-        // instead of turning the assassin into a second area-damage caster.
-        float[] radii = { 0.72f, 0.94f, 1.18f };
-        int[] damages = { 34, 48, 86 };
-        for (int pulse = 0; pulse < radii.Length; pulse++)
-        {
-            yield return new WaitForSeconds(0.18f);
-            int hits = player.DamageEnemiesInRadius(fracturePoint, radii[pulse], damages[pulse],
-                impactKind: CombatImpactKind.Chrono);
-            if (hits > 0)
-                AddSkillHitCharge(8f * hits);
-            StartCoroutine(ShakeMainCamera(0.05f, 0.025f + pulse * 0.012f));
-        }
+        yield return new WaitForSeconds(0.14f);
+        int firstHits = player.DamageEnemiesInRadius(origin, 1.18f, 54,
+            impactKind: CombatImpactKind.Chrono);
+        if (firstHits > 0)
+            AddSkillHitCharge(7f * firstHits);
+        StartCoroutine(ShakeMainCamera(0.06f, 0.035f));
 
-        yield return new WaitForSeconds(0.10f);
-        EndCast("time-fracture");
+        yield return new WaitForSeconds(0.24f);
+        int echoHits = player.DamageEnemiesInRadius(origin, 1.42f, 88,
+            playSwordImpact: true, impactKind: CombatImpactKind.Chrono);
+        if (echoHits > 0)
+            AddSkillHitCharge(9f * echoHits);
+        yield return StartCoroutine(PlayImpactFeedback(0.10f, 0.06f, 0.032f));
+        yield return new WaitForSeconds(0.16f);
+        EndCast("echo-rend");
     }
 
     private IEnumerator CastGraveSnare()
@@ -542,27 +568,36 @@ public class PlayerSkillController : MonoBehaviour
         EndCast("grave-snare");
     }
 
-    private IEnumerator CastCitadelVerdict()
+    private IEnumerator CastCitadelCollapse()
     {
-        BeginCast("citadel-verdict");
+        BeginCast("citadel-collapse");
         player.PlaySkillBodyMotion(3, true);
-        player.PlayAbilitySfx(azureCitadelVerdictSfx, 1f, 0.96f);
-        // The tank ultimate owns space and lets Azure survive inside the mob.
-        GrantAzureGuard(1.85f);
+        player.PlayAbilitySfx(azureCitadelCollapseSfx, 1f, 0.98f);
+        GrantAzureGuard(1.45f);
+        if (playerHealth == null)
+            playerHealth = GetComponent<HealthController>();
+        playerHealth?.GrantBarrier(2, 3f);
+
         Vector3 origin = player.VisualCenter;
-        CreateTintedEffect("Citadel Verdict", azureCitadelVerdictFrames, origin, 1.75f, 1.02f,
-            Quaternion.identity, Color.white, smoothFrames: true, sortingOffset: 1);
-        float[] radii = { 2.10f, 3.0f, 3.75f };
-        int[] damages = { 38, 52, 78 };
-        for (int pulse = 0; pulse < radii.Length; pulse++)
+        CreateTintedEffect("Citadel Collapse", azureCitadelCollapseFrames, origin, 1.36f, 1.08f,
+            Quaternion.identity, Color.white, smoothFrames: false, sortingOffset: -1);
+        int[] damages = { 34, 48, 110 };
+        for (int pulse = 0; pulse < damages.Length; pulse++)
         {
-            yield return new WaitForSeconds(0.23f);
-            player.DamageEnemiesInRadius(origin, radii[pulse], damages[pulse],
-                playSwordImpact: pulse == radii.Length - 1, impactKind: CombatImpactKind.Azure);
-            StartCoroutine(ShakeMainCamera(0.07f, 0.04f + pulse * 0.015f));
+            yield return new WaitForSeconds(pulse == 2 ? 0.26f : 0.22f);
+            bool finalPulse = pulse == damages.Length - 1;
+            ApplyAzureControl(origin, 3.70f, finalPulse ? 0.18f : 0.58f,
+                finalPulse ? 0.85f : 0.80f, finalPulse ? 0f : 0.42f);
+            player.DamageEnemiesInRadius(origin, finalPulse ? 3.10f : 3.55f, damages[pulse],
+                playSwordImpact: finalPulse, impactKind: CombatImpactKind.Azure);
+            if (finalPulse)
+                player.PlayAbilitySfx(azureCitadelCollapseImpactSfx, 1f, 0.94f);
+            StartCoroutine(ShakeMainCamera(finalPulse ? 0.14f : 0.07f,
+                finalPulse ? 0.105f : 0.04f + pulse * 0.014f));
         }
-        yield return new WaitForSeconds(0.22f);
-        EndCast("citadel-verdict");
+        yield return StartCoroutine(PlayImpactFeedback(0.16f, 0.10f, 0.05f));
+        yield return new WaitForSeconds(0.20f);
+        EndCast("citadel-collapse");
     }
 
     private IEnumerator CastZeroHour()
@@ -575,18 +610,21 @@ public class PlayerSkillController : MonoBehaviour
         Vector2 direction = ((Vector2)zeroPoint - (Vector2)origin).normalized;
         if (direction.sqrMagnitude < 0.001f)
             direction = player.FacingDirection;
-        player.BlinkForSkill(direction, Mathf.Min(7.5f, Vector2.Distance((Vector2)origin, (Vector2)zeroPoint)));
-        zeroPoint = player.VisualCenter;
-        CreateTintedEffect("Zero Hour", chronoZeroHourFrames, zeroPoint, 1.70f, 0.82f,
-            Quaternion.identity, Color.white, smoothFrames: true, sortingOffset: 2);
+        float targetDistance = Vector2.Distance((Vector2)origin, (Vector2)zeroPoint);
+        playerHealth?.GrantTemporaryInvulnerability(0.95f);
+        player.BlinkForSkill(direction, Mathf.Max(0f, Mathf.Min(7.5f, targetDistance - 0.42f)));
+        CreateTintedEffect("Zero Hour", chronoZeroHourFrames, zeroPoint, 3.25f, 0.92f,
+            Quaternion.identity, Color.white, smoothFrames: true, sortingOffset: -1);
 
-        float[] radii = { 0.95f, 1.15f, 1.40f, 1.65f };
-        int[] damages = { 48, 64, 82, 138 };
+        float[] radii = { 0.72f, 0.84f, 0.96f, 1.30f };
+        int[] damages = { 46, 56, 68, 148 };
         for (int pulse = 0; pulse < radii.Length; pulse++)
         {
-            yield return new WaitForSeconds(0.17f);
+            yield return new WaitForSeconds(pulse == 0 ? 0.12f : 0.15f);
             player.DamageEnemiesInRadius(zeroPoint, radii[pulse], damages[pulse],
-                impactKind: CombatImpactKind.Chrono);
+                playSwordImpact: pulse == radii.Length - 1, impactKind: CombatImpactKind.Chrono);
+            if (pulse == radii.Length - 1)
+                player.PlayAbilitySfx(chronoZeroHourImpactSfx, 1f, 0.92f);
             StartCoroutine(ShakeMainCamera(0.06f, 0.035f + pulse * 0.014f));
         }
 
@@ -600,6 +638,51 @@ public class PlayerSkillController : MonoBehaviour
         if (playerHealth == null)
             playerHealth = GetComponent<HealthController>();
         playerHealth?.GrantTemporaryInvulnerability(duration);
+    }
+
+    private int ApplyAzureControl(Vector3 center, float radius, float displacement, float duration,
+        float speedMultiplier, Vector2? forcedDirection = null)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(center, radius, player.enemyLayers);
+        HashSet<Transform> affectedRoots = new HashSet<Transform>();
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider == null)
+                continue;
+
+            EnemyHealth configured = collider.GetComponentInParent<EnemyHealth>();
+            Enemy legacy = collider.GetComponentInParent<Enemy>();
+            BossController boss = collider.GetComponentInParent<BossController>();
+            if (configured != null && configured.IsDead)
+                continue;
+
+            Transform root = configured != null ? configured.transform :
+                legacy != null ? legacy.transform : boss != null ? boss.transform : null;
+            if (root == null || !affectedRoots.Add(root))
+                continue;
+
+            bool bossLike = boss != null || configured != null &&
+                (configured.GetComponent<MiniBossController>() != null ||
+                 configured.GetComponent<SkeletonKingController>() != null);
+            float controlWeight = bossLike ? 0.35f : 1f;
+            Vector2 direction = forcedDirection ?? ((Vector2)center - (Vector2)root.position);
+            if (direction.sqrMagnitude > 0.001f && displacement > 0f)
+            {
+                Vector3 destination = root.position +
+                    (Vector3)(direction.normalized * displacement * controlWeight);
+                EnemyMovement movement = root.GetComponent<EnemyMovement>();
+                if (movement != null)
+                    movement.TrySetNearbyDestination(destination, 1.25f, 9f, 0.05f);
+                else
+                    root.position = destination;
+            }
+
+            EnemyMovement controlledMovement = root.GetComponent<EnemyMovement>();
+            if (controlledMovement != null)
+                controlledMovement.ApplyCrowdControl(duration,
+                    bossLike ? Mathf.Max(0.35f, speedMultiplier) : speedMultiplier);
+        }
+        return affectedRoots.Count;
     }
 
     private IEnumerator CastNightfall()

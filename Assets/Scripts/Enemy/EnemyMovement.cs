@@ -9,6 +9,8 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private SpriteRenderer spriteRenderer;
     private float nextRepathTime;
+    private float crowdControlUntil = -1f;
+    private float crowdControlSpeedMultiplier = 1f;
     private readonly List<Vector3> bossArenaCells = new List<Vector3>();
 
     public Vector2 Velocity => agent != null ? agent.velocity : Vector2.zero;
@@ -47,9 +49,16 @@ public class EnemyMovement : MonoBehaviour
     public bool SetDestination(Vector3 destination, float speed, float repathInterval = 0.25f, bool force = false)
     {
         if (agent == null || !agent.enabled || !agent.isOnNavMesh) return false;
+        if (Time.time >= crowdControlUntil)
+            crowdControlSpeedMultiplier = 1f;
+        else if (crowdControlSpeedMultiplier <= 0.01f)
+        {
+            Stop();
+            return false;
+        }
         if (bossArenaCells.Count > 0)
             destination = NearestBossArenaCell(destination);
-        agent.speed = Mathf.Max(0.1f, speed);
+        agent.speed = Mathf.Max(0.1f, speed * crowdControlSpeedMultiplier);
         agent.isStopped = false;
         if (!force && Time.time < nextRepathTime) return true;
         nextRepathTime = Time.time + Mathf.Max(0.05f, repathInterval);
@@ -180,5 +189,22 @@ public class EnemyMovement : MonoBehaviour
         if (agent == null || !agent.enabled || !agent.isOnNavMesh) return;
         agent.speed = Mathf.Max(0.1f, speed);
         agent.isStopped = false;
+    }
+
+    /// <summary>Temporarily slows or stops this enemy without disabling its NavMeshAgent.</summary>
+    public void ApplyCrowdControl(float duration, float speedMultiplier)
+    {
+        if (duration <= 0f)
+            return;
+        if (Time.time >= crowdControlUntil)
+            crowdControlSpeedMultiplier = 1f;
+
+        crowdControlUntil = Mathf.Max(crowdControlUntil, Time.time + duration);
+        crowdControlSpeedMultiplier = Mathf.Min(crowdControlSpeedMultiplier,
+            Mathf.Clamp01(speedMultiplier));
+        if (crowdControlSpeedMultiplier <= 0.01f)
+            Stop();
+        else if (agent != null && agent.enabled && agent.isOnNavMesh)
+            agent.speed = Mathf.Max(0.1f, agent.speed * crowdControlSpeedMultiplier);
     }
 }
