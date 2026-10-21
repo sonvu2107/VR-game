@@ -1,0 +1,1 @@
+PASS: locked/open runtime UI copies rendered with production state styling; labels fit; gameplay unchanged.

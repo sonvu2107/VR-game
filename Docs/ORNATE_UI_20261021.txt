@@ -1,0 +1,20 @@
+MENU NGOÀI — 21/10/2026
+
+Phạm vi hiện tại theo yêu cầu mới nhất: giữ màn chính Start/Quit nguyên bản; chỉ sửa luồng chọn
+chế độ / nhân vật / màn chơi hoặc kết nối LAN. Palette đỏ, nền tối,
+nhãn nút căn giữa, nội dung ngắn gọn, chế độ solo hiển thị Chơi đơn.
+
+Đã gỡ mọi hook theme mới khỏi HUD kỹ năng, minimap, hội thoại, mục tiêu,
+nhật ký, thanh LAN, pause/settings/controls và màn thua/thắng.
+SkillHudController trở về HEAD. Giữ sửa xuống dòng hội thoại có sẵn của người dùng.
+Scene gốc không bị ghi đè. Đã bỏ OrnateSceneUI; không áp dụng theme lên các scene gốc.
+
+Tools/build_ornate_ui.py tạo 25 PNG độc lập tại Assets/Resources/UI/Ornate.
+Asset chưa dùng trong menu được giữ trong bộ ảnh, không gắn vào gameplay.
+Import Point, không mipmap/nén, border nine-slice theo manifest.json.
+
+Kiểm tra: Captures/MenuFlow/validation.txt và Captures/OrnateUI/validation.txt.
+Render menu: Captures/MenuFlow (1280x720, 1024x768, 1920x1080).
+Kiểm tra Dungeon giữ sprite gốc, không tham chiếu bộ Ornate.
+Ảnh Dungeon trong Captures/OrnateUI từ lần thử trước là bản cũ, không phản ánh
+phạm vi hiện tại. Chưa kiểm thử LAN hai máy. Chưa commit/push.

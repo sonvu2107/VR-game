@@ -1,0 +1,4 @@
+PASS width=818 lines=3 textBounds=(774.16, 63.87, 0.00) rect=(818.00, 66.00)
+PASS width=720 lines=3 textBounds=(691.87, 63.87, 0.00) rect=(720.00, 66.00)
+PASS width=480 lines=4 textBounds=(439.87, 86.87, 0.00) rect=(480.00, 89.00)
+PASS width=320 lines=5 textBounds=(314.68, 109.87, 0.00) rect=(320.00, 112.00)

@@ -226,7 +226,8 @@ public sealed partial class LevelOneStory
     private void FitNarrativeCards()
     {
         Vector2 canvasSize = narrativeHud.GetComponent<RectTransform>().rect.size;
-        if (fittedCue == cueText.text && fittedObjective == objectiveText.text && fittedCanvasSize == canvasSize) return;
+        if (fittedCue == cueText.text && fittedObjective == objectiveText.text && fittedCanvasSize == canvasSize &&
+            cueText.enableWordWrapping && objectiveText.enableWordWrapping) return;
         fittedCue = cueText.text; fittedObjective = objectiveText.text; fittedCanvasSize = canvasSize;
         float availableWidth = Mathf.Max(100, canvasSize.x - 48);
         FitNarrativeCard(cueText, Mathf.Min(818, availableWidth - 32), new Vector2(32, 20));
@@ -235,6 +236,12 @@ public sealed partial class LevelOneStory
 
     private static void FitNarrativeCard(TMP_Text label, float maxTextWidth, Vector2 padding)
     {
+        // TMP defaults may disable wrapping; configure it before measuring the text.
+        label.enableWordWrapping = true;
+        label.enableAutoSizing = false;
+        label.overflowMode = TextOverflowModes.Overflow;
+        label.margin = Vector4.zero;
+        maxTextWidth = Mathf.Max(1, maxTextWidth);
         // Đo bằng TMP để tính đúng dấu tiếng Việt, rich text và dòng xuống hàng.
         float width = Mathf.Clamp(Mathf.Ceil(label.GetPreferredValues(label.text, Mathf.Infinity, Mathf.Infinity).x) + 2, 1, maxTextWidth);
         float height = Mathf.Ceil(label.GetPreferredValues(label.text, width, Mathf.Infinity).y) + 2;

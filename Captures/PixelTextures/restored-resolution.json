@@ -1,0 +1,145 @@
+[
+  {
+    "path": "Assets/Art/MapThemes/Ambience/DungeonAmbience_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Floors_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Props_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Spikes_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Walls_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/AbyssSanctum/AbyssSanctum_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/BoneCatacombs/BoneCatacombs_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/CrimsonThrone/CrimsonThrone_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/EmberForge/EmberForge_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/ForbiddenLibrary/ForbiddenLibrary_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/FrozenVault/FrozenVault_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/MossCrypt/MossCrypt_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "Assets/Art/MapThemes/Campaign/SunkenPrison/SunkenPrison_Atlas_v1.png",
+    "small": [
+      128,
+      128
+    ],
+    "original": [
+      1254,
+      1254
+    ]
+  }
+]

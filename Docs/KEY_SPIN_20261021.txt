@@ -1,0 +1,14 @@
+CHÌA KHÓA XOAY 360 ĐỘ
+16 PNG độc lập 32x48: Assets/Resources/Pickups/KeySpin.
+Sinh bằng Tools/build_key_spin.py từ hình chìa khóa voxel, không nội suy làm mờ.
+Mỗi frame 0,08 giây, một vòng 1,28 giây. Trục xoay dọc, pivot giữa.
+Sprite PPU32 giữ canvas world 1x1,5 như sprite cũ 8x12 PPU8.
+DungeonKey dùng frame mới; giữ collider, điều kiện nhặt và hiệu ứng nhấp nhô.
+Bỏ phóng to/thu nhỏ tuần hoàn để hình không rung kích thước khi xoay.
+Texture readable để cơ chế truyền texture LAN có thể gửi frame chưa nằm trong catalog.
+Đã kiểm tra 16 frame khác nhau, alpha nhị phân, kích thước thống nhất.
+Preview: Captures/KeySpin/key-spin.gif và frames.png.
+Chưa xác nhận import/Play Mode trong Unity: MCP timeout trong lượt kiểm tra này.
+Chưa commit/push.
+
+CẬP NHẬT KIỂM TRA MCP: đã quan sát đủ 16 frame trên chìa khóa đang có trong game. Đã sửa tint cũ khi hot reload. Lần xác nhận cuối dùng DungeonKey tạm ở (10000,10000), collider tắt, quan sát đủ 16 frame trong 6 giây, màu trắng và import hợp lệ; PASS. Đã xóa đối tượng thử. Không thay đổi số chìa của người chơi; chưa thử LAN hai máy. Kết quả: Captures/KeySpin/play-validation.txt.

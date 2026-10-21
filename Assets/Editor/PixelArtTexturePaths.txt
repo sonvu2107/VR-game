@@ -1,0 +1,493 @@
+Assets/Art/Enemies/TinyCreatures/Bat.png
+Assets/Art/Enemies/TinyCreatures/BoneSentinel.png
+Assets/Art/Enemies/TinyCreatures/DarkMage.png
+Assets/Art/Enemies/TinyCreatures/EliteKnight.png
+Assets/Art/Enemies/TinyCreatures/PoisonSlime.png
+Assets/Art/Enemies/TinyCreatures/PoisonSlimeReadable.png
+Assets/Art/Enemies/TinyCreatures/SkeletonArcher.png
+Assets/Art/Enemies/TinyCreatures/SkeletonKing.png
+Assets/Art/MapThemes/Ambience/DungeonAmbience_Atlas_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Floors_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Props_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Spikes_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Walls_v1.png
+Assets/Art/MapThemes/Campaign/AbyssSanctum/AbyssSanctum_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/BoneCatacombs/BoneCatacombs_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/CrimsonThrone/CrimsonThrone_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/EmberForge/EmberForge_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/ForbiddenLibrary/ForbiddenLibrary_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/FrozenVault/FrozenVault_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/MossCrypt/MossCrypt_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/SunkenPrison/SunkenPrison_Atlas_v1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v2/skeleton_v2_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v2/skeleton_v2_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v2/skeleton_v2_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton1/v2/skeleton_v2_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v1/skeleton2_v1_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v1/skeleton2_v1_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v1/skeleton2_v1_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v1/skeleton2_v1_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v2/skeleton2_v2_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v2/skeleton2_v2_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v2/skeleton2_v2_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skeleton2/v2/skeleton2_v2_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v1/skull_v1_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v1/skull_v1_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v1/skull_v1_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v1/skull_v1_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v2/skull_v2_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v2/skull_v2_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v2/skull_v2_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/skull/v2/skull_v2_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v1/vampire_v1_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v1/vampire_v1_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v1/vampire_v1_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v1/vampire_v1_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v2/vampire_v2_1.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v2/vampire_v2_2.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v2/vampire_v2_3.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/Character_animation/monsters_idle/vampire/v2/vampire_v2_4.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Attack2.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Attack2NoMovement.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_AttackCombo2hit.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Death.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Hit.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Idle.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Run.png
+Assets/Imports/Retro Inventory/Scaled 3x/Health_05_01.png
+Assets/Imports/Retro Inventory/Scaled 3x/Hearts_Red_1.png
+Assets/Imports/Retro Inventory/Scaled 3x/Hearts_Red_3.png
+Assets/Imports/Retro Inventory/Scaled 3x/Hearts_Red_5.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Attack.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Dead.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Hit.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Idle.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Walk.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Barrel/Blue/Barrel_Blue.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Barrel/Purple/Barrel_Purple.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Barrel/Red/Barrel_Red.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Barrel/Yellow/Barrel_Yellow.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/TNT/Blue/TNT_Blue.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/TNT/Dynamite/Dynamite.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/TNT/Purple/TNT_Purple.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/TNT/Red/TNT_Red.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/TNT/Yellow/TNT_Yellow.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Torch/Blue/Torch_Blue.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Torch/Purple/Torch_Purple.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Torch/Red/Torch_Red.png
+Assets/Imports/Tiny Swords (Update 010)/Factions/Goblins/Troops/Torch/Yellow/Torch_Yellow.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Gold Mine/GoldMine_Active.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Gold Mine/GoldMine_Destroyed.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Gold Mine/GoldMine_Inactive.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/G_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/G_Idle_(NoShadow).png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/G_Spawn.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/M_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/M_Idle_(NoShadow).png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/M_Spawn.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/W_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/W_Idle_(NoShadow).png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/W_Spawn.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_All.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_Bouncing.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Trees/Tree.png
+Assets/Resources/Characters/AzureWarden/Frames/Attack_6f/Frame_00.png
+Assets/Resources/Characters/AzureWarden/Frames/Attack_6f/Frame_01.png
+Assets/Resources/Characters/AzureWarden/Frames/Attack_6f/Frame_02.png
+Assets/Resources/Characters/AzureWarden/Frames/Attack_6f/Frame_03.png
+Assets/Resources/Characters/AzureWarden/Frames/Attack_6f/Frame_04.png
+Assets/Resources/Characters/AzureWarden/Frames/Attack_6f/Frame_05.png
+Assets/Resources/Characters/AzureWarden/Frames/Dash_6f/Frame_00.png
+Assets/Resources/Characters/AzureWarden/Frames/Dash_6f/Frame_01.png
+Assets/Resources/Characters/AzureWarden/Frames/Dash_6f/Frame_02.png
+Assets/Resources/Characters/AzureWarden/Frames/Dash_6f/Frame_03.png
+Assets/Resources/Characters/AzureWarden/Frames/Dash_6f/Frame_04.png
+Assets/Resources/Characters/AzureWarden/Frames/Dash_6f/Frame_05.png
+Assets/Resources/Characters/AzureWarden/Frames/Death_6f/Frame_00.png
+Assets/Resources/Characters/AzureWarden/Frames/Death_6f/Frame_01.png
+Assets/Resources/Characters/AzureWarden/Frames/Death_6f/Frame_02.png
+Assets/Resources/Characters/AzureWarden/Frames/Death_6f/Frame_03.png
+Assets/Resources/Characters/AzureWarden/Frames/Death_6f/Frame_04.png
+Assets/Resources/Characters/AzureWarden/Frames/Death_6f/Frame_05.png
+Assets/Resources/Characters/AzureWarden/Frames/Hurt_3f/Frame_00.png
+Assets/Resources/Characters/AzureWarden/Frames/Hurt_3f/Frame_01.png
+Assets/Resources/Characters/AzureWarden/Frames/Hurt_3f/Frame_02.png
+Assets/Resources/Characters/AzureWarden/Frames/Idle_6f/Frame_00.png
+Assets/Resources/Characters/AzureWarden/Frames/Idle_6f/Frame_01.png
+Assets/Resources/Characters/AzureWarden/Frames/Idle_6f/Frame_02.png
+Assets/Resources/Characters/AzureWarden/Frames/Idle_6f/Frame_03.png
+Assets/Resources/Characters/AzureWarden/Frames/Idle_6f/Frame_04.png
+Assets/Resources/Characters/AzureWarden/Frames/Idle_6f/Frame_05.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_00.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_01.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_02.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_03.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_04.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_05.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_06.png
+Assets/Resources/Characters/AzureWarden/Frames/Run_8f/Frame_07.png
+Assets/Resources/Characters/Chronoblade/Frames/Attack_6f/Frame_00.png
+Assets/Resources/Characters/Chronoblade/Frames/Attack_6f/Frame_01.png
+Assets/Resources/Characters/Chronoblade/Frames/Attack_6f/Frame_02.png
+Assets/Resources/Characters/Chronoblade/Frames/Attack_6f/Frame_03.png
+Assets/Resources/Characters/Chronoblade/Frames/Attack_6f/Frame_04.png
+Assets/Resources/Characters/Chronoblade/Frames/Attack_6f/Frame_05.png
+Assets/Resources/Characters/Chronoblade/Frames/Dash_6f/Frame_00.png
+Assets/Resources/Characters/Chronoblade/Frames/Dash_6f/Frame_01.png
+Assets/Resources/Characters/Chronoblade/Frames/Dash_6f/Frame_02.png
+Assets/Resources/Characters/Chronoblade/Frames/Dash_6f/Frame_03.png
+Assets/Resources/Characters/Chronoblade/Frames/Dash_6f/Frame_04.png
+Assets/Resources/Characters/Chronoblade/Frames/Dash_6f/Frame_05.png
+Assets/Resources/Characters/Chronoblade/Frames/Death_6f/Frame_00.png
+Assets/Resources/Characters/Chronoblade/Frames/Death_6f/Frame_01.png
+Assets/Resources/Characters/Chronoblade/Frames/Death_6f/Frame_02.png
+Assets/Resources/Characters/Chronoblade/Frames/Death_6f/Frame_03.png
+Assets/Resources/Characters/Chronoblade/Frames/Death_6f/Frame_04.png
+Assets/Resources/Characters/Chronoblade/Frames/Death_6f/Frame_05.png
+Assets/Resources/Characters/Chronoblade/Frames/Hurt_3f/Frame_00.png
+Assets/Resources/Characters/Chronoblade/Frames/Hurt_3f/Frame_01.png
+Assets/Resources/Characters/Chronoblade/Frames/Hurt_3f/Frame_02.png
+Assets/Resources/Characters/Chronoblade/Frames/Idle_6f/Frame_00.png
+Assets/Resources/Characters/Chronoblade/Frames/Idle_6f/Frame_01.png
+Assets/Resources/Characters/Chronoblade/Frames/Idle_6f/Frame_02.png
+Assets/Resources/Characters/Chronoblade/Frames/Idle_6f/Frame_03.png
+Assets/Resources/Characters/Chronoblade/Frames/Idle_6f/Frame_04.png
+Assets/Resources/Characters/Chronoblade/Frames/Idle_6f/Frame_05.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_00.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_01.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_02.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_03.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_04.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_05.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_06.png
+Assets/Resources/Characters/Chronoblade/Frames/Run_8f/Frame_07.png
+Assets/Resources/Characters/GravewindRanger/Frames/Attack_6f/Frame_00.png
+Assets/Resources/Characters/GravewindRanger/Frames/Attack_6f/Frame_01.png
+Assets/Resources/Characters/GravewindRanger/Frames/Attack_6f/Frame_02.png
+Assets/Resources/Characters/GravewindRanger/Frames/Attack_6f/Frame_03.png
+Assets/Resources/Characters/GravewindRanger/Frames/Attack_6f/Frame_04.png
+Assets/Resources/Characters/GravewindRanger/Frames/Attack_6f/Frame_05.png
+Assets/Resources/Characters/GravewindRanger/Frames/Dash_6f/Frame_00.png
+Assets/Resources/Characters/GravewindRanger/Frames/Dash_6f/Frame_01.png
+Assets/Resources/Characters/GravewindRanger/Frames/Dash_6f/Frame_02.png
+Assets/Resources/Characters/GravewindRanger/Frames/Dash_6f/Frame_03.png
+Assets/Resources/Characters/GravewindRanger/Frames/Dash_6f/Frame_04.png
+Assets/Resources/Characters/GravewindRanger/Frames/Dash_6f/Frame_05.png
+Assets/Resources/Characters/GravewindRanger/Frames/Death_6f/Frame_00.png
+Assets/Resources/Characters/GravewindRanger/Frames/Death_6f/Frame_01.png
+Assets/Resources/Characters/GravewindRanger/Frames/Death_6f/Frame_02.png
+Assets/Resources/Characters/GravewindRanger/Frames/Death_6f/Frame_03.png
+Assets/Resources/Characters/GravewindRanger/Frames/Death_6f/Frame_04.png
+Assets/Resources/Characters/GravewindRanger/Frames/Death_6f/Frame_05.png
+Assets/Resources/Characters/GravewindRanger/Frames/Hurt_3f/Frame_00.png
+Assets/Resources/Characters/GravewindRanger/Frames/Hurt_3f/Frame_01.png
+Assets/Resources/Characters/GravewindRanger/Frames/Hurt_3f/Frame_02.png
+Assets/Resources/Characters/GravewindRanger/Frames/Idle_6f/Frame_00.png
+Assets/Resources/Characters/GravewindRanger/Frames/Idle_6f/Frame_01.png
+Assets/Resources/Characters/GravewindRanger/Frames/Idle_6f/Frame_02.png
+Assets/Resources/Characters/GravewindRanger/Frames/Idle_6f/Frame_03.png
+Assets/Resources/Characters/GravewindRanger/Frames/Idle_6f/Frame_04.png
+Assets/Resources/Characters/GravewindRanger/Frames/Idle_6f/Frame_05.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_00.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_01.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_02.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_03.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_04.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_05.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_06.png
+Assets/Resources/Characters/GravewindRanger/Frames/Run_8f/Frame_07.png
+Assets/Resources/Combat/Frames/AshenJudgmentBladesPixel_6f/Frame_00.png
+Assets/Resources/Combat/Frames/AshenJudgmentBladesPixel_6f/Frame_01.png
+Assets/Resources/Combat/Frames/AshenJudgmentBladesPixel_6f/Frame_02.png
+Assets/Resources/Combat/Frames/AshenJudgmentBladesPixel_6f/Frame_03.png
+Assets/Resources/Combat/Frames/AshenJudgmentBladesPixel_6f/Frame_04.png
+Assets/Resources/Combat/Frames/AshenJudgmentBladesPixel_6f/Frame_05.png
+Assets/Resources/Combat/Frames/AshenJudgmentFinalPixel_6f/Frame_00.png
+Assets/Resources/Combat/Frames/AshenJudgmentFinalPixel_6f/Frame_01.png
+Assets/Resources/Combat/Frames/AshenJudgmentFinalPixel_6f/Frame_02.png
+Assets/Resources/Combat/Frames/AshenJudgmentFinalPixel_6f/Frame_03.png
+Assets/Resources/Combat/Frames/AshenJudgmentFinalPixel_6f/Frame_04.png
+Assets/Resources/Combat/Frames/AshenJudgmentFinalPixel_6f/Frame_05.png
+Assets/Resources/Combat/Frames/AshenJudgmentRunePixel_6f/Frame_00.png
+Assets/Resources/Combat/Frames/AshenJudgmentRunePixel_6f/Frame_01.png
+Assets/Resources/Combat/Frames/AshenJudgmentRunePixel_6f/Frame_02.png
+Assets/Resources/Combat/Frames/AshenJudgmentRunePixel_6f/Frame_03.png
+Assets/Resources/Combat/Frames/AshenJudgmentRunePixel_6f/Frame_04.png
+Assets/Resources/Combat/Frames/AshenJudgmentRunePixel_6f/Frame_05.png
+Assets/Resources/Combat/Frames/AzureAegisLance_v2_6f/Frame_00.png
+Assets/Resources/Combat/Frames/AzureAegisLance_v2_6f/Frame_01.png
+Assets/Resources/Combat/Frames/AzureAegisLance_v2_6f/Frame_02.png
+Assets/Resources/Combat/Frames/AzureAegisLance_v2_6f/Frame_03.png
+Assets/Resources/Combat/Frames/AzureAegisLance_v2_6f/Frame_04.png
+Assets/Resources/Combat/Frames/AzureAegisLance_v2_6f/Frame_05.png
+Assets/Resources/Combat/Frames/AzureCitadelVerdict_v2_6f/Frame_00.png
+Assets/Resources/Combat/Frames/AzureCitadelVerdict_v2_6f/Frame_01.png
+Assets/Resources/Combat/Frames/AzureCitadelVerdict_v2_6f/Frame_02.png
+Assets/Resources/Combat/Frames/AzureCitadelVerdict_v2_6f/Frame_03.png
+Assets/Resources/Combat/Frames/AzureCitadelVerdict_v2_6f/Frame_04.png
+Assets/Resources/Combat/Frames/AzureCitadelVerdict_v2_6f/Frame_05.png
+Assets/Resources/Combat/Frames/AzureWardbreaker_v2_6f/Frame_00.png
+Assets/Resources/Combat/Frames/AzureWardbreaker_v2_6f/Frame_01.png
+Assets/Resources/Combat/Frames/AzureWardbreaker_v2_6f/Frame_02.png
+Assets/Resources/Combat/Frames/AzureWardbreaker_v2_6f/Frame_03.png
+Assets/Resources/Combat/Frames/AzureWardbreaker_v2_6f/Frame_04.png
+Assets/Resources/Combat/Frames/AzureWardbreaker_v2_6f/Frame_05.png
+Assets/Resources/Combat/Frames/AzureWardenDash_6f/Frame_00.png
+Assets/Resources/Combat/Frames/AzureWardenDash_6f/Frame_01.png
+Assets/Resources/Combat/Frames/AzureWardenDash_6f/Frame_02.png
+Assets/Resources/Combat/Frames/AzureWardenDash_6f/Frame_03.png
+Assets/Resources/Combat/Frames/AzureWardenDash_6f/Frame_04.png
+Assets/Resources/Combat/Frames/AzureWardenDash_6f/Frame_05.png
+Assets/Resources/Combat/Frames/CasterBodyAuraPixel_6f/Frame_00.png
+Assets/Resources/Combat/Frames/CasterBodyAuraPixel_6f/Frame_01.png
+Assets/Resources/Combat/Frames/CasterBodyAuraPixel_6f/Frame_02.png
+Assets/Resources/Combat/Frames/CasterBodyAuraPixel_6f/Frame_03.png
+Assets/Resources/Combat/Frames/CasterBodyAuraPixel_6f/Frame_04.png
+Assets/Resources/Combat/Frames/CasterBodyAuraPixel_6f/Frame_05.png
+Assets/Resources/Combat/Frames/ChronoRiftCutter_6f/Frame_00.png
+Assets/Resources/Combat/Frames/ChronoRiftCutter_6f/Frame_01.png
+Assets/Resources/Combat/Frames/ChronoRiftCutter_6f/Frame_02.png
+Assets/Resources/Combat/Frames/ChronoRiftCutter_6f/Frame_03.png
+Assets/Resources/Combat/Frames/ChronoRiftCutter_6f/Frame_04.png
+Assets/Resources/Combat/Frames/ChronoRiftCutter_6f/Frame_05.png
+Assets/Resources/Combat/Frames/ChronoTimeFracture_6f/Frame_00.png
+Assets/Resources/Combat/Frames/ChronoTimeFracture_6f/Frame_01.png
+Assets/Resources/Combat/Frames/ChronoTimeFracture_6f/Frame_02.png
+Assets/Resources/Combat/Frames/ChronoTimeFracture_6f/Frame_03.png
+Assets/Resources/Combat/Frames/ChronoTimeFracture_6f/Frame_04.png
+Assets/Resources/Combat/Frames/ChronoTimeFracture_6f/Frame_05.png
+Assets/Resources/Combat/Frames/ChronoZeroHour_6f/Frame_00.png
+Assets/Resources/Combat/Frames/ChronoZeroHour_6f/Frame_01.png
+Assets/Resources/Combat/Frames/ChronoZeroHour_6f/Frame_02.png
+Assets/Resources/Combat/Frames/ChronoZeroHour_6f/Frame_03.png
+Assets/Resources/Combat/Frames/ChronoZeroHour_6f/Frame_04.png
+Assets/Resources/Combat/Frames/ChronoZeroHour_6f/Frame_05.png
+Assets/Resources/Combat/Frames/ChronobladeDash_6f/Frame_00.png
+Assets/Resources/Combat/Frames/ChronobladeDash_6f/Frame_01.png
+Assets/Resources/Combat/Frames/ChronobladeDash_6f/Frame_02.png
+Assets/Resources/Combat/Frames/ChronobladeDash_6f/Frame_03.png
+Assets/Resources/Combat/Frames/ChronobladeDash_6f/Frame_04.png
+Assets/Resources/Combat/Frames/ChronobladeDash_6f/Frame_05.png
+Assets/Resources/Combat/Frames/DashBurstPixel_6f/Frame_00.png
+Assets/Resources/Combat/Frames/DashBurstPixel_6f/Frame_01.png
+Assets/Resources/Combat/Frames/DashBurstPixel_6f/Frame_02.png
+Assets/Resources/Combat/Frames/DashBurstPixel_6f/Frame_03.png
+Assets/Resources/Combat/Frames/DashBurstPixel_6f/Frame_04.png
+Assets/Resources/Combat/Frames/DashBurstPixel_6f/Frame_05.png
+Assets/Resources/Combat/Frames/E_SpinSlash_6f/Frame_00.png
+Assets/Resources/Combat/Frames/E_SpinSlash_6f/Frame_01.png
+Assets/Resources/Combat/Frames/E_SpinSlash_6f/Frame_02.png
+Assets/Resources/Combat/Frames/E_SpinSlash_6f/Frame_03.png
+Assets/Resources/Combat/Frames/E_SpinSlash_6f/Frame_04.png
+Assets/Resources/Combat/Frames/E_SpinSlash_6f/Frame_05.png
+Assets/Resources/Combat/Frames/GraveNightfallRain_6f/Frame_00.png
+Assets/Resources/Combat/Frames/GraveNightfallRain_6f/Frame_01.png
+Assets/Resources/Combat/Frames/GraveNightfallRain_6f/Frame_02.png
+Assets/Resources/Combat/Frames/GraveNightfallRain_6f/Frame_03.png
+Assets/Resources/Combat/Frames/GraveNightfallRain_6f/Frame_04.png
+Assets/Resources/Combat/Frames/GraveNightfallRain_6f/Frame_05.png
+Assets/Resources/Combat/Frames/GraveNightfall_6f/Frame_00.png
+Assets/Resources/Combat/Frames/GraveNightfall_6f/Frame_01.png
+Assets/Resources/Combat/Frames/GraveNightfall_6f/Frame_02.png
+Assets/Resources/Combat/Frames/GraveNightfall_6f/Frame_03.png
+Assets/Resources/Combat/Frames/GraveNightfall_6f/Frame_04.png
+Assets/Resources/Combat/Frames/GraveNightfall_6f/Frame_05.png
+Assets/Resources/Combat/Frames/GraveSnareRanged_6f/Frame_00.png
+Assets/Resources/Combat/Frames/GraveSnareRanged_6f/Frame_01.png
+Assets/Resources/Combat/Frames/GraveSnareRanged_6f/Frame_02.png
+Assets/Resources/Combat/Frames/GraveSnareRanged_6f/Frame_03.png
+Assets/Resources/Combat/Frames/GraveSnareRanged_6f/Frame_04.png
+Assets/Resources/Combat/Frames/GraveSnareRanged_6f/Frame_05.png
+Assets/Resources/Combat/Frames/GraveSnare_6f/Frame_00.png
+Assets/Resources/Combat/Frames/GraveSnare_6f/Frame_01.png
+Assets/Resources/Combat/Frames/GraveSnare_6f/Frame_02.png
+Assets/Resources/Combat/Frames/GraveSnare_6f/Frame_03.png
+Assets/Resources/Combat/Frames/GraveSnare_6f/Frame_04.png
+Assets/Resources/Combat/Frames/GraveSnare_6f/Frame_05.png
+Assets/Resources/Combat/Frames/GraveWraithFan_6f/Frame_00.png
+Assets/Resources/Combat/Frames/GraveWraithFan_6f/Frame_01.png
+Assets/Resources/Combat/Frames/GraveWraithFan_6f/Frame_02.png
+Assets/Resources/Combat/Frames/GraveWraithFan_6f/Frame_03.png
+Assets/Resources/Combat/Frames/GraveWraithFan_6f/Frame_04.png
+Assets/Resources/Combat/Frames/GraveWraithFan_6f/Frame_05.png
+Assets/Resources/Combat/Frames/GravewindRangerDash_6f/Frame_00.png
+Assets/Resources/Combat/Frames/GravewindRangerDash_6f/Frame_01.png
+Assets/Resources/Combat/Frames/GravewindRangerDash_6f/Frame_02.png
+Assets/Resources/Combat/Frames/GravewindRangerDash_6f/Frame_03.png
+Assets/Resources/Combat/Frames/GravewindRangerDash_6f/Frame_04.png
+Assets/Resources/Combat/Frames/GravewindRangerDash_6f/Frame_05.png
+Assets/Resources/Combat/Frames/SlashVfxHit1_6f/Frame_00.png
+Assets/Resources/Combat/Frames/SlashVfxHit1_6f/Frame_01.png
+Assets/Resources/Combat/Frames/SlashVfxHit1_6f/Frame_02.png
+Assets/Resources/Combat/Frames/SlashVfxHit1_6f/Frame_03.png
+Assets/Resources/Combat/Frames/SlashVfxHit1_6f/Frame_04.png
+Assets/Resources/Combat/Frames/SlashVfxHit1_6f/Frame_05.png
+Assets/Resources/Combat/Frames/SlashVfxHit2_6f/Frame_00.png
+Assets/Resources/Combat/Frames/SlashVfxHit2_6f/Frame_01.png
+Assets/Resources/Combat/Frames/SlashVfxHit2_6f/Frame_02.png
+Assets/Resources/Combat/Frames/SlashVfxHit2_6f/Frame_03.png
+Assets/Resources/Combat/Frames/SlashVfxHit2_6f/Frame_04.png
+Assets/Resources/Combat/Frames/SlashVfxHit2_6f/Frame_05.png
+Assets/Resources/Combat/Frames/SlashVfxHit3_6f/Frame_00.png
+Assets/Resources/Combat/Frames/SlashVfxHit3_6f/Frame_01.png
+Assets/Resources/Combat/Frames/SlashVfxHit3_6f/Frame_02.png
+Assets/Resources/Combat/Frames/SlashVfxHit3_6f/Frame_03.png
+Assets/Resources/Combat/Frames/SlashVfxHit3_6f/Frame_04.png
+Assets/Resources/Combat/Frames/SlashVfxHit3_6f/Frame_05.png
+Assets/Resources/Combat/Frames/SwordWaveImpactPixel_6f/Frame_00.png
+Assets/Resources/Combat/Frames/SwordWaveImpactPixel_6f/Frame_01.png
+Assets/Resources/Combat/Frames/SwordWaveImpactPixel_6f/Frame_02.png
+Assets/Resources/Combat/Frames/SwordWaveImpactPixel_6f/Frame_03.png
+Assets/Resources/Combat/Frames/SwordWaveImpactPixel_6f/Frame_04.png
+Assets/Resources/Combat/Frames/SwordWaveImpactPixel_6f/Frame_05.png
+Assets/Resources/Combat/Frames/SwordWavePixel_6f/Frame_00.png
+Assets/Resources/Combat/Frames/SwordWavePixel_6f/Frame_01.png
+Assets/Resources/Combat/Frames/SwordWavePixel_6f/Frame_02.png
+Assets/Resources/Combat/Frames/SwordWavePixel_6f/Frame_03.png
+Assets/Resources/Combat/Frames/SwordWavePixel_6f/Frame_04.png
+Assets/Resources/Combat/Frames/SwordWavePixel_6f/Frame_05.png
+Assets/Resources/Decor/Flags/flag_1.png
+Assets/Resources/Decor/Flags/flag_2.png
+Assets/Resources/Decor/Flags/flag_3.png
+Assets/Resources/Decor/Flags/flag_4.png
+Assets/Resources/Decor/Plants/bush_1.png
+Assets/Resources/Decor/Plants/bush_2.png
+Assets/Resources/Decor/Plants/grass_1.png
+Assets/Resources/Decor/Plants/grass_2.png
+Assets/Resources/Decor/Plants/mushroom_1.png
+Assets/Resources/Decor/Props/box_1.png
+Assets/Resources/Decor/Props/box_2.png
+Assets/Resources/Decor/Props/box_3.png
+Assets/Resources/Decor/Props/box_4.png
+Assets/Resources/Decor/Props/chest_1.png
+Assets/Resources/Decor/Props/pot_gray.png
+Assets/Resources/Decor/Props/pot_red.png
+Assets/Resources/Decor/Props/stone_1.png
+Assets/Resources/Decor/Props/stone_2.png
+Assets/Resources/Decor/Props/stone_3.png
+Assets/Resources/Decor/Props/stone_4.png
+Assets/Resources/Decor/Props/stone_5.png
+Assets/Resources/Decor/Torches/torch_1.png
+Assets/Resources/Decor/Torches/torch_2.png
+Assets/Resources/Decor/Torches/torch_3.png
+Assets/Resources/Decor/Torches/torch_4.png
+Assets/Resources/Decor/Trees/tree_idle_1.png
+Assets/Resources/Decor/Trees/tree_idle_2.png
+Assets/Resources/Decor/Trees/tree_idle_3.png
+Assets/Resources/Decor/Trees/tree_idle_4.png
+Assets/Resources/Decor/Trees/tree_sprout_1.png
+Assets/Resources/Decor/Trees/tree_sprout_2.png
+Assets/Resources/Decor/Trees/tree_sprout_3.png
+Assets/Resources/Decor/Trees/tree_sprout_4.png
+Assets/Resources/Decor/Trees/tree_sprout_5.png
+Assets/Resources/Decor/Trees/tree_sprout_6.png
+Assets/Resources/Decor/Trees/tree_sprout_7.png
+Assets/Resources/Enemy/AnimatedArt/Bat.png
+Assets/Resources/Enemy/AnimatedArt/MonsterSkeleton.png
+Assets/Resources/Enemy/AnimatedArt/MonsterWitch.png
+Assets/Resources/Enemy/AnimatedArt/MonsterZombie.png
+Assets/Resources/Enemy/AnimatedArt/SkeletonArcher.png
+Assets/Resources/Enemy/AnimatedArt/UndeadKing.png
+Assets/Resources/Enemy/AnimatedArt/VampireAttack.png
+Assets/Resources/Enemy/AnimatedArt/VampireDeath.png
+Assets/Resources/Enemy/AnimatedArt/VampireHurt.png
+Assets/Resources/Enemy/AnimatedArt/VampireIdle.png
+Assets/Resources/Enemy/AnimatedArt/VampireRun.png
+Assets/Resources/Enemy/AnimatedArt/VampireWalk.png
+Assets/Resources/Enemy/Arrows/arrow_1.png
+Assets/Resources/Enemy/Arrows/arrow_2.png
+Assets/Resources/Enemy/Arrows/arrow_3.png
+Assets/Resources/Enemy/Arrows/arrow_4.png
+Assets/Resources/MapThemes/ArrowCrypt/archery_target.png
+Assets/Resources/MapThemes/ArrowCrypt/arrow_trap_00_idle.png
+Assets/Resources/MapThemes/ArrowCrypt/arrow_trap_01_warning.png
+Assets/Resources/MapThemes/ArrowCrypt/arrow_trap_02_fire.png
+Assets/Resources/MapThemes/ArrowCrypt/arrow_trap_03_reset.png
+Assets/Resources/MapThemes/ArrowCrypt/bow_rack.png
+Assets/Resources/MapThemes/ArrowCrypt/crypt_gate.png
+Assets/Resources/MapThemes/ArrowCrypt/floor_stone.png
+Assets/Resources/MapThemes/ArrowCrypt/wall_stone.png
+Assets/Resources/MapThemes/ArrowCrypt/weapon_debris.png
+Assets/Resources/Pickups/KeySpin/KeySpin_00.png
+Assets/Resources/Pickups/KeySpin/KeySpin_01.png
+Assets/Resources/Pickups/KeySpin/KeySpin_02.png
+Assets/Resources/Pickups/KeySpin/KeySpin_03.png
+Assets/Resources/Pickups/KeySpin/KeySpin_04.png
+Assets/Resources/Pickups/KeySpin/KeySpin_05.png
+Assets/Resources/Pickups/KeySpin/KeySpin_06.png
+Assets/Resources/Pickups/KeySpin/KeySpin_07.png
+Assets/Resources/Pickups/KeySpin/KeySpin_08.png
+Assets/Resources/Pickups/KeySpin/KeySpin_09.png
+Assets/Resources/Pickups/KeySpin/KeySpin_10.png
+Assets/Resources/Pickups/KeySpin/KeySpin_11.png
+Assets/Resources/Pickups/KeySpin/KeySpin_12.png
+Assets/Resources/Pickups/KeySpin/KeySpin_13.png
+Assets/Resources/Pickups/KeySpin/KeySpin_14.png
+Assets/Resources/Pickups/KeySpin/KeySpin_15.png
+Assets/Resources/Pickups/PotionSet16x16.png
+Assets/Resources/Portal/Frames/portal1_frame_1.png
+Assets/Resources/Portal/Frames/portal1_frame_2.png
+Assets/Resources/Portal/Frames/portal1_frame_3.png
+Assets/Resources/Portal/Frames/portal1_frame_4.png
+Assets/Resources/Portal/Frames/portal1_frame_5.png
+Assets/Resources/Portal/Frames/portal1_frame_6.png
+Assets/Resources/Portal/Frames/portal1_frame_7.png
+Assets/Resources/Story/Companion/_Attack2.png
+Assets/Resources/Story/Companion/_Attack2NoMovement.png
+Assets/Resources/Story/Companion/_AttackCombo2hit.png
+Assets/Resources/Story/Companion/_Death.png
+Assets/Resources/Story/Companion/_Hit.png
+Assets/Resources/Story/Companion/_Idle.png
+Assets/Resources/Story/Companion/_Run.png
+Assets/Resources/Story/SkeletonKing.png
+Assets/Resources/UI/Ornate/button_disabled.png
+Assets/Resources/UI/Ornate/button_hover.png
+Assets/Resources/UI/Ornate/button_normal.png
+Assets/Resources/UI/Ornate/button_pressed.png
+Assets/Resources/UI/Ornate/fill_health.png
+Assets/Resources/UI/Ornate/fill_mana.png
+Assets/Resources/UI/Ornate/fill_stamina.png
+Assets/Resources/UI/Ornate/fill_xp.png
+Assets/Resources/UI/Ornate/flourish.png
+Assets/Resources/UI/Ornate/icon_close.png
+Assets/Resources/UI/Ornate/icon_left.png
+Assets/Resources/UI/Ornate/icon_right.png
+Assets/Resources/UI/Ornate/icon_warning.png
+Assets/Resources/UI/Ornate/panel_hollow.png
+Assets/Resources/UI/Ornate/panel_ornate.png
+Assets/Resources/UI/Ornate/panel_parchment.png
+Assets/Resources/UI/Ornate/panel_plain.png
+Assets/Resources/UI/Ornate/scroll_thumb.png
+Assets/Resources/UI/Ornate/scroll_thumb_hover.png
+Assets/Resources/UI/Ornate/scroll_track.png
+Assets/Resources/UI/Ornate/stat_frame.png
+Assets/Resources/UI/Ornate/widget_disabled.png
+Assets/Resources/UI/Ornate/widget_hover.png
+Assets/Resources/UI/Ornate/widget_normal.png
+Assets/Resources/UI/Ornate/widget_selected.png
+Assets/Resources/UI/SkillHud/SkillSlotFrame_ObsidianCyan.png
+Assets/Resources/UI/SkillHud/SkillSlotFrame_ObsidianCyan_v2.png
+Assets/Resources/UI/Skills/AzureWarden/IconAegisLance.png
+Assets/Resources/UI/Skills/AzureWarden/IconAegisRush.png
+Assets/Resources/UI/Skills/AzureWarden/IconCitadelVerdict.png
+Assets/Resources/UI/Skills/AzureWarden/IconWardbreaker.png
+Assets/Resources/UI/Skills/Chronoblade/IconRiftCutter.png
+Assets/Resources/UI/Skills/Chronoblade/IconRiftStep.png
+Assets/Resources/UI/Skills/Chronoblade/IconTimeFracture.png
+Assets/Resources/UI/Skills/Chronoblade/IconZeroHour.png
+Assets/Resources/UI/Skills/GravewindRanger/IconGraveSnare.png
+Assets/Resources/UI/Skills/GravewindRanger/IconMistStep.png
+Assets/Resources/UI/Skills/GravewindRanger/IconNightfall.png
+Assets/Resources/UI/Skills/GravewindRanger/IconWraithFan.png
+Assets/Resources/UI/Skills/IconAshenJudgment.png
+Assets/Resources/UI/Skills/IconDash.png
+Assets/Resources/UI/Skills/IconSpinSlash.png
+Assets/Resources/UI/Skills/IconSwordWave.png
+Assets/Resources/VFX/Combat/Explosions.png
+Assets/Resources/VFX/Combat/Fire.png

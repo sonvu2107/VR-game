@@ -1,0 +1,143 @@
+RÀ SOÁT PIXEL TEXTURE — 21/10/2026
+
+Đã rà 1.345 texture nguồn; kiểm tra 477 texture pixel art thuộc gameplay, Resources và các asset được tham chiếu.
+99 texture có thay đổi metadata so với HEAD (gồm 4 atlas Arcane đã sửa ở lượt trước).
+Point, tắt mipmap và tắt nén cho pixel art. Giữ GUID, sprite slicing, pivot, PPU và ảnh nguồn.
+Không đổi các override nền tảng đang tắt. Không có ảnh trong danh sách vượt maxTextureSize mặc định.
+Đã sửa CampaignMapsBuilder và ArcaneCitadelMapTools để không bật lại Bilinear/mipmap.
+
+Giữ nguyên bóng đổ mềm, rune procedural của Boss, Pipoya TimeMagic và UI Prinbles.
+Các asset pack mẫu chưa được gameplay tham chiếu không bị sửa hàng loạt.
+Không thay đổi bố cục/màu UI gốc hoặc menu chọn chế độ.
+
+Unity: Captures/PixelTextures/validation.txt xác nhận 477 texture import và runtime có Point, một mip level, không nén; kiểm tra thêm override nền tảng đang bật.
+Đây là kiểm tra texture được Unity nạp, chưa thay thế chơi qua toàn bộ 10 màn.
+
+Nhóm có thay đổi:
+Assets/Art/MapThemes: 12
+Assets/Imports/2D Pixel Dungeon Asset Pack: 1
+Assets/Imports/FreeKnight_v1: 7
+Assets/Imports/Retro Inventory: 4
+Assets/Imports/Skeleton: 5
+Assets/Imports/Tiny Swords (Update 010): 16
+Assets/Resources/Decor: 36
+Assets/Resources/Pickups: 1
+Assets/Resources/Portal: 7
+Assets/Resources/Story: 8
+Assets/Resources/VFX: 2
+
+Danh sách metadata thay đổi so với HEAD:
+Assets/Resources/Pickups/PotionSet16x16.png
+Assets/Resources/Story/SkeletonKing.png
+Assets/Resources/VFX/Combat/Explosions.png
+Assets/Resources/VFX/Combat/Fire.png
+Assets/Resources/Story/Companion/_Attack2.png
+Assets/Resources/Story/Companion/_Attack2NoMovement.png
+Assets/Resources/Story/Companion/_AttackCombo2hit.png
+Assets/Resources/Story/Companion/_Death.png
+Assets/Resources/Story/Companion/_Hit.png
+Assets/Resources/Story/Companion/_Idle.png
+Assets/Resources/Story/Companion/_Run.png
+Assets/Resources/Portal/Frames/portal1_frame_1.png
+Assets/Resources/Portal/Frames/portal1_frame_2.png
+Assets/Resources/Portal/Frames/portal1_frame_3.png
+Assets/Resources/Portal/Frames/portal1_frame_4.png
+Assets/Resources/Portal/Frames/portal1_frame_5.png
+Assets/Resources/Portal/Frames/portal1_frame_6.png
+Assets/Resources/Portal/Frames/portal1_frame_7.png
+Assets/Resources/Decor/Flags/flag_1.png
+Assets/Resources/Decor/Flags/flag_2.png
+Assets/Resources/Decor/Flags/flag_3.png
+Assets/Resources/Decor/Flags/flag_4.png
+Assets/Resources/Decor/Plants/bush_1.png
+Assets/Resources/Decor/Plants/bush_2.png
+Assets/Resources/Decor/Plants/grass_1.png
+Assets/Resources/Decor/Plants/grass_2.png
+Assets/Resources/Decor/Plants/mushroom_1.png
+Assets/Resources/Decor/Props/box_1.png
+Assets/Resources/Decor/Props/box_2.png
+Assets/Resources/Decor/Props/box_3.png
+Assets/Resources/Decor/Props/box_4.png
+Assets/Resources/Decor/Props/chest_1.png
+Assets/Resources/Decor/Props/pot_gray.png
+Assets/Resources/Decor/Props/pot_red.png
+Assets/Resources/Decor/Props/stone_1.png
+Assets/Resources/Decor/Props/stone_2.png
+Assets/Resources/Decor/Props/stone_3.png
+Assets/Resources/Decor/Props/stone_4.png
+Assets/Resources/Decor/Props/stone_5.png
+Assets/Resources/Decor/Torches/torch_1.png
+Assets/Resources/Decor/Torches/torch_2.png
+Assets/Resources/Decor/Torches/torch_3.png
+Assets/Resources/Decor/Torches/torch_4.png
+Assets/Resources/Decor/Trees/tree_idle_1.png
+Assets/Resources/Decor/Trees/tree_idle_2.png
+Assets/Resources/Decor/Trees/tree_idle_3.png
+Assets/Resources/Decor/Trees/tree_idle_4.png
+Assets/Resources/Decor/Trees/tree_sprout_1.png
+Assets/Resources/Decor/Trees/tree_sprout_2.png
+Assets/Resources/Decor/Trees/tree_sprout_3.png
+Assets/Resources/Decor/Trees/tree_sprout_4.png
+Assets/Resources/Decor/Trees/tree_sprout_5.png
+Assets/Resources/Decor/Trees/tree_sprout_6.png
+Assets/Resources/Decor/Trees/tree_sprout_7.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Gold Mine/GoldMine_Active.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Gold Mine/GoldMine_Destroyed.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Gold Mine/GoldMine_Inactive.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/G_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/G_Idle_(NoShadow).png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/G_Spawn.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/M_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/M_Idle_(NoShadow).png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/M_Spawn.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/W_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/W_Idle_(NoShadow).png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Resources/W_Spawn.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_All.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_Bouncing.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_Idle.png
+Assets/Imports/Tiny Swords (Update 010)/Resources/Trees/Tree.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Attack.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Dead.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Hit.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Idle.png
+Assets/Imports/Skeleton/Sprite Sheets/Skeleton Walk.png
+Assets/Imports/Retro Inventory/Scaled 3x/Health_05_01.png
+Assets/Imports/Retro Inventory/Scaled 3x/Hearts_Red_1.png
+Assets/Imports/Retro Inventory/Scaled 3x/Hearts_Red_3.png
+Assets/Imports/Retro Inventory/Scaled 3x/Hearts_Red_5.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Attack2.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Attack2NoMovement.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_AttackCombo2hit.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Death.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Hit.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Idle.png
+Assets/Imports/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Run.png
+Assets/Imports/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Floors_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Props_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Spikes_v1.png
+Assets/Art/MapThemes/ArcaneCitadel/ArcaneCitadel_Walls_v1.png
+Assets/Art/MapThemes/Campaign/AbyssSanctum/AbyssSanctum_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/BoneCatacombs/BoneCatacombs_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/CrimsonThrone/CrimsonThrone_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/EmberForge/EmberForge_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/ForbiddenLibrary/ForbiddenLibrary_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/FrozenVault/FrozenVault_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/MossCrypt/MossCrypt_Atlas_v1.png
+Assets/Art/MapThemes/Campaign/SunkenPrison/SunkenPrison_Atlas_v1.png
+
+BỔ SUNG — NGUYÊN NHÂN MẤT CHI TIẾT ẢNH NGUỒN
+Ảnh người dùng gửi tiếp cho thấy lọc texture không phải nguyên nhân duy nhất.
+Commit 3ffe5e5 đã thu nhỏ 13 atlas MapThemes từ 1254x1254 xuống 128x128.
+Đã khôi phục nguyên byte từ parent của commit đó cho cả 13 atlas.
+Không upscale ảnh 128px và không tạo lại ảnh. GUID/material/UV giữ nguyên.
+PixelArtTextureValidation kiểm tra thêm kích thước texture Unity phải là 1254x1254.
+Preview UV huy hiệu màn 9 sau import: Captures/PixelTextures/level9-emblem-imported.png.
+Danh sách: Captures/PixelTextures/restored-resolution.json.
+
+NGUYÊN NHÂN THỨ HAI: LowNoiseMap.shader vẫn lượng tử hóa xuống 48 pixel/ô
+và lấy trung bình 9 mẫu, kể cả huy hiệu phủ 3x3 ô world.
+Đã bỏ bộ lọc này riêng cho ô atlas số 3 (huy hiệu) trên cả 8 map chiến dịch.
+Ô nền lặp nhỏ vẫn giữ bộ lọc giảm nhiễu. Preview huy hiệu được render bằng
+material thật của Theme, không chỉ crop ảnh PNG nguồn.

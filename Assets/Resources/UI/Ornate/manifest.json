@@ -1,0 +1,352 @@
+[
+  {
+    "name": "panel_ornate",
+    "size": [
+      64,
+      64
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Menu, pause, results, dialogue"
+  },
+  {
+    "name": "panel_plain",
+    "size": [
+      48,
+      48
+    ],
+    "border": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "role": "Objectives and small information panels"
+  },
+  {
+    "name": "panel_parchment",
+    "size": [
+      48,
+      48
+    ],
+    "border": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "role": "Journal and reading"
+  },
+  {
+    "name": "panel_hollow",
+    "size": [
+      48,
+      48
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Skill icons and minimap; transparent centre"
+  },
+  {
+    "name": "button_normal",
+    "size": [
+      96,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Button normal"
+  },
+  {
+    "name": "button_hover",
+    "size": [
+      96,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Button hover"
+  },
+  {
+    "name": "button_pressed",
+    "size": [
+      96,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Button pressed"
+  },
+  {
+    "name": "button_disabled",
+    "size": [
+      96,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Button disabled"
+  },
+  {
+    "name": "widget_normal",
+    "size": [
+      32,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Toggle, field, small selection normal"
+  },
+  {
+    "name": "widget_hover",
+    "size": [
+      32,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Toggle, field, small selection hover"
+  },
+  {
+    "name": "widget_selected",
+    "size": [
+      32,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Toggle, field, small selection selected"
+  },
+  {
+    "name": "widget_disabled",
+    "size": [
+      32,
+      32
+    ],
+    "border": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "role": "Toggle, field, small selection disabled"
+  },
+  {
+    "name": "scroll_track",
+    "size": [
+      10,
+      32
+    ],
+    "border": [
+      4,
+      3,
+      4,
+      3
+    ],
+    "role": "Scrollbar track"
+  },
+  {
+    "name": "scroll_thumb",
+    "size": [
+      16,
+      24
+    ],
+    "border": [
+      6,
+      8,
+      6,
+      8
+    ],
+    "role": "Scrollbar/slider handle"
+  },
+  {
+    "name": "scroll_thumb_hover",
+    "size": [
+      16,
+      24
+    ],
+    "border": [
+      6,
+      8,
+      6,
+      8
+    ],
+    "role": "Scrollbar/slider handle"
+  },
+  {
+    "name": "stat_frame",
+    "size": [
+      64,
+      16
+    ],
+    "border": [
+      7,
+      6,
+      7,
+      6
+    ],
+    "role": "Hollow statbar border"
+  },
+  {
+    "name": "fill_health",
+    "size": [
+      8,
+      8
+    ],
+    "border": [
+      0,
+      3,
+      0,
+      2
+    ],
+    "role": "Statbar fill health"
+  },
+  {
+    "name": "fill_mana",
+    "size": [
+      8,
+      8
+    ],
+    "border": [
+      0,
+      3,
+      0,
+      2
+    ],
+    "role": "Statbar fill mana"
+  },
+  {
+    "name": "fill_stamina",
+    "size": [
+      8,
+      8
+    ],
+    "border": [
+      0,
+      3,
+      0,
+      2
+    ],
+    "role": "Statbar fill stamina"
+  },
+  {
+    "name": "fill_xp",
+    "size": [
+      8,
+      8
+    ],
+    "border": [
+      0,
+      3,
+      0,
+      2
+    ],
+    "role": "Statbar fill xp"
+  },
+  {
+    "name": "icon_close",
+    "size": [
+      16,
+      16
+    ],
+    "border": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "role": "Icon close"
+  },
+  {
+    "name": "icon_warning",
+    "size": [
+      16,
+      16
+    ],
+    "border": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "role": "Icon warning"
+  },
+  {
+    "name": "icon_left",
+    "size": [
+      16,
+      16
+    ],
+    "border": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "role": "Icon left"
+  },
+  {
+    "name": "icon_right",
+    "size": [
+      16,
+      16
+    ],
+    "border": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "role": "Icon right"
+  },
+  {
+    "name": "flourish",
+    "size": [
+      96,
+      16
+    ],
+    "border": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "role": "Decorative separator"
+  }
+]

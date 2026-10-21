@@ -1,0 +1,4 @@
+PASS
+Observed actual DungeonKey sprites in Play Mode for 6 seconds.
+Key -201228: 16 distinct frames: KeySpin_00, KeySpin_01, KeySpin_02, KeySpin_03, KeySpin_04, KeySpin_05, KeySpin_06, KeySpin_07, KeySpin_08, KeySpin_09, KeySpin_10, KeySpin_11, KeySpin_12, KeySpin_13, KeySpin_14, KeySpin_15
+Pickup trigger checked; did not collect a key or exercise two-machine LAN.

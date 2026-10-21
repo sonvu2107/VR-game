@@ -10,12 +10,15 @@ public sealed class DungeonKey : MonoBehaviour
     [SerializeField, Min(0.1f)] private float visualScale = 0.65f;
 
     private static Sprite runtimeSprite;
-    public static Sprite IconSprite => GetRuntimeSprite();
+    private static Sprite[] spinFrames;
+    private const float FrameDuration = .08f;
+    public static Sprite IconSprite => GetSpinFrames().Length > 0 ? spinFrames[0] : GetRuntimeSprite();
     private GameManager gameManager;
     private SpriteRenderer spriteRenderer;
     private Vector3 anchorPosition;
     private Vector3 baseScale;
     private bool collected;
+    private float spinTime;
 
     public void Initialize(GameManager owner)
     {
@@ -33,9 +36,9 @@ public sealed class DungeonKey : MonoBehaviour
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 
         if (spriteRenderer.sprite == null)
-            spriteRenderer.sprite = GetRuntimeSprite();
+            spriteRenderer.sprite = IconSprite;
 
-        spriteRenderer.color = keyColor;
+        spriteRenderer.color = GetSpinFrames().Length > 0 ? Color.white : keyColor;
         spriteRenderer.sortingOrder = Mathf.Max(spriteRenderer.sortingOrder, 8);
         baseScale = transform.localScale * visualScale;
         transform.localScale = baseScale;
@@ -55,7 +58,15 @@ public sealed class DungeonKey : MonoBehaviour
 
         float wave = Mathf.Sin(Time.time * bobFrequency);
         transform.position = anchorPosition + Vector3.up * (wave * bobAmplitude);
-        transform.localScale = baseScale * (1f + 0.08f * (wave + 1f));
+        spinTime += Time.deltaTime;
+        var frames = GetSpinFrames();
+        if (frames.Length > 0)
+        {
+            // Also refresh keys already alive when the editor reloads this script.
+            spriteRenderer.color = Color.white;
+            transform.localScale = baseScale;
+            spriteRenderer.sprite = frames[Mathf.FloorToInt(spinTime / FrameDuration) % frames.Length];
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -99,5 +110,18 @@ public sealed class DungeonKey : MonoBehaviour
             new Vector2(0.5f, 0.5f), 8f, 0, SpriteMeshType.FullRect);
         runtimeSprite.name = "Runtime Dungeon Key";
         return runtimeSprite;
+    }
+
+    private static Sprite[] GetSpinFrames()
+    {
+        if (spinFrames != null && spinFrames.Length > 0 && spinFrames[0] != null) return spinFrames;
+        var frames = new Sprite[16];
+        for (int i = 0; i < frames.Length; i++)
+        {
+            frames[i] = Resources.Load<Sprite>($"Pickups/KeySpin/KeySpin_{i:00}");
+            if (frames[i] == null) return System.Array.Empty<Sprite>();
+        }
+        spinFrames = frames;
+        return spinFrames;
     }
 }

@@ -14,7 +14,7 @@ public class StartMenuControls : MonoBehaviour
     private void Start()
     {
         if (loadingScreen != null) loadingScreen.SetActive(false);
-        LanMenuUI.Show(this);
+        if (!string.IsNullOrEmpty(LanLaunch.LastError)) LanMenuUI.Show(this);
     }
 
     public void StartButtonControl()

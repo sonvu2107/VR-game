@@ -61,6 +61,7 @@ public sealed partial class StorySmokeProbe
             }
             if (LanLaunch.Mode == LanMode.Solo)
             {
+                yield return VerifyDialogueWrapping(story);
                 for (int shot = 0; shot < 3; shot++)
                 {
                     Check(story.LineIndex == shot && story.Opening, "opening shot " + shot);

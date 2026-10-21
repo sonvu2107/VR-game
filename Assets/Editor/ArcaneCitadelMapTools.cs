@@ -68,8 +68,8 @@ public static class ArcaneCitadelMapTools
         AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
         var importer = (TextureImporter)AssetImporter.GetAtPath(path);
         // Texture-only settings; Sprite slicing/pivots/metadata remain untouched.
-        importer.filterMode = FilterMode.Bilinear;
-        importer.mipmapEnabled = true;
+        importer.filterMode = FilterMode.Point;
+        importer.mipmapEnabled = false;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.maxTextureSize = 2048;
         importer.wrapMode = TextureWrapMode.Clamp;

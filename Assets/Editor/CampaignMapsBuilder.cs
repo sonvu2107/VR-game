@@ -161,7 +161,7 @@ public static class CampaignMapsBuilder
             // These atlases are minified heavily at the gameplay camera scale.
             // Point sampling without mipmaps creates temporal aliasing while the
             // camera scrolls, which reads as movement jitter on themed maps.
-            importer.filterMode = FilterMode.Bilinear; importer.mipmapEnabled = true;
+            importer.filterMode = FilterMode.Point; importer.mipmapEnabled = false;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.wrapMode = TextureWrapMode.Clamp; importer.maxTextureSize = 2048;
             importer.isReadable = true; importer.alphaIsTransparency = true; importer.SaveAndReimport();

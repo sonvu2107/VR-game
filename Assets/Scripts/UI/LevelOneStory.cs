@@ -185,6 +185,7 @@ public sealed partial class LevelOneStory : MonoBehaviour
         }
         TickScenery(show);
         if (!show) return;
+        ConfigureDialogueText();
         if (IsComplete)
         {
             // Không để cú click đóng hội thoại trở thành nhát chém đầu tiên.
@@ -417,6 +418,7 @@ public sealed partial class LevelOneStory : MonoBehaviour
         body = Label(card, "", 28, new Vector2(0, -12), new Vector2(984, 120), new Color(0.96f, 0.95f, 0.92f));
         body.alignment = TextAlignmentOptions.TopLeft;
         body.lineSpacing = 6f;
+        ConfigureDialogueText();
         hint = Label(card, "", 18, new Vector2(-210, -135), new Vector2(565, 50), new Color(0.75f, 0.79f, 0.84f));
         skip = MakeButton(card, "Bỏ qua", new Vector2(180, -135), new Vector2(150, 52), false, () => RequestAdvance(true));
         next = MakeButton(card, "Tiếp tục", new Vector2(388, -135), new Vector2(240, 52), true, () => RequestAdvance(false));
@@ -431,6 +433,17 @@ public sealed partial class LevelOneStory : MonoBehaviour
         go.transform.SetParent(parent, false);
         go.GetComponent<Image>().color = color;
         return go.GetComponent<RectTransform>();
+    }
+
+    private void ConfigureDialogueText()
+    {
+        if (body == null) return;
+        // Không phụ thuộc TMP Settings hoặc trạng thái UI giữ lại sau hot reload.
+        body.enableWordWrapping = true;
+        body.enableAutoSizing = true;
+        body.fontSizeMin = 22f;
+        body.fontSizeMax = cinematicLayout ? 24f : 28f;
+        body.overflowMode = TextOverflowModes.Overflow;
     }
     private static void Place(RectTransform rect, Vector2 size, Vector2 position)
     {

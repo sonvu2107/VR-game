@@ -1,0 +1,2 @@
+PASS: 2348 menu assertions; ornate UI checks passed.
+Actual Unity uGUI renders; no two-machine LAN session exercised.

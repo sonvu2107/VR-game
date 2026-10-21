@@ -1,0 +1,1 @@
+PASS: both inscription labels fit in a copy of the real world UI; story reveal state unchanged.

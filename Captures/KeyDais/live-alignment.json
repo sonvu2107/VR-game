@@ -1,0 +1,704 @@
+[
+  {
+    "name": "Bệ đá pixel art",
+    "id": -4456,
+    "components": [
+      {
+        "typeName": "UnityEngine.RectTransform",
+        "instanceID": -4460,
+        "properties": {
+          "rect": {
+            "x": -100.0,
+            "y": -67.0,
+            "width": 200.0,
+            "height": 134.0
+          },
+          "anchorMin": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchorMax": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchoredPosition": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "sizeDelta": {
+            "x": 200.0,
+            "y": 134.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchoredPosition3D": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "offsetMin": {
+            "x": -100.0,
+            "y": -67.0
+          },
+          "offsetMax": {
+            "x": 100.0,
+            "y": 67.0
+          },
+          "drivenByObject": null,
+          "position": {
+            "x": 35.5,
+            "y": 30.5,
+            "z": 0.0
+          },
+          "localPosition": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "eulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "localEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "right": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "up": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": 0.0
+          },
+          "forward": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          },
+          "localRotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          },
+          "localScale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "parent": {
+            "name": "Bệ đá hai chìa — âm sàn",
+            "instanceID": -4452
+          },
+          "root": {
+            "name": "GameManager",
+            "instanceID": 35328
+          },
+          "childCount": 0,
+          "lossyScale": {
+            "x": 0.009999999776482582,
+            "y": 0.009999999776482582,
+            "z": 0.009999999776482582
+          },
+          "hasChanged": true,
+          "hierarchyCapacity": 94,
+          "hierarchyCount": 51,
+          "gameObject": {
+            "name": "Bệ đá pixel art",
+            "instanceID": -4456
+          },
+          "tag": "Untagged",
+          "name": "Bệ đá pixel art",
+          "hideFlags": 0
+        }
+      },
+      {
+        "typeName": "UnityEngine.UI.Image",
+        "instanceID": -4464,
+        "properties": {
+          "sprite": {
+            "name": "",
+            "instanceID": -4454
+          },
+          "overrideSprite": {
+            "name": "",
+            "instanceID": -4454
+          },
+          "type": 0,
+          "preserveAspect": true,
+          "fillCenter": true,
+          "fillMethod": 4,
+          "fillAmount": 1.0,
+          "fillClockwise": true,
+          "fillOrigin": 0,
+          "eventAlphaThreshold": 1.0,
+          "alphaHitTestMinimumThreshold": 0.0,
+          "useSpriteMesh": false,
+          "mainTexture": "Assets/Resources/Story/KeyDais.png",
+          "hasBorder": false,
+          "pixelsPerUnitMultiplier": 1.0,
+          "pixelsPerUnit": 0.6399999856948853,
+          "material": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "minWidth": 0.0,
+          "preferredWidth": 2400.0,
+          "flexibleWidth": -1.0,
+          "minHeight": 0.0,
+          "preferredHeight": 1600.0,
+          "flexibleHeight": -1.0,
+          "layoutPriority": 0,
+          "onCullStateChanged": {},
+          "maskable": true,
+          "isMaskingGraphic": false,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "raycastTarget": false,
+          "raycastPadding": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "depth": -1,
+          "rectTransform": {
+            "name": "Bệ đá pixel art",
+            "instanceID": -4460
+          },
+          "canvas": null,
+          "canvasRenderer": {
+            "name": "Bệ đá pixel art",
+            "instanceID": -4462
+          },
+          "defaultMaterial": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "materialForRendering": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "m_Sprite": {
+            "name": "",
+            "instanceID": -4454
+          },
+          "m_Type": 0,
+          "m_PreserveAspect": true,
+          "m_FillCenter": true,
+          "m_FillMethod": 4,
+          "m_FillAmount": 1.0,
+          "m_FillClockwise": true,
+          "m_FillOrigin": 0,
+          "m_UseSpriteMesh": false,
+          "m_PixelsPerUnitMultiplier": 1.0,
+          "m_Maskable": true,
+          "m_OnCullStateChanged": {},
+          "m_Material": null,
+          "m_Color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_RaycastTarget": false,
+          "m_RaycastPadding": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "Chìa đã đặt 1",
+    "id": -4466,
+    "components": [
+      {
+        "typeName": "UnityEngine.RectTransform",
+        "instanceID": -4470,
+        "properties": {
+          "rect": {
+            "x": -100.0,
+            "y": -67.0,
+            "width": 200.0,
+            "height": 134.0
+          },
+          "anchorMin": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchorMax": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchoredPosition": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "sizeDelta": {
+            "x": 200.0,
+            "y": 134.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchoredPosition3D": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "offsetMin": {
+            "x": -100.0,
+            "y": -67.0
+          },
+          "offsetMax": {
+            "x": 100.0,
+            "y": 67.0
+          },
+          "drivenByObject": null,
+          "position": {
+            "x": 35.5,
+            "y": 30.5,
+            "z": 0.0
+          },
+          "localPosition": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "eulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "localEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "right": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "up": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": 0.0
+          },
+          "forward": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          },
+          "localRotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          },
+          "localScale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "parent": {
+            "name": "Bệ đá hai chìa — âm sàn",
+            "instanceID": -4452
+          },
+          "root": {
+            "name": "GameManager",
+            "instanceID": 35328
+          },
+          "childCount": 0,
+          "lossyScale": {
+            "x": 0.009999999776482582,
+            "y": 0.009999999776482582,
+            "z": 0.009999999776482582
+          },
+          "hasChanged": true,
+          "hierarchyCapacity": 94,
+          "hierarchyCount": 51,
+          "gameObject": {
+            "name": "Chìa đã đặt 1",
+            "instanceID": -4466
+          },
+          "tag": "Untagged",
+          "name": "Chìa đã đặt 1",
+          "hideFlags": 0
+        }
+      },
+      {
+        "typeName": "UnityEngine.UI.Image",
+        "instanceID": -4474,
+        "properties": {
+          "sprite": {
+            "name": "",
+            "instanceID": -4510
+          },
+          "overrideSprite": {
+            "name": "",
+            "instanceID": -4510
+          },
+          "type": 0,
+          "preserveAspect": true,
+          "fillCenter": true,
+          "fillMethod": 4,
+          "fillAmount": 1.0,
+          "fillClockwise": true,
+          "fillOrigin": 0,
+          "eventAlphaThreshold": 1.0,
+          "alphaHitTestMinimumThreshold": 0.0,
+          "useSpriteMesh": false,
+          "mainTexture": "Assets/Resources/Story/KeyDaisInlay1.png",
+          "hasBorder": false,
+          "pixelsPerUnitMultiplier": 1.0,
+          "pixelsPerUnit": 0.6399999856948853,
+          "material": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "minWidth": 0.0,
+          "preferredWidth": 300.0,
+          "flexibleWidth": -1.0,
+          "minHeight": 0.0,
+          "preferredHeight": 200.0,
+          "flexibleHeight": -1.0,
+          "layoutPriority": 0,
+          "onCullStateChanged": {},
+          "maskable": true,
+          "isMaskingGraphic": false,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "raycastTarget": false,
+          "raycastPadding": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "depth": -1,
+          "rectTransform": {
+            "name": "Chìa đã đặt 1",
+            "instanceID": -4470
+          },
+          "canvas": null,
+          "canvasRenderer": {
+            "name": "Chìa đã đặt 1",
+            "instanceID": -4472
+          },
+          "defaultMaterial": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "materialForRendering": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "m_Sprite": {
+            "name": "",
+            "instanceID": -4510
+          },
+          "m_Type": 0,
+          "m_PreserveAspect": true,
+          "m_FillCenter": true,
+          "m_FillMethod": 4,
+          "m_FillAmount": 1.0,
+          "m_FillClockwise": true,
+          "m_FillOrigin": 0,
+          "m_UseSpriteMesh": false,
+          "m_PixelsPerUnitMultiplier": 1.0,
+          "m_Maskable": true,
+          "m_OnCullStateChanged": {},
+          "m_Material": null,
+          "m_Color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_RaycastTarget": false,
+          "m_RaycastPadding": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "Chìa đã đặt 2",
+    "id": -4476,
+    "components": [
+      {
+        "typeName": "UnityEngine.RectTransform",
+        "instanceID": -4480,
+        "properties": {
+          "rect": {
+            "x": -100.0,
+            "y": -67.0,
+            "width": 200.0,
+            "height": 134.0
+          },
+          "anchorMin": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchorMax": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchoredPosition": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "sizeDelta": {
+            "x": 200.0,
+            "y": 134.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchoredPosition3D": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "offsetMin": {
+            "x": -100.0,
+            "y": -67.0
+          },
+          "offsetMax": {
+            "x": 100.0,
+            "y": 67.0
+          },
+          "drivenByObject": null,
+          "position": {
+            "x": 35.5,
+            "y": 30.5,
+            "z": 0.0
+          },
+          "localPosition": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "eulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "localEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "right": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "up": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": 0.0
+          },
+          "forward": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          },
+          "localRotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          },
+          "localScale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "parent": {
+            "name": "Bệ đá hai chìa — âm sàn",
+            "instanceID": -4452
+          },
+          "root": {
+            "name": "GameManager",
+            "instanceID": 35328
+          },
+          "childCount": 0,
+          "lossyScale": {
+            "x": 0.009999999776482582,
+            "y": 0.009999999776482582,
+            "z": 0.009999999776482582
+          },
+          "hasChanged": true,
+          "hierarchyCapacity": 94,
+          "hierarchyCount": 51,
+          "gameObject": {
+            "name": "Chìa đã đặt 2",
+            "instanceID": -4476
+          },
+          "tag": "Untagged",
+          "name": "Chìa đã đặt 2",
+          "hideFlags": 0
+        }
+      },
+      {
+        "typeName": "UnityEngine.UI.Image",
+        "instanceID": -4484,
+        "properties": {
+          "sprite": {
+            "name": "",
+            "instanceID": -4512
+          },
+          "overrideSprite": {
+            "name": "",
+            "instanceID": -4512
+          },
+          "type": 0,
+          "preserveAspect": true,
+          "fillCenter": true,
+          "fillMethod": 4,
+          "fillAmount": 1.0,
+          "fillClockwise": true,
+          "fillOrigin": 0,
+          "eventAlphaThreshold": 1.0,
+          "alphaHitTestMinimumThreshold": 0.0,
+          "useSpriteMesh": false,
+          "mainTexture": "Assets/Resources/Story/KeyDaisInlay2.png",
+          "hasBorder": false,
+          "pixelsPerUnitMultiplier": 1.0,
+          "pixelsPerUnit": 0.6399999856948853,
+          "material": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "minWidth": 0.0,
+          "preferredWidth": 300.0,
+          "flexibleWidth": -1.0,
+          "minHeight": 0.0,
+          "preferredHeight": 200.0,
+          "flexibleHeight": -1.0,
+          "layoutPriority": 0,
+          "onCullStateChanged": {},
+          "maskable": true,
+          "isMaskingGraphic": false,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "raycastTarget": false,
+          "raycastPadding": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "depth": -1,
+          "rectTransform": {
+            "name": "Chìa đã đặt 2",
+            "instanceID": -4480
+          },
+          "canvas": null,
+          "canvasRenderer": {
+            "name": "Chìa đã đặt 2",
+            "instanceID": -4482
+          },
+          "defaultMaterial": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "materialForRendering": {
+            "name": "Default UI Material",
+            "instanceID": -2170
+          },
+          "m_Sprite": {
+            "name": "",
+            "instanceID": -4512
+          },
+          "m_Type": 0,
+          "m_PreserveAspect": true,
+          "m_FillCenter": true,
+          "m_FillMethod": 4,
+          "m_FillAmount": 1.0,
+          "m_FillClockwise": true,
+          "m_FillOrigin": 0,
+          "m_UseSpriteMesh": false,
+          "m_PixelsPerUnitMultiplier": 1.0,
+          "m_Maskable": true,
+          "m_OnCullStateChanged": {},
+          "m_Material": null,
+          "m_Color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_RaycastTarget": false,
+          "m_RaycastPadding": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          }
+        }
+      }
+    ]
+  }
+]

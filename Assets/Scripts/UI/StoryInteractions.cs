@@ -107,7 +107,15 @@ public sealed partial class LevelOneStory
                 ? new Color(1f, .68f, .22f, .8f + Mathf.Sin(Time.unscaledTime * 2f) * .15f)
                 : new Color(.32f, .46f, .55f, .65f);
         }
-        mechanismLabel.text = StoryLevel == 4 ? "ẤN DÒ ĐƯỜNG" : StoryLevel == 6 ? "LỬA DẪN ĐƯỜNG" : "HAI NỬA LỜI GIẢI";
+        mechanismLabel.text = StoryLevel == 4 ? "ẤN DÒ ĐƯỜNG" : StoryLevel == 6 ? "LỬA DẪN ĐƯỜNG" : "Hai nửa lời giải";
+        mechanismLabel.rectTransform.anchoredPosition = new Vector2(0, StoryLevel == 8 ? 68 : 105);
+        mechanismLabel.fontSize = StoryLevel == 8 ? 22 : 20;
+        if (StoryLevel == 8)
+        {
+            mechanismLabel.outlineColor = new Color32(15, 11, 9, 255);
+            mechanismLabel.outlineWidth = .2f;
+        }
+        else mechanismLabel.outlineWidth = 0;
         bool showGuide = GuideAvailable && manager.CurrentState == GameState.Playing && !journalOpen;
         guideLabel.gameObject.SetActive(showGuide);
         if (showGuide)

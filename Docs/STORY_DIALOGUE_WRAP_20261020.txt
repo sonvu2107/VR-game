@@ -1,0 +1,30 @@
+SỬA TRÀN CHỮ KHUNG HỘI THOẠI — 20/10/2026
+
+LevelOneStory.ConfigureDialogueText bật xuống dòng rõ ràng cho body,
+cho phép tự điều chỉnh cỡ chữ trong khoảng 22–24 ở cảnh phim,
+22–28 khi đọc bia. Không cắt mất nội dung bằng truncate/ellipsis.
+Áp dụng lúc dựng UI và khi hiển thị để sửa trạng thái no-wrap còn giữ
+sau hot reload. Không phụ thuộc giá trị mặc định của TMP Settings.
+
+DialogueLayoutSmokeProbe:
+- Cố ý tắt wrap: kiểm tra hình học phát hiện chữ vượt mép khung.
+- Sang frame sau: UI khôi phục wrap và chữ nằm trong khung.
+- Kiểm tra từng glyph thay vì chỉ dựa vào isTextOverflowing.
+- Cảnh đầu/cuối và lời khắc Solo/LAN được đo ở 1280x720, 1024x768,
+  1280x360, 800x600. Đoạn mở đầu phải có nhiều hơn một dòng.
+
+Bằng chứng tại D:/tl-dialogue-wrap-20261020:
+- build.log:6985: LAN_BUILD_SUCCESS.
+- solo.log:412/423: tái hiện lỗi no-wrap và xác nhận tự sửa.
+- solo.log:434/1501/2568/3635: bốn kích thước màn hình.
+- solo.log:4702: mở đầu xuống nhiều dòng, glyph nằm trong khung.
+- solo.log:49177: hồi quy Solo tầng 1–10 hoàn tất.
+- Evidence/opening-0.png: đã xem ảnh, đoạn đầu hai dòng đầy đủ,
+  không vượt viền hoặc đè lên các nút.
+
+Giới hạn: dùng project kiểm thử riêng. Mã UI và probe sửa trong lượt
+này khớp SHA-256 với workspace; các thay đổi gameplay khác trong
+workspace chưa có trong project kiểm thử, nên lượt hồi quy không
+chứng nhận toàn bộ phiên bản gameplay hiện tại. Catalog workspace
+được trả về bản trước lượt này để không trộn catalog từ project cũ.
+Không điều khiển Unity Play đang mở và không thay đổi save người dùng.

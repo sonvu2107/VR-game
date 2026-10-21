@@ -29,6 +29,10 @@ Shader "TheLabyrinth/Low Noise Pixel Map"
             }
             fixed4 frag(Output input) : SV_Target
             {
+                // Atlas cell 3 is the large floor emblem, stretched over 3x3 world cells.
+                // Keep its original detail; the 48-pixel prefilter is only for small repeating tiles.
+                if (input.uv.x >= .75 && input.uv.y >= .75)
+                    return tex2D(_MainTex, input.uv);
                 float density = max(16, _PixelsPerCell) * 4;
                 float2 cellMin = floor(input.uv * 4) * .25;
                 float2 lo = cellMin + _MainTex_TexelSize.xy * 3;

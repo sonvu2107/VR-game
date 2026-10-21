@@ -1,0 +1,1 @@
+PASS: 25 pixel sprites imported correctly; Dungeon retains original artwork. No scene-wide theme hook.

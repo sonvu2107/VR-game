@@ -1,0 +1,17 @@
+FAIL: checked 477 gameplay pixel textures.
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_00.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_01.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_02.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_03.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_04.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_05.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_06.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_07.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_08.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_09.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_10.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_11.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_12.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_13.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_14.png
+MISSING Assets/Resources/Pickups/KeySpin/KeySpin_15.png

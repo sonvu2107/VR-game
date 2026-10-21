@@ -23,9 +23,11 @@ public sealed partial class LevelOneStory
     };
     private GameObject scenery, rainRoot, flameRoot, keyDais, returnPortal;
     private Image skyImage, backdropImage, flameImage, portalImage;
+    private TMP_Text returnArrow;
     private Sprite rainyBackdrop, dawnBackdrop;
     private RectTransform actorOne, actorTwo;
     private Image[] keyHalves;
+    private int keyDaisLayoutVersion;
     private TMP_Text sceneryCaption, returnCaption, inscriptionLeft, inscriptionRight;
     private readonly List<RectTransform> rainDrops = new();
     private readonly List<Sprite> presentationSprites = new();
@@ -195,12 +197,13 @@ public sealed partial class LevelOneStory
         keyHalves = new Image[2];
         for (int i = 0; i < 2; i++)
         {
-            keyHalves[i] = Art(keyDais.transform, "Chìa đã đặt " + (i + 1), new Vector2(36, 54),
-                new Vector2(i == 0 ? -30 : 30, 6), new Color(1, .77f, .27f), DungeonKey.IconSprite);
+            keyHalves[i] = Art(keyDais.transform, "Chìa đã đặt " + (i + 1), new Vector2(200, 134),
+                Vector2.zero, Color.white);
         }
         inscriptionLeft = Label(keyDais.transform, "MẠNG SỐNG NHÀ VUA", 11, new Vector2(0, -53), new Vector2(240, 20), new Color(1, .84f, .51f));
         inscriptionRight = Label(keyDais.transform, "LÀ KHÓA CỦA MÊ CUNG", 11, new Vector2(0, -72), new Vector2(240, 20), new Color(1, .84f, .51f));
         inscriptionLeft.alignment = inscriptionRight.alignment = TextAlignmentOptions.Center;
+        ApplyKeyDaisLayout();
         mechanismLabel.rectTransform.anchoredPosition = new Vector2(0, 105);
         returnPortal = new GameObject("Cổng trở về", typeof(RectTransform), typeof(Canvas));
         returnPortal.transform.SetParent(transform, false);
@@ -208,16 +211,16 @@ public sealed partial class LevelOneStory
         returnPortal.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
         returnPortal.GetComponent<Canvas>().sortingOrder = 45;
         portalImage = Art(returnPortal.transform, "Ánh bình minh trong cổng", new Vector2(140, 180), new Vector2(0, 35), Color.white);
-        for (int side = -1; side <= 1; side += 2)
-            Art(returnPortal.transform, "Khung cổng", new Vector2(11, 145), new Vector2(side * 72, 32), new Color(.85f, .69f, .34f));
-        Art(returnPortal.transform, "Đỉnh cổng", new Vector2(155, 11), new Vector2(0, 106), new Color(.95f, .82f, .47f));
         returnCaption = Label(returnPortal.transform, "", 18, new Vector2(0, 138), new Vector2(460, 32), new Color(1, .86f, .55f));
         returnCaption.alignment = TextAlignmentOptions.Center;
+        ApplyReturnPortalLayout();
     }
 
     private void TickWorldPresentation(bool inWorld)
     {
         if (flameRoot == null) BuildWorldPresentation();
+        if (keyDaisLayoutVersion != 2) ApplyKeyDaisLayout();
+        if (returnArrow == null) ApplyReturnPortalLayout();
         int frame = Mathf.FloorToInt(Time.unscaledTime * 9) % 7;
         flameRoot.SetActive(StoryLevel == 6);
         flameImage.gameObject.SetActive(StoryLevel == 6 && MechanismStage > 0);
@@ -229,7 +232,74 @@ public sealed partial class LevelOneStory
         returnPortal.SetActive(StoryLevel == 10 && inWorld);
         returnPortal.transform.position = ExitPosition;
         portalImage.sprite = returnFrames[frame];
-        portalImage.color = ReturnPortalReady ? new Color(1, .87f, .50f) : new Color(.32f, .22f, .23f, .7f);
-        returnCaption.text = ReturnPortalReady ? "TRỞ VỀ · BƯỚC QUA CỔNG" : "LỐI VỀ ĐANG BỊ KHÓA";
+        ApplyReturnPortalState(portalImage, returnArrow, returnCaption, ReturnPortalReady);
+    }
+
+    private void ApplyReturnPortalLayout()
+    {
+        if (returnPortal == null || returnCaption == null) return;
+        // Retire the old bars when scripts reload during a running session.
+        foreach (Transform child in returnPortal.transform)
+            if (child.name == "Khung cổng" || child.name == "Đỉnh cổng" ||
+                child.name == "Vòm đá cổng trở về" || child.name == "Phong ấn cổng trở về" ||
+                child.name == "Nền chữ cổng trở về") child.gameObject.SetActive(false);
+        Place(portalImage.rectTransform, new Vector2(140, 180), new Vector2(0, 35));
+        Place(returnCaption.rectTransform, new Vector2(260, 30), new Vector2(0, 165));
+        if (returnArrow == null)
+            returnArrow = Label(returnPortal.transform, "▼", 20, new Vector2(0, 137), new Vector2(30, 24), Color.white);
+        returnArrow.name = "Mũi tên cổng trở về";
+        returnArrow.alignment = TextAlignmentOptions.Center;
+        returnArrow.outlineColor = new Color32(18, 12, 16, 255);
+        returnArrow.outlineWidth = .2f;
+        returnArrow.raycastTarget = false;
+        returnCaption.transform.SetAsLastSibling();
+        returnCaption.fontSize = 18;
+        returnCaption.enableAutoSizing = false;
+        returnCaption.enableWordWrapping = false;
+        returnCaption.alignment = TextAlignmentOptions.Center;
+        returnCaption.outlineColor = new Color32(18, 12, 16, 255);
+        returnCaption.outlineWidth = .18f;
+        returnCaption.raycastTarget = false;
+    }
+
+    private static void ApplyReturnPortalState(Image portalImage, TMP_Text returnArrow, TMP_Text returnCaption, bool ready)
+    {
+        portalImage.color = ready ? Color.white : new Color(.58f, .42f, .50f, .85f);
+        returnCaption.text = ready ? "Trở về · Bước qua cổng" : "Lối về bị khóa";
+        returnCaption.color = ready ? new Color(1f, .90f, .67f) : new Color(.94f, .76f, .65f);
+        if (returnArrow != null) returnArrow.color = returnCaption.color;
+    }
+
+    private void ApplyKeyDaisLayout()
+    {
+        if (keyHalves == null || inscriptionLeft == null || inscriptionRight == null) return;
+        for (int i = 0; i < keyHalves.Length; i++)
+        {
+            // Full-canvas overlays share the dais UVs: no independent scaling or slot offsets.
+            var texture = Resources.Load<Texture2D>("Story/KeyDaisInlay" + (i + 1));
+            if (texture == null) return;
+            keyHalves[i].sprite = Frame(texture, new Rect(0, 0, texture.width, texture.height));
+            keyHalves[i].color = Color.white;
+            keyHalves[i].preserveAspect = true;
+            keyHalves[i].raycastTarget = false;
+            Place(keyHalves[i].rectTransform, new Vector2(200, 134), Vector2.zero);
+        }
+        inscriptionLeft.text = "Mạng sống nhà vua";
+        inscriptionRight.text = "là khóa của mê cung";
+        var labels = new[] { inscriptionLeft, inscriptionRight };
+        for (int i = 0; i < labels.Length; i++)
+        {
+            var label = labels[i];
+            Place(label.rectTransform, new Vector2(280, 28), new Vector2(0, -62 - i * 26));
+            label.fontSize = 18;
+            label.enableAutoSizing = false;
+            label.enableWordWrapping = false;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = new Color(1f, .91f, .72f);
+            label.outlineColor = new Color32(15, 11, 9, 255);
+            label.outlineWidth = .2f;
+            label.raycastTarget = false;
+        }
+        keyDaisLayoutVersion = 2;
     }
 }
