@@ -11,6 +11,14 @@ public class PlayerMovement : MonoBehaviour
     // PrefabPlacer maps a logical tile (x,y) to world (x,y+1). The half-cell
     // shift makes each spawn coordinate the centre of its allowed tile region.
     private static readonly Vector2 WalkableCellLookupOffset = new(0.5f, -0.5f);
+    // Campaign corridors and room tiles use different visual origins. Probe
+    // the valid logical anchors at the dash position; physics still resolves
+    // the actual collider against walls after this floor-only safety sweep.
+    private static readonly Vector2[] DashCellOffsets =
+    {
+        WalkableCellLookupOffset, Vector2.zero, new Vector2(0.5f, 0.5f),
+        new Vector2(-0.5f, -0.5f), new Vector2(-0.5f, 0.5f)
+    };
     // Frames 5 and 6 in the imported HeavyStrikeBody sheet contain detached
     // sword fragments.  Hold the last clean raised-sword pose while charging
     // instead of exposing that broken artwork.
@@ -1432,7 +1440,7 @@ public class PlayerMovement : MonoBehaviour
             Vector2 requestedDelta = dashDirection * (distance / duration) * Time.fixedDeltaTime;
             Vector2 allowedDelta = ConstrainToWalkableArea(requestedDelta);
             rb.MovePosition(rb.position + allowedDelta);
-            if ((allowedDelta - requestedDelta).sqrMagnitude > 0.0001f)
+            if (allowedDelta.sqrMagnitude < 0.0001f)
             {
                 isDashing = false;
                 rb.velocity = Vector2.zero;
@@ -1497,9 +1505,22 @@ public class PlayerMovement : MonoBehaviour
         // The generator's logical player anchor is stable across every
         // character sprite and collider pivot. Sweep that anchor for dash;
         // Continuous Rigidbody2D collision still protects the full collider.
-        return WalkableAreaConstraint.ConstrainDelta(
-            walkableFloorTiles, rb.position, desiredDelta, Vector2.zero, Vector2.zero,
-            WalkableCellLookupOffset);
+        Vector2 best = Vector2.zero;
+        float bestDistance = -1f;
+        for (int i = 0; i < DashCellOffsets.Length; i++)
+        {
+            Vector2 offset = DashCellOffsets[i];
+            if (!WalkableAreaConstraint.ContainsFootprint(walkableFloorTiles, rb.position,
+                    Vector2.zero, Vector2.zero, cellLookupOffset: offset))
+                continue;
+            Vector2 allowed = WalkableAreaConstraint.ConstrainDelta(
+                walkableFloorTiles, rb.position, desiredDelta, Vector2.zero, Vector2.zero, offset);
+            float forwardDistance = Vector2.Dot(allowed, desiredDelta.normalized);
+            if (forwardDistance <= bestDistance) continue;
+            best = allowed;
+            bestDistance = forwardDistance;
+        }
+        return best;
     }
 
     /// <summary>

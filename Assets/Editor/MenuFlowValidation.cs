@@ -22,13 +22,15 @@ public static class MenuFlowValidation
         try
         {
             Directory.CreateDirectory(Output);
+            ValidateLobbyFont();
             if (Application.isBatchMode) MenuPreviewLibraryBuilder.Build();
             OrnateUIEditorValidation.OpenFixture("StartMenu");
             var menu = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects()
                 .SelectMany(g => g.GetComponentsInChildren<StartMenuControls>(true)).Single();
             LanLaunch.LastError = null;
             typeof(StartMenuControls).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(menu, null);
-            Check(Object.FindObjectOfType<LanMenuUI>() == null, "original scene main menu stays visible before Start");
+            Check(Object.FindObjectOfType<LanMenuUI>() == null, "new lobby is visible before Start");
+            Check(GameObject.Find("Labyrinth Title Screen") != null, "new lobby exists");
             Capture("00-main", 1280, 720);
             menu.StartButtonControl();
             ui = Object.FindObjectOfType<LanMenuUI>();
@@ -114,7 +116,8 @@ public static class MenuFlowValidation
             Capture("02-character-1920x1080", 1920, 1080);
             ClickText("Quay lại");
             ClickText("Menu chính");
-            Check(Object.FindObjectOfType<LanMenuUI>() == null, "Back restores original main menu");
+            Check(Object.FindObjectOfType<LanMenuUI>() == null, "Back closes local setup");
+            Check(GameObject.Find("Labyrinth Title Screen") != null, "Back returns to new lobby");
             menu.StartButtonControl();
             ui = Object.FindObjectOfType<LanMenuUI>();
             Page("Mode");
@@ -124,6 +127,16 @@ public static class MenuFlowValidation
             Check(LanLaunch.StartingLevel == 7 && LanLaunch.Port == 7788, "host keeps selected port and level");
             LanLaunch.Configure(LanMode.Client, "192.168.1.10", 7788, 7);
             Check(LanLaunch.StartingLevel == 1 && LanLaunch.Address == "192.168.1.10", "join defers level to host");
+            // Returning from a failed LAN connection must keep the local destination form.
+            Object.DestroyImmediate(ui.gameObject);
+            LanLaunch.LastError = "Không thể kết nối máy chủ. Vui lòng thử lại.";
+            typeof(StartMenuControls).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(menu, null);
+            ui = Object.FindObjectOfType<LanMenuUI>();
+            Page("Destination");
+            Check(GameObject.Find("Labyrinth Title Screen") == null, "LAN error is not covered by the lobby");
+            Check(ui.GetComponentsInChildren<TMP_Text>().Any(x => x.text == LanLaunch.LastError), "LAN error stays visible");
+            Capture("06-lan-return", 1280, 720);
+            LanLaunch.LastError = null;
             OrnateUIValidation.ValidateAndCapture();
             File.WriteAllText(Output + "/validation.txt", $"PASS: {assertions} menu assertions; ornate UI checks passed.\nActual Unity uGUI renders; no two-machine LAN session exercised.\n");
             Debug.Log($"MENU_FLOW_PASS {assertions} assertions");
@@ -135,6 +148,24 @@ public static class MenuFlowValidation
             File.WriteAllText(Output + "/validation.txt", "FAIL\n" + ex);
             if (Application.isBatchMode) EditorApplication.Exit(1);
         }
+    }
+
+    private static void ValidateLobbyFont()
+    {
+        var font = Resources.Load<TMP_FontAsset>("Story/StoryFont");
+        Check(font != null, "local Vietnamese font is present");
+        var original = font.characterTable.Select(c => c.unicode).ToArray();
+        const string required = "THE LABYRINTH · MÊ CUNG KHẾ ƯỚC Bắt đầu Chơi đơn Tạo phòng LAN Tham gia LAN Quay lại Menu chính Chọn nhân vật Tiếp tục Kết nối Không thể kết nối máy chủ. Vui lòng thử lại. ←→•▼…";
+        string all = required + "\u00c3\u00ca\u00d3\u1ea2\u1ea6\u1eae\u1ec5\u1ef0";
+        string toAdd = new string(all.Distinct().Where(c => !font.HasCharacter(c)).ToArray());
+        if (toAdd.Length > 0) font.TryAddCharacters(toAdd);
+        string missing = new string(all.Distinct().Where(c => !font.HasCharacter(c)).ToArray());
+        Check(string.IsNullOrEmpty(missing), "lobby characters available: " + missing);
+        Check(original.All(c => font.characterLookupTable.ContainsKey(c)), "all existing local glyphs preserved");
+        EditorUtility.SetDirty(font);
+        AssetDatabase.SaveAssets();
+        File.WriteAllText(Output + "/font-validation.txt", "PASS: local font retained; existing glyphs=" + original.Length +
+            "; final glyphs=" + font.characterTable.Count + "; missing=0");
     }
 
     private static bool Active(string name) => ui.GetComponentsInChildren<Transform>(true)
@@ -165,9 +196,7 @@ public static class MenuFlowValidation
         go.GetComponent<UniversalAdditionalCameraData>().renderPostProcessing = false;
         var target = RenderTexture.GetTemporary(width, height, 24);
         var old = RenderTexture.active;
-        var canvas = ui != null ? ui.GetComponent<Canvas>() :
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects()
-                .SelectMany(g => g.GetComponentsInChildren<Canvas>(true)).First(c => c.name == "Canvas");
+        var canvas = ui != null ? ui.GetComponent<Canvas>() : GameObject.Find("Labyrinth Title Screen").GetComponent<Canvas>();
         var scaler = canvas.GetComponent<CanvasScaler>();
         var mode = scaler.uiScaleMode;
         var renderMode = canvas.renderMode;

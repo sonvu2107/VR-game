@@ -1,0 +1,4 @@
+Shalimar-Regular.ttf
+Source: https://github.com/google/fonts/tree/main/ofl/shalimar
+License: SIL Open Font License 1.1 (OFL.txt in this directory)
+Used to render the Vietnamese lobby tagline and Start button sprites.

@@ -7,9 +7,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "Assets/Resources/UI/Ornate"
 PREVIEW = ROOT / "Captures/OrnateUI"
 P = {
-    "void": "#160b0d", "ink": "#241114", "slate": "#391b20", "edge": "#090406",
-    "shade": "#401318", "bronze": "#75232c", "gold": "#b43e48", "light": "#e57679",
-    "shine": "#ffc1b2", "blue": "#68202b", "cyan": "#b64b54", "ice": "#ffd1c2",
+    "void": "#030303", "ink": "#080808", "slate": "#151012", "edge": "#020202",
+    "shade": "#290305", "bronze": "#50070b", "gold": "#850d15", "light": "#b4202c",
+    "shine": "#ef4a50", "blue": "#200407", "cyan": "#94141e", "ice": "#f05b60",
     "paper": "#c5ac72", "paperlight": "#ddc58e", "papershadow": "#9a7c50",
     "gray": "#5e625c", "graylight": "#8a8c79", "red": "#892f43",
     "redlight": "#c34e58", "green": "#407459", "greenlight": "#76a36a",
@@ -141,6 +141,6 @@ for i,item in enumerate(manifest):
     scale=min(3,220//asset.width,98//asset.height)
     if scale>1:asset=asset.resize((asset.width*scale,asset.height*scale),Image.Resampling.NEAREST)
     sheet.paste(asset,(x,y+20),asset)
-    d.text((x,y),item["name"],fill="#e57679")
+    d.text((x,y),item["name"],fill="#b4202c")
 sheet.save(PREVIEW/"asset-review.png")
 print(f"PASS: {len(manifest)} individual PNGs; binary alpha; fixed palette; integer pixel geometry.")

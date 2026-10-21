@@ -10,7 +10,7 @@ public sealed partial class LanMenuUI
 {
     private enum MenuStep { Mode, Character, Destination }
     private static readonly Color Muted = new Color(.76f, .69f, .65f);
-    private static readonly Color Gold = new Color(.90f, .39f, .41f);
+    private static readonly Color Gold = new Color(.85f, .16f, .18f);
     private Button originalButton;
     private Color originalButtonColor;
     private readonly GameObject[] pages = new GameObject[3];
@@ -251,12 +251,7 @@ public sealed partial class LanMenuUI
         if (launching) return;
         if (menuStep != MenuStep.Mode) { ShowStep(menuStep - 1); return; }
         gameObject.SetActive(false);
-        if (EventSystem.current != null)
-        {
-            if (previousFocus == null)
-                previousFocus = GameObject.Find("Start Button");
-            EventSystem.current.SetSelectedGameObject(previousFocus);
-        }
+        startMenu.ShowTitleScreen();
         if (Application.isPlaying) Destroy(gameObject);
         else DestroyImmediate(gameObject);
     }

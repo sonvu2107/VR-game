@@ -6,9 +6,9 @@ using UnityEngine.UI;
 /// <summary>Shared pixel artwork, without changing callbacks, values, or gameplay state.</summary>
 public static class OrnateUITheme
 {
-    public static readonly Color Text = new Color(.96f, .91f, .80f);
-    public static readonly Color Gold = new Color(.96f, .48f, .48f);
-    public static readonly Color Background = new Color(.075f, .027f, .035f);
+    public static readonly Color Text = new Color(.88f, .28f, .28f);
+    public static readonly Color Gold = new Color(1f, .42f, .42f);
+    public static readonly Color Background = new Color(.012f, .008f, .010f);
     private static readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
 
     public static Sprite Sprite(string name)

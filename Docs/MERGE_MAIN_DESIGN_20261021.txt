@@ -1,0 +1,24 @@
+MERGE MAIN + SẢNH DESIGN — HOÀN TẤT
+Main nguồn: 6b2a6f0c66e094772800828b0f86b478fba57db2 (mduchd)
+Design nguồn: 878e2dfcc4248944e0fd36505fe87fcb5d24840b (thinhtran-18)
+Snapshot local trước merge: 82ee547aa66b699ac0701c5cc469ace7d40ea0cd
+Snapshot bổ sung trước khi áp dụng: dde8fe2ed220aad59449f129255f097d494e3739
+
+ĐÃ XỬ LÝ:
+- StoryFont.asset: giữ font local, giữ toàn bộ 164 ký tự cũ; hiện có 175 ký tự, gồm đủ 8 ký tự riêng của design.
+- LanMenuUI.cs: giữ menu local nhiều bước và preview nhân vật; nút Menu chính trở về sảnh mới.
+- StartMenuControls.cs: ghép sảnh design, giữ luồng trả về form LAN khi kết nối lỗi; tránh chồng màn hình.
+- BossWaveAttackController.cs và toàn bộ phần boss design: giữ đúng blob main; loại 92 đường dẫn thay đổi boss design cùng kiểm tra asset boss cũ.
+- Menu local: nền đen, viền/nhãn nút đỏ, giữ bố cục và callback.
+- Cốt truyện local và các sửa UI bệ chìa/cổng/lời nhắc không thay đổi so với snapshot.
+- LanAssetCatalog được Unity cập nhật sau import.
+
+KIỂM TRA:
+PASS: Unity compile, không có error CS.
+PASS: 2554 assertions của MenuFlowValidation; sảnh, 3 bước menu, preview mọi nhân vật, quay lại, cấu hình host/join và lỗi LAN.
+PASS: 25 sprite pixel UI, Point/no mipmap/uncompressed; gameplay UI giữ artwork gốc.
+PASS: font local không mất ký tự, không thiếu ký tự cần cho sảnh/menu.
+PASS: đối chiếu hash boss với main và không còn conflict markers.
+Ảnh: Captures/MenuFlow/00-main.png, 01-mode.png, 02-character-*.png, 06-lan-return.png.
+Chưa kiểm tra phiên LAN hai máy hoặc toàn bộ trận boss/dash trong gameplay.
+Không push remote.
