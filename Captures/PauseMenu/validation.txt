@@ -1,0 +1,4 @@
+Unity 2022.3.10f1: no C# compilation errors.
+Pause menu verified in running Dungeon scene: five buttons, centered label rects, trimmed trailing newlines, Midline alignment.
+Screenshot: centered-final.png.
+Return to menu uses existing LAN Leave flow; LAN disconnect not re-tested in this change.

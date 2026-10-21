@@ -116,6 +116,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        PauseMenuNavigation.Install(this);
         Time.timeScale = 1f;
         CurrentLevel = Mathf.Clamp(LanLaunch.StartingLevel, 1, TotalLevels);
         SetState(GameState.Generating);
@@ -300,6 +301,19 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         Application.Quit();
+    }
+
+    public void ReturnToMainMenu()
+    {
+        Time.timeScale = 1f;
+        isGamePaused = isGameOver = isWin = isStoryPlaying = false;
+        if (LanSessionBridge.Active != null)
+        {
+            LanSessionBridge.Active.Leave();
+            return;
+        }
+        LanLaunch.Configure(LanMode.Solo);
+        SceneManager.LoadScene("StartMenu");
     }
 
     public void UpdateCounter()
