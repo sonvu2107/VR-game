@@ -1,0 +1,27 @@
+TÊN HIỂN THỊ LAN
+- Ô Tên hiển thị tại bước tạo/tham gia phòng; ẩn khi chơi đơn.
+- Nhớ tên bằng PlayerPrefs, giữ nội dung khi chuyển bước.
+- Chuẩn hóa Unicode tiếng Việt, trim, tối đa 20 ký tự; chặn tên rỗng/control/rich text.
+- Client gửi tên trong hello; Host xác nhận, phân biệt tên trùng bằng hậu tố 2 và gửi tên cả hai người trong snapshot.
+- Nhãn world-space đo đỉnh pixel có alpha ở tư thế ban đầu, loại vùng trong suốt, giữ chiều cao ổn định khi đổi frame; không bị lật cùng nhân vật, không bắt click; vàng nhạt cho Host, xanh nhạt cho Guest.
+- Client nội suy nhãn cùng tốc độ với world sprites; ẩn khi chết, vắng mặt hoặc ngoài trạng thái chơi/chờ đồng đội.
+- Protocol tăng 13 -> 14: Host và Client cần cùng bản build mới.
+- Có tham số -lanName cho chạy bản build/test.
+
+KIỂM TRA
+Unity compile: không lỗi CS.
+MenuFlowValidation: PASS 2683 assertions, gồm tên rỗng, giữ tên khi quay lại, host/join/Solo layout.
+LanPlayerNameValidation: PASS 17 checks, gồm TCP loopback thật cho hello/snapshot UTF-8, tên trùng, giới hạn dài, vị trí/ẩn/hiện nhãn.
+Chưa chạy phiên gameplay LAN trên hai máy riêng biệt.
+Chưa commit/push thay đổi này.
+
+KIỂM TRA GAMEPLAY HOST/CLIENT 21-10-2026
+- Chạy hai tiến trình Windows Development cùng bản build qua TCP 127.0.0.1.
+- Host Minh Đức, Client Ngọc Sơn: cả hai phía có đủ hai nhãn, đúng dấu và đúng chủ thể.
+- Phát hiện tên quá cao do vùng trong suốt của sprite; đã sửa điểm neo và tăng cỡ chữ tối đa 18 -> 24.
+- Host: PASS 7268 mẫu. Client: PASS 7513 mẫu, 208 snapshot. Sai số so với đỉnh pixel hiển thị dưới 0.00004 world unit.
+- Fixture dịch chuyển cả hai actor ở Host để đo replication/vị trí nhãn; không phải bài kiểm tra input chạy/animation toàn bộ nhân vật.
+- Ảnh camera game thật: Captures/LanNames/GameplayFixed/host.png và client.png.
+- Giới hạn: hai tiến trình trên cùng máy, chưa thử hai máy LAN vật lý. Ảnh lấy trực tiếp từ camera, không gồm HUD overlay.
+- Phát hiện lỗi riêng của URP 14 trong bản Player: Light2D tạo động có m_ApplyToSortingLayers null (Awake chỉ khởi tạo trong UNITY_EDITOR). Probe khởi tạo trường này riêng khi chụp để kiểm tra tên; chưa sửa hệ thống đèn sản phẩm. Không coi ảnh này là chứng nhận bản standalone sạch lỗi render.
+- Probe chỉ hoạt động khi truyền -lanNameSmoke ở Development/Editor. Thư mục ảnh/log lấy từ biến LABYRINTH_NAME_ARTIFACTS.

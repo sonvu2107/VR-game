@@ -23,6 +23,7 @@ public static class MenuFlowValidation
         {
             Directory.CreateDirectory(Output);
             ValidateLobbyFont();
+            LanPlayerNameValidation.Run();
             if (Application.isBatchMode) MenuPreviewLibraryBuilder.Build();
             OrnateUIEditorValidation.OpenFixture("StartMenu");
             var menu = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects()
@@ -89,11 +90,17 @@ public static class MenuFlowValidation
             Click("Mode Host");
             ClickText("Tiếp tục");
             Check(Active("Level Choices") && Active("Host Port") && !Active("LAN Connection"), "host has levels and port");
-            ui.GetComponentsInChildren<TMP_InputField>().Single().text = "0";
+            Check(Active("LAN Display Name"), "host can choose a display name");
+            var displayName = ui.GetComponentsInChildren<TMP_InputField>().Single(f => f.name == "Display Name");
+            displayName.text = " ";
+            ClickText("Tạo phòng");
+            Check(ui.GetComponentsInChildren<TMP_Text>().Any(t => t.text.Contains("Nhập tên hiển thị")), "blank name cannot create a room");
+            displayName.text = "Minh Đức";
+            ui.GetComponentsInChildren<TMP_InputField>().Single(f => f.name == "Host Port Number").text = "0";
             ClickText("Tạo phòng");
             Check(ui.gameObject.activeSelf && ui.GetComponentsInChildren<TMP_Text>().Any(t => t.text.Contains("65535")),
                 "invalid host port stays on form");
-            ui.GetComponentsInChildren<TMP_InputField>().Single().text = "7777";
+            ui.GetComponentsInChildren<TMP_InputField>().Single(f => f.name == "Host Port Number").text = "7777";
             ClickText("Quay lại");
             ClickText("Tiếp tục");
             Capture("04-host", 1280, 720);
@@ -102,6 +109,7 @@ public static class MenuFlowValidation
             Click("Mode Client");
             ClickText("Tiếp tục");
             Check(!Active("Level Choices") && Active("LAN Connection") && !Active("Host Port"), "join hides level selection");
+            Check(Active("LAN Display Name") && displayName.text == "Minh Đức", "join keeps the entered name across menu steps");
             ClickText("Kết nối");
             Check(ui.gameObject.activeSelf && ui.GetComponentsInChildren<TMP_Text>().Any(t => t.text.Contains("IPv4")),
                 "invalid address stays on form with error");

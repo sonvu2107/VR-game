@@ -1,0 +1,2 @@
+PASS: 17 checks; real TCP loopback UTF8 hello/snapshot, name rules, duplicate names and nameplate positioning.
+Not a two-machine gameplay test.

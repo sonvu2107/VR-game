@@ -14,6 +14,14 @@ public static class LanLaunch
     public static PlayableCharacterId SelectedCharacter { get; private set; } = PlayableCharacterId.AshenKnight;
     public static string LastError { get; set; }
     public static bool MenuSelectionMade { get; private set; }
+    public static string DisplayName { get; private set; } = LanPlayerNames.DefaultName;
+
+    public static void SetDisplayName(string value)
+    {
+        DisplayName = LanPlayerNames.Normalize(value);
+        PlayerPrefs.SetString("LanDisplayName", DisplayName);
+        PlayerPrefs.Save();
+    }
 
     public static void Configure(LanMode mode, string address = "127.0.0.1", int port = 7777, int startingLevel = 1)
     {
@@ -49,10 +57,13 @@ public static class LanLaunch
         MenuSelectionMade = false;
         SelectedCharacter = PlayableCharacterId.AshenKnight;
         LanSessionBridge.Active = null;
+        try { DisplayName = LanPlayerNames.Normalize(PlayerPrefs.GetString("LanDisplayName", LanPlayerNames.DefaultName)); }
+        catch (ArgumentException) { DisplayName = LanPlayerNames.DefaultName; }
         string[] args = Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "-lanHost") Mode = LanMode.Host;
+            if (args[i] == "-lanName" && i + 1 < args.Length) DisplayName = LanPlayerNames.Normalize(args[++i]);
             if (args[i] == "-lanJoin" && i + 1 < args.Length) { Mode = LanMode.Client; Address = args[++i]; }
             if (args[i] == "-lanPort" && i + 1 < args.Length && int.TryParse(args[++i], out int port)) Port = port;
             if (args[i] == "-character" && i + 1 < args.Length &&

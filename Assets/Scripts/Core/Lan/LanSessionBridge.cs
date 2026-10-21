@@ -24,6 +24,9 @@ public sealed class LanSessionBridge : GameSessionBridge
     private PlayerMovement guest;
     private HealthController guestHealth;
     private HealthController hostHealth;
+    private string hostDisplayName, guestDisplayName;
+    private LanPlayerNameplate[] nameplates;
+    private LanPlayerState[] namedPlayers;
     private LanPlayerInput guestInput;
     private LanInputFrame pendingInput;
     private bool previousAttack;
@@ -58,6 +61,8 @@ public sealed class LanSessionBridge : GameSessionBridge
         Active = this;
         manager = gameManager;
         hostHealth = manager.PlayerMovement.GetComponent<HealthController>();
+        hostDisplayName = LanLaunch.DisplayName;
+        nameplates = new[] { LanPlayerNameplate.Create(transform, 0), LanPlayerNameplate.Create(transform, 1) };
         scoreManager = FindObjectOfType<ScoreManager>();
         catalog = Resources.Load<LanAssetCatalog>("LanAssetCatalog");
         if (catalog == null) { Fail("Thiếu LAN catalog. Chọn Tools > The Labyrinth > Refresh LAN Catalog rồi build lại."); return; }
@@ -136,7 +141,7 @@ public sealed class LanSessionBridge : GameSessionBridge
                 if (!HasStateAuthority) Send(new LanMessage
                 {
                     type = "hello", catalog = catalog.fingerprint,
-                    character = (int)LanLaunch.SelectedCharacter
+                    character = (int)LanLaunch.SelectedCharacter, playerName = LanLaunch.DisplayName
                 });
             }
             else if (value == "disconnected")
@@ -196,6 +201,22 @@ public sealed class LanSessionBridge : GameSessionBridge
     private void LateUpdate()
     {
         if (!HasStateAuthority && world != null) world.Interpolate();
+        if (nameplates == null || manager == null) return;
+        bool visible = !leaving && (manager.CurrentState == GameState.Playing || manager.CurrentState == GameState.WaitingForPartner);
+        if (HasStateAuthority)
+        {
+            nameplates[0].Present(hostDisplayName, NameAnchor(manager.PlayerMovement), visible && hostHealth.currentHealth > 0, false);
+            nameplates[1].Present(guestDisplayName, NameAnchor(guest), visible && guestHealth != null && guestHealth.currentHealth > 0, false);
+        }
+        else
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var state = namedPlayers != null ? namedPlayers[i] : null;
+                nameplates[i].Present(state?.displayName, state != null ? state.nameAnchor : Vector3.zero,
+                    visible && state != null && state.health > 0, true);
+            }
+        }
     }
 
     private void HandleHostMessage(LanMessage message)
@@ -212,6 +233,12 @@ public sealed class LanSessionBridge : GameSessionBridge
             if (!Enum.IsDefined(typeof(PlayableCharacterId), message.character))
             {
                 Send(new LanMessage { type = "error", error = "Nhân vật được chọn không hợp lệ." });
+                return;
+            }
+            try { guestDisplayName = LanPlayerNames.ForGuest(message.playerName, hostDisplayName); }
+            catch (ArgumentException ex)
+            {
+                Send(new LanMessage { type = "error", error = ex.Message });
                 return;
             }
             guestCharacter = (PlayableCharacterId)message.character;
@@ -310,6 +337,7 @@ public sealed class LanSessionBridge : GameSessionBridge
             throw new System.IO.InvalidDataException("Invalid LAN state.");
         world.ApplyVisuals(message);
         LocalState = message.players[1];
+        namedPlayers = message.players;
         teammateHealth = message.players[0].health;
         if (teammateLight != null) teammateLight.position = message.players[0].position + lightOffset;
         manager.PlayerMovement.transform.position = LocalState.position;
@@ -432,6 +460,7 @@ public sealed class LanSessionBridge : GameSessionBridge
     private void RemoveGuest()
     {
         authenticated = peerReady = false;
+        if (guest != null) nameHeights.Remove(guest);
         if (guest != null) Destroy(guest.gameObject);
         guest = null; guestHealth = null; guestInput = null;
         if (hostHealth.currentHealth <= 0 && manager.CurrentState != GameState.Victory) manager.GameOver();
@@ -469,6 +498,8 @@ public sealed class LanSessionBridge : GameSessionBridge
         PlayerCharacterFrameAnimator character = player.GetComponent<PlayerCharacterFrameAnimator>();
         return new LanPlayerState
         {
+            displayName = player == guest ? guestDisplayName : hostDisplayName,
+            nameAnchor = NameAnchor(player),
             position = player.transform.position, health = health.currentHealth, hearts = health.startHeart,
             dash = player.DashCooldownNormalized, power = player.PowerUpCooldownRemaining,
             q = skills != null ? skills.SwordWaveCooldownNormalized : 0f,
@@ -476,6 +507,17 @@ public sealed class LanSessionBridge : GameSessionBridge
             ultimate = skills != null ? skills.UltimateNormalized : 0f,
             character = character != null ? (int)character.Character : (int)PlayableCharacterId.AshenKnight
         };
+    }
+
+    private readonly System.Collections.Generic.Dictionary<PlayerMovement, float> nameHeights = new();
+    private Vector3 NameAnchor(PlayerMovement player)
+    {
+        if (player == null) return Vector3.zero;
+        var body = player.GetComponent<SpriteRenderer>();
+        if (body == null || body.sprite == null) return player.transform.position + Vector3.up * 1.25f;
+        if (!nameHeights.TryGetValue(player, out float height))
+            nameHeights[player] = height = LanPlayerNameplate.MeasureHead(body);
+        return player.transform.TransformPoint(new Vector3(0, height, 0)) + Vector3.up * .28f;
     }
 
     private LanMessage Capture(string type)
@@ -628,6 +670,9 @@ public sealed class LanSessionBridge : GameSessionBridge
     {
         if (manager != null) { manager.LevelChanged -= OnLevelReady; manager.StateChanged -= OnStateChanged; }
         transport?.Dispose(); world?.Dispose();
+        if (nameplates != null)
+            foreach (var plate in nameplates)
+                if (plate != null) Destroy(plate.gameObject);
         if (guest != null) Destroy(guest.gameObject);
         if (Active == this) Active = null;
         Time.timeScale = 1f;

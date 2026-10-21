@@ -5,7 +5,8 @@ using UnityEngine;
 public sealed class LanMessage
 {
     public string type;
-    public const int CurrentProtocol = 13;
+    public const int CurrentProtocol = 14;
+    public string playerName;
     public int protocol = CurrentProtocol;
     public string catalog;
     public string error;
@@ -83,6 +84,8 @@ public struct LanInputFrame
 [Serializable]
 public sealed class LanPlayerState
 {
+    public string displayName;
+    public Vector3 nameAnchor;
     public Vector3 position;
     public int health;
     public int hearts;

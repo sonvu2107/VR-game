@@ -1,0 +1,742 @@
+Mono path[0] = 'D:/UnityGame/The-Labyrinth-main/Build/LanNames/TheLabyrinth_Data/Managed'
+Mono config path = 'D:/UnityGame/The-Labyrinth-main/Build/LanNames/MonoBleedingEdge/etc'
+Found 1 interfaces on host : 0) 192.168.10.5
+Multi-casting "[IP] 192.168.10.5 [Port] 55000 [Flags] 2 [Guid] 2257990424 [EditorId] 3617176464 [Version] 1048832 [Id] WindowsPlayer(2,SonVu) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] The Labyrinth" to [225.0.0.222:54997]...
+[Physics::Module] Initialized MultithreadedJobDispatcher with 15 workers.
+Initialize engine version: 2022.3.10f1 (ff3792e53c62)
+[Subsystems] Discovering subsystems at path D:/UnityGame/The-Labyrinth-main/Build/LanNames/TheLabyrinth_Data/UnitySubsystems
+GfxDevice: creating device client; threaded=1; jobified=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3050 Laptop GPU (ID=0x25a2)
+    Vendor:   NVIDIA
+    VRAM:     3964 MB
+    Driver:   32.0.15.8157
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  0.185 seconds
+- Finished resetting the current domain, in  0.001 seconds
+<RI> Initializing input.
+New input system (experimental) initialized
+Using Windows.Gaming.Input
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 0.880300 ms
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 30.722500 ms
+Unloading 6 unused Assets / (0 B). Loaded Objects now: 4576.
+Memory consumption went from 219.6 MB to 219.6 MB.
+Total: 2.649200 ms (FindLiveObjects: 0.270000 ms CreateObjectMapping: 0.102400 ms MarkObjects: 1.801400 ms  DeleteObjects: 0.474500 ms)
+
+[Save] File lưu: C:/Users/ADMIN/AppData/LocalLow/Dhanvith Nayak/The Labyrinth\save.json
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+SaveSystem:Load () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/UI/SaveSystem.cs:62)
+SaveSystem:get_Data () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/UI/SaveSystem.cs:35)
+ScoreManager:Start () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/UI/ScoreManager.cs:33)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/UI/SaveSystem.cs Line: 62)
+
+LAN_GUEST_SPAWNED
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+LanSessionBridge:SpawnGuest () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/Core/Lan/LanSessionBridge.cs:447)
+LanSessionBridge:HandleHostMessage (LanMessage) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/Core/Lan/LanSessionBridge.cs:251)
+LanSessionBridge:Update () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/Core/Lan/LanSessionBridge.cs:166)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/Core/Lan/LanSessionBridge.cs Line: 447)
+
+Generating level 1/10 (Khởi đầu) with seed 12345.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:118)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 118)
+
+Level 1 validation passed on attempt 1.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:TryGenerateValidDungeon () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:226)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:120)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 226)
+
+Walkable Bounds [Floor]: Center: (120.00, 4.00, 0.00), Extents: (130.00, 19.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.NavMeshBuilder2d:AddDefaultWalkableTilemap (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState,NavMeshPlus.Components.NavMeshModifier) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:224)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (UnityEngine.GameObject,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:175)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:154)
+NavMeshPlus.Extensions.CollectSources2d:CollectSources (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:87)
+NavMeshPlus.Components.NavMeshSurface:CollectSources (NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:390)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:173)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:139)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs Line: 224)
+
+Walkable Bounds [Walls]: Center: (120.00, 4.00, 0.00), Extents: (131.00, 20.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.NavMeshBuilder2d:AddDefaultWalkableTilemap (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState,NavMeshPlus.Components.NavMeshModifier) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:224)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (UnityEngine.GameObject,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:175)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:154)
+NavMeshPlus.Extensions.CollectSources2d:CollectSources (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:87)
+NavMeshPlus.Components.NavMeshSurface:CollectSources (NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:390)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:173)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:139)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs Line: 224)
+
+Sources 3075
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:156)
+NavMeshPlus.Extensions.CollectSources2d:CollectSources (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:87)
+NavMeshPlus.Components.NavMeshSurface:CollectSources (NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:390)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:173)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:139)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs Line: 156)
+
+From Local Bounds [Floor]: Center: (120.00, 4.00, 0.00), Extents: (130.00, 19.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:51)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:139)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 51)
+
+To World Bounds: Center: (120.73, 0.00, 71.00), Extents: (130.00, 0.00, 71.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:52)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:139)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 52)
+
+From Local Bounds [Walls]: Center: (120.00, 4.00, 0.00), Extents: (131.00, 20.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:51)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:139)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 51)
+
+To World Bounds: Center: (120.73, 0.00, 71.50), Extents: (131.00, 0.00, 71.50)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:52)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:139)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 52)
+
+Level 1 room 1/6 (Start): 0 enemies placed so far.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:SpawnRoomObjects (FloorExit&,int&) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:304)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:141)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 304)
+
+Level 1 room 2/6 (Combat): 4 enemies placed so far.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:SpawnRoomObjects (FloorExit&,int&) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:304)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:141)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 304)
+
+Level 1 room 3/6 (Combat): 7 enemies placed so far.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:SpawnRoomObjects (FloorExit&,int&) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:304)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:141)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 304)
+
+Treasure prefab is not assigned. Spawn point (137, 4) was reserved.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+InfiniteWorldGenerator:PlaceOptionalRoomPrefab (DungeonRoom,UnityEngine.GameObject,string) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:622)
+InfiniteWorldGenerator:SpawnRoomObjects (FloorExit&,int&) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:287)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:141)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 622)
+
+Level 1 room 4/6 (Treasure): 9 enemies placed so far.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:SpawnRoomObjects (FloorExit&,int&) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:304)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:141)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 304)
+
+Level 1 room 5/6 (Boss): 12 enemies placed so far.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:SpawnRoomObjects (FloorExit&,int&) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:304)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:141)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 304)
+
+Level 1 room 6/6 (Exit): 13 enemies placed so far.
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+InfiniteWorldGenerator:SpawnRoomObjects (FloorExit&,int&) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:304)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:141)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs Line: 304)
+
+Walkable Bounds [Floor]: Center: (120.00, 4.00, 0.00), Extents: (130.00, 19.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.NavMeshBuilder2d:AddDefaultWalkableTilemap (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState,NavMeshPlus.Components.NavMeshModifier) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:224)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (UnityEngine.GameObject,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:175)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:154)
+NavMeshPlus.Extensions.CollectSources2d:CollectSources (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:87)
+NavMeshPlus.Components.NavMeshSurface:CollectSources (NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:390)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:173)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:175)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs Line: 224)
+
+Walkable Bounds [Walls]: Center: (120.00, 4.00, 0.00), Extents: (131.00, 20.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.NavMeshBuilder2d:AddDefaultWalkableTilemap (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState,NavMeshPlus.Components.NavMeshModifier) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:224)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (UnityEngine.GameObject,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:175)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:154)
+NavMeshPlus.Extensions.CollectSources2d:CollectSources (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:87)
+NavMeshPlus.Components.NavMeshSurface:CollectSources (NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:390)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:173)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:175)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs Line: 224)
+
+Sources 3094
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.NavMeshBuilder2d:CollectSources (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilder2dState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs:156)
+NavMeshPlus.Extensions.CollectSources2d:CollectSources (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:87)
+NavMeshPlus.Components.NavMeshSurface:CollectSources (NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:390)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:173)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:175)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshBuilder2d.cs Line: 156)
+
+From Local Bounds [Floor]: Center: (120.00, 4.00, 0.00), Extents: (130.00, 19.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:51)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:175)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 51)
+
+To World Bounds: Center: (120.73, 0.00, 71.00), Extents: (130.00, 0.00, 71.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:52)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:175)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 52)
+
+From Local Bounds [Walls]: Center: (120.00, 4.00, 0.00), Extents: (131.00, 20.00, 0.00)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:51)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:175)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 51)
+
+To World Bounds: Center: (120.73, 0.00, 71.50), Extents: (131.00, 0.00, 71.50)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:37)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+NavMeshPlus.Extensions.CollectSources2d:CalculateGridWorldBounds (NavMeshPlus.Components.NavMeshSurface,UnityEngine.Matrix4x4,UnityEngine.Bounds) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:52)
+NavMeshPlus.Extensions.CollectSources2d:CalculateWorldBounds (NavMeshPlus.Components.NavMeshSurface,System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>,NavMeshPlus.Extensions.NavMeshBuilderState) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs:33)
+NavMeshPlus.Components.NavMeshSurface:CalculateWorldBounds (System.Collections.Generic.List`1<UnityEngine.AI.NavMeshBuildSource>) (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:430)
+NavMeshPlus.Components.NavMeshSurface:BuildNavMesh () (at D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/NavMeshSurface.cs:180)
+InfiniteWorldGenerator:GenerateLevel (LevelDefinition,int,int) (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/PCG/InfiniteWorldGenerator.cs:175)
+GameManager/<GenerateLevelRoutine>d__89:MoveNext () (at D:/UnityGame/The-Labyrinth-main/Assets/Scripts/GameManager.cs:369)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: D:/UnityGame/The-Labyrinth-main/Assets/NavMeshComponents/Scripts/CollectSources2d.cs Line: 52)
+
+Setting up 16 worker threads for Enlighten.
+PlayerConnection::CleanupMemory Statistics:
+[ALLOC_TEMP_TLS] TLS Allocator
+  StackAllocators : 
+    [ALLOC_TEMP_MAIN]
+      Peak usage frame count: [4.0 KB-8.0 KB]: 20363 frames, [8.0 KB-16.0 KB]: 9624 frames, [16.0 KB-32.0 KB]: 453 frames, [128.0 KB-256.0 KB]: 1 frames, [0.5 MB-1.0 MB]: 237 frames, [2.0 MB-4.0 MB]: 2 frames
+      Initial Block Size 4.0 MB
+      Current Block Size 4.0 MB
+      Peak Allocated Bytes 3.8 MB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 3]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 6]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_AUDIO_FMOD (WASAPI) feeder thread]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 168 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 2]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_AUDIO_FMOD mixer thread]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 8]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Loading.AsyncRead]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 288 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 15]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 0]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 6]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_BatchDeleteObjects]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_AUDIO_FMOD stream thread]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 4]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 28.6 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 1]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 1]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 92.3 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 12]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 13]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 21.1 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 7]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 9]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 5]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Loading.PreloadManager]
+      Initial Block Size 256.0 KB
+      Current Block Size 324.0 KB
+      Peak Allocated Bytes 310.0 KB
+      Overflow Count 8
+    [ALLOC_TEMP_Background Job.worker 7]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 11]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 10]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 5]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 4]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 12]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 13]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_AssetGarbageCollectorHelper] x 15
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 138 B
+      Overflow Count 0
+    [ALLOC_TEMP_Profiler.Dispatcher]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 456 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 8]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 14]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_HIDInput]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 11.8 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 11]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 0]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 14]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_EnlightenWorker] x 16
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_UnityGfxDeviceWorker]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 177.6 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 3]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 28.6 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 2]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 21.1 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.worker 10]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 18.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.worker 9]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+[ALLOC_MEMORYPROFILER]
+  Peak usage frame count: [128.0 KB-256.0 KB]: 1 frames, [256.0 KB-0.5 MB]: 30679 frames
+  Requested Block Size 1.0 MB
+  Peak Block count 1
+  Peak Allocated memory 349.5 KB
+  Peak Large allocation bytes 0 B
+[ALLOC_DEFAULT] Dual Thread Allocator
+  Peak main deferred allocation count 1791
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 2.3 MB
+      Failed Allocations. Bucket layout:
+        16B: 18 Subsections = 6144 buckets. Failed count: 114928
+        32B: 32 Subsections = 8192 buckets. Failed count: 24774
+        48B: 60 Subsections = 12288 buckets. Failed count: 9311
+        64B: 52 Subsections = 8874 buckets. Failed count: 3785
+        80B: 32 Subsections = 4681 buckets. Failed count: 0
+        96B: 24 Subsections = 3072 buckets. Failed count: 109
+        112B: 19 Subsections = 2161 buckets. Failed count: 0
+        128B: 19 Subsections = 1945 buckets. Failed count: 55
+    [ALLOC_DEFAULT_MAIN]
+      Peak usage frame count: [64.0 MB-128.0 MB]: 30680 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 3
+      Peak Allocated memory 84.2 MB
+      Peak Large allocation bytes 46.6 MB
+    [ALLOC_DEFAULT_THREAD]
+      Peak usage frame count: [16.0 MB-32.0 MB]: 30679 frames, [32.0 MB-64.0 MB]: 1 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 4
+      Peak Allocated memory 60.3 MB
+      Peak Large allocation bytes 16.0 MB
+[ALLOC_TEMP_JOB_1_FRAME]
+  Initial Block Size 2.0 MB
+  Used Block Count 0
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_2_FRAMES]
+  Initial Block Size 2.0 MB
+  Used Block Count 0
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_4_FRAMES (JobTemp)]
+  Initial Block Size 2.0 MB
+  Used Block Count 1
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_ASYNC (Background)]
+  Initial Block Size 1.0 MB
+  Used Block Count 1
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_GFX] Dual Thread Allocator
+  Peak main deferred allocation count 14
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 2.3 MB
+      Failed Allocations. Bucket layout:
+        16B: 18 Subsections = 6144 buckets. Failed count: 114928
+        32B: 32 Subsections = 8192 buckets. Failed count: 24774
+        48B: 60 Subsections = 12288 buckets. Failed count: 9311
+        64B: 52 Subsections = 8874 buckets. Failed count: 3785
+        80B: 32 Subsections = 4681 buckets. Failed count: 0
+        96B: 24 Subsections = 3072 buckets. Failed count: 109
+        112B: 19 Subsections = 2161 buckets. Failed count: 0
+        128B: 19 Subsections = 1945 buckets. Failed count: 55
+    [ALLOC_GFX_MAIN]
+      Peak usage frame count: [128.0 MB-256.0 MB]: 190 frames, [256.0 MB-0.50 GB]: 30490 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 23
+      Peak Allocated memory 330.6 MB
+      Peak Large allocation bytes 0 B
+    [ALLOC_GFX_THREAD]
+      Peak usage frame count: [64.0 KB-128.0 KB]: 892 frames, [256.0 KB-0.5 MB]: 29788 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 1
+      Peak Allocated memory 314.6 KB
+      Peak Large allocation bytes 0 B
+[ALLOC_CACHEOBJECTS] Dual Thread Allocator
+  Peak main deferred allocation count 27
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 2.3 MB
+      Failed Allocations. Bucket layout:
+        16B: 18 Subsections = 6144 buckets. Failed count: 114928
+        32B: 32 Subsections = 8192 buckets. Failed count: 24774
+        48B: 60 Subsections = 12288 buckets. Failed count: 9311
+        64B: 52 Subsections = 8874 buckets. Failed count: 3785
+        80B: 32 Subsections = 4681 buckets. Failed count: 0
+        96B: 24 Subsections = 3072 buckets. Failed count: 109
+        112B: 19 Subsections = 2161 buckets. Failed count: 0
+        128B: 19 Subsections = 1945 buckets. Failed count: 55
+    [ALLOC_CACHEOBJECTS_MAIN]
+      Peak usage frame count: [8.0 MB-16.0 MB]: 30680 frames
+      Requested Block Size 4.0 MB
+      Peak Block count 3
+      Peak Allocated memory 13.7 MB
+      Peak Large allocation bytes 4.7 MB
+    [ALLOC_CACHEOBJECTS_THREAD]
+      Peak usage frame count: [2.0 MB-4.0 MB]: 30679 frames, [4.0 MB-8.0 MB]: 1 frames
+      Requested Block Size 4.0 MB
+      Peak Block count 2
+      Peak Allocated memory 4.6 MB
+      Peak Large allocation bytes 0 B
+[ALLOC_TYPETREE] Dual Thread Allocator
+  Peak main deferred allocation count 0
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 2.3 MB
+      Failed Allocations. Bucket layout:
+        16B: 18 Subsections = 6144 buckets. Failed count: 114928
+        32B: 32 Subsections = 8192 buckets. Failed count: 24774
+        48B: 60 Subsections = 12288 buckets. Failed count: 9311
+        64B: 52 Subsections = 8874 buckets. Failed count: 3785
+        80B: 32 Subsections = 4681 buckets. Failed count: 0
+        96B: 24 Subsections = 3072 buckets. Failed count: 109
+        112B: 19 Subsections = 2161 buckets. Failed count: 0
+        128B: 19 Subsections = 1945 buckets. Failed count: 55
+    [ALLOC_TYPETREE_MAIN]
+      Peak usage frame count: [32.0 KB-64.0 KB]: 30680 frames
+      Requested Block Size 2.0 MB
+      Peak Block count 1
+      Peak Allocated memory 35.8 KB
+      Peak Large allocation bytes 0 B
+    [ALLOC_TYPETREE_THREAD]
+      Peak usage frame count: [16.0 KB-32.0 KB]: 30680 frames
+      Requested Block Size 2.0 MB
+      Peak Block count 1
+      Peak Allocated memory 25.3 KB
+      Peak Large allocation bytes 0 B
+[ALLOC_PROFILER]
+  Peak usage frame count: [256.0 KB-0.5 MB]: 891 frames, [0.5 MB-1.0 MB]: 29788 frames, [32.0 MB-64.0 MB]: 1 frames
+  Requested Block Size 16.0 MB
+  Peak Block count 3
+  Peak Allocated memory 33.3 MB
+  Peak Large allocation bytes 0 B
+    [ALLOC_PROFILER_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 66.1 KB
+##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1792573588129,"processId":35256,"allocatedMemory":805811,"memoryLabels":[{"Default":-128},{"Thread":144},{"Manager":534280},{"GfxDevice":72},{"GfxThread":704},{"Serialization":508},{"String":163},{"HashMap":3840},{"Utility":263768},{"PoolAlloc":168},{"VR":1696},{"NativeArray":372},{"Subsystems":96},{"CoreBusinessMetrics":128}]}

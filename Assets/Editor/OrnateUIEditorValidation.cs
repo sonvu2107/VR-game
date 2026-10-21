@@ -31,6 +31,8 @@ public static class OrnateUIEditorValidation
         var eventSystem = UnityEngine.EventSystems.EventSystem.current;
         var focus = eventSystem != null ? eventSystem.currentSelectedGameObject : null;
         bool ownsFolder = false;
+        bool hadName = PlayerPrefs.HasKey("LanDisplayName");
+        string savedName = PlayerPrefs.GetString("LanDisplayName", "");
         try
         {
             if (Directory.Exists(FixtureFolder)) throw new IOException("Fixture directory already exists; refusing to overwrite.");
@@ -49,6 +51,8 @@ public static class OrnateUIEditorValidation
             if (fixture.IsValid() && fixture.isLoaded) EditorSceneManager.CloseScene(fixture, true);
             if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
             foreach (var pair in state) pair.Key.SetValue(null, pair.Value);
+            if (hadName) PlayerPrefs.SetString("LanDisplayName", savedName); else PlayerPrefs.DeleteKey("LanDisplayName");
+            PlayerPrefs.Save();
             if (eventSystem != null) eventSystem.SetSelectedGameObject(focus);
             // Only the fixed folder created by this invocation may be removed.
             if (ownsFolder && Directory.Exists(FixtureFolder))

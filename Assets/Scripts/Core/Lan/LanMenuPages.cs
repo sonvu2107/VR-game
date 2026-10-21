@@ -24,8 +24,8 @@ public sealed partial class LanMenuUI
     private TextMeshProUGUI heading, characterName, characterDescription, selectionSummary;
     private TextMeshProUGUI nextText, backText;
     private Button nextButton;
-    private RectTransform levelGroup, networkGroup, hostPortGroup;
-    private TMP_InputField hostField, portField, hostPortField;
+    private RectTransform levelGroup, networkGroup, hostPortGroup, nameGroup;
+    private TMP_InputField hostField, portField, hostPortField, nameField;
     private MenuCharacterPreview preview;
     private GameObject previousFocus;
     private bool launching;
@@ -134,6 +134,12 @@ public sealed partial class LanMenuUI
         var parent = pages[2].transform;
         selectionSummary = Label(parent, "", 19, new Vector2(0, 157), new Vector2(1020, 32));
         selectionSummary.color = Gold;
+        nameGroup = Panel("LAN Display Name", parent, Color.clear);
+        Center(nameGroup, new Vector2(700, 44), new Vector2(0, 108));
+        Label(nameGroup, "Tên hiển thị", 18, new Vector2(-220, 0), new Vector2(220, 30));
+        nameField = Field(nameGroup, "Display Name", LanLaunch.DisplayName, new Vector2(105, 0), new Vector2(410, 44));
+        nameField.characterLimit = LanPlayerNames.MaxLength;
+        nameField.lineType = TMP_InputField.LineType.SingleLine;
         levelGroup = Panel("Level Choices", parent, Color.clear);
         Center(levelGroup, new Vector2(1040, 260), new Vector2(0, -5));
         for (int i = 0; i < levelChoices.Length; i++)
@@ -217,6 +223,8 @@ public sealed partial class LanMenuUI
         levelGroup.gameObject.SetActive(chosenMode != LanMode.Client);
         networkGroup.gameObject.SetActive(chosenMode == LanMode.Client);
         hostPortGroup.gameObject.SetActive(chosenMode == LanMode.Host);
+        nameGroup.gameObject.SetActive(chosenMode != LanMode.Solo);
+        levelGroup.anchoredPosition = new Vector2(0, chosenMode == LanMode.Host ? -35 : -5);
         selectionSummary.text = PlayableCharacterNames.DisplayName(LanLaunch.SelectedCharacter) + "   /   " +
             (chosenMode == LanMode.Solo ? "Chơi đơn" : chosenMode == LanMode.Host ? "Chủ phòng LAN" : "Tham gia LAN");
         // Explicit focus prevents keyboard/controller navigation returning to a hidden page.
@@ -235,6 +243,7 @@ public sealed partial class LanMenuUI
             if (chosenMode != LanMode.Solo &&
                 !int.TryParse(chosenMode == LanMode.Client ? portField.text : hostPortField.text, out port))
                 throw new ArgumentException("Nhập cổng hợp lệ từ 1024 đến 65535.");
+            if (chosenMode != LanMode.Solo) LanLaunch.SetDisplayName(nameField.text);
             LanLaunch.Configure(chosenMode, chosenMode == LanMode.Client ? hostField.text.Trim() : "127.0.0.1",
                 port, chosenLevel);
             launching = true;
